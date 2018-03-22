@@ -4,12 +4,14 @@
   text-align: center;
   display: inline-block;
 }
+
 .project img {
   width: 7rem;
   height: 7rem;
   box-shadow: 0 0 3px #808080;
   background: white;
 }
+
 .project p {
   color: #808080;
 }

@@ -1,5 +1,6 @@
 import { homedir, platform } from 'os';
 import fs from 'fs';
+import { join } from 'path';
 
 import newicon from 'images/newicon.png';
 import sampleicon from 'images/sampleicon.png';
@@ -23,24 +24,24 @@ function checkFolders() {
   // maybe check platform? console.log(platform());
   // check settings file - look somewhere other than home folder
 
-  const home = fs.readdirSync(`${homedirectory}`);
+  const home = fs.readdirSync(join(homedirectory));
   if (!home.includes('Documents')) { // weird but ok
-    fs.mkdirSync(`${homedirectory}/Documents`);
+    fs.mkdirSync(join(homedirectory, 'Documents'));
   }
-  const documents = fs.readdirSync(`${homedirectory}/Documents`);
+  const documents = fs.readdirSync(join(homedirectory, 'Documents'));
   if (!documents.includes('Phinch2.0')) {
-    fs.mkdirSync(`${homedirectory}/Documents/Phinch2.0`);
-    // spawn samples as well here
+    fs.mkdirSync(join(homedirectory, 'Documents', 'Phinch2.0'));
   }
-  // const phinch = fs.readdirSync(`${homedirectory}/Documents/Phinch2.0`);
-  // check for files inside phinch directory folders (data*, settings, thumbnails, etc)
 }
 
 export function getProjects() {
   checkFolders();
-  const projects = fs.readdirSync(`${homedirectory}/Documents/Phinch2.0`)
+  const projects = fs.readdirSync(join(homedirectory, 'Documents', 'Phinch2.0'))
     .filter(f => f !== 'Samples')
-    .filter(f => fs.lstatSync(`${homedirectory}/Documents/Phinch2.0/${f}`).isDirectory());
+    .filter(f => fs.lstatSync(join(homedirectory, 'Documents', 'Phinch2.0', f)).isDirectory());
+  // map => 
+  // check for files inside phinch directory folders (data*, settings, thumbnails, etc)
+  //
   const newproject = {
     name: 'New Project',
     slug: 'newproject',
@@ -52,28 +53,28 @@ export function getProjects() {
 
 export function getSamples() {
   checkFolders();
-  const phinch = fs.readdirSync(`${homedirectory}/Documents/Phinch2.0`);
+  const phinch = fs.readdirSync(join(homedirectory, 'Documents', 'Phinch2.0'));
   if (!phinch.includes('Samples')) {
-    fs.mkdirSync(`${homedirectory}/Documents/Phinch2.0/Samples`);
+    fs.mkdirSync(join(homedirectory, 'Documents', 'Phinch2.0', 'Samples'));
     // Make our 2 default samples now
     sampleProjects.forEach((s) => {
-      fs.mkdirSync(`${homedirectory}/Documents/Phinch2.0/Samples/${s.slug}`);
-      fs.writeFileSync(`${homedirectory}/Documents/Phinch2.0/Samples/${s.slug}/${s.slug}.json`, JSON.stringify({name:s.name}));
-      fs.writeFileSync(`${homedirectory}/Documents/Phinch2.0/Samples/${s.slug}/${s.slug}.png`, s.thumb.replace(/^data:image\/png;base64,/, ''), 'base64');
+      fs.mkdirSync(join(homedirectory, 'Documents', 'Phinch2.0', 'Samples', s.slug));
+      fs.writeFileSync(join(homedirectory, 'Documents', 'Phinch2.0', 'Samples', s.slug, `${s.slug}.json`), JSON.stringify({name:s.name}));
+      fs.writeFileSync(join(homedirectory, 'Documents', 'Phinch2.0', 'Samples', s.slug, `${s.slug}.png`), s.thumb.replace(/^data:image\/png;base64,/, ''), 'base64');
       // add some data lol idk
     });
   }
-  const samples = fs.readdirSync(`${homedirectory}/Documents/Phinch2.0/Samples`)
-    .filter(f => fs.lstatSync(`${homedirectory}/Documents/Phinch2.0/Samples/${f}`).isDirectory())
+  const samples = fs.readdirSync(join(homedirectory, 'Documents', 'Phinch2.0', 'Samples'))
+    .filter(f => fs.lstatSync(join(homedirectory, 'Documents', 'Phinch2.0', 'Samples', f)).isDirectory())
     .map((s) => {
-      const path = `${homedirectory}/Documents/Phinch2.0/Samples/${s}/${s}`;
+      const path = join(homedirectory, 'Documents', 'Phinch2.0', 'Samples', s);
       let name = '';
-      if (fs.existsSync(`${path}.json`)) {
-        name = JSON.parse(fs.readFileSync(`${path}.json`, 'utf8')).name;
+      if (fs.existsSync(join(path, `${s}.json`))) {
+        name = JSON.parse(fs.readFileSync(join(path, `${s}.json`), 'utf8')).name;
       }
       let thumb = '';
-      if (fs.existsSync(`${path}.png`)) {
-        thumb = `data:image/png;base64, ${fs.readFileSync(`${path}.png`, 'base64')}`;
+      if (fs.existsSync(join(path, `${s}.png`))) {
+        thumb = `data:image/png;base64, ${fs.readFileSync(join(path, `${s}.png`), 'base64')}`;
       }
       return {
         name: name,
