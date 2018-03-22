@@ -1,0 +1,22 @@
+.link {
+  color: white;
+  padding: 1rem 0;
+}
+
+.link img {
+  width: 2rem;
+  height: 2rem;
+  margin: 0 1rem;
+  background: white;
+}
+
+.link p {
+  margin: 0;
+  padding: 0;
+}
+
+.info {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
