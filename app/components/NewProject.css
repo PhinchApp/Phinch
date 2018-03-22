@@ -5,3 +5,50 @@
 .logo {
   width: 15vw;
 }
+
+.container h1 {
+  color: #2b2b2b;
+  margin: 1rem 0;
+}
+
+input, textarea {
+  width: 50vw;
+  margin: 1rem;
+  margin-left: 0;
+  resize: none;
+  border: 1px solid #2b2b2b;
+  background: #f8f8f8;
+  padding: 0.25rem;
+  font-size: 1rem;
+  font-weight: 200;
+}
+
+button {
+  margin: 1rem 0;
+  color: white;
+  background: #2b2b2b;
+  border: 1px solid #808080;
+  padding: 0.25rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 200;
+}
+
+
+table {
+  border-spacing: 0;
+  margin: 0.5rem 0;
+}
+td {
+  margin: 0;
+  padding: 0.25rem 0;
+}
+
+.label {
+  padding-right: 1.5rem;
+  font-weight: 400;
+  color: #2b2b2b;
+}
+
+.error {
+  color: red;
+}
