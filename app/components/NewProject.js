@@ -1,30 +1,25 @@
 // @flow
 import React, { Component } from 'react';
-// import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const path = require('path');
-const { remote, clipboard } = require('electron');
+const { remote } = require('electron');
 const { dialog } = remote;
 const { spawn, execFile } = require('child_process');
 
 const isDev = () => process.env.NODE_ENV === 'development';
 const appPath = isDev() ? __dirname : remote.app.getAppPath();
 
-import { getProjects, getSamples } from '../projects.js';
-import ProjectList from './ProjectList.js';
-import LinkList from './LinkList.js';
-import styles from './Home.css';
+import styles from './NewProject.css';
 import logo from 'images/phinch.png';
 
-export default class Home extends Component {
+export default class NewProject extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       filename: '',
       datainfo: '',
-      projects: getProjects(),
-      samples: getSamples(),
     };
 
     this.showFilename = this.showFilename.bind(this);
@@ -81,44 +76,42 @@ export default class Home extends Component {
     });
   }
 
-  render() {
-    // TODO: break down into componenets
-    /*
-            <h3>{this.state.filename}</h3>
-            <button id='open' onClick={this.handleOpenButton}>Choose a file</button>
-            <div>{this.state.datainfo}</div>
-    */
-    const links = LinkList();
-    const projects = ProjectList(this.state.projects);
-    const samples = ProjectList(this.state.samples);
+  render() {    
     return (
-      <div>
-        <div className={styles.container} data-tid='container'>
-          <div className={`${styles.section} ${styles.left}`}>
-            <div className={`${styles.area} ${styles.about}`}>
-              <img src={logo} alt='Phinch Logo' />
-              <h1>Welcome to Phinch</h1>
-              <p>version 0.01</p>
-            </div>
-            <div className={`${styles.area} ${styles.links}`}>
-              {links}
-            </div>
-          </div>
-          <div className={`${styles.section} ${styles.right}`}>
-            <div className={styles.area}>
-              <div className={styles.projectType}>
-                <h2>Projects</h2>
-              </div>
-              {projects}
-            </div>
-            <div className={styles.area}>
-              <div className={styles.projectType}>
-                <h2>Samples</h2>
-              </div>
-              {samples}
-            </div>
-          </div>
+      <div className={styles.container}>
+        <div className={styles.logo}>
+          <Link to="/">
+            <img src={logo} alt='Phinch' />
+          </Link>
         </div>
+        <h1>New Project</h1>
+        <p>To start a new project, you can browse for a file on your local hard drive or drag the file to the box below.</p>
+        <input type="text" value={this.state.filename} disabled />
+        <button id='open' onClick={this.handleOpenButton}>Browse</button>
+        <input type="textarea" value='Drag/Drop file here.' disabled />
+        <table>
+          <tbody>
+            <tr>
+              <td>File Name</td>
+              <td>{this.state.filename}</td>
+            </tr>
+            <tr>
+              <td>Size</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>File Validates</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>Observations</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+        <div>Error Message Goes Here</div>
+        <button id='filter'>Filter Data</button>
+        <div>{this.state.datainfo}</div>
       </div>
     );
   }

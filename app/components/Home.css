@@ -36,52 +36,11 @@
   background: #2b2b2b;
   height: 64vh;
 }
-.link {
-  color: white;
-  padding: 1rem 0;
-}
-.link img {
-  width: 2rem;
-  height: 2rem;
-  margin: 0 1rem;
-  background: white;
-}
 
-.linfo {
-  display: inline-block;
-  margin: 0;
-  padding: 0;
-}
-
-h2 {
-  font-weight: 200;
-  font-size: 1.2rem;
-  margin: 0;
-  padding: 0;
-}
-.link p {
-  margin: 0;
-  padding: 0;
-}
 
 .right {
   vertical-align: top;
   width: 60vw;
-}
-.project {
-  width: 10.75rem;
-  padding: 1rem;
-  text-align: center;
-  display: inline-block;
-}
-.project img {
-  width: 7rem;
-  height: 7rem;
-  box-shadow: 0 0 3px #808080;
-  background: white;
-}
-.project p {
-  color: #808080;
 }
 
 .projectType {
