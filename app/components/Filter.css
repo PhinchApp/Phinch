@@ -1,0 +1,28 @@
+.container {
+  height: 100vh;
+  padding: 1rem;
+}
+
+.table {
+  background: #DEF;
+}
+
+.table th {
+  text-align: left;
+  font-weight: 200;
+}
+
+.table td {
+  outline: 1px solid grey;
+}
+
+.logo {
+  width: 15vw;
+}
+
+.input {
+  width: auto;
+  margin: 0;
+  padding: 0;
+  border: none;
+}

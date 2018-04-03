@@ -1,22 +1,19 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 import styles from './ProjectList.css';
 
-const ProjectThumb = (p,i) => {
+const ProjectThumb = (p, i, c) => {
   return (
-    <Link key={`${p.slug}-${i}`} to={p.slug}>
-      <div className={styles.project}>
-        <img src={p.thumb} alt={p.name} />
-        <p>{p.name}</p>
-      </div>
-    </Link>
+    <div key={`${p.slug}-${i}`} className={styles.project} onClick={() => c(p)}>
+      <img src={p.thumb} alt={p.name} />
+      <p>{p.name}</p>
+    </div>
   );
 }
 
-const ProjectList = (projectList) => {
-  const projects = projectList.map((p,i) => {
-    return ProjectThumb(p,i);
+const ProjectList = (props) => {
+  const projects = props.projectList.map((p, i) => {
+    return ProjectThumb(p, i, props.click);
   });
   return (
     <div>
