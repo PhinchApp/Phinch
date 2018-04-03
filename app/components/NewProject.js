@@ -1,18 +1,17 @@
 // @flow
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { join } from 'path';
-import { spawn } from 'child_process';
 import { remote } from 'electron';
-import { statSync } from 'fs';
+
+import { createProject } from '../projects.js';
+import loadFile from '../DataLoader';
+import DataContainer from '../DataContainer';
 
 import styles from './NewProject.css';
 import logo from 'images/phinch.png';
 import loading from 'images/loading.gif';
 
 const { dialog } = remote;
-const isDev = () => process.env.NODE_ENV === 'development';
-const appPath = isDev() ? __dirname : remote.app.getAppPath();
 
 export default class NewProject extends Component {
   constructor(props) {
@@ -30,29 +29,28 @@ export default class NewProject extends Component {
       observations: null,
       error: null,
       loading: false,
+      dragging: false,
     };
 
+    this.success = this.success.bind(this);
+    this.failure = this.failure.bind(this);
+
+    this.showDrop = this.showDrop.bind(this);
+    this.hideDrop = this.hideDrop.bind(this);
+    this.handleDrop = this.handleDrop.bind(this);
     this.onChosenFileToOpen = this.onChosenFileToOpen.bind(this);
     this.handleOpenButton = this.handleOpenButton.bind(this);
   }
 
-  updateName(filepath) {
-    const valid = null;
-    const filename = filepath.toString().split('/');
-    this.setState({name:filename[filename.length-1],valid});
-  }
-
-  // Maybe externalize this to utils or something
-  formatFileSize(bytes) {
-    const interval = 1000;
-    const units = ['B', 'kB', 'MB', 'GB', 'TB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(interval));
-    return `${(bytes / Math.pow(interval, i)).toFixed(1)} ${units[i]}`;
-  }
-
-  updateSize(filepath) {
-    const size = this.formatFileSize(statSync(filepath).size);
-    this.setState({size});
+  updateSummary(filepath) {
+    DataContainer.setSummary(filepath);
+    const summary = DataContainer.getSummary();
+    this.setState({
+      name: summary.name,
+      size: summary.size,
+      valid: null,
+      observations: null,
+    });
   }
 
   updateValid(isvalid) {
@@ -74,40 +72,23 @@ export default class NewProject extends Component {
     this.setState({loading});
   }
 
-  uint8arrayToString(data){
-    return String.fromCharCode.apply(null, data);
+  success(data) {
+    DataContainer.setData(data);
+    this.updateValid(true);
+    this.updateObservations(Number.parseFloat(data.rows.length).toLocaleString());
+    this.updateLoading(false);
+    createProject({name: this.state.name, data});
   }
 
-  loadFile(filepath) {
-    const python = spawn(join(`${appPath}`,`/../biomhandler/dist/biomhandler`), [filepath]);
-    let json = '';
-    python.stdout.on('data', (data) => {
-      json += this.uint8arrayToString(data);
-    });
-    python.stdout.on('end', () => {
-      try {
-        const data = JSON.parse(json);
-        // console.log(data);
-        this.updateValid(true);
-        this.updateObservations(Number.parseFloat(data.rows.length).toLocaleString());
-        // DO SOMETHING WITH THE DATA => FILTER PAGE
-      } catch (e) {
-        this.updateError('validation');
-      }
-      this.updateLoading(false);
-    });
-    python.on('error', (error) => {
-      this.updateLoading(false);
-      this.updateError('validation');
-      console.warn(error);
-    });
+  failure() {
+    this.updateLoading(false);
+    this.updateError('validation');
   }
 
   onChosenFileToOpen(filepath) {
     this.updateLoading(true);
-    this.updateName(filepath);
-    this.updateSize(filepath);
-    this.loadFile(filepath);
+    this.updateSummary(filepath);
+    loadFile(filepath, this.success, this.failure);
   }
 
   handleOpenButton() {
@@ -120,16 +101,52 @@ export default class NewProject extends Component {
     });
   }
 
+  allowDrop(e) {
+    e.preventDefault();
+    return false;
+  }
+
+  showDrop(e) {
+    e.preventDefault();
+    this.setState({dragging: true});
+    return false;
+  }
+
+  hideDrop(e) {
+    e.preventDefault();
+    this.setState({dragging: false});
+    return false;
+  }
+
+  handleDrop(e) {
+    e.preventDefault();
+    this.hideDrop(e);
+    if (e.dataTransfer.files[0].path) {
+      this.onChosenFileToOpen(e.dataTransfer.files[0].path.toString());
+    } else {
+      this.updateError('missing');
+    }
+    return false;
+  }
+
   render() {
     let result = '';
     if (this.state.valid === 'Yes') {
-      result = <button id='filter'>Filter Data</button>;
+      result = <Link to="/filter"><button id='filter'>Filter Data</button></Link>;
     } else if (this.state.valid === 'No') {
       result = <div className={styles.error}>{this.state.error}</div>
     }
     const loader = this.state.loading ? <img src={loading} alt='loading' /> : '';
+    const indicateDrag = this.state.dragging ? styles.drag : '';
     return (
-      <div className={styles.container}>
+      <div
+        className={`${styles.container} ${indicateDrag}`}
+        onDrop={this.handleDrop}
+        onDragOver={this.allowDrop}
+        onDragEnd={this.hideDrop}
+        onDragEnter={this.showDrop}
+        onDragLeave={this.hideDrop}
+      >
         <div className={styles.logo}>
           <Link to="/">
             <img src={logo} alt='Phinch' />

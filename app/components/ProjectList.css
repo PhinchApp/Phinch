@@ -1,8 +1,11 @@
 .project {
   width: 10.75rem;
+  height: 12.5rem;
   padding: 1rem;
+  vertical-align: top;
   text-align: center;
   display: inline-block;
+  cursor: pointer;
 }
 
 .project img {
@@ -14,4 +17,5 @@
 
 .project p {
   color: #808080;
+  word-wrap: break-word;
 }

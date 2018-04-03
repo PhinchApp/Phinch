@@ -1,5 +1,14 @@
 .container {
+  height: 100vh;
   padding: 1rem;
+}
+
+.drag {
+  background: #bffbbf;
+}
+
+.drag * {
+  pointer-events: none;
 }
 
 .logo {

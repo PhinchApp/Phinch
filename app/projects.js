@@ -34,13 +34,60 @@ function checkFolders() {
   }
 }
 
+function getProjectInfo(path, project) {
+  let name = project;
+  if (fs.existsSync(join(path, `${project}.json`))) {
+    const tmpname = JSON.parse(fs.readFileSync(join(path, `${project}.json`), 'utf8')).name;
+    if (tmpname) {
+      name = tmpname;
+    }
+  }
+  let thumb = '';
+  if (fs.existsSync(join(path, `${project}.png`))) {
+    thumb = `data:image/png;base64, ${fs.readFileSync(join(path, `${project}.png`), 'base64')}`;
+  }
+  let data = '';
+  if (fs.existsSync(join(path, `${project}.biom`))) {
+    data = join(path, `${project}.biom`);
+  }
+  return {
+    name: name,
+    slug: 'filter',
+    thumb: thumb,
+    path: path,
+    data: data,
+  }
+}
+
+export function createProject(project) {
+  checkFolders();
+  const phinchdir = join(homedirectory, 'Documents', 'Phinch2.0');
+  const phinch = fs.readdirSync(phinchdir);
+  //
+  const basename = project.name.split('.')[0];
+  let foldername = basename;
+  let version = 0;
+  while (phinch.includes(foldername)) {
+    foldername = `${basename}-${version}`;
+    version++;
+  }
+  //
+  fs.mkdirSync(join(phinchdir, foldername));
+  fs.writeFileSync(join(phinchdir, foldername, `${foldername}.biom`), JSON.stringify(project.data));
+  fs.writeFileSync(join(phinchdir, foldername, `${foldername}.json`), JSON.stringify({name:foldername}));
+  fs.writeFileSync(join(phinchdir, foldername, `${foldername}.png`), sampleicon.replace(/^data:image\/png;base64,/, ''), 'base64');
+}
+
 export function getProjects() {
   checkFolders();
   const projects = fs.readdirSync(join(homedirectory, 'Documents', 'Phinch2.0'))
     .filter(f => f !== 'Samples')
-    .filter(f => fs.lstatSync(join(homedirectory, 'Documents', 'Phinch2.0', f)).isDirectory());
-  // map => 
-  // check for files inside phinch directory folders (data*, settings, thumbnails, etc)
+    .filter(f => fs.lstatSync(join(homedirectory, 'Documents', 'Phinch2.0', f)).isDirectory())
+    .map((p) => {
+      // check for files inside phinch directory folders (data*, settings, thumbnails, etc)
+      const path = join(homedirectory, 'Documents', 'Phinch2.0', p);
+      return getProjectInfo(path, p);
+    });
   //
   const newproject = {
     name: 'New Project',
@@ -53,34 +100,23 @@ export function getProjects() {
 
 export function getSamples() {
   checkFolders();
-  const phinch = fs.readdirSync(join(homedirectory, 'Documents', 'Phinch2.0'));
+  const phinchdir = join(homedirectory, 'Documents', 'Phinch2.0');
+  const phinch = fs.readdirSync(phinchdir);
   if (!phinch.includes('Samples')) {
-    fs.mkdirSync(join(homedirectory, 'Documents', 'Phinch2.0', 'Samples'));
+    fs.mkdirSync(join(phinchdir, 'Samples'));
     // Make our 2 default samples now
     sampleProjects.forEach((s) => {
-      fs.mkdirSync(join(homedirectory, 'Documents', 'Phinch2.0', 'Samples', s.slug));
-      fs.writeFileSync(join(homedirectory, 'Documents', 'Phinch2.0', 'Samples', s.slug, `${s.slug}.json`), JSON.stringify({name:s.name}));
-      fs.writeFileSync(join(homedirectory, 'Documents', 'Phinch2.0', 'Samples', s.slug, `${s.slug}.png`), s.thumb.replace(/^data:image\/png;base64,/, ''), 'base64');
+      fs.mkdirSync(join(phinchdir, 'Samples', s.slug));
+      fs.writeFileSync(join(phinchdir, 'Samples', s.slug, `${s.slug}.json`), JSON.stringify({name:s.name}));
+      fs.writeFileSync(join(phinchdir, 'Samples', s.slug, `${s.slug}.png`), s.thumb.replace(/^data:image\/png;base64,/, ''), 'base64');
       // add some data lol idk
     });
   }
-  const samples = fs.readdirSync(join(homedirectory, 'Documents', 'Phinch2.0', 'Samples'))
-    .filter(f => fs.lstatSync(join(homedirectory, 'Documents', 'Phinch2.0', 'Samples', f)).isDirectory())
+  const samples = fs.readdirSync(join(phinchdir, 'Samples'))
+    .filter(f => fs.lstatSync(join(phinchdir, 'Samples', f)).isDirectory())
     .map((s) => {
-      const path = join(homedirectory, 'Documents', 'Phinch2.0', 'Samples', s);
-      let name = '';
-      if (fs.existsSync(join(path, `${s}.json`))) {
-        name = JSON.parse(fs.readFileSync(join(path, `${s}.json`), 'utf8')).name;
-      }
-      let thumb = '';
-      if (fs.existsSync(join(path, `${s}.png`))) {
-        thumb = `data:image/png;base64, ${fs.readFileSync(join(path, `${s}.png`), 'base64')}`;
-      }
-      return {
-        name: name,
-        slug: s,
-        thumb: thumb,
-      }
+      const path = join(phinchdir, 'Samples', s);
+      return getProjectInfo(path, s);
     });
   return samples;
 }
