@@ -1,40 +1,35 @@
-import React from 'react';
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import { scaleLog } from 'd3-scale';
 
-let width, height, padding, scale, bars;
+export default class FrequencyChart extends Component {
+  constructor(props) {
+    super(props);
+    this.padding = this.props.width * 0.05;
+    this.scale = scaleLog()
+      .domain([Math.min(...this.props.data.map(d => d.reads)), Math.max(...this.props.data.map(d => d.reads))])
+      .range([this.padding, this.props.width - this.padding]);    
+  }
 
-export function getFrequencyChart(value) {
-  const bar = (
-      <g key={`v-${value}`} transform={`translate(${scale(value)}, ${height / 6})`}>
-        <rect width='0.5' height={`${height / 3 * 2}`} fill='black' />
-      </g>
-  );
-  return (
-    <svg width={width} height={height}>
-      <rect width={width} height={height} fill='white' />
-      <line x1={padding} y1={height / 2} x2={width - padding} y2={height / 2} stroke='black' />
-      <circle cx={padding / 2} cy={height / 2} r={padding / 2} fill='none' stroke='black' strokeWidth='0.25' />
-      <circle cx={width - padding / 2} cy={height / 2} r={padding / 2} fill='none' stroke='black' strokeWidth='0.25' />
-      {bars}
-      {bar}
-    </svg>
-  );
-}
+  componentDidMount() {
+    this.updateCanvas(ReactDOM.findDOMNode(this).getContext('2d'));
+  }
 
-export function setupFrequencyChart(data, w, h) {
-  width = w;
-  height = h;
-  padding = width * 0.05;
+  updateCanvas(ctx) {
+    ctx.fillStyle = 'black';
+    this.props.data.forEach((d) => {
+      ctx.fillRect(this.scale(d.reads), this.props.height / 3, 0.25, this.props.height / 3);
+    });
+    ctx.fillRect(this.scale(this.props.value), this.props.height / 6, 1, this.props.height / 3 * 2);
+  }
 
-  scale = scaleLog()
-            .domain([Math.min(...data), Math.max(...data)])
-            .range([padding, width - padding]);
-
-  bars = data.map((d) => {
+  render() {    
     return (
-      <g key={`g-${d}`} transform={`translate(${scale(d)}, ${height / 3})`}>
-        <rect width='0.1' height={`${height / 3}`} fill='black' />
-      </g>
+      <canvas
+        width={this.props.width}
+        height={this.props.height}
+        style={{ background: 'white', width: this.props.width / 2, height: this.props.height / 2, margin: 0, padding: 0, overflow: 'hidden' }}
+      />
     );
-  });
-}
+  }
+};
