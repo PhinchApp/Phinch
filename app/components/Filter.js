@@ -5,7 +5,7 @@ import { Link, Redirect } from 'react-router-dom';
 import Table from 'rc-table';
 
 import DataContainer from '../DataContainer';
-import { setupFrequencyChart, getFrequencyChart} from './frequencyChart';
+import FrequencyChart from './FrequencyChart';
 
 import styles from './Filter.css';
 import logo from 'images/phinch.png';
@@ -16,10 +16,17 @@ export default class Filter extends Component {
 
     this.reverse = false;
 
+    this.state = {
+      summary: DataContainer.getSummary(),
+      data: DataContainer.getSamples(),
+      height: window.innerHeight,
+    };
+
     this.columns = [
       {
         title: (<a onClick={() => { this.sortBy('phinchName') }}>Phinch Name</a>),
         dataIndex: 'phinchName',
+        key: 'phinchName',
         width: 150,
         render: (t, r) => (
           <input
@@ -33,44 +40,38 @@ export default class Filter extends Component {
       {
         title: (<a onClick={() => { this.sortBy('id') }}>BIOM ID</a>),
         dataIndex: 'id',
+        key: 'id',
         width: 150,
       },
       {
         title: (<a onClick={() => { this.sortBy('sampleName') }}>Sample Name</a>),
         dataIndex: 'sampleName',
+        key: 'sampleName',
         width: 150,
       },
       {
         title: (<a onClick={() => { this.sortBy('reads') }}>Sequence Reads</a>),
         dataIndex: 'reads',
+        key: 'reads',
         width: 150,
       },
       {
         title: '',
-        dataIndex: 'chart',
+        dataIndex: '',
+        key: 'chart',
         width: 150,
-      },      
+        render: (d) => (<FrequencyChart data={this.state.data} value={d.reads} width={150 * 2} height={30 * 2} />),
+      },
       {
         title: '',
         dataIndex: '',
+        key: 'remove',
         width: 15,
         render: (r) => (
           <div onClick={() => { this.removeRow(r) }}>x</div>
         ),
       }
     ];
-
-    this.state = {
-      summary: DataContainer.getSummary(),
-      data: DataContainer.getSamples(),
-      height: window.innerHeight,
-    };
-
-    setupFrequencyChart(this.state.data.map(d => d.reads), 150, 20);
-    const data = this.state.data.map((d) => {
-      d.chart = getFrequencyChart(d.reads)
-      return d;
-    });
 
     this.updateDimensions = this.updateDimensions.bind(this);
   }
@@ -102,7 +103,6 @@ export default class Filter extends Component {
     const data = this.state.data.filter((d) => {
       return (d.sampleName !== r.sampleName);
     });
-    setupFrequencyChart(data.map(d => d.reads), 150, 20);
     this.setState({data});
   }
 
@@ -127,7 +127,6 @@ export default class Filter extends Component {
 
   render() {
     const redirect = (this.state.summary.name && this.state.summary.size) ? '' : <Redirect push to='/' />;
-    console.log('render');
     return (
       <div className={styles.container}>
         {redirect}
