@@ -25,15 +25,21 @@
   padding: 1rem;
 }
 
+.left {
+  width: 40vw;
+  vertical-align: top;
+}
+
+.right {
+  vertical-align: top;
+  width: 60vw;
+}
+
 .scroll {
   height: 100vh;
   overflow-y: scroll;
 }
 
-.left {
-  width: 40vw;
-  vertical-align: top;
-}
 .about {
   margin-top: 1rem;
   height: 36vh;
@@ -47,12 +53,6 @@
 .links {
   background: #2b2b2b;
   height: 64vh;
-}
-
-
-.right {
-  vertical-align: top;
-  width: 60vw;
 }
 
 .projectType {

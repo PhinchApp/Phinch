@@ -17,7 +17,8 @@
 }
 
 .logo {
-  width: 15vw;
+  width: 140px;
+  /*width: 15vw;*/
 }
 
 .input {
@@ -25,4 +26,19 @@
   margin: 0;
   padding: 0;
   border: none;
+}
+
+.section {
+  display: inline-block;
+  /*height: 100vh;*/
+}
+
+.left {
+  width: 35vw;
+  vertical-align: top;
+}
+
+.right {
+  vertical-align: top;
+  width: 60vw;
 }
