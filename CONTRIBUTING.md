@@ -4,7 +4,7 @@ Thank you for your interest in contributing to Phinch :tada:!
 
 Phinch is an open-source app for visualizing biological data.
 
-In 2014 we created the original [Phinch webapp](https://github.com/PitchInteractiveInc/Phinch/) to help scientist visualize biological data. Now we're brining Phinch to the desktop to enable updated formats, larger datasets, and a fresh new interface.
+In 2014 we created the original [Phinch webapp](https://github.com/PitchInteractiveInc/Phinch/) to help scientists visualize biological data. Now we're brining Phinch to the desktop to enable updated formats, larger datasets, and a fresh new interface.
 
 This documents is a set of guidelines for contributing to Phinch on GitHub. These are guidelines, not rules. This guide is meant to make it easy for you to get involved.
 
@@ -20,7 +20,7 @@ This project adheres to a [code of conduct](/CONDUCT.md). By participating, you 
 
 ## What we're working on
 
-Take a look at all the [current issues](/issues) or browse some [good first issues](/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) to get started!
+Take a look at all the [current issues](https://github.com/PhinchApp/Phinch/issues) or browse some [good first issues](https://github.com/PhinchApp/Phinch/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) to get started!
 
 ## How to submit changes
 
@@ -34,7 +34,7 @@ First time contributing to open source? Check out this *free* series, [How to Co
 
 ## How to report bugs
 
-Notice a mistake? Please file any bugs, requests, or questions in our [issue tracker](/issues)!
+Notice a mistake? Please file any bugs, requests, or questions in our [issue tracker](https://github.com/PhinchApp/Phinch/issues)!
 
 ## Communication channels
 
