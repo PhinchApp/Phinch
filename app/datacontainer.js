@@ -34,8 +34,7 @@ class DataContainer {
 
   setData(data) {
     this.data = data;
-    console.log(this.data);
-    //
+
     const seqeuncereads = [];
     this.data.data.forEach((d) => {
       if (seqeuncereads[d[1]]) {
@@ -44,12 +43,13 @@ class DataContainer {
         seqeuncereads[d[1]] = d[2];
       }
     });
-    //
     this.summary.observations = this.data.rows.length;
+    
     this.samples = this.data.columns.map((c, i) => {
       return {
         phinchName: c.metadata.phinchID ? c.id : '',
         sampleName: c.id,
+        metadata: c.metadata,
         reads: seqeuncereads[i],
         id: i + 1,
       };

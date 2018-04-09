@@ -20,7 +20,63 @@ export default class Filter extends Component {
       summary: DataContainer.getSummary(),
       data: DataContainer.getSamples(),
       height: window.innerHeight,
+      filters: {},
     };
+
+    this.filters = {
+      date: {},
+      number: {},
+      string: {},
+    };
+
+    /*
+      FILTER Controls
+    */
+    //
+    if (this.state.data.length) {
+      const metadata = this.state.data[0].metadata;
+      this.metadataKeys = Object.keys(metadata);
+      this.metadataKeys.forEach((k) => {
+        this.state.filters[k] = 'all';
+        const values = [...new Set(this.state.data.map(d => d.metadata[k]))];
+        if (k.toLowerCase().trim() === 'date' || k.toLowerCase().trim() === 'year') {
+          this.filters.date[k] = values.sort((a, b) => {
+            return a < b;
+          });
+        } else if (this.filterFloat(metadata[k]) !== null) {
+          this.filters.number[k] = values.map((v) => {
+            if (this.filterFloat(v) !== null) {
+              return this.filterFloat(v);
+            } else {
+              return v;
+            }
+          }).sort();
+        } else {
+          this.filters.string[k] = values;
+        }
+      });
+    }
+    this.filters = Object.keys(this.filters).map((k) => {
+      const group = Object.keys(this.filters[k]).map((g) => {
+        const options = this.filters[k][g].map((o) => {
+          return <option key={o} value={o}>{o}</option>
+        })
+        return (
+          <div key={g}>
+            <label htmlFor={g}>{g}</label>
+            <select name={g} defaultValue='all' onChange={(event) => {
+              this.updateFilters(event, g);
+            }}>
+              <option value='all' key='all'>All</option>
+              {options}
+            </select>
+          </div>
+        );
+      });
+      return <div key={k}><div>{k}</div><ul>{group}</ul></div>;
+    });
+    //
+
 
     this.columns = [
       {
@@ -89,6 +145,34 @@ export default class Filter extends Component {
   }
 
 
+  filterFloat(value) {
+    if (/^(\-|\+)?([0-9]+(\.[0-9]+)?|Infinity)$/.test(value)) {
+      return Number(value);
+    }
+    return null;
+  }
+
+  applyFilters(filters) {
+    const data = DataContainer.getSamples().filter((d) => {
+      let include = true;
+      Object.keys(filters).forEach((k) => {
+        if (filters[k] !== 'all') {
+          if (filters[k].toString() !== d.metadata[k]) {
+            include = false;
+          }
+        }
+      });
+      return include;
+    });
+    this.setState({filters, data});
+  }
+
+  updateFilters(e, attribute) {
+    const filters = this.state.filters;
+    filters[attribute] = e.target.value;
+    this.applyFilters(filters);
+  }
+
   updatePhinchName(e, r) {
     const data = this.state.data.map((d) => {
       if (d.sampleName === r.sampleName) {
@@ -151,13 +235,24 @@ export default class Filter extends Component {
             </tr>
           </tbody>
         </table>
-        <Table
-          className={styles.table}
-          scroll={{ y: (this.state.height - 200) }}
-          columns={this.columns}
-          data={this.state.data}
-          rowKey={row => row.id}
-        />
+        <div>
+          <div className={`${styles.section} ${styles.left}`} style={{
+            display: 'inline-block',
+            height: (this.state.height - 175),
+            overflowY: 'scroll',
+          }}>
+            {this.filters}
+          </div>
+          <div className={`${styles.section} ${styles.right}`}>
+            <Table
+              className={styles.table}
+              scroll={{ y: (this.state.height - 210) }}
+              columns={this.columns}
+              data={this.state.data}
+              rowKey={row => row.id}
+            />
+          </div>
+        </div>
       </div>
     );
   }
