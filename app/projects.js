@@ -79,7 +79,6 @@ export function createProject(project) {
 }
 
 export function getProjects() {
-  console.log('called getprojects');
   checkFolders();
   const projects = fs.readdirSync(join(homedirectory, 'Documents', 'Phinch2.0'))
     .filter(f => f !== 'Samples')
@@ -96,7 +95,6 @@ export function getProjects() {
     thumb: newicon
   };
   projects.unshift(newproject);
-  console.log(projects);
   return projects;
 }
 

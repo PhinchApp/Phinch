@@ -43,7 +43,6 @@ export default class Home extends Component {
   }
 
   click(project) {
-    console.log(project);
     if (project.slug === 'newproject') {
       this.setState({redirect: '/newproject'});
     } else if (project.data) {
