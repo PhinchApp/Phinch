@@ -2,10 +2,12 @@
 import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 
+import { nest } from 'd3-collection';
 import Table from 'rc-table';
 
 import DataContainer from '../DataContainer';
 import FrequencyChart from './FrequencyChart';
+import FilterChart from './FilterChart';
 
 import styles from './Filter.css';
 import logo from 'images/phinch.png';
@@ -32,51 +34,85 @@ export default class Filter extends Component {
     /*
       FILTER Controls
     */
-    //
+    // TODO: Move this to data container or similar
     if (this.state.data.length) {
       const metadata = this.state.data[0].metadata;
-      this.metadataKeys = Object.keys(metadata);
+      this.metadataKeys = Object.keys(metadata).filter(k => k !== 'phinchID');
       this.metadataKeys.forEach((k) => {
-        this.state.filters[k] = 'all';
-        const values = [...new Set(this.state.data.map(d => d.metadata[k]))];
-        if (k.toLowerCase().trim() === 'date' || k.toLowerCase().trim() === 'year') {
-          this.filters.date[k] = values.sort((a, b) => {
-            return a < b;
-          });
-        } else if (this.filterFloat(metadata[k]) !== null) {
-          this.filters.number[k] = values.map((v) => {
-            if (this.filterFloat(v) !== null) {
-              return this.filterFloat(v);
-            } else {
-              return v;
+        const units = [];
+        /* TODO:
+          Figure out how to handle no_data
+          Figure out how to handle strings
+        */
+        const values = nest()
+          .key(d => d)
+          .entries(this.state.data.map((d) => {
+            const [value,unit] = d.metadata[k].split(' ');
+            if (unit !== undefined && !units.includes(unit)) {
+              units.push(unit);
             }
-          }).sort();
+            return value;
+          }).filter(d => d !== 'no_data')).map((d, i) => {
+            return {
+              index: i,
+              value: d.key,
+              count: d.values.length,
+            };
+          });
+        const unit = units.length ? units[0] : '';
+        if (k.toLowerCase().trim().includes('date') || k.toLowerCase().trim().includes('year')) {
+          /*
+            TODO: 
+              Make sure you handle all date types
+              May need to convert to GMT for consistency?
+          */
+          this.filters.date[k] = {
+            values: values.sort((a, b) => {
+              return a.value > b.value;
+            }).map((d, i) => {
+              d.index = i;
+              d.value = new Date(d.value);
+              return d;
+            }),
+            unit: unit,
+          };
+        } else if (this.filterFloat(values.filter(v => v.value !== 'no_data')[0].value) !== null) {
+          console.log(values);
+          this.filters.number[k] = {
+            values: values.map((v) => {
+                      if (this.filterFloat(v.value) !== null) {
+                        v.value = this.filterFloat(v.value);
+                      }
+                      return v;
+                    }).sort((a, b) => {
+                      console.log(a.value);
+                      console.log(b.value);
+                      return a.value < b.value;
+                    }).map((d, i) => {
+                      d.index = i;
+                      return d;
+                    }),
+            unit: unit,
+          };
+          console.log(values);
         } else {
-          this.filters.string[k] = values;
+          this.filters.string[k] = {
+            values: values,
+            unit: unit,
+          };
         }
+
+        this.state.filters[k] = {
+          range: {
+            min: values[0],
+            max: values[values.length - 1],
+          },
+          expanded: false,
+        };
+        console.log(this.state.filters[k].range);
       });
     }
-    this.filters = Object.keys(this.filters).map((k) => {
-      const group = Object.keys(this.filters[k]).map((g) => {
-        const options = this.filters[k][g].map((o) => {
-          return <option key={o} value={o}>{o}</option>
-        })
-        return (
-          <div key={g}>
-            <label htmlFor={g}>{g}</label>
-            <select name={g} defaultValue='all' onChange={(event) => {
-              this.updateFilters(event, g);
-            }}>
-              <option value='all' key='all'>All</option>
-              {options}
-            </select>
-          </div>
-        );
-      });
-      return <div key={k}><div>{k}</div><ul>{group}</ul></div>;
-    });
     //
-
 
     this.columns = [
       {
@@ -167,9 +203,37 @@ export default class Filter extends Component {
     this.setState({filters, data});
   }
 
+  displayFilters() {
+    return Object.keys(this.filters).map((k) => {
+      const group = Object.keys(this.filters[k]).map((g) => {
+        const expanded = this.state.filters[g].expanded;
+        const icon = expanded ? '[-]' : '[+]';
+        const width = expanded ? 300 : 150;
+        const height = expanded ? 60 : 30;
+        return (
+          <div key={g}>
+            <div onClick={() => {
+              const filters = this.state.filters;
+              filters[g].expanded = !filters[g].expanded;
+              this.setState({filters});
+            }}>{icon}</div>
+            <FilterChart
+              name={g}
+              data={this.filters[k][g]}
+              width={width}
+              height={height}
+              filter={this.state.filters[g]}
+            />
+          </div>
+        );
+      });
+      return <div key={k}><div>{k}</div>{group}</div>;
+    });
+  }
+
   updateFilters(e, attribute) {
     const filters = this.state.filters;
-    filters[attribute] = e.target.value;
+    filters[attribute].filtered = e.target.value;
     this.applyFilters(filters);
   }
 
@@ -241,7 +305,7 @@ export default class Filter extends Component {
             height: (this.state.height - 175),
             overflowY: 'scroll',
           }}>
-            {this.filters}
+            {this.displayFilters()}
           </div>
           <div className={`${styles.section} ${styles.right}`}>
             <Table
