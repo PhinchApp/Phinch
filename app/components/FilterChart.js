@@ -21,13 +21,14 @@ export default class FilterChart extends Component {
 
   render() {
     this.updateScales();
+    const barWidth = (this.xscale(1) - this.xscale(0));
     const bars = this.props.data.values.map((d, i) => {
       return (
         <rect
           key={`r-${i}`}
           x={this.xscale(i)}
           y={this.props.height - this.yscale(d.count)}
-          width={this.xscale(i + 1) - this.xscale(i)}
+          width={barWidth}
           height={this.yscale(d.count)}
           fill='grey'
           stroke='white'
@@ -39,7 +40,7 @@ export default class FilterChart extends Component {
       const isDate = (this.props.name.includes('date') || this.props.name.includes('year'));
       const min = isDate ? new Date(this.props.filter.range.min.value).toLocaleString().split(', ')[0] : this.props.filter.range.min.value;
       const max = isDate ? new Date(this.props.filter.range.max.value).toLocaleString().split(', ')[0] : this.props.filter.range.max.value;
-      range = min ? (<span>range: [{min} — {max}]</span>) : '';
+      range = min !== undefined ? (<span>range: [{min} — {max}]</span>) : '';
     }
     const info = this.props.filter.expanded ? (
         <div>
@@ -47,15 +48,14 @@ export default class FilterChart extends Component {
           {range}
         </div>
       ) : (<div></div>);
-    console.log(this.props.filter.range);
+    //
     const brush = this.props.filter.expanded ? (
         <g>
           <rect
             x={this.xscale(this.props.filter.range.min.index)}
             y={this.padding}
-            // width={this.xscale(1) + this.xscale(this.props.filter.range.max.index - this.props.filter.range.min.index)}
-            width={this.xscale(this.props.data.values.length)}
-            height={this.props.height}
+            width={barWidth * ((this.props.filter.range.max.index - this.props.filter.range.min.index) + 1)}
+            height={this.props.height - this.padding}
             fill='grey'
             stroke='none'
             fillOpacity={0.5}

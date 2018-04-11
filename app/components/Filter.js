@@ -46,7 +46,7 @@ export default class Filter extends Component {
         */
         const values = nest()
           .key(d => d)
-          .entries(this.state.data.map((d) => {
+          .entries(this.state.data.slice().map((d) => {
             const [value,unit] = d.metadata[k].split(' ');
             if (unit !== undefined && !units.includes(unit)) {
               units.push(unit);
@@ -59,57 +59,54 @@ export default class Filter extends Component {
               count: d.values.length,
             };
           });
+        //
         const unit = units.length ? units[0] : '';
+        let groupKey = 'string';
+        let filterValues = values.slice();
         if (k.toLowerCase().trim().includes('date') || k.toLowerCase().trim().includes('year')) {
           /*
             TODO: 
               Make sure you handle all date types
               May need to convert to GMT for consistency?
           */
-          this.filters.date[k] = {
-            values: values.sort((a, b) => {
-              return a.value > b.value;
-            }).map((d, i) => {
-              d.index = i;
-              d.value = new Date(d.value);
-              return d;
-            }),
-            unit: unit,
-          };
+          groupKey = 'date';
+          filterValues = values.slice().map((d, i) => {
+            d.value = new Date(d.value);
+            return d;
+          }).sort((a, b) => {
+            return a.value.valueOf() - b.value.valueOf();
+          }).map((d, i) => {
+            d.index = i;
+            return d;
+          });
         } else if (this.filterFloat(values.filter(v => v.value !== 'no_data')[0].value) !== null) {
-          console.log(values);
-          this.filters.number[k] = {
-            values: values.map((v) => {
-                      if (this.filterFloat(v.value) !== null) {
-                        v.value = this.filterFloat(v.value);
-                      }
-                      return v;
-                    }).sort((a, b) => {
-                      console.log(a.value);
-                      console.log(b.value);
-                      return a.value < b.value;
-                    }).map((d, i) => {
-                      d.index = i;
-                      return d;
-                    }),
-            unit: unit,
-          };
-          console.log(values);
-        } else {
-          this.filters.string[k] = {
-            values: values,
-            unit: unit,
-          };
+          groupKey = 'number';
+          filterValues = values.slice().map((v) => {
+            if (this.filterFloat(v.value) !== null) {
+              v.value = this.filterFloat(v.value);
+            }
+            return v;
+          }).sort((a, b) => {
+            return a.value - b.value;
+          }).map((d, i) => {
+            d.index = i;
+            return d;
+          });
         }
-
+        //
+        this.filters[groupKey][k] = {
+          values: filterValues,
+          unit: unit,
+        };
+        //
         this.state.filters[k] = {
           range: {
-            min: values[0],
-            max: values[values.length - 1],
+            min: filterValues[0],
+            max: filterValues[filterValues.length - 1],
           },
           expanded: false,
         };
-        console.log(this.state.filters[k].range);
+        //
       });
     }
     //
