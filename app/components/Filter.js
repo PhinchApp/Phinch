@@ -8,6 +8,7 @@ import Table from 'rc-table';
 import DataContainer from '../DataContainer';
 import FrequencyChart from './FrequencyChart';
 import FilterChart from './FilterChart';
+import CheckBoxes from './CheckBoxes';
 
 import styles from './Filter.css';
 import logo from 'images/phinch.png';
@@ -101,17 +102,26 @@ export default class Filter extends Component {
           unit: unit,
         };
         //
+        let range = {
+          min: this.filterValues[k][0],
+          max: this.filterValues[k][this.filterValues[k].length - 1],
+        };
+        if (groupKey === 'string') {
+          range = {};
+          this.filterValues[k].map((v) => {
+            range[v.value] = true;
+          });
+        }
+        //
         this.state.filters[k] = {
-          range: {
-            min: this.filterValues[k][0],
-            max: this.filterValues[k][this.filterValues[k].length - 1],
-          },
+          range: range,
           type: groupKey,
           expanded: false,
         };
         //
       });
 
+      this.updateChecks = this.updateChecks.bind(this);
       this.updateFilters = this.updateFilters.bind(this);
     }
     //
@@ -200,18 +210,28 @@ export default class Filter extends Component {
           if (value.valueOf() < filters[k].range.min.value.valueOf() || value.valueOf() > filters[k].range.max.value.valueOf()) {
             include = false;
           }
-        } else {
+        } else if (filters[k].type === 'number') {
           if (this.filterFloat(value) !== null) {
             value = this.filterFloat(value);
             if (value < filters[k].range.min.value || value > filters[k].range.max.value) {
               include = false;
             }
           }
+        } else {
+          if (!filters[k].range[value]) {
+            include = false;
+          }
         }
       });
       return include;
     });
     this.setState({filters, data});
+  }
+
+  updateChecks(attribute, type, value) {
+    const filters = this.state.filters;
+    filters[attribute].range[type] = value;
+    this.applyFilters(filters);
   }
 
   updateFilters(attribute, min, max) {
@@ -230,13 +250,14 @@ export default class Filter extends Component {
         const icon = expanded ? '[-]' : '[+]';
         const width = expanded ? 300 : 150;
         const height = expanded ? 60 : 30;
-        return (
-          <div key={g}>
-            <div onClick={() => {
-              const filters = this.state.filters;
-              filters[g].expanded = !filters[g].expanded;
-              this.setState({filters});
-            }}>{icon}</div>
+        const filter = (this.state.filters[g].type === 'string') ? (
+            <CheckBoxes
+              name={g}
+              data={this.filters[k][g]}
+              filter={this.state.filters[g]}
+              update={this.updateChecks}
+            />
+          ) : (
             <FilterChart
               name={g}
               data={this.filters[k][g]}
@@ -245,6 +266,15 @@ export default class Filter extends Component {
               filter={this.state.filters[g]}
               update={this.updateFilters}
             />
+          );
+        return (
+          <div key={g}>
+            <div onClick={() => {
+              const filters = this.state.filters;
+              filters[g].expanded = !filters[g].expanded;
+              this.setState({filters});
+            }}>{icon}</div>
+            {filter}
           </div>
         );
       });
@@ -269,10 +299,9 @@ export default class Filter extends Component {
     this.setState({data});
   }
 
-
   sortBy(key) {
     if (this.state.data.length) {
-      const data = this.state.data.sort((a,b) => {
+      const data = this.state.data.sort((a, b) => {
         if (this.reverse) {
           if (a[key] < b[key]) return -1;
           if (a[key] > b[key]) return 1;
