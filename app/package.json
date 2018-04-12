@@ -14,5 +14,7 @@
     "postinstall": "npm run electron-rebuild"
   },
   "license": "BSD 2-Clause License",
-  "dependencies": {}
+  "dependencies": {
+    "rc-slider": "^8.6.1"
+  }
 }

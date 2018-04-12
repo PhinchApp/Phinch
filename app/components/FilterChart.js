@@ -1,47 +1,8 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
+import Slider, { Range } from 'rc-slider';
 import { scaleLinear } from 'd3-scale';
-
-class Handle extends Component {
-
-  componentDidMount() {
-    document.addEventListener('mouseup', this.handleMouseUp);
-  }
-
-  handleMouseDown = (e) => {
-    this.tx = e.pageX;
-    this.x = this.tx;
-    document.addEventListener('mousemove', this.handleMouseMove);
-  };
-  
-  handleMouseUp = () => {
-    document.removeEventListener('mousemove', this.handleMouseMove);
-  };
-
-  handleMouseMove = (e) => {
-    this.tx = e.pageX;
-    const xDiff = this.x - this.tx;
-    this.props.update(this.props.x - xDiff);
-  };
-
-  render() {
-    this.x = this.tx;
-    return (
-      <rect
-        x={this.props.x}
-        y={this.props.y}
-        width={this.props.width}
-        height={this.props.height}
-        fill='black'
-        stroke='none'
-        fillOpacity={0.5}
-        cursor='move'
-        onMouseDown={this.handleMouseDown}
-      />
-    )
-  }
-}
 
 export default class FilterChart extends Component {
   constructor(props) {
@@ -51,54 +12,24 @@ export default class FilterChart extends Component {
       update: false,
     }
 
-    this.updateMin = this.updateMin.bind(this);
-    this.updateMax = this.updateMax.bind(this);
+    this.updateFilter = this.updateFilter.bind(this);
   }
 
   updateScales() {
     this.padding = this.props.width * 0.05;
     const counts = this.props.data.values.map(d => d.count);
     this.yscale = scaleLinear()
-      .domain([Math.min(...counts), Math.max(...counts)])
-      .range([this.padding, this.props.height - this.padding]);
+      // .domain([Math.min(...counts), Math.max(...counts)])
+      .domain([0, Math.max(...counts)])
+      .range([0, this.props.height - this.padding]);
     this.xscale = scaleLinear()
       .clamp(true)
       .domain([0, this.props.data.values.length])
       .range([this.padding, this.props.width - this.padding]);
   }
 
-  updateMin(value) {
-    // let nextMin = Math.round(this.xscale.invert(value + (this.padding / 2)) * -1);
-    // if (nextMin < 0) {
-    //   nextMin = 0;
-    // } else if (nextMin > this.props.filter.range.max.index) {
-    //   nextMin = this.props.filter.range.max.index;
-    // }
-    // this.props.filter.range.min.index = nextMin;
-    // this.setState({update: !this.state.update});
-    const mod = (this.xscale(this.props.filter.range.min.index) < value) ? (-this.padding / 2) : (this.padding / 2)
-    let nextMin = Math.round(this.xscale.invert(value + mod));
-    if (nextMin > this.props.filter.range.max.index) {
-      nextMin = this.props.filter.range.max.index;
-    }
-    if (this.props.filter.range.min.index !== nextMin) {
-      this.props.filter.range.min.index = nextMin;
-      this.setState({update: !this.state.update});
-    }
-    // go up one level here - update filter state and props
-  }
-
-  updateMax(value) {
-    const mod = (this.xscale(this.props.filter.range.max.index) < value) ? (-this.padding / 2) : (this.padding / 2)
-    let nextMax = Math.round(this.xscale.invert(value + mod));
-    if (nextMax < this.props.filter.range.min.index) {
-      nextMax = this.props.filter.range.min.index;
-    }
-    if (this.props.filter.range.max.index !== nextMax) {
-      this.props.filter.range.max.index = nextMax;
-      this.setState({update: !this.state.update});
-    }
-    // go up one level here - update filter state and props
+  updateFilter(name, values) {
+    this.props.update(name, this.xscale.invert(values[0]), (this.xscale.invert(values[1]) - 1));
   }
 
   render() {
@@ -109,7 +40,7 @@ export default class FilterChart extends Component {
         <rect
           key={`r-${i}`}
           x={this.xscale(i)}
-          y={this.props.height - (this.yscale(d.count) + this.padding)}
+          y={this.props.height - (this.yscale(d.count))}
           width={barWidth}
           height={this.yscale(d.count)}
           fill='grey'
@@ -130,33 +61,18 @@ export default class FilterChart extends Component {
           {range}
         </div>
       ) : (<div></div>);
-    //
+    const style = { width: (this.props.width - (this.padding * 2)), margin: this.padding };
     const brush = this.props.filter.expanded ? (
-        <g>
-          <rect
-            x={this.xscale(this.props.filter.range.min.index)}
-            y={0}
-            width={barWidth * ((this.props.filter.range.max.index - this.props.filter.range.min.index) + 1)}
-            height={this.props.height - this.padding}
-            fill='grey'
-            stroke='none'
-            fillOpacity={0.5}
+        <div style={style}>
+          <Range
+            min={this.xscale(0)}
+            max={this.xscale(this.props.data.values.length)}
+            step={barWidth}
+            allowCross={false}
+            defaultValue={[this.xscale(this.props.filter.range.min.index), this.xscale(this.props.filter.range.max.index + 1)]}
+            onChange={(values) => this.updateFilter(this.props.name, values)}
           />
-          <Handle
-            x={this.xscale(this.props.filter.range.min.index)}
-            y={(this.padding / 2)}
-            width={this.padding}
-            height={this.props.height - (this.padding * 2)}
-            update={this.updateMin}
-          />
-          <Handle
-            x={this.xscale(this.props.filter.range.max.index)}
-            y={(this.padding / 2)}
-            width={this.padding}
-            height={this.props.height - (this.padding * 2)}
-            update={this.updateMax}
-          />
-        </g>
+        </div>
       ) : '';
     return (
       <div>
@@ -168,8 +84,8 @@ export default class FilterChart extends Component {
           onMouseOut={() => {document.addEventListener('mousemove', null)}}
         >
           {bars}
-          {brush}
         </svg>
+        {brush}
       </div>
     );
   }
