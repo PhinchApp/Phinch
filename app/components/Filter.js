@@ -31,6 +31,8 @@ export default class Filter extends Component {
       string: {},
     };
 
+    this.filterValues = {};
+
     /*
       FILTER Controls
     */
@@ -62,7 +64,7 @@ export default class Filter extends Component {
         //
         const unit = units.length ? units[0] : '';
         let groupKey = 'string';
-        let filterValues = values.slice();
+        this.filterValues[k] = values.slice();
         if (k.toLowerCase().trim().includes('date') || k.toLowerCase().trim().includes('year')) {
           /*
             TODO: 
@@ -70,7 +72,7 @@ export default class Filter extends Component {
               May need to convert to GMT for consistency?
           */
           groupKey = 'date';
-          filterValues = values.slice().map((d, i) => {
+          this.filterValues[k] = values.slice().map((d, i) => {
             d.value = new Date(d.value);
             return d;
           }).sort((a, b) => {
@@ -81,7 +83,7 @@ export default class Filter extends Component {
           });
         } else if (this.filterFloat(values.filter(v => v.value !== 'no_data')[0].value) !== null) {
           groupKey = 'number';
-          filterValues = values.slice().map((v) => {
+          this.filterValues[k] = values.slice().map((v) => {
             if (this.filterFloat(v.value) !== null) {
               v.value = this.filterFloat(v.value);
             }
@@ -95,19 +97,22 @@ export default class Filter extends Component {
         }
         //
         this.filters[groupKey][k] = {
-          values: filterValues,
+          values: this.filterValues[k],
           unit: unit,
         };
         //
         this.state.filters[k] = {
           range: {
-            min: filterValues[0],
-            max: filterValues[filterValues.length - 1],
+            min: this.filterValues[k][0],
+            max: this.filterValues[k][this.filterValues[k].length - 1],
           },
+          type: groupKey,
           expanded: false,
         };
         //
       });
+
+      this.updateFilters = this.updateFilters.bind(this);
     }
     //
 
@@ -186,18 +191,36 @@ export default class Filter extends Component {
   }
 
   applyFilters(filters) {
-    const data = DataContainer.getSamples().filter((d) => {
+    const data = DataContainer.getSamples().filter((d, i) => {
       let include = true;
       Object.keys(filters).forEach((k) => {
-        if (filters[k] !== 'all') {
-          if (filters[k].toString() !== d.metadata[k]) {
+        let value = d.metadata[k].split(' ')[0];
+        if (filters[k].type === 'date') {
+          value = new Date(value);
+          if (value.valueOf() < filters[k].range.min.value.valueOf() || value.valueOf() > filters[k].range.max.value.valueOf()) {
             include = false;
+          }
+        } else {
+          if (this.filterFloat(value) !== null) {
+            value = this.filterFloat(value);
+            if (value < filters[k].range.min.value || value > filters[k].range.max.value) {
+              include = false;
+            }
           }
         }
       });
       return include;
     });
     this.setState({filters, data});
+  }
+
+  updateFilters(attribute, min, max) {
+    const filters = this.state.filters;
+    filters[attribute].range = {
+      min: this.filterValues[attribute][min],
+      max: this.filterValues[attribute][max],
+    };
+    this.applyFilters(filters);
   }
 
   displayFilters() {
@@ -220,18 +243,13 @@ export default class Filter extends Component {
               width={width}
               height={height}
               filter={this.state.filters[g]}
+              update={this.updateFilters}
             />
           </div>
         );
       });
       return <div key={k}><div>{k}</div>{group}</div>;
     });
-  }
-
-  updateFilters(e, attribute) {
-    const filters = this.state.filters;
-    filters[attribute].filtered = e.target.value;
-    this.applyFilters(filters);
   }
 
   updatePhinchName(e, r) {
