@@ -71,7 +71,9 @@ button {
 
 .rc-slider {
   position: relative;
-  margin-top: -25px;
+  /*margin-top: -25px;*/
+  margin-top: -8px;
+  margin-bottom: 16px;
   height: 14px;
   padding: 5px 0;
   width: 100%;
@@ -96,8 +98,8 @@ button {
   position: absolute;
   left: 0;
   /*height: 4px;*/
-  margin-top: -50px;
-  height: 50px;
+  margin-top: -60px;
+  height: 60px;
   opacity: 0.5;
   /*border-radius: 6px;*/
   background-color: #abe2fb;

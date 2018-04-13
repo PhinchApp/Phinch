@@ -4,6 +4,8 @@ import ReactDOM from 'react-dom';
 import Slider, { Range } from 'rc-slider';
 import { scaleLinear } from 'd3-scale';
 
+import styles from './FilterChart.css';
+
 export default class FilterChart extends Component {
   constructor(props) {
     super(props);
@@ -16,10 +18,10 @@ export default class FilterChart extends Component {
   }
 
   updateScales() {
-    this.padding = this.props.width * 0.05;
+    // this.padding = this.props.width * 0.05;
+    this.padding = 0;
     const counts = this.props.data.values.map(d => d.count);
     this.yscale = scaleLinear()
-      // .domain([Math.min(...counts), Math.max(...counts)])
       .domain([0, Math.max(...counts)])
       .range([0, this.props.height - this.padding]);
     this.xscale = scaleLinear()
@@ -49,11 +51,16 @@ export default class FilterChart extends Component {
       );
     });
     let range = '';
+    const marks = {};
     if (this.props.filter.expanded) {
       const isDate = (this.props.name.includes('date') || this.props.name.includes('year'));
       const min = isDate ? new Date(this.props.filter.range.min.value).toLocaleString().split(', ')[0] : this.props.filter.range.min.value;
       const max = isDate ? new Date(this.props.filter.range.max.value).toLocaleString().split(', ')[0] : this.props.filter.range.max.value;
-      range = min !== undefined ? (<span>range: [{min} — {max}]</span>) : '';
+      range = min !== undefined ? (<div>range: [{min} — {max}]</div>) : '';
+      //
+      const markStyle = {fontSize: '8px', display: 'inline-block'};
+      marks[this.xscale(this.props.filter.range.min.index)] = { label: <div style={markStyle}>{min}</div> };
+      marks[this.xscale(this.props.filter.range.max.index + 1)] = { label: <div style={markStyle}>{max}</div> };
     }
     const info = this.props.filter.expanded ? (
         <div>
@@ -62,11 +69,13 @@ export default class FilterChart extends Component {
         </div>
       ) : (<div></div>);
     const style = { width: (this.props.width - (this.padding * 2)), margin: this.padding };
+    //
     const brush = this.props.filter.expanded ? (
         <div style={style}>
           <Range
             min={this.xscale(0)}
             max={this.xscale(this.props.data.values.length)}
+            marks={marks}
             step={barWidth}
             allowCross={false}
             defaultValue={[this.xscale(this.props.filter.range.min.index), this.xscale(this.props.filter.range.max.index + 1)]}
@@ -81,6 +90,7 @@ export default class FilterChart extends Component {
         <svg
           width={this.props.width}
           height={this.props.height}
+          style={{marginTop: '8px'}}
           onMouseOut={() => {document.addEventListener('mousemove', null)}}
         >
           {bars}
