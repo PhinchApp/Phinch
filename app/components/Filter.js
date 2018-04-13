@@ -128,7 +128,7 @@ export default class Filter extends Component {
 
     this.columns = [
       {
-        title: (<a onClick={() => { this.sortBy('phinchName') }}>Phinch Name</a>),
+        title: (<div className={styles.heading} onClick={() => { this.sortBy('phinchName') }}>Phinch Name</div>),
         dataIndex: 'phinchName',
         key: 'phinchName',
         width: 150,
@@ -142,19 +142,19 @@ export default class Filter extends Component {
         ),
       },
       {
-        title: (<a onClick={() => { this.sortBy('id') }}>BIOM ID</a>),
+        title: (<div className={styles.heading} onClick={() => { this.sortBy('id') }}>BIOM ID</div>),
         dataIndex: 'id',
         key: 'id',
         width: 150,
       },
       {
-        title: (<a onClick={() => { this.sortBy('sampleName') }}>Sample Name</a>),
+        title: (<div className={styles.heading} onClick={() => { this.sortBy('sampleName') }}>Sample Name</div>),
         dataIndex: 'sampleName',
         key: 'sampleName',
         width: 150,
       },
       {
-        title: (<a onClick={() => { this.sortBy('reads') }}>Sequence Reads</a>),
+        title: (<div className={styles.heading} onClick={() => { this.sortBy('reads') }}>Sequence Reads</div>),
         dataIndex: 'reads',
         key: 'reads',
         width: 150,
@@ -244,12 +244,19 @@ export default class Filter extends Component {
   }
 
   displayFilters() {
+    const SectionNames = {
+      date: 'Date Range',
+      number: 'Numeric Range',
+      string: 'Categories',
+    };
     return Object.keys(this.filters).map((k) => {
       const group = Object.keys(this.filters[k]).map((g) => {
         const expanded = this.state.filters[g].expanded;
-        const icon = expanded ? '[-]' : '[+]';
-        const width = expanded ? 300 : 150;
-        const height = expanded ? 60 : 30;
+        // const icon = expanded ? '[-]' : '[+]';
+        const icon = expanded ? '-' : '+';
+        // const width = expanded ? 300 : 150;
+        const width = 200;
+        const height = expanded ? 60 : 20;
         const filter = (this.state.filters[g].type === 'string') ? (
             <CheckBoxes
               name={g}
@@ -268,8 +275,8 @@ export default class Filter extends Component {
             />
           );
         return (
-          <div key={g}>
-            <div onClick={() => {
+          <div key={g} className={styles.filter}>
+            <div className={styles.expand} onClick={() => {
               const filters = this.state.filters;
               filters[g].expanded = !filters[g].expanded;
               this.setState({filters});
@@ -278,7 +285,16 @@ export default class Filter extends Component {
           </div>
         );
       });
-      return <div key={k}><div>{k}</div>{group}</div>;
+      return (
+        <div key={k} className={styles.bottom}>
+          <div className={styles.heading}>
+            {SectionNames[k]}
+          </div>
+          <div className={styles.outline}>
+            {group}
+          </div>
+        </div>
+      );
     });
   }
 
@@ -327,7 +343,7 @@ export default class Filter extends Component {
             <img src={logo} alt='Phinch' />
           </Link>
         </div>
-        <table>
+        <table className={styles.info}>
           <tbody>
             <tr>
               <td className={styles.label}>File Name:</td>
@@ -335,18 +351,19 @@ export default class Filter extends Component {
             </tr>
             <tr>
               <td className={styles.label}>Observations:</td>
-              <td>{this.state.summary.observations}</td>
+              <td>{this.state.summary.observations.toLocaleString()}</td>
             </tr>
             <tr>
               <td className={styles.label}>Selected Samples:</td>
-              <td>{this.state.data.length}</td>
+              <td>{this.state.data.length.toLocaleString()}</td>
             </tr>
           </tbody>
         </table>
         <div>
           <div className={`${styles.section} ${styles.left}`} style={{
             display: 'inline-block',
-            height: (this.state.height - 175),
+            // height: (this.state.height - 175),
+            height: (this.state.height - 125),
             overflowY: 'scroll',
           }}>
             {this.displayFilters()}
@@ -354,7 +371,14 @@ export default class Filter extends Component {
           <div className={`${styles.section} ${styles.right}`}>
             <Table
               className={styles.table}
-              scroll={{ y: (this.state.height - 210) }}
+              rowClassName={(r, i) => {
+                if (i%2 === 0) {
+                  return styles.grey;
+                }
+                return;
+              }}
+              // scroll={{ y: (this.state.height - 210) }}
+              scroll={{ y: (this.state.height - 155) }}
               columns={this.columns}
               data={this.state.data}
               rowKey={row => row.id}
