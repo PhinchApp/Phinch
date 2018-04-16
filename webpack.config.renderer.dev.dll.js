@@ -168,7 +168,12 @@ export default merge.smart(baseConfig, {
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
         use: 'url-loader',
-      }
+      },
+      // CLI 
+      {
+        test: path.resolve(__dirname, 'node_modules/npm/bin/npm-cli.js'),
+        loader: 'shebang-loader'
+      },
     ]
   },
 
