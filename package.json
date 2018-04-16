@@ -168,6 +168,7 @@
     "redux-logger": "^3.0.6",
     "rimraf": "^2.6.2",
     "sass-loader": "^6.0.6",
+    "shebang-loader": "^0.0.1",
     "sinon": "^4.2.2",
     "spectron": "^3.8.0",
     "style-loader": "^0.20.1",
