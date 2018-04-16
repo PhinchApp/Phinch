@@ -74,7 +74,11 @@ export default class Filter extends Component {
           */
           groupKey = 'date';
           this.filterValues[k] = values.slice().map((d, i) => {
-            d.value = new Date(d.value);
+            if (k.toLowerCase().trim().includes('date')) {
+              d.value = new Date(d.value);
+            } if (this.filterFloat(d.value) !== null) {
+              d.value = this.filterFloat(d.value);
+            }
             return d;
           }).sort((a, b) => {
             return a.value.valueOf() - b.value.valueOf();
@@ -204,13 +208,19 @@ export default class Filter extends Component {
     const data = DataContainer.getSamples().filter((d, i) => {
       let include = true;
       Object.keys(filters).forEach((k) => {
+        //
+        // if (filters[k].range.min === undefined || filters[k].range.max === undefined) {
+        //   return false;
+        // }
+        //
         let value = d.metadata[k].split(' ')[0];
-        if (filters[k].type === 'date') {
+        // if (filters[k].type === 'date') {
+        if (k.toLowerCase().trim().includes('date')) {
           value = new Date(value);
           if (value.valueOf() < filters[k].range.min.value.valueOf() || value.valueOf() > filters[k].range.max.value.valueOf()) {
             include = false;
           }
-        } else if (filters[k].type === 'number') {
+        } else if (filters[k].type === 'number' || filters[k].type === 'date') {
           if (this.filterFloat(value) !== null) {
             value = this.filterFloat(value);
             if (value < filters[k].range.min.value || value > filters[k].range.max.value) {
@@ -236,9 +246,20 @@ export default class Filter extends Component {
 
   updateFilters(attribute, min, max) {
     const filters = this.state.filters;
+    let minValue = Object.assign({}, this.filterValues[attribute][min]);
+    if (min >= this.filterValues[attribute].length) {
+      minValue = Object.assign({}, this.filterValues[attribute][this.filterValues[attribute].length - 1]);
+      minValue.value += 1;
+    }
+    let maxValue = Object.assign({}, this.filterValues[attribute][max]);
+    if (max < 0) {
+      maxValue = Object.assign({}, this.filterValues[attribute][0]);
+      maxValue.value -= 1;
+    }
+    //
     filters[attribute].range = {
-      min: this.filterValues[attribute][min],
-      max: this.filterValues[attribute][max],
+      min: minValue,
+      max: maxValue,
     };
     this.applyFilters(filters);
   }

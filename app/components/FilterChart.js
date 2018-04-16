@@ -31,7 +31,11 @@ export default class FilterChart extends Component {
   }
 
   updateFilter(name, values) {
-    this.props.update(name, this.xscale.invert(values[0]), (this.xscale.invert(values[1]) - 1));
+    this.props.update(
+      name,
+      Math.round(this.xscale.invert(values[0])),
+      Math.round(this.xscale.invert(values[1]) - 1),
+      );
   }
 
   render() {
@@ -53,7 +57,8 @@ export default class FilterChart extends Component {
     let range = '';
     const marks = {};
     if (this.props.filter.expanded) {
-      const isDate = (this.props.name.includes('date') || this.props.name.includes('year'));
+      // const isDate = (this.props.name.toLowerCase().includes('date') || this.props.name.toLowerCase().includes('year'));
+      const isDate = (this.props.name.toLowerCase().includes('date'));
       const min = isDate ? new Date(this.props.filter.range.min.value).toLocaleString().split(', ')[0] : this.props.filter.range.min.value;
       const max = isDate ? new Date(this.props.filter.range.max.value).toLocaleString().split(', ')[0] : this.props.filter.range.max.value;
       range = min !== undefined ? (<div>range: [{min} — {max}]</div>) : '';
