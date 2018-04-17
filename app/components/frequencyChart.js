@@ -17,6 +17,7 @@ export default class FrequencyChart extends Component {
 
   updateCanvas(ctx) {
     ctx.fillStyle = 'black';
+    // ctx.fillRect(this.padding, (this.props.height / 2) - 0.125, this.props.width - (this.padding * 2), 0.25);
     this.props.data.forEach((d) => {
       ctx.fillRect(this.scale(d.reads), this.props.height / 3, 0.25, this.props.height / 3);
     });
@@ -28,7 +29,7 @@ export default class FrequencyChart extends Component {
       <canvas
         width={this.props.width}
         height={this.props.height}
-        style={{ background: 'white', width: this.props.width / 2, height: this.props.height / 2, margin: 0, padding: 0, overflow: 'hidden' }}
+        style={{ width: this.props.width / 2, height: this.props.height / 2, margin: 0, padding: 0, overflow: 'hidden' }}
       />
     );
   }

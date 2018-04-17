@@ -132,13 +132,13 @@ export default class Filter extends Component {
 
     this.columns = [
       {
-        title: (<div className={styles.heading} onClick={() => { this.sortBy('phinchName') }}>Phinch Name</div>),
+        title: (<div className={`${styles.heading} ${styles.name}`} onClick={() => { this.sortBy('phinchName') }}>Phinch Name</div>),
         dataIndex: 'phinchName',
         key: 'phinchName',
-        width: 150,
+        // width: 200,
         render: (t, r) => (
           <input
-            className={styles.input}
+            className={`${styles.input} ${styles.name}`}
             type="text"
             value={t}
             onChange={(e) => this.updatePhinchName(e, r)}
@@ -146,28 +146,28 @@ export default class Filter extends Component {
         ),
       },
       {
-        title: (<div className={styles.heading} onClick={() => { this.sortBy('id') }}>BIOM ID</div>),
+        title: (<div className={`${styles.heading} ${styles.id}`} onClick={() => { this.sortBy('id') }}>BIOM ID</div>),
         dataIndex: 'id',
         key: 'id',
-        width: 150,
+        // width: 75,
       },
       {
-        title: (<div className={styles.heading} onClick={() => { this.sortBy('sampleName') }}>Sample Name</div>),
+        title: (<div className={`${styles.heading} ${styles.sample}`} onClick={() => { this.sortBy('sampleName') }}>Sample Name</div>),
         dataIndex: 'sampleName',
         key: 'sampleName',
-        width: 150,
+        // width: 125,
       },
       {
         title: (<div className={styles.heading} onClick={() => { this.sortBy('reads') }}>Sequence Reads</div>),
         dataIndex: 'reads',
         key: 'reads',
-        width: 150,
+        // width: 150,
       },
       {
         title: '',
         dataIndex: '',
         key: 'chart',
-        width: 150,
+        // width: 150,
         render: (d) => (<FrequencyChart data={this.state.data} value={d.reads} width={150 * 2} height={30 * 2} />),
       },
       {
@@ -208,11 +208,6 @@ export default class Filter extends Component {
     const data = DataContainer.getSamples().filter((d, i) => {
       let include = true;
       Object.keys(filters).forEach((k) => {
-        //
-        // if (filters[k].range.min === undefined || filters[k].range.max === undefined) {
-        //   return false;
-        // }
-        //
         let value = d.metadata[k].split(' ')[0];
         // if (filters[k].type === 'date') {
         if (k.toLowerCase().trim().includes('date')) {
