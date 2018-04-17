@@ -128,39 +128,67 @@ export default class Filter extends Component {
       this.updateChecks = this.updateChecks.bind(this);
       this.updateFilters = this.updateFilters.bind(this);
     }
+
     //
+/*
+
+*/
+    // 
 
     this.columns = [
       {
-        title: (<div className={`${styles.heading} ${styles.name}`} onClick={() => { this.sortBy('phinchName') }}>Phinch Name</div>),
+        title: (<div className={styles.name}><div className={styles.heading} onClick={() => { this.sortBy('phinchName') }}>Phinch Name</div></div>),
         dataIndex: 'phinchName',
         key: 'phinchName',
         // width: 200,
         render: (t, r) => (
-          <input
-            className={`${styles.input} ${styles.name}`}
-            type="text"
-            value={t}
-            onChange={(e) => this.updatePhinchName(e, r)}
-          />
+          <div className={styles.name}>
+            <div className={styles.cell}>
+              <input
+                className={styles.input}
+                type="text"
+                value={t}
+                onChange={(e) => this.updatePhinchName(e, r)}
+              />
+            </div>
+          </div>
         ),
       },
       {
-        title: (<div className={`${styles.heading} ${styles.id}`} onClick={() => { this.sortBy('id') }}>BIOM ID</div>),
+        title: (<div className={styles.id}><div className={styles.heading} onClick={() => { this.sortBy('id') }}>BIOM ID</div></div>),
         dataIndex: 'id',
         key: 'id',
+        render: (t) => (
+          <div className={styles.id}>
+            <div className={styles.cell}>
+              {t}
+            </div>
+          </div>
+        ),
         // width: 75,
       },
       {
-        title: (<div className={`${styles.heading} ${styles.sample}`} onClick={() => { this.sortBy('sampleName') }}>Sample Name</div>),
+        title: (<div className={styles.sample}><div className={styles.heading} onClick={() => { this.sortBy('sampleName') }}>Sample Name</div></div>),
         dataIndex: 'sampleName',
         key: 'sampleName',
+        render: (t) => (
+          <div className={styles.sample}>
+            <div className={styles.cell}>
+              {t}
+            </div>
+          </div>
+        ),
         // width: 125,
       },
       {
         title: (<div className={styles.heading} onClick={() => { this.sortBy('reads') }}>Sequence Reads</div>),
         dataIndex: 'reads',
         key: 'reads',
+        render: (t) => (
+          <div className={styles.cell}>
+            {t}
+          </div>
+        ),
         // width: 150,
       },
       {
@@ -168,7 +196,11 @@ export default class Filter extends Component {
         dataIndex: '',
         key: 'chart',
         // width: 150,
-        render: (d) => (<FrequencyChart data={this.state.data} value={d.reads} width={150 * 2} height={30 * 2} />),
+        render: (d) => (
+          <div className={styles.cell}>
+            <FrequencyChart data={this.state.data} value={d.reads} width={150 * 2} height={18 * 2} />
+          </div>
+        ),
       },
       {
         title: '',
@@ -176,7 +208,11 @@ export default class Filter extends Component {
         key: 'remove',
         width: 15,
         render: (r) => (
-          <div onClick={() => { this.removeRow(r) }}>x</div>
+          <div className={styles.cell}>
+            <div className={styles.remove} onClick={() => { this.removeRow(r) }}>
+              <div className={styles.delete}>x</div>
+            </div>
+          </div>
         ),
       }
     ];
