@@ -3,18 +3,27 @@
   padding: 1rem;
 }
 
-.table {
-  /*background: #DEF;*/
+.table th, tr, thead, table {
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-style: none;
+  border-spacing: 0;
+  border-collapse: collapse;
 }
+
+.table thead {
+  display: table-header-group;
+}
+/*.table tr {
+  display: table-row;
+}*/
 
 .table th {
   text-align: left;
   font-weight: 200;
 }
 
-.table td {
-  /*outline: 1px solid grey;*/
-}
 
 .logo {
   width: 140px;
@@ -36,6 +45,8 @@
 }
 
 .heading {
+  /*width: auto;*/
+  /*width*/
   display: inline-block;
   padding: 0.25rem 0.5rem;
   background: #2b2b2b;
@@ -88,4 +99,17 @@
 
 .grey {
   background: #f4f4f4;
+}
+
+.name {
+  /*width: 15%;
+  min-width: 175px;*/
+}
+.id {
+  /*width: 5%;
+  min-width: 75px;*/
+}
+.sample {
+  /*width: 15%;
+  min-width: 175px;*/
 }

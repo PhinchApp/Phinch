@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 
-export default class FilterChart extends Component {
+import styles from './CheckBoxes.css';
+
+export default class CheckBoxes extends Component {
   render() {
     const boxes = this.props.data.values.map((d) => {
       return (
         <div key={d.value}>
           <input
+            className={styles.check}
             type='checkbox'
             name={d.value}
             value={d.value}

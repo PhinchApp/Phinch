@@ -157,7 +157,7 @@ export default class NewProject extends Component {
         <input type="text" value={this.state.name} disabled />
         <button id='open' onClick={this.handleOpenButton}>Browse</button>
         <textarea rows="3" className={styles.textarea} value='Drag/Drop file here.' disabled />
-        <table>
+        <table className={styles.table}>
           <tbody>
             <tr>
               <td className={styles.label}>File Name:</td>
