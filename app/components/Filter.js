@@ -129,18 +129,11 @@ export default class Filter extends Component {
       this.updateFilters = this.updateFilters.bind(this);
     }
 
-    //
-/*
-
-*/
-    // 
-
     this.columns = [
       {
         title: (<div className={styles.name}><div className={styles.heading} onClick={() => { this.sortBy('phinchName') }}>Phinch Name</div></div>),
         dataIndex: 'phinchName',
         key: 'phinchName',
-        // width: 200,
         render: (t, r) => (
           <div className={styles.name}>
             <div className={styles.cell}>
@@ -165,7 +158,6 @@ export default class Filter extends Component {
             </div>
           </div>
         ),
-        // width: 75,
       },
       {
         title: (<div className={styles.sample}><div className={styles.heading} onClick={() => { this.sortBy('sampleName') }}>Sample Name</div></div>),
@@ -178,7 +170,6 @@ export default class Filter extends Component {
             </div>
           </div>
         ),
-        // width: 125,
       },
       {
         title: (<div className={styles.heading} onClick={() => { this.sortBy('reads') }}>Sequence Reads</div>),
@@ -189,13 +180,11 @@ export default class Filter extends Component {
             {t}
           </div>
         ),
-        // width: 150,
       },
       {
         title: '',
         dataIndex: '',
         key: 'chart',
-        // width: 150,
         render: (d) => (
           <div className={styles.cell}>
             <FrequencyChart data={this.state.data} value={d.reads} width={150 * 2} height={18 * 2} />
@@ -206,7 +195,6 @@ export default class Filter extends Component {
         title: '',
         dataIndex: '',
         key: 'remove',
-        width: 15,
         render: (r) => (
           <div className={styles.cell}>
             <div className={styles.remove} onClick={() => { this.removeRow(r) }}>
@@ -245,7 +233,6 @@ export default class Filter extends Component {
       let include = true;
       Object.keys(filters).forEach((k) => {
         let value = d.metadata[k].split(' ')[0];
-        // if (filters[k].type === 'date') {
         if (k.toLowerCase().trim().includes('date')) {
           value = new Date(value);
           if (value.valueOf() < filters[k].range.min.value.valueOf() || value.valueOf() > filters[k].range.max.value.valueOf()) {
@@ -280,12 +267,20 @@ export default class Filter extends Component {
     let minValue = Object.assign({}, this.filterValues[attribute][min]);
     if (min >= this.filterValues[attribute].length) {
       minValue = Object.assign({}, this.filterValues[attribute][this.filterValues[attribute].length - 1]);
-      minValue.value += 1;
+      if (minValue.value instanceof Date) {
+        minValue.value = new Date(minValue.value.valueOf() + 1);
+      } else {
+        minValue.value += 1;
+      }
     }
     let maxValue = Object.assign({}, this.filterValues[attribute][max]);
     if (max < 0) {
       maxValue = Object.assign({}, this.filterValues[attribute][0]);
-      maxValue.value -= 1;
+      if (maxValue.value instanceof Date) {
+        maxValue.value = new Date(maxValue.value.valueOf() - 1);
+      } else {
+        maxValue.value -= 1;
+      }
     }
     //
     filters[attribute].range = {
