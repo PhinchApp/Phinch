@@ -41,6 +41,7 @@
   display: inline-block;
   vertical-align: top;
   margin: 0.5rem 1.5rem;
+  font-size: 0.75rem;
 }
 
 .label {
@@ -82,6 +83,7 @@
   padding: 0.25rem 0.5rem;
   /*line-height: 1.125rem;*/
   line-height: 1rem;
+  font-size: 0.75rem;
   /*max-height: 1.75rem;*/
   box-sizing: border-box;
   display: inline-block;
@@ -90,6 +92,7 @@
 .input {
   box-sizing: border-box;
   display: inline-block;
+  font-size: 0.75rem;
   width: 95%;
   margin: 0;
   padding: 0;
@@ -135,7 +138,7 @@
   cursor: pointer;
   width: 20px;
   height: 20px;
-  line-height: 1rem;
+  line-height: 1.25rem;
   padding: 0;
   margin: 0;
   background: #2b2b2b;
@@ -143,4 +146,17 @@
   text-align: center;
   vertical-align: middle;
   border-radius: 10px;
+}
+
+.button {
+  cursor: pointer;
+  padding: 1rem;
+  display: inline-block;
+}
+
+.error {
+  color: red;
+}
+.success {
+  color: green;
 }

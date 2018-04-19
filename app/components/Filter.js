@@ -6,6 +6,8 @@ import { nest } from 'd3-collection';
 import Table from 'rc-table';
 
 import DataContainer from '../DataContainer';
+import { setProjectFilters, getProjectFilters } from '../projects.js';
+
 import FrequencyChart from './FrequencyChart';
 import FilterChart from './FilterChart';
 import CheckBoxes from './CheckBoxes';
@@ -19,12 +21,17 @@ export default class Filter extends Component {
 
     this.reverse = false;
 
+    this.timeout = null;
+
     this.state = {
       summary: DataContainer.getSummary(),
       data: DataContainer.getSamples(),
       height: window.innerHeight,
       filters: {},
+      result: null,
     };
+
+    this.initFilters = getProjectFilters(this.state.summary.path, this.state.summary.name);
 
     this.filters = {
       date: {},
@@ -43,10 +50,6 @@ export default class Filter extends Component {
       this.metadataKeys = Object.keys(metadata).filter(k => k !== 'phinchID');
       this.metadataKeys.forEach((k) => {
         const units = [];
-        /* TODO:
-          Figure out how to handle no_data
-          Figure out how to handle strings
-        */
         const values = nest()
           .key(d => d)
           .entries(this.state.data.slice().map((d) => {
@@ -62,7 +65,6 @@ export default class Filter extends Component {
               count: d.values.length,
             };
           });
-        //
         const unit = units.length ? units[0] : '';
         let groupKey = 'string';
         this.filterValues[k] = values.slice();
@@ -70,7 +72,7 @@ export default class Filter extends Component {
           /*
             TODO: 
               Make sure you handle all date types
-              May need to convert to GMT for consistency?
+              Convert to GMT for consistency?
           */
           groupKey = 'date';
           this.filterValues[k] = values.slice().map((d, i) => {
@@ -100,12 +102,10 @@ export default class Filter extends Component {
             return d;
           });
         }
-        //
         this.filters[groupKey][k] = {
           values: this.filterValues[k],
           unit: unit,
         };
-        //
         let range = {
           min: this.filterValues[k][0],
           max: this.filterValues[k][this.filterValues[k].length - 1],
@@ -116,15 +116,18 @@ export default class Filter extends Component {
             range[v.value] = true;
           });
         }
-        //
         this.state.filters[k] = {
           range: range,
           type: groupKey,
           expanded: false,
         };
-        //
+        if (this.initFilters[k]) {
+          this.state.filters[k] = this.initFilters[k];
+        }
       });
 
+      this.setResult = this.setResult.bind(this);
+      this.clearResult = this.clearResult.bind(this);
       this.updateChecks = this.updateChecks.bind(this);
       this.updateFilters = this.updateFilters.bind(this);
     }
@@ -177,7 +180,7 @@ export default class Filter extends Component {
         key: 'reads',
         render: (t) => (
           <div className={styles.cell}>
-            {t}
+            {t.toLocaleString()}
           </div>
         ),
       },
@@ -213,6 +216,7 @@ export default class Filter extends Component {
   }
 
   componentWillUnmount() {
+    clearTimeout(this.timeout);
     window.removeEventListener('resize', this.updateDimensions);
   }
 
@@ -227,6 +231,21 @@ export default class Filter extends Component {
     }
     return null;
   }
+
+
+  setResult(value) {
+    const result = value;
+    this.timeout = setTimeout(() => {
+      this.clearResult();
+    }, 3000);
+    this.setState({result});
+  }
+
+  clearResult() {
+    const result = null;
+    this.setState({result});
+  }
+
 
   applyFilters(filters) {
     const data = DataContainer.getSamples().filter((d, i) => {
@@ -282,7 +301,6 @@ export default class Filter extends Component {
         maxValue.value -= 1;
       }
     }
-    //
     filters[attribute].range = {
       min: minValue,
       max: maxValue,
@@ -299,9 +317,7 @@ export default class Filter extends Component {
     return Object.keys(this.filters).map((k) => {
       const group = Object.keys(this.filters[k]).map((g) => {
         const expanded = this.state.filters[g].expanded;
-        // const icon = expanded ? '[-]' : '[+]';
         const icon = expanded ? '-' : '+';
-        // const width = expanded ? 300 : 150;
         const width = 200;
         const height = expanded ? 60 : 20;
         const filter = (this.state.filters[g].type === 'string') ? (
@@ -382,6 +398,14 @@ export default class Filter extends Component {
 
   render() {
     const redirect = (this.state.summary.name && this.state.summary.size) ? '' : <Redirect push to='/' />;
+    const resultStyle = this.state.result === 'error' ? styles.error : styles.success;
+    const result = (
+      <div className={styles.button}>
+        <div className={resultStyle} onClick={this.clearResult}>
+          {this.state.result}
+        </div>
+      </div>
+      );
     return (
       <div className={styles.container}>
         {redirect}
@@ -402,14 +426,21 @@ export default class Filter extends Component {
             </tr>
             <tr>
               <td className={styles.label}>Selected Samples:</td>
-              <td>{this.state.data.length.toLocaleString()}</td>
+              <td>{`${this.state.data.length.toLocaleString()} / ${this.state.summary.samples.toLocaleString()}`}</td>
             </tr>
           </tbody>
         </table>
+        <div className={styles.button}>
+          <div className={styles.heading} onClick={() => { 
+            setProjectFilters(this.state.summary.path, this.state.summary.name, this.state.filters, this.setResult);
+          }}>
+            Save Filters
+          </div>
+        </div>
+        {result}
         <div>
           <div className={`${styles.section} ${styles.left}`} style={{
             display: 'inline-block',
-            // height: (this.state.height - 175),
             height: (this.state.height - 125),
             overflowY: 'scroll',
           }}>
@@ -424,7 +455,6 @@ export default class Filter extends Component {
                 }
                 return;
               }}
-              // scroll={{ y: (this.state.height - 210) }}
               scroll={{ y: (this.state.height - 155) }}
               columns={this.columns}
               data={this.state.data}

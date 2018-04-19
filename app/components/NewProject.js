@@ -65,7 +65,7 @@ export default class NewProject extends Component {
   updateError(errortype) {
     const valid = 'No';
     const error = (this.errors[errortype]) ? this.errors[errortype] : 'unknown error';
-    this.setState({error,valid});
+    this.setState({error, valid});
   }
 
   updateLoading(loading) {
@@ -156,7 +156,7 @@ export default class NewProject extends Component {
         <p>To start a new project, you can browse for a file on your local hard drive or drag the file to the box below.</p>
         <input type="text" value={this.state.name} disabled />
         <button id='open' onClick={this.handleOpenButton}>Browse</button>
-        <textarea rows="3" className={styles.textarea} value='Drag/Drop file here.' disabled />
+        <textarea rows="3" className={styles.textarea} value='Drag and Drop or Browse for file.' disabled />
         <table className={styles.table}>
           <tbody>
             <tr>
