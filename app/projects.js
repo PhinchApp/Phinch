@@ -59,6 +59,27 @@ function getProjectInfo(path, project) {
   }
 }
 
+export function setProjectFilters(path, name, filters, callback) {
+  name = name.replace('.biom', '.json');
+  const metadataPath = join('/', ...path, name);
+  const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
+  metadata.filters = filters;
+  try {
+    fs.writeFileSync(metadataPath, JSON.stringify(metadata));
+    callback('Saved!');
+  } catch (e) {
+    callback('error');
+  }
+}
+
+export function getProjectFilters(path, name) {
+  name = name.replace('.biom', '.json');
+  const metadataPath = join('/', ...path, name);
+  const metadata = path.length ? JSON.parse(fs.readFileSync(metadataPath, 'utf8')) : {};
+  const filters = metadata['filters'] ? metadata['filters'] : {};
+  return filters;
+}
+
 export function createProject(project) {
   checkFolders();
   const phinchdir = join(homedirectory, 'Documents', 'Phinch2.0');

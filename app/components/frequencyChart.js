@@ -22,6 +22,7 @@ export default class FrequencyChart extends Component {
     this.props.data.forEach((d) => {
       ctx.fillRect(this.scale(d.reads), this.props.height / 4 + this.padding, 0.25, this.props.height / 2);
     });
+    ctx.fillStyle = 'red';
     ctx.fillRect(this.scale(this.props.value), (this.padding * 2), 1, this.props.height + (this.padding * 2));
   }
 

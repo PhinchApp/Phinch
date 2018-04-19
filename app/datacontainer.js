@@ -5,9 +5,12 @@ class DataContainer {
     this.summary = {
       name: '',
       size: 0,
+      path: '',
+      samples: 0,
       observations: 0,
     };
     this.data = {};
+    this.filters = {};
     this.samples = [];
   }
 
@@ -22,6 +25,10 @@ class DataContainer {
   setSummary(filepath) {
     const filename = filepath.toString().split('/');
     this.summary.name = filename[filename.length-1];
+    //
+    filename.pop();
+    this.summary.path = filename;
+    //
     this.summary.size = this.formatFileSize(statSync(filepath).size);
   }
   getSummary() {
@@ -43,6 +50,7 @@ class DataContainer {
         seqeuncereads[d[1]] = d[2];
       }
     });
+    this.summary.samples = this.data.columns.length;
     this.summary.observations = this.data.rows.length;
     
     this.samples = this.data.columns.map((c, i) => {
