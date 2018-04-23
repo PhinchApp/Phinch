@@ -20,13 +20,13 @@ export default class FrequencyChart extends Component {
     ctx.fillStyle = 'black';
     ctx.fillRect(this.padding, (this.props.height / 2) - 0.125 + this.padding, this.props.width - (this.padding * 2), 0.25);
     this.props.data.forEach((d) => {
-      ctx.fillRect(this.scale(d.reads), this.props.height / 4 + this.padding, 0.25, this.props.height / 2);
+      ctx.fillRect(this.scale(d.reads), this.props.height / 3 + this.padding, 0.5, this.props.height / 3);
     });
     ctx.fillStyle = 'red';
-    ctx.fillRect(this.scale(this.props.value), (this.padding * 2), 1, this.props.height + (this.padding * 2));
+    ctx.fillRect(this.scale(this.props.value), (this.padding * 2), 2, this.props.height + (this.padding * 2));
   }
 
-  render() {    
+  render() {
     return (
       <canvas
         width={this.props.width}

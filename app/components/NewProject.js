@@ -139,14 +139,7 @@ export default class NewProject extends Component {
     const loader = this.state.loading ? <img src={loading} alt='loading' /> : '';
     const indicateDrag = this.state.dragging ? styles.drag : '';
     return (
-      <div
-        className={`${styles.container} ${indicateDrag}`}
-        onDrop={this.handleDrop}
-        onDragOver={this.allowDrop}
-        onDragEnd={this.hideDrop}
-        onDragEnter={this.showDrop}
-        onDragLeave={this.hideDrop}
-      >
+      <div className={styles.container}>
         <div className={styles.logo}>
           <Link to="/">
             <img src={logo} alt='Phinch' />
@@ -156,7 +149,17 @@ export default class NewProject extends Component {
         <p>To start a new project, you can browse for a file on your local hard drive or drag the file to the box below.</p>
         <input type="text" value={this.state.name} disabled />
         <button id='open' onClick={this.handleOpenButton}>Browse</button>
-        <textarea rows="3" className={styles.textarea} value='Drag and Drop or Browse for file.' disabled />
+        <textarea
+          rows="3"
+          className={`${styles.textarea} ${indicateDrag}`}
+          value='Drag and Drop or Browse for file.'
+          disabled
+          onDrop={this.handleDrop}
+          onDragOver={this.allowDrop}
+          onDragEnd={this.hideDrop}
+          onDragEnter={this.showDrop}
+          onDragLeave={this.hideDrop}
+        />
         <table className={styles.table}>
           <tbody>
             <tr>
