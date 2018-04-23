@@ -13,10 +13,12 @@ body {
   position: relative;
   color: #808080;
   height: 100vh;
+  min-width: 960px;
   font-weight: 200;
   background-color: white;
   font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
   margin: 0;
+  overflow-x: scroll;
   overflow-y: hidden;
 }
 
@@ -98,12 +100,14 @@ button {
 .rc-slider-track {
   position: absolute;
   left: 0;
-  /*height: 4px;*/
-  margin-top: -60px;
-  height: 60px;
-  opacity: 0.5;
+  height: 4px;
+  background: #2b2b2b;
+  /*margin-top: -60px;*/
+  /*height: 60px;*/
+  /*opacity: 0.5;*/
   /*border-radius: 6px;*/
-  background-color: #abe2fb;
+  /*background-color: #abe2fb;*/
+  /*background-color: #abe2fb;*/
 }
 .rc-slider-handle {
   position: absolute;
@@ -115,28 +119,30 @@ button {
   cursor: -webkit-grab;
   cursor: grab;
   border-radius: 50%;
-  border: solid 2px #96dbfa;
+  /*border: solid 2px #96dbfa;*/
+  border: solid 2px #2b2b2b;
   background-color: #fff;
   -ms-touch-action: pan-x;
       touch-action: pan-x;
 }
 .rc-slider-handle:hover {
-  border-color: #57c5f7;
+  border-color: #2b2b2b;
 }
 .rc-slider-handle:active {
-  border-color: #57c5f7;
-  box-shadow: 0 0 5px #57c5f7;
+  border-color: #2b2b2b;
+  box-shadow: 0 0 5px #2b2b2b;
   cursor: -webkit-grabbing;
   cursor: grabbing;
 }
 .rc-slider-handle:focus {
-  border-color: #57c5f7;
+  border-color: #2b2b2b;
   box-shadow: 0 0 0 5px #96dbfa;
   outline: none;
 }
 .rc-slider-mark {
   position: absolute;
-  top: 18px;
+  /*top: 18px;*/
+  top: 16px;
   left: 0;
   width: 100%;
   font-size: 12px;

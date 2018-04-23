@@ -5,6 +5,7 @@ import App from './containers/App';
 import HomePage from './containers/HomePage';
 import NewProject from './components/NewProject.js';
 import Filter from './components/Filter.js';
+import Vis from './components/Vis.js';
 import CounterPage from './containers/CounterPage';
 
 export default () => (
@@ -13,6 +14,7 @@ export default () => (
       <Route path="/counter" component={CounterPage} />
       <Route path="/newproject" component={NewProject} />
       <Route path="/filter" component={Filter} />
+      <Route path="/vis" component={Vis} />
       <Route path="/" component={HomePage} />
     </Switch>
   </App>

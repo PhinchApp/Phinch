@@ -15,31 +15,35 @@ import CheckBoxes from './CheckBoxes';
 import styles from './Filter.css';
 import logo from 'images/phinch.png';
 
+import vis from 'images/vis-placeholder-sm.png';
+
 export default class Filter extends Component {
   constructor(props) {
     super(props);
 
-    this.reverse = false;
-
     this.timeout = null;
+
+    this.sort = {
+      reverse: false,
+      key: 'id',
+    };
 
     this.state = {
       summary: DataContainer.getSummary(),
       data: DataContainer.getSamples(),
+      deleted: [],
       height: window.innerHeight,
       filters: {},
       result: null,
     };
 
-    this.initFilters = getProjectFilters(this.state.summary.path, this.state.summary.name);
+    this.init = getProjectFilters(this.state.summary.path, this.state.summary.name);
 
     this.filters = {
       date: {},
       number: {},
       string: {},
     };
-
-    this.filterValues = {};
 
     /*
       FILTER Controls
@@ -67,7 +71,7 @@ export default class Filter extends Component {
           });
         const unit = units.length ? units[0] : '';
         let groupKey = 'string';
-        this.filterValues[k] = values.slice();
+        let filterValues = values.slice();
         if (k.toLowerCase().trim().includes('date') || k.toLowerCase().trim().includes('year')) {
           /*
             TODO: 
@@ -75,7 +79,7 @@ export default class Filter extends Component {
               Convert to GMT for consistency?
           */
           groupKey = 'date';
-          this.filterValues[k] = values.slice().map((d, i) => {
+          filterValues = values.slice().map((d, i) => {
             if (k.toLowerCase().trim().includes('date')) {
               d.value = new Date(d.value);
             } if (this.filterFloat(d.value) !== null) {
@@ -90,7 +94,7 @@ export default class Filter extends Component {
           });
         } else if (this.filterFloat(values.filter(v => v.value !== 'no_data')[0].value) !== null) {
           groupKey = 'number';
-          this.filterValues[k] = values.slice().map((v) => {
+          filterValues = values.slice().map((v) => {
             if (this.filterFloat(v.value) !== null) {
               v.value = this.filterFloat(v.value);
             }
@@ -102,43 +106,42 @@ export default class Filter extends Component {
             return d;
           });
         }
-        this.filters[groupKey][k] = {
-          values: this.filterValues[k],
-          unit: unit,
-        };
         let range = {
-          min: this.filterValues[k][0],
-          max: this.filterValues[k][this.filterValues[k].length - 1],
+          min: filterValues[0],
+          max: filterValues[filterValues.length - 1],
         };
         if (groupKey === 'string') {
           range = {};
-          this.filterValues[k].map((v) => {
+          filterValues.map((v) => {
             range[v.value] = true;
           });
         }
         this.state.filters[k] = {
+          key: k,
+          unit: unit,
           range: range,
           type: groupKey,
+          values: filterValues,
           expanded: false,
         };
-        if (this.initFilters[k]) {
-          this.state.filters[k] = this.initFilters[k];
+        this.filters[groupKey][k] = {
+          values: filterValues,
+          unit: unit,
+        };
+        if (this.init.filters[k]) {
+          this.state.filters[k] = this.init.filters[k];
         }
       });
-
-      this.setResult = this.setResult.bind(this);
-      this.clearResult = this.clearResult.bind(this);
-      this.updateChecks = this.updateChecks.bind(this);
-      this.updateFilters = this.updateFilters.bind(this);
+      this.state.deleted = this.init.deleted;
     }
 
     this.columns = [
       {
-        title: (<div className={styles.name}><div className={styles.heading} onClick={() => { this.sortBy('phinchName') }}>Phinch Name</div></div>),
+        title: this.generateTableTitle('phinchName'),
         dataIndex: 'phinchName',
         key: 'phinchName',
         render: (t, r) => (
-          <div className={styles.name}>
+          <div className={styles.phinchName}>
             <div className={styles.cell}>
               <input
                 className={styles.input}
@@ -151,7 +154,7 @@ export default class Filter extends Component {
         ),
       },
       {
-        title: (<div className={styles.id}><div className={styles.heading} onClick={() => { this.sortBy('id') }}>BIOM ID</div></div>),
+        title: this.generateTableTitle('id'),
         dataIndex: 'id',
         key: 'id',
         render: (t) => (
@@ -163,11 +166,11 @@ export default class Filter extends Component {
         ),
       },
       {
-        title: (<div className={styles.sample}><div className={styles.heading} onClick={() => { this.sortBy('sampleName') }}>Sample Name</div></div>),
+        title: this.generateTableTitle('sampleName'),
         dataIndex: 'sampleName',
         key: 'sampleName',
         render: (t) => (
-          <div className={styles.sample}>
+          <div className={styles.sampleName}>
             <div className={styles.cell}>
               {t}
             </div>
@@ -175,7 +178,7 @@ export default class Filter extends Component {
         ),
       },
       {
-        title: (<div className={styles.heading} onClick={() => { this.sortBy('reads') }}>Sequence Reads</div>),
+        title: this.generateTableTitle('reads'),
         dataIndex: 'reads',
         key: 'reads',
         render: (t) => (
@@ -190,7 +193,19 @@ export default class Filter extends Component {
         key: 'chart',
         render: (d) => (
           <div className={styles.cell}>
-            <FrequencyChart data={this.state.data} value={d.reads} width={150 * 2} height={18 * 2} />
+            <FrequencyChart data={this.state.data} value={d.reads} width={125 * 2} height={18 * 2} />
+          </div>
+        ),
+      },
+      {
+        title: '',
+        dataIndex: '',
+        key: 'drag',
+        render: (r) => (
+          <div className={styles.cell}>
+            <div className={styles.remove}>
+              <div className={styles.delete} style={{'transform': 'rotate(90deg)'}}>||</div>
+            </div>
           </div>
         ),
       },
@@ -200,7 +215,7 @@ export default class Filter extends Component {
         key: 'remove',
         render: (r) => (
           <div className={styles.cell}>
-            <div className={styles.remove} onClick={() => { this.removeRow(r) }}>
+            <div className={styles.remove} onClick={() => { this.removeRows([r]) }}>
               <div className={styles.delete}>x</div>
             </div>
           </div>
@@ -208,11 +223,17 @@ export default class Filter extends Component {
       }
     ];
 
+    this.setResult = this.setResult.bind(this);
+    this.clearResult = this.clearResult.bind(this);
+    this.updateChecks = this.updateChecks.bind(this);
+    this.getSortArrow = this.getSortArrow.bind(this);
+    this.updateFilters = this.updateFilters.bind(this);
     this.updateDimensions = this.updateDimensions.bind(this);
   }
 
   componentDidMount() {
     window.addEventListener('resize', this.updateDimensions);
+    this.applyFilters(this.state.filters, this.state.deleted);
   }
 
   componentWillUnmount() {
@@ -233,6 +254,27 @@ export default class Filter extends Component {
   }
 
 
+  generateTableTitle(key) {
+    if (key === 'remove' || key === 'chart') {
+      return '';
+    }
+    const names = {
+      phinchName: 'Phinch Name',
+      id: 'BIOM ID',
+      sampleName: 'Sample Name',
+      reads: 'Sequence Reads',
+    };
+    return (
+      <div
+        className={`${styles.heading} ${styles[key]}`}
+        onClick={() => { this.sortBy(key) }
+      }>
+        {names[key]} {this.getSortArrow(key)}
+      </div>
+    );
+  }
+
+
   setResult(value) {
     const result = value;
     this.timeout = setTimeout(() => {
@@ -247,9 +289,13 @@ export default class Filter extends Component {
   }
 
 
-  applyFilters(filters) {
+  applyFilters(filters, deleted) {
+    const deletedSamples = deleted.map(d => d.sampleName);
     const data = DataContainer.getSamples().filter((d, i) => {
       let include = true;
+      if (deletedSamples.includes(d.sampleName)) {
+        include = false;
+      }
       Object.keys(filters).forEach((k) => {
         let value = d.metadata[k].split(' ')[0];
         if (k.toLowerCase().trim().includes('date')) {
@@ -265,7 +311,7 @@ export default class Filter extends Component {
             }
           }
         } else {
-          if (!filters[k].range[value]) {
+          if (value !== 'no_data' && !filters[k].range[value]) {
             include = false;
           }
         }
@@ -278,23 +324,23 @@ export default class Filter extends Component {
   updateChecks(attribute, type, value) {
     const filters = this.state.filters;
     filters[attribute].range[type] = value;
-    this.applyFilters(filters);
+    this.applyFilters(filters, this.state.deleted);
   }
 
   updateFilters(attribute, min, max) {
     const filters = this.state.filters;
-    let minValue = Object.assign({}, this.filterValues[attribute][min]);
-    if (min >= this.filterValues[attribute].length) {
-      minValue = Object.assign({}, this.filterValues[attribute][this.filterValues[attribute].length - 1]);
+    let minValue = Object.assign({}, this.state.filters[attribute].values[min]);
+    if (min >= this.state.filters[attribute].values.length) {
+      minValue = Object.assign({}, this.state.filters[attribute].values[this.state.filters[attribute].values.length - 1]);
       if (minValue.value instanceof Date) {
         minValue.value = new Date(minValue.value.valueOf() + 1);
       } else {
         minValue.value += 1;
       }
     }
-    let maxValue = Object.assign({}, this.filterValues[attribute][max]);
+    let maxValue = Object.assign({}, this.state.filters[attribute].values[max]);
     if (max < 0) {
-      maxValue = Object.assign({}, this.filterValues[attribute][0]);
+      maxValue = Object.assign({}, this.state.filters[attribute].values[0]);
       if (maxValue.value instanceof Date) {
         maxValue.value = new Date(maxValue.value.valueOf() - 1);
       } else {
@@ -305,7 +351,7 @@ export default class Filter extends Component {
       min: minValue,
       max: maxValue,
     };
-    this.applyFilters(filters);
+    this.applyFilters(filters, this.state.deleted);
   }
 
   displayFilters() {
@@ -371,17 +417,28 @@ export default class Filter extends Component {
     this.setState({data});
   }
 
-  removeRow(r) {
+  removeRows(rows) {
     const data = this.state.data.filter((d) => {
-      return (d.sampleName !== r.sampleName);
+      return !rows.includes(d);
     });
-    this.setState({data});
+    const deleted = this.state.deleted.concat(rows);
+    this.setState({data, deleted});
+  }
+
+  getSortArrow(key) {
+    if (key === this.sort.key) {
+      const angle = this.sort.reverse ? 180 : 0;
+      return (<div className={styles.arrow} style={{transform: `rotate(${angle}deg)`}}>⌃</div>);
+    } else {
+      return '';
+    }
   }
 
   sortBy(key) {
     if (this.state.data.length) {
+      this.sort.key = key;
       const data = this.state.data.sort((a, b) => {
-        if (this.reverse) {
+        if (this.sort.reverse) {
           if (a[key] < b[key]) return -1;
           if (a[key] > b[key]) return 1;
           return 0;
@@ -391,7 +448,11 @@ export default class Filter extends Component {
           return 0;
         }
       });
-      this.reverse = !this.reverse;
+      this.sort.reverse = !this.sort.reverse;
+      this.columns = this.columns.map((c) => {
+        c.title = this.generateTableTitle(c.key);
+        return c;
+      })
       this.setState({data});
     }
   }
@@ -409,35 +470,40 @@ export default class Filter extends Component {
     return (
       <div className={styles.container}>
         {redirect}
-        <div className={styles.logo}>
-          <Link to="/">
-            <img src={logo} alt='Phinch' />
-          </Link>
-        </div>
-        <table className={styles.info}>
-          <tbody>
-            <tr>
-              <td className={styles.label}>File Name:</td>
-              <td>{this.state.summary.name} ({this.state.summary.size})</td>
-            </tr>
-            <tr>
-              <td className={styles.label}>Observations:</td>
-              <td>{this.state.summary.observations.toLocaleString()}</td>
-            </tr>
-            <tr>
-              <td className={styles.label}>Selected Samples:</td>
-              <td>{`${this.state.data.length.toLocaleString()} / ${this.state.summary.samples.toLocaleString()}`}</td>
-            </tr>
-          </tbody>
-        </table>
-        <div className={styles.button}>
-          <div className={styles.heading} onClick={() => { 
-            setProjectFilters(this.state.summary.path, this.state.summary.name, this.state.filters, this.setResult);
-          }}>
-            Save Filters
+        <div className={styles.header}>
+          <div className={styles.logo}>
+            <Link to="/">
+              <img src={logo} alt='Phinch' />
+            </Link>
           </div>
+          <table className={styles.info}>
+            <tbody>
+              <tr>
+                <td className={`${styles.label} ${styles.summary}`}>File Name:</td>
+                <td className={styles.summary}>{this.state.summary.name} ({this.state.summary.size})</td>
+              </tr>
+              <tr>
+                <td className={`${styles.label} ${styles.summary}`}>Observations:</td>
+                <td className={styles.summary}>{this.state.summary.observations.toLocaleString()}</td>
+              </tr>
+              <tr>
+                <td className={`${styles.label} ${styles.summary}`}>Selected Samples:</td>
+                <td className={styles.summary}>{`${this.state.data.length.toLocaleString()} / ${this.state.summary.samples.toLocaleString()}`}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div className={styles.button}>
+            <div className={styles.heading} onClick={() => { 
+              setProjectFilters(this.state.summary.path, this.state.summary.name, this.state.filters, this.state.deleted, this.setResult);
+            }}>
+              <Link to='/vis' style={{color: 'white', textDecoration: 'none'}}>
+                <img src={vis} alt='' style={{width: '112px', height: '24px', margin: '2px 0'}}/><br />
+                View Stacked Bar <div className={styles.arrow} style={{transform: `rotate(${90}deg)`}}>⌃</div>
+              </Link>
+            </div>
+          </div>
+          {result}
         </div>
-        {result}
         <div>
           <div className={`${styles.section} ${styles.left}`} style={{
             display: 'inline-block',

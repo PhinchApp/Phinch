@@ -12,6 +12,7 @@ class DataContainer {
     this.data = {};
     this.filters = {};
     this.samples = [];
+    // this.observations = [];
   }
 
   // Maybe externalize this to utils or something
@@ -39,9 +40,16 @@ class DataContainer {
     return this.samples;
   }
 
+  getObservations() {
+    return this.observations;
+  }
+
   setData(data) {
     this.data = data;
 
+    /* 
+      SIDE EFFECTS
+    */
     const seqeuncereads = [];
     this.data.data.forEach((d) => {
       if (seqeuncereads[d[1]]) {
@@ -50,6 +58,7 @@ class DataContainer {
         seqeuncereads[d[1]] = d[2];
       }
     });
+
     this.summary.samples = this.data.columns.length;
     this.summary.observations = this.data.rows.length;
     
@@ -62,6 +71,15 @@ class DataContainer {
         id: i + 1,
       };
     });
+    // this.observations = this.data.rows.map((r, i) => {
+    //   if (i < 10) {
+    //     console.log(r);
+    //   }
+    //   return r;
+    // });
+    /* 
+      SIDE EFFECTS
+    */
   }
   getData() {
     return this.data;

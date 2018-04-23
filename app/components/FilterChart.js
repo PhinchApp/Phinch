@@ -4,8 +4,6 @@ import ReactDOM from 'react-dom';
 import Slider, { Range } from 'rc-slider';
 import { scaleLinear } from 'd3-scale';
 
-import styles from './FilterChart.css';
-
 export default class FilterChart extends Component {
   constructor(props) {
     super(props);
@@ -18,7 +16,6 @@ export default class FilterChart extends Component {
   }
 
   updateScales() {
-    // this.padding = this.props.width * 0.05;
     this.padding = 0;
     const counts = this.props.data.values.map(d => d.count);
     this.yscale = scaleLinear()
@@ -40,8 +37,24 @@ export default class FilterChart extends Component {
 
   render() {
     this.updateScales();
+    const isDate = (this.props.name.toLowerCase().includes('date'));
     const barWidth = (this.xscale(1) - this.xscale(0));
+    //
     const bars = this.props.data.values.map((d, i) => {
+      const valueInRange = (isDate) ? (          
+          !(
+            new Date(d.value).valueOf() < new Date(this.props.filter.range.min.value).valueOf()
+            ||
+            new Date(d.value).valueOf() > new Date(this.props.filter.range.max.value).valueOf()
+          )
+        ) : (
+          !(
+            d.value < this.props.filter.range.min.value
+            ||
+            d.value > this.props.filter.range.max.value
+          )
+        );
+      const fillOpacity = valueInRange ? 1 : 0.3;
       return (
         <rect
           key={`r-${i}`}
@@ -49,16 +62,16 @@ export default class FilterChart extends Component {
           y={this.props.height - (this.yscale(d.count))}
           width={barWidth}
           height={this.yscale(d.count)}
-          fill='grey'
+          fill='#2b2b2b'
+          fillOpacity={fillOpacity}
           stroke='white'
         />
       );
     });
+    //
     let range = '';
     const marks = {};
     if (this.props.filter.expanded) {
-      // const isDate = (this.props.name.toLowerCase().includes('date') || this.props.name.toLowerCase().includes('year'));
-      const isDate = (this.props.name.toLowerCase().includes('date'));
       const min = isDate ? new Date(this.props.filter.range.min.value).toLocaleString().split(', ')[0] : this.props.filter.range.min.value;
       const max = isDate ? new Date(this.props.filter.range.max.value).toLocaleString().split(', ')[0] : this.props.filter.range.max.value;
       range = min !== undefined ? (<div>range: [{min} — {max}]</div>) : '';

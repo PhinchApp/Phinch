@@ -3,6 +3,10 @@
   padding: 1rem;
 }
 
+.header {
+  margin-bottom: 1rem;
+}
+
 .table th,
 .table tr,
 .table td,
@@ -44,6 +48,11 @@
   font-size: 0.75rem;
 }
 
+.summary {
+  margin: 0;
+  padding: 0.125rem 0;
+}
+
 .label {
   padding-right: 1.5rem;
   font-weight: 200;
@@ -66,6 +75,7 @@
   width: 100%;
   display: inline-block;
   padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
 }
 
 .bottom {
@@ -81,23 +91,31 @@
 
 .table .cell {
   padding: 0.25rem 0.5rem;
-  /*line-height: 1.125rem;*/
+  width: 100%;
   line-height: 1rem;
   font-size: 0.75rem;
-  /*max-height: 1.75rem;*/
   box-sizing: border-box;
   display: inline-block;
+  vertical-align: middle;
+  /**/
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .input {
   box-sizing: border-box;
   display: inline-block;
   font-size: 0.75rem;
-  width: 95%;
+  width: 100%;
   margin: 0;
   padding: 0;
   border: none;
   background: none;
+  /**/
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .section {
@@ -106,32 +124,46 @@
 
 .left {
   vertical-align: top;
-  width: 25vw;
-  min-width: 225px;
+  width: 230px;
 }
 .right {
   vertical-align: top;
-  width: 71vw;
+  /*width: 71vw;*/
 }
 
 .grey {
   background: #f4f4f4;
 }
 
-.name {
+.phinchName {
   width: 15vw;
   min-width: 150px;
+  margin-right: 0.25rem;
 }
 .id {
   width: 10vw;
   min-width: 100px;
+  margin-right: 0.25rem;
 }
-.sample {
+.sampleName {
   width: 15vw;
   min-width: 150px;
+  margin-right: 0.25rem;
+}
+.reads {
+  min-width: 205px;
+  margin-right: 0.25rem;
 }
 .remove {
-  width: 20px;
+  /*width: 20px;*/
+  /*margin-right: 0.25rem;*/
+}
+
+.arrow {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  line-height: 1rem;
 }
 
 .delete {
@@ -150,7 +182,7 @@
 
 .button {
   cursor: pointer;
-  padding: 1rem;
+  padding: 0.75rem;
   display: inline-block;
 }
 
