@@ -35,6 +35,7 @@ export default class Filter extends Component {
       height: window.innerHeight,
       filters: {},
       result: null,
+      showHidden: false,
     };
 
     this.init = getProjectFilters(this.state.summary.path, this.state.summary.name);
@@ -129,6 +130,11 @@ export default class Filter extends Component {
           unit: unit,
         };
         if (this.init.filters[k]) {
+          this.init.filters[k].values = filterValues;
+          if (k.toLowerCase().trim().includes('date')) {
+            this.init.filters[k].range.max.value = new Date(this.init.filters[k].range.max.value);
+            this.init.filters[k].range.min.value = new Date(this.init.filters[k].range.min.value);
+          }
           this.state.filters[k] = this.init.filters[k];
         }
       });
@@ -137,7 +143,7 @@ export default class Filter extends Component {
 
     this.columns = [
       {
-        title: this.generateTableTitle('phinchName'),
+        title: this.generateTableTitle('phinchName', true),
         dataIndex: 'phinchName',
         key: 'phinchName',
         render: (t, r) => (
@@ -154,7 +160,7 @@ export default class Filter extends Component {
         ),
       },
       {
-        title: this.generateTableTitle('id'),
+        title: this.generateTableTitle('id', true),
         dataIndex: 'id',
         key: 'id',
         render: (t) => (
@@ -166,7 +172,7 @@ export default class Filter extends Component {
         ),
       },
       {
-        title: this.generateTableTitle('sampleName'),
+        title: this.generateTableTitle('sampleName', true),
         dataIndex: 'sampleName',
         key: 'sampleName',
         render: (t) => (
@@ -178,7 +184,7 @@ export default class Filter extends Component {
         ),
       },
       {
-        title: this.generateTableTitle('reads'),
+        title: this.generateTableTitle('reads', true),
         dataIndex: 'reads',
         key: 'reads',
         render: (t) => (
@@ -223,10 +229,32 @@ export default class Filter extends Component {
       }
     ];
 
+    this.deletedColumns = this.columns.map((c) => {
+      return Object.assign({}, c);
+    }).filter((c) => {
+      return !(c.key === 'remove' || c.key === 'drag');
+    }).map((c) => { 
+      c.title = this.generateTableTitle(c.key, false);
+      return c;
+    });
+    this.deletedColumns.push({
+      title: '',
+      dataIndex: '',
+      key: 'remove',
+      render: (r) => (
+        <div className={styles.cell}>
+          <div className={styles.remove} onClick={() => { this.restoreRows([r]) }}>
+            <div className={styles.delete}>⤴</div>
+          </div>
+        </div>
+      ),
+    });
+
     this.setResult = this.setResult.bind(this);
     this.clearResult = this.clearResult.bind(this);
     this.updateChecks = this.updateChecks.bind(this);
     this.getSortArrow = this.getSortArrow.bind(this);
+    this.resetFilters = this.resetFilters.bind(this);
     this.updateFilters = this.updateFilters.bind(this);
     this.updateDimensions = this.updateDimensions.bind(this);
   }
@@ -254,8 +282,8 @@ export default class Filter extends Component {
   }
 
 
-  generateTableTitle(key) {
-    if (key === 'remove' || key === 'chart') {
+  generateTableTitle(key, click) {
+    if (key === 'remove' || key === 'chart' || key === 'drag') {
       return '';
     }
     const names = {
@@ -264,12 +292,14 @@ export default class Filter extends Component {
       sampleName: 'Sample Name',
       reads: 'Sequence Reads',
     };
+    const onClick = click ? (() => { this.sortBy(key) }) : (() => {});
+    const arrow = click ? (this.getSortArrow(key)) : '';
     return (
       <div
         className={`${styles.heading} ${styles[key]}`}
-        onClick={() => { this.sortBy(key) }
-      }>
-        {names[key]} {this.getSortArrow(key)}
+        onClick={onClick}
+      >
+        {names[key]} {arrow}
       </div>
     );
   }
@@ -288,6 +318,23 @@ export default class Filter extends Component {
     this.setState({result});
   }
 
+
+  resetFilters() {
+    const filters = {};
+    Object.keys(this.state.filters).forEach((k) => {
+      const filter = this.state.filters[k];
+      if (filter.type === 'string') {
+        Object.keys(filter.range).forEach((r) => {
+          filter.range[r] = true;
+        });
+      } else {
+        filter.range.min = Object.assign({}, filter.values[0]);
+        filter.range.max = Object.assign({}, filter.values[filter.values.length - 1]);
+      }
+      filters[k] = filter;
+    });
+    this.applyFilters(filters, this.state.deleted);
+  }
 
   applyFilters(filters, deleted) {
     const deletedSamples = deleted.map(d => d.sampleName);
@@ -407,6 +454,49 @@ export default class Filter extends Component {
     });
   }
 
+  displayHiddenSamples() {
+    const label = this.state.showHidden ? 'Hide' : 'Show';
+    const button = this.state.deleted.length ? (
+        <div
+          className={styles.heading}
+          style={{
+            marginTop: '1rem',
+            cursor: 'pointer',
+          }}
+          onClick={() => {
+            const showHidden = !this.state.showHidden;
+            this.setState({showHidden});
+          }}
+        >
+          {label} Hidden Samples
+        </div>
+      ) : '';
+    const table = this.state.showHidden ? (
+        <div className={styles.modal}>
+          <p>Hidden Samples</p>
+          <Table
+            className={styles.table}
+            rowClassName={(r, i) => {
+              if (i%2 === 0) {
+                return styles.grey;
+              }
+              return;
+            }}
+            scroll={{ y: (360) }}
+            columns={this.deletedColumns}
+            data={this.state.deleted}
+            rowKey={row => `d-${row.id}`}
+          />
+        </div>
+      ) : '';
+    return (
+      <div>
+        {button}
+        {table}
+      </div>
+    );
+  }
+
   updatePhinchName(e, r) {
     const data = this.state.data.map((d) => {
       if (d.sampleName === r.sampleName) {
@@ -423,6 +513,25 @@ export default class Filter extends Component {
     });
     const deleted = this.state.deleted.concat(rows);
     this.setState({data, deleted});
+  }
+
+  restoreRows(rows) {
+    const deleted = this.state.deleted.filter((d) => {
+      return !rows.includes(d);
+    });
+    const data = this.state.data.concat(rows).sort((a, b) => {
+      if (!this.sort.reverse) {
+        if (a[this.sort.key] < b[this.sort.key]) return -1;
+        if (a[this.sort.key] > b[this.sort.key]) return 1;
+        return 0;
+      } else {
+        if (b[this.sort.key] < a[this.sort.key]) return -1;
+        if (b[this.sort.key] > a[this.sort.key]) return 1;
+        return 0;
+      }
+    });
+    const showHidden = deleted.length ? true : false;
+    this.setState({data, deleted, showHidden});
   }
 
   getSortArrow(key) {
@@ -450,9 +559,9 @@ export default class Filter extends Component {
       });
       this.sort.reverse = !this.sort.reverse;
       this.columns = this.columns.map((c) => {
-        c.title = this.generateTableTitle(c.key);
+        c.title = this.generateTableTitle(c.key, true);
         return c;
-      })
+      });
       this.setState({data});
     }
   }
@@ -498,7 +607,7 @@ export default class Filter extends Component {
             }}>
               <Link to='/vis' style={{color: 'white', textDecoration: 'none'}}>
                 <img src={vis} alt='' style={{width: '112px', height: '24px', margin: '2px 0'}}/><br />
-                View Stacked Bar <div className={styles.arrow} style={{transform: `rotate(${90}deg)`}}>⌃</div>
+                Save and View <div className={styles.arrow} style={{transform: `rotate(${90}deg)`}}>⌃</div>
               </Link>
             </div>
           </div>
@@ -511,6 +620,13 @@ export default class Filter extends Component {
             overflowY: 'scroll',
           }}>
             {this.displayFilters()}
+            <div
+              className={styles.heading}
+              style={{ cursor: 'pointer' }}
+              onClick={this.resetFilters}
+            >
+              Reset Filters
+            </div>
           </div>
           <div className={`${styles.section} ${styles.right}`}>
             <Table
@@ -521,11 +637,12 @@ export default class Filter extends Component {
                 }
                 return;
               }}
-              scroll={{ y: (this.state.height - 155) }}
+              scroll={{ y: (this.state.height - 195) }}
               columns={this.columns}
               data={this.state.data}
               rowKey={row => row.id}
             />
+            {this.displayHiddenSamples()}
           </div>
         </div>
       </div>
