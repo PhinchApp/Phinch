@@ -75,7 +75,6 @@ export default class FilterChart extends Component {
       const min = isDate ? new Date(this.props.filter.range.min.value).toLocaleString().split(', ')[0] : this.props.filter.range.min.value;
       const max = isDate ? new Date(this.props.filter.range.max.value).toLocaleString().split(', ')[0] : this.props.filter.range.max.value;
       range = min !== undefined ? (<div>range: [{min} — {max}]</div>) : '';
-      //
       const markStyle = {fontSize: '8px', display: 'inline-block'};
       marks[this.xscale(this.props.filter.range.min.index)] = { label: <div style={markStyle}>{min}</div> };
       marks[this.xscale(this.props.filter.range.max.index + 1)] = { label: <div style={markStyle}>{max}</div> };
@@ -96,7 +95,7 @@ export default class FilterChart extends Component {
             marks={marks}
             step={barWidth}
             allowCross={false}
-            defaultValue={[this.xscale(this.props.filter.range.min.index), this.xscale(this.props.filter.range.max.index + 1)]}
+            value={[this.xscale(this.props.filter.range.min.index), this.xscale(this.props.filter.range.max.index + 1)]}
             onChange={(values) => this.updateFilter(this.props.name, values)}
           />
         </div>

@@ -74,14 +74,11 @@ export function setProjectFilters(path, name, filters, deleted, callback) {
 }
 
 export function getProjectFilters(path, name) {
-// export function getProjectState(path, name) {
   name = name.replace('.biom', '.json');
   const metadataPath = join('/', ...path, name);
   const metadata = path.length ? JSON.parse(fs.readFileSync(metadataPath, 'utf8')) : {};
   const filters = metadata['filters'] ? metadata['filters'] : {};
   const deleted = metadata['deleted'] ? metadata['deleted'] : [];
-  // return filters;
-  // return metadata;
   return {
     filters,
     deleted,
