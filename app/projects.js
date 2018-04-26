@@ -59,6 +59,24 @@ function getProjectInfo(path, project) {
   }
 }
 
+export function exportProjectData(path, name, data, callback) {
+  const projectdir = join('/', ...path);
+  const project = fs.readdirSync(projectdir);
+  let version = 0;
+  let exportname = `export-${version}-${name}`;
+  while (project.includes(exportname)) {
+    version++;
+    exportname = `export-${version}-${name}`;
+  }
+  const exportPath = join('/', ...path, exportname);
+  try {
+    fs.writeFileSync(exportPath, JSON.stringify(data));
+    callback('Exported!');
+  } catch (e) {
+    callback('error');
+  }
+}
+
 export function setProjectFilters(path, name, filters, deleted, callback) {
   name = name.replace('.biom', '.json');
   const metadataPath = join('/', ...path, name);

@@ -6,7 +6,7 @@ import { nest } from 'd3-collection';
 import Table from 'rc-table';
 
 import DataContainer from '../DataContainer';
-import { setProjectFilters, getProjectFilters } from '../projects.js';
+import { setProjectFilters, getProjectFilters, exportProjectData } from '../projects.js';
 
 import FrequencyChart from './FrequencyChart';
 import FilterChart from './FilterChart';
@@ -601,6 +601,19 @@ export default class Filter extends Component {
               </tr>
             </tbody>
           </table>
+          <div className={styles.button}>
+            <div className={styles.heading} onClick={() => {
+              // show picker to allow custom name?
+              //
+              // FIRST Send this info to DataContainer via function here
+              const biom = DataContainer.applyFiltersToData(this.state.data);
+              // THEN save file using project exportProjectData function
+              exportProjectData(this.state.summary.path, this.state.summary.name, biom, this.setResult);
+              //
+            }}>
+              Export Filtered BIOM File
+            </div>
+          </div>
           <div className={styles.button}>
             <div className={styles.heading} onClick={() => { 
               setProjectFilters(this.state.summary.path, this.state.summary.name, this.state.filters, this.state.deleted, this.setResult);

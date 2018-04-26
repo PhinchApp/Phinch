@@ -10,9 +10,9 @@ class DataContainer {
       observations: 0,
     };
     this.data = {};
-    this.filters = {};
+    // this.filters = {};
     this.samples = [];
-    // this.observations = [];
+    this.observations = [];
   }
 
   // Maybe externalize this to utils or something
@@ -46,6 +46,7 @@ class DataContainer {
 
   setData(data) {
     this.data = data;
+    // console.log(this.data);
 
     /* 
       SIDE EFFECTS
@@ -63,6 +64,7 @@ class DataContainer {
     this.summary.observations = this.data.rows.length;
     
     this.samples = this.data.columns.map((c, i) => {
+      c.metadata['phinchID'] = i;
       return {
         phinchName: c.metadata.phinchID ? c.id : '',
         sampleName: c.id,
@@ -71,18 +73,43 @@ class DataContainer {
         id: i + 1,
       };
     });
-    // this.observations = this.data.rows.map((r, i) => {
-    //   if (i < 10) {
-    //     console.log(r);
-    //   }
-    //   return r;
-    // });
+    this.observations = this.data.rows.map((r, i) => {
+      r.metadata['phinchID'] = i;
+      return r;
+    });
     /* 
       SIDE EFFECTS
     */
   }
   getData() {
     return this.data;
+  }
+
+  applyFiltersToData(columns) {
+
+    // Modify Data
+    const filteredData = Object.assign({}, this.data);
+    // 1. columns - apply this from filter.state.data
+    filteredData.columns = columns;
+    // 2. data - filter by column id
+    const columnIDs = columns.map(c => c.metadata.phinchID);
+    filteredData.data = filteredData.data.filter((d) => {      
+      return (columnIDs.indexOf(d[1]) !== -1);
+    });
+    // 3. rows - filter by row ids in data
+    const rowIDs = [... new Set(filteredData.data.map(d => d[0]))];
+    filteredData.rows = this.observations.filter((r) => {
+      return (rowIDs.indexOf(r.metadata.phinchID) !== -1);
+    });
+
+    //
+    // Modify Metadata
+    filteredData.generated_by = 'Phinch 2.0'
+    filteredData.date = new Date().toISOString();
+    filteredData.shape = [filteredData.rows.length, filteredData.columns.length];
+    //
+
+    return filteredData;
   }
 }
 
