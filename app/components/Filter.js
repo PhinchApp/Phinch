@@ -31,16 +31,14 @@ export default class Filter extends Component {
     this.state = {
       summary: DataContainer.getSummary(),
       data: DataContainer.getSamples(),
-      observations: 0,
       deleted: [],
+      names: {},
       height: window.innerHeight,
       filters: {},
       result: null,
       showHidden: false,
       loading: false,
     };
-
-    this.state.observations = this.state.summary.observations;
 
     this.init = getProjectFilters(this.state.summary.path, this.state.summary.name);
 
@@ -143,6 +141,7 @@ export default class Filter extends Component {
         }
       });
       this.state.deleted = this.init.deleted;
+      this.state.names = this.init.names;
     }
 
     this.columns = [
@@ -266,7 +265,7 @@ export default class Filter extends Component {
 
   componentDidMount() {
     window.addEventListener('resize', this.updateDimensions);
-    this.applyFilters(this.state.filters, this.state.deleted);
+    this.applyFilters(this.state.filters, this.state.names, this.state.deleted);
   }
 
   componentWillUnmount() {
@@ -339,12 +338,17 @@ export default class Filter extends Component {
       }
       filters[k] = filter;
     });
-    this.applyFilters(filters, this.state.deleted);
+    this.applyFilters(filters, this.state.names, this.state.deleted);
   }
 
-  applyFilters(filters, deleted) {
+  applyFilters(filters, names, deleted) {
     const deletedSamples = deleted.map(d => d.sampleName);
-    const data = DataContainer.getSamples().filter((d, i) => {
+    const data = DataContainer.getSamples().map((d, i) => {
+      if (names[d.sampleName]) {
+        d.phinchName = names[d.sampleName];
+      }
+      return d;
+    }).filter((d, i) => {
       let include = true;
       if (deletedSamples.includes(d.sampleName)) {
         include = false;
@@ -377,7 +381,7 @@ export default class Filter extends Component {
   updateChecks(attribute, type, value) {
     const filters = this.state.filters;
     filters[attribute].range[type] = value;
-    this.applyFilters(filters, this.state.deleted);
+    this.applyFilters(filters, this.state.names, this.state.deleted);
   }
 
   updateFilters(attribute, min, max) {
@@ -404,7 +408,7 @@ export default class Filter extends Component {
       min: minValue,
       max: maxValue,
     };
-    this.applyFilters(filters, this.state.deleted);
+    this.applyFilters(filters, this.state.names, this.state.deleted);
   }
 
   displayFilters() {
@@ -504,13 +508,15 @@ export default class Filter extends Component {
   }
 
   updatePhinchName(e, r) {
+    const names = this.state.names;
     const data = this.state.data.map((d) => {
       if (d.sampleName === r.sampleName) {
         d.phinchName = e.target.value;
       }
+      names[d.sampleName] = d.phinchName;
       return d;
     });
-    this.setState({data});
+    this.setState({data, names});
   }
 
   removeRows(rows) {
@@ -624,7 +630,14 @@ export default class Filter extends Component {
           </div>
           <div className={styles.button}>
             <div className={styles.heading} onClick={() => { 
-              setProjectFilters(this.state.summary.path, this.state.summary.name, this.state.filters, this.state.deleted, this.setResult);
+              setProjectFilters(
+                this.state.summary.path,
+                this.state.summary.name,
+                this.state.filters,
+                this.state.names,
+                this.state.deleted,
+                this.setResult,
+                );
             }}>
               <Link to='/vis' style={{color: 'white', textDecoration: 'none'}}>
                 Save & View <div className={styles.arrow} style={{transform: `rotate(${90}deg)`}}>⌃</div><br />

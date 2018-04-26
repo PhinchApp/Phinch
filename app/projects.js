@@ -77,11 +77,12 @@ export function exportProjectData(path, name, data, callback) {
   }
 }
 
-export function setProjectFilters(path, name, filters, deleted, callback) {
+export function setProjectFilters(path, name, filters, names, deleted, callback) {
   name = name.replace('.biom', '.json');
   const metadataPath = join('/', ...path, name);
   const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
   metadata.filters = filters;
+  metadata.names = names;
   metadata.deleted = deleted;
   try {
     fs.writeFileSync(metadataPath, JSON.stringify(metadata));
@@ -96,9 +97,11 @@ export function getProjectFilters(path, name) {
   const metadataPath = join('/', ...path, name);
   const metadata = path.length ? JSON.parse(fs.readFileSync(metadataPath, 'utf8')) : {};
   const filters = metadata['filters'] ? metadata['filters'] : {};
+  const names = metadata['names'] ? metadata['names'] : {};
   const deleted = metadata['deleted'] ? metadata['deleted'] : [];
   return {
     filters,
+    names,
     deleted,
   };
 }
