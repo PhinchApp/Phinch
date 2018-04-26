@@ -154,10 +154,6 @@
   min-width: 205px;
   margin-right: 0.25rem;
 }
-.remove {
-  /*width: 20px;*/
-  /*margin-right: 0.25rem;*/
-}
 
 .arrow {
   display: inline-block;
@@ -191,8 +187,10 @@
 
 .button {
   cursor: pointer;
-  padding: 0.75rem;
+  padding: 0.25rem;
   display: inline-block;
+  vertical-align: top;
+  max-width: 124px;
 }
 
 .error {

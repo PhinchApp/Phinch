@@ -5,18 +5,6 @@
   font-size: 0.7rem;
 }
 
-.loader {
-  position: absolute;
-  width: 100vw;
-  height: 100vh;
-  z-index: 10;
-  background: rgba(0, 0, 0, 0.35);
-}
-.loader img {
-  display: block;
-  margin: 45vh auto;
-}
-
 .section {
   display: inline-block;
   height: 100vh;

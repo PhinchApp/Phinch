@@ -1,17 +1,16 @@
-// @flow
 import React, { Component } from 'react';
 import { Redirect } from 'react-router';
 
 import loadFile from '../DataLoader';
 import DataContainer from '../DataContainer';
-
 import { getProjects, getSamples } from '../projects.js';
+
 import ProjectList from './ProjectList.js';
 import LinkList from './LinkList.js';
+import Loader from './Loader.js';
 
 import styles from './Home.css';
 import logo from 'images/phinch.png';
-import loading from 'images/loading.gif';
 
 export default class Home extends Component {
   constructor(props) {
@@ -55,7 +54,6 @@ export default class Home extends Component {
   }
 
   render() {
-    const loader = this.state.loading ? <div className={styles.loader}><img src={loading} alt='loading' /></div> : '';
     const redirect = (this.state.redirect === null) ? '' : <Redirect push to={this.state.redirect} />;
     const links = LinkList();
     const projects = ProjectList({projectList: this.state.projects, click: this.click});
@@ -63,7 +61,7 @@ export default class Home extends Component {
     return (
       <div>
         <div className={styles.container} data-tid='container'>
-          {loader}
+          <Loader loading={this.state.loading} />
           {redirect}
           <div className={`${styles.section} ${styles.left}`}>
             <div className={`${styles.area} ${styles.about}`}>

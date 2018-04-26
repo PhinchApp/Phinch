@@ -1,4 +1,3 @@
-// @flow
 import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 
@@ -11,6 +10,7 @@ import { setProjectFilters, getProjectFilters, exportProjectData } from '../proj
 import FrequencyChart from './FrequencyChart';
 import FilterChart from './FilterChart';
 import CheckBoxes from './CheckBoxes';
+import Loader from './Loader';
 
 import styles from './Filter.css';
 import logo from 'images/phinch.png';
@@ -31,12 +31,16 @@ export default class Filter extends Component {
     this.state = {
       summary: DataContainer.getSummary(),
       data: DataContainer.getSamples(),
+      observations: 0,
       deleted: [],
       height: window.innerHeight,
       filters: {},
       result: null,
       showHidden: false,
+      loading: false,
     };
+
+    this.state.observations = this.state.summary.observations;
 
     this.init = getProjectFilters(this.state.summary.path, this.state.summary.name);
 
@@ -209,7 +213,7 @@ export default class Filter extends Component {
         key: 'drag',
         render: (r) => (
           <div className={styles.cell}>
-            <div className={styles.remove}>
+            <div>
               <div className={styles.delete} style={{'transform': 'rotate(90deg)'}}>||</div>
             </div>
           </div>
@@ -221,7 +225,7 @@ export default class Filter extends Component {
         key: 'remove',
         render: (r) => (
           <div className={styles.cell}>
-            <div className={styles.remove} onClick={() => { this.removeRows([r]) }}>
+            <div onClick={() => { this.removeRows([r]) }}>
               <div className={styles.delete}>x</div>
             </div>
           </div>
@@ -243,7 +247,7 @@ export default class Filter extends Component {
       key: 'remove',
       render: (r) => (
         <div className={styles.cell}>
-          <div className={styles.remove} onClick={() => { this.restoreRows([r]) }}>
+          <div onClick={() => { this.restoreRows([r]) }}>
             <div className={styles.delete}>⤴</div>
           </div>
         </div>
@@ -254,6 +258,7 @@ export default class Filter extends Component {
     this.clearResult = this.clearResult.bind(this);
     this.updateChecks = this.updateChecks.bind(this);
     this.getSortArrow = this.getSortArrow.bind(this);
+    this.applyFilters = this.applyFilters.bind(this);
     this.resetFilters = this.resetFilters.bind(this);
     this.updateFilters = this.updateFilters.bind(this);
     this.updateDimensions = this.updateDimensions.bind(this);
@@ -310,7 +315,8 @@ export default class Filter extends Component {
     this.timeout = setTimeout(() => {
       this.clearResult();
     }, 3000);
-    this.setState({result});
+    const loading = false;
+    this.setState({result, loading});
   }
 
   clearResult() {
@@ -578,6 +584,7 @@ export default class Filter extends Component {
       );
     return (
       <div className={styles.container}>
+        <Loader loading={this.state.loading} />
         {redirect}
         <div className={styles.header}>
           <div className={styles.logo}>
@@ -604,12 +611,13 @@ export default class Filter extends Component {
           <div className={styles.button}>
             <div className={styles.heading} onClick={() => {
               // show picker to allow custom name?
-              //
-              // FIRST Send this info to DataContainer via function here
-              const biom = DataContainer.applyFiltersToData(this.state.data);
-              // THEN save file using project exportProjectData function
-              exportProjectData(this.state.summary.path, this.state.summary.name, biom, this.setResult);
-              //
+              this.setState({ loading: true});
+              setTimeout(() => {
+                // FIRST Send this info to DataContainer via function here
+                const biom = DataContainer.applyFiltersToData(this.state.data);
+                // THEN save file using project exportProjectData function
+                exportProjectData(this.state.summary.path, this.state.summary.name, biom, this.setResult);
+              }, 1);
             }}>
               Export Filtered BIOM File
             </div>
@@ -619,8 +627,8 @@ export default class Filter extends Component {
               setProjectFilters(this.state.summary.path, this.state.summary.name, this.state.filters, this.state.deleted, this.setResult);
             }}>
               <Link to='/vis' style={{color: 'white', textDecoration: 'none'}}>
-                <img src={vis} alt='' style={{width: '112px', height: '24px', margin: '2px 0'}}/><br />
-                Save and View <div className={styles.arrow} style={{transform: `rotate(${90}deg)`}}>⌃</div>
+                Save & View <div className={styles.arrow} style={{transform: `rotate(${90}deg)`}}>⌃</div><br />
+                <img src={vis} alt='' style={{width: '112px', height: '24px', margin: '2px 0'}}/>
               </Link>
             </div>
           </div>
