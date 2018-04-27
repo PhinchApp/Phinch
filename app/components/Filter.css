@@ -175,6 +175,9 @@
   vertical-align: middle;
   border-radius: 10px;
 }
+.drag {
+  cursor: move;
+}
 
 .modal {
   position: relative;

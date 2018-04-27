@@ -75,12 +75,10 @@ export default class Filter extends Component {
         const unit = units.length ? units[0] : '';
         let groupKey = 'string';
         let filterValues = values.slice();
+        /*
+          TODO: Test w/ Additional Date / Metadata Types
+        */
         if (k.toLowerCase().trim().includes('date') || k.toLowerCase().trim().includes('year')) {
-          /*
-            TODO: 
-              Make sure you handle all date types
-              Convert to GMT for consistency?
-          */
           groupKey = 'date';
           filterValues = values.slice().map((d, i) => {
             if (k.toLowerCase().trim().includes('date')) {
@@ -142,6 +140,9 @@ export default class Filter extends Component {
       });
       this.state.deleted = this.init.deleted;
       this.state.names = this.init.names;
+      if (this.init.sort) {
+        this.sort = this.init.sort;
+      }
     }
 
     this.columns = [
@@ -213,7 +214,7 @@ export default class Filter extends Component {
         render: (r) => (
           <div className={styles.cell}>
             <div>
-              <div className={styles.delete} style={{'transform': 'rotate(90deg)'}}>||</div>
+              <div className={`${styles.delete} ${styles.drag}`} style={{'transform': 'rotate(90deg)'}}>||</div>
             </div>
           </div>
         ),
@@ -253,6 +254,9 @@ export default class Filter extends Component {
       ),
     });
 
+    this.dragEnd = this.dragEnd.bind(this);
+    this.dragOver = this.dragOver.bind(this);
+    this.dragStart = this.dragStart.bind(this);
     this.setResult = this.setResult.bind(this);
     this.clearResult = this.clearResult.bind(this);
     this.updateChecks = this.updateChecks.bind(this);
@@ -277,14 +281,12 @@ export default class Filter extends Component {
     this.setState({height:window.innerHeight});
   }
 
-
   filterFloat(value) {
     if (/^(\-|\+)?([0-9]+(\.[0-9]+)?|Infinity)$/.test(value)) {
       return Number(value);
     }
     return null;
   }
-
 
   generateTableTitle(key, click) {
     if (key === 'remove' || key === 'chart' || key === 'drag') {
@@ -296,7 +298,7 @@ export default class Filter extends Component {
       sampleName: 'Sample Name',
       reads: 'Sequence Reads',
     };
-    const onClick = click ? (() => { this.sortBy(key) }) : (() => {});
+    const onClick = click ? (() => { this.sortBy(key, this.state.data, true) }) : (() => {});
     const arrow = click ? (this.getSortArrow(key)) : '';
     return (
       <div
@@ -307,7 +309,6 @@ export default class Filter extends Component {
       </div>
     );
   }
-
 
   setResult(value) {
     const result = value;
@@ -322,7 +323,6 @@ export default class Filter extends Component {
     const result = null;
     this.setState({result});
   }
-
 
   resetFilters() {
     const filters = {};
@@ -343,7 +343,7 @@ export default class Filter extends Component {
 
   applyFilters(filters, names, deleted) {
     const deletedSamples = deleted.map(d => d.sampleName);
-    const data = DataContainer.getSamples().map((d, i) => {
+    let data = DataContainer.getSamples().map((d, i) => {
       if (names[d.sampleName]) {
         d.phinchName = names[d.sampleName];
       }
@@ -375,6 +375,8 @@ export default class Filter extends Component {
       });
       return include;
     });
+    this.sort.reverse = !this.sort.reverse;
+    data = this.sortBy(this.sort.key, data, false);
     this.setState({filters, data});
   }
 
@@ -555,27 +557,70 @@ export default class Filter extends Component {
     }
   }
 
-  sortBy(key) {
-    if (this.state.data.length) {
-      this.sort.key = key;
-      const data = this.state.data.sort((a, b) => {
-        if (this.sort.reverse) {
-          if (a[key] < b[key]) return -1;
-          if (a[key] > b[key]) return 1;
-          return 0;
-        } else {
-          if (b[key] < a[key]) return -1;
-          if (b[key] > a[key]) return 1;
-          return 0;
-        }
-      });
-      this.sort.reverse = !this.sort.reverse;
-      this.columns = this.columns.map((c) => {
-        c.title = this.generateTableTitle(c.key, true);
-        return c;
-      });
+  sortBy(key, indata, setstate) {
+    this.sort.key = key;
+    const data = indata.sort((a, b) => {
+      if (this.sort.reverse) {
+        if (a[key] < b[key]) return -1;
+        if (a[key] > b[key]) return 1;
+        return 0;
+      } else {
+        if (b[key] < a[key]) return -1;
+        if (b[key] > a[key]) return 1;
+        return 0;
+      }
+    }).map((d, i) => {
+      d.order = i;
+      return d;
+    });
+    this.sort.reverse = !this.sort.reverse;
+    this.columns = this.columns.map((c) => {
+      c.title = this.generateTableTitle(c.key, true);
+      return c;
+    });
+    if (setstate) {
       this.setState({data});
+    } else {
+      return data;
     }
+  }
+
+  dragEnd(e) {
+    let target = Number(this.over.dataset.id);
+    if ((e.clientY - this.over.offsetTop) > (this.over.offsetHeight / 2)) {
+      target++;
+    }
+    if (this.dragged <= target) {
+      target--;
+    }
+    //
+    let data = this.state.data;
+    data.splice(target, 0, data.splice(this.dragged, 1)[0]);
+    data = data.map((d, i) => {
+      d.order = i;
+      return d;
+    });
+    // 
+    this.over.style = null;
+    this.over = null;
+    this.dragged = null;
+    //
+    this.sort.reverse = !this.sort.reverse;
+    this.sortBy('order', data, true);
+  }
+  dragOver(e) {
+    e.preventDefault();
+    if (this.over) {
+      this.over.style = null;
+    }
+    this.over = e.currentTarget;
+    // I know this isn't the React way, but re-rendering the whole table takes forever
+    this.over.style = 'background: #e4e4e4; height: 3rem; vertical-align: top;';
+  }
+  dragStart(e) {
+    this.dragged = Number(e.currentTarget.dataset.id);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', null);
   }
 
   render() {
@@ -618,10 +663,9 @@ export default class Filter extends Component {
             <div className={styles.heading} onClick={() => {
               // show picker to allow custom name?
               this.setState({ loading: true});
+              // this is more consistent than the setState callback
               setTimeout(() => {
-                // FIRST Send this info to DataContainer via function here
                 const biom = DataContainer.applyFiltersToData(this.state.data);
-                // THEN save file using project exportProjectData function
                 exportProjectData(this.state.summary.path, this.state.summary.name, biom, this.setResult);
               }, 1);
             }}>
@@ -636,6 +680,7 @@ export default class Filter extends Component {
                 this.state.filters,
                 this.state.names,
                 this.state.deleted,
+                this.sort,
                 this.setResult,
                 );
             }}>
@@ -665,16 +710,24 @@ export default class Filter extends Component {
           <div className={`${styles.section} ${styles.right}`}>
             <Table
               className={styles.table}
-              rowClassName={(r, i) => {
-                if (i%2 === 0) {
-                  return styles.grey;
-                }
-                return;
-              }}
               scroll={{ y: (this.state.height - 195) }}
               columns={this.columns}
               data={this.state.data}
               rowKey={row => row.id}
+              onRow={(r, i) => {
+                const className = (i%2 === 0) ? (
+                  styles.grey
+                ) : '';
+                return {
+                  'data-id': r.order,
+                  'className': className,
+                  'key': r.sampleName,
+                  'draggable': 'true',
+                  'onDragEnd': this.dragEnd,
+                  'onDragOver': this.dragOver,
+                  'onDragStart': this.dragStart,
+                }
+              }}
             />
             {this.displayHiddenSamples()}
           </div>
