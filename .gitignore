@@ -1,5 +1,5 @@
 # biomhandler binary
-biomhandler/dist/biomhandler
+biomhandler/dist/*
 
 # Logs
 logs
