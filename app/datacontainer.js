@@ -10,6 +10,7 @@ class DataContainer {
       observations: 0,
     };
     this.data = {};
+    this.filteredData = {};
     // this.filters = {};
     this.samples = [];
     this.observations = [];
@@ -46,7 +47,6 @@ class DataContainer {
 
   setData(data) {
     this.data = data;
-    // console.log(this.data);
 
     /* 
       SIDE EFFECTS
@@ -63,7 +63,7 @@ class DataContainer {
     this.summary.samples = this.data.columns.length;
     this.summary.observations = this.data.rows.length;
     
-    this.samples = this.data.columns.map((c, i) => {
+    this.data.columns = this.data.columns.map((c, i) => {
       c.metadata['phinchID'] = i;
       return {
         phinchName: c.metadata.phinchID ? c.id : '',
@@ -73,10 +73,13 @@ class DataContainer {
         id: i + 1,
       };
     });
-    this.observations = this.data.rows.map((r, i) => {
+    this.samples = this.data.columns;
+
+    this.data.rows = this.data.rows.map((r, i) => {
       r.metadata['phinchID'] = i;
       return r;
     });
+    this.observations = this.data.rows;
     /* 
       SIDE EFFECTS
     */
@@ -86,30 +89,32 @@ class DataContainer {
   }
 
   applyFiltersToData(columns) {
-
     // Modify Data
     const filteredData = Object.assign({}, this.data);
     // 1. columns - apply this from filter.state.data
     filteredData.columns = columns;
     // 2. data - filter by column id
     const columnIDs = columns.map(c => c.metadata.phinchID);
-    filteredData.data = filteredData.data.filter((d) => {      
+    filteredData.data = filteredData.data.filter((d) => {
       return (columnIDs.indexOf(d[1]) !== -1);
     });
+    // Don't do this so that the rows match
     // 3. rows - filter by row ids in data
-    const rowIDs = [... new Set(filteredData.data.map(d => d[0]))];
-    filteredData.rows = this.observations.filter((r) => {
-      return (rowIDs.indexOf(r.metadata.phinchID) !== -1);
-    });
-
+    // const rowIDs = [... new Set(filteredData.data.map(d => d[0]))];
+    // filteredData.rows = this.observations.filter((r) => {
+    //   return (rowIDs.indexOf(r.metadata.phinchID) !== -1);
+    // });
     //
     // Modify Metadata
     filteredData.generated_by = 'Phinch 2.0'
     filteredData.date = new Date().toISOString();
     filteredData.shape = [filteredData.rows.length, filteredData.columns.length];
     //
-
+    this.filteredData = filteredData;
     return filteredData;
+  }
+  getFilteredData() {
+    return this.filteredData;
   }
 }
 

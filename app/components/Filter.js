@@ -38,7 +38,10 @@ export default class Filter extends Component {
       result: null,
       showHidden: false,
       loading: false,
+      redirect: null,
     };
+
+    this.state.redirect = (this.state.summary.name && this.state.summary.size) ? null : '/';
 
     this.init = getProjectFilters(this.state.summary.path, this.state.summary.name);
 
@@ -144,6 +147,8 @@ export default class Filter extends Component {
         this.sort = this.init.sort;
       }
     }
+
+    // console.log(this.state.data.map(d => d.reads).sort());
 
     this.columns = [
       {
@@ -264,11 +269,13 @@ export default class Filter extends Component {
     this.applyFilters = this.applyFilters.bind(this);
     this.resetFilters = this.resetFilters.bind(this);
     this.updateFilters = this.updateFilters.bind(this);
+    this.redirectToVis = this.redirectToVis.bind(this);
     this.updateDimensions = this.updateDimensions.bind(this);
   }
 
   componentDidMount() {
     window.addEventListener('resize', this.updateDimensions);
+
     this.applyFilters(this.state.filters, this.state.names, this.state.deleted);
   }
 
@@ -623,8 +630,17 @@ export default class Filter extends Component {
     e.dataTransfer.setData('text/html', null);
   }
 
+  redirectToVis(result) {
+    if (result === 'error') {
+      this.setResult(result);
+    } else {
+      this.setState({redirect: '/vis'});
+    }
+  }
+
   render() {
-    const redirect = (this.state.summary.name && this.state.summary.size) ? '' : <Redirect push to='/' />;
+    // const redirect = (this.state.summary.name && this.state.summary.size) ? '' : <Redirect push to='/' />;
+    const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
     const resultStyle = this.state.result === 'error' ? styles.error : styles.success;
     const result = (
       <div className={styles.button}>
@@ -660,6 +676,7 @@ export default class Filter extends Component {
             </tbody>
           </table>
           <div className={styles.button}>
+            {/*
             <div className={styles.heading} onClick={() => {
               // show picker to allow custom name?
               this.setState({ loading: true});
@@ -671,9 +688,10 @@ export default class Filter extends Component {
             }}>
               Export Filtered BIOM File
             </div>
+            */}
           </div>
           <div className={styles.button}>
-            <div className={styles.heading} onClick={() => { 
+            <div className={styles.heading} onClick={() => {
               setProjectFilters(
                 this.state.summary.path,
                 this.state.summary.name,
@@ -684,10 +702,27 @@ export default class Filter extends Component {
                 this.setResult,
                 );
             }}>
-              <Link to='/vis' style={{color: 'white', textDecoration: 'none'}}>
-                Save & View <div className={styles.arrow} style={{transform: `rotate(${90}deg)`}}>⌃</div><br />
-                <img src={vis} alt='' style={{width: '112px', height: '24px', margin: '2px 0'}}/>
-              </Link>
+              Save Filters
+            </div>
+          </div>
+          <div className={styles.button}>
+            <div className={styles.heading} onClick={() => {
+              this.setState({ loading: true});
+              setTimeout(() => {
+                DataContainer.applyFiltersToData(this.state.data);
+                setProjectFilters(
+                  this.state.summary.path,
+                  this.state.summary.name,
+                  this.state.filters,
+                  this.state.names,
+                  this.state.deleted,
+                  this.sort,
+                  this.redirectToVis,
+                  );
+              }, 1);
+            }}>
+              Save & View <div className={styles.arrow} style={{transform: `rotate(${90}deg)`}}>⌃</div><br />
+              <img src={vis} alt='' style={{width: '112px', height: '24px', margin: '2px 0'}}/>
             </div>
           </div>
           {result}

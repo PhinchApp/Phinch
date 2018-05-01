@@ -77,7 +77,8 @@ export default class NewProject extends Component {
     this.updateValid(true);
     this.updateObservations(Number.parseFloat(data.rows.length).toLocaleString());
     this.updateLoading(false);
-    createProject({name: this.state.name, data});
+    const filepath = createProject({name: this.state.name, data});
+    DataContainer.setSummary(filepath);
   }
 
   failure() {

@@ -123,9 +123,12 @@ export function createProject(project) {
   }
   //
   fs.mkdirSync(join(phinchdir, foldername));
-  fs.writeFileSync(join(phinchdir, foldername, `${foldername}.biom`), JSON.stringify(project.data));
+  const filepath = join(phinchdir, foldername, `${foldername}.biom`);
+  fs.writeFileSync(filepath, JSON.stringify(project.data));
   fs.writeFileSync(join(phinchdir, foldername, `${foldername}.json`), JSON.stringify({name:foldername}));
   fs.writeFileSync(join(phinchdir, foldername, `${foldername}.png`), sampleicon.replace(/^data:image\/png;base64,/, ''), 'base64');
+  //
+  return filepath;
 }
 
 export function getProjects() {

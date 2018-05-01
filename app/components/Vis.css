@@ -1,0 +1,38 @@
+.container {
+  height: 100vh;
+  padding: 1rem;
+}
+
+.logo {
+  width: 140px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.button {
+  cursor: pointer;
+  margin: 0.25rem;
+  padding: 0.5rem 0.25rem;
+  display: inline-block;
+}
+
+.selected {
+  background: #2b2b2b;
+  color: white;
+}
+
+.row {
+  margin: 0;
+  padding: 0;
+  line-height: 1rem;
+  display: block;
+  vertical-align: top;
+}
+
+.rowLabel {
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  width: 36px;
+  display: inline-block;
+}

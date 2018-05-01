@@ -4,7 +4,7 @@
 }
 
 .header {
-  margin-bottom: 1rem;
+  /*margin-bottom: 1rem;*/
 }
 
 .table th,
@@ -49,6 +49,11 @@
 }
 
 .summary {
+  max-width: 266px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
   margin: 0;
   padding: 0.125rem 0;
 }
@@ -190,10 +195,15 @@
 
 .button {
   cursor: pointer;
-  padding: 0.25rem;
+  padding: 0.5rem 0.25rem;
+  margin: 0.25rem;
   display: inline-block;
   vertical-align: top;
   max-width: 124px;
+}
+
+.button .heading {
+  height: 57px;
 }
 
 .error {

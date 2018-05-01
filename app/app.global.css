@@ -64,6 +64,12 @@ button {
   cursor: pointer;
 }
 
+.container {
+  height: 100vh;
+  padding: 1rem;
+}
+
+
 .label {
   padding-right: 1.5rem;
   font-weight: 400;
