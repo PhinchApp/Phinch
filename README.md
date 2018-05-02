@@ -8,7 +8,7 @@
 
 ## Install
 
-Clone the repo via git:
+First, clone the repo via git:
 
 ```bash
 git clone https://github.com/PhinchApp/Phinch.git your-project-name
@@ -19,6 +19,15 @@ Then install dependencies with yarn or `npm install`.
 ```bash
 $ cd phinch
 $ yarn
+```
+
+Finally, here's *the tricky part*. Phinch uses a python script in the  `biomhandler` folder to load .biom files. To make Phinch easy to install, we use PyInstaller to package that script into a standablone executable. Follow these steps to generate the executable:
+
+```bash
+virtualenv ./virtualenv
+source ./virtualenv/bin/activate
+pip install -r requirements.txt
+pyinstaller biomhandler.spec
 ```
 
 ## Run
