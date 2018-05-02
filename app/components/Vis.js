@@ -28,11 +28,11 @@ export default class Vis extends Component {
 
     this.metrics = {
       padding: 16,
-      barHeight: 14,
+      lineHeight: 14,
+      barHeight: 12,
       height: 600,
-      digits: 3,
-      digitPadding: 2,
-      initoffset: 32,
+      idWidth: 32,
+      nameWidth: 144,
     };
 
     this.time = {
@@ -249,8 +249,11 @@ export default class Vis extends Component {
         // this.scales.c.domain([sequence.length, 1]);
         return (
           <div key={d.sampleName} className={styles.row}>
-            <div className={styles.rowLabel} style={{width: this.metrics.initoffset}}>
+            <div className={styles.rowLabel} style={{width: this.metrics.idWidth}}>
               {d.phinchID}
+            </div>
+            <div className={styles.rowLabel} style={{width: this.metrics.nameWidth}}>
+              {d.phinchName}
             </div>
             <StackedBar
               data={sequence}
@@ -269,10 +272,7 @@ export default class Vis extends Component {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
 
     if (this.state.data.length) {
-      this.metrics.height = (this.state.data.length * this.metrics.padding);
-      this.metrics.digits = this.state.data.length.toString().length;
-      this.metrics.digitPadding = Math.floor(this.metrics.digits / 2) + 1;
-      this.metrics.initoffset = (this.metrics.padding * this.metrics.digitPadding);
+      this.metrics.height = (this.state.data.length * this.metrics.lineHeight);
     }
 
     const levels = this.levels.map(l => {
@@ -289,8 +289,9 @@ export default class Vis extends Component {
     });
     
     this.scales.x
-      .domain([0, Math.max(...this.state.data.map(d => d.reads))])
-      .range([0, (this.state.width - (this.metrics.padding * (2 + this.metrics.digitPadding)))]);
+      .domain([1, Math.max(...this.state.data.map(d => d.reads))])
+      .range([1, (this.state.width - ((this.metrics.padding * 2) + this.metrics.idWidth + this.metrics.nameWidth))])
+      .clamp();
 
     const bars = this.renderBars(this.state.data);
 

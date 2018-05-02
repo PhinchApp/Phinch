@@ -24,7 +24,7 @@
 .row {
   margin: 0;
   padding: 0;
-  line-height: 1rem;
+  height: 14px;
   display: block;
   vertical-align: top;
 }
@@ -32,7 +32,10 @@
 .rowLabel {
   margin: 0;
   padding: 0;
-  font-size: 14px;
-  width: 36px;
+  font-size: 12px;
+  line-height: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   display: inline-block;
 }
