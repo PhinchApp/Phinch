@@ -1,0 +1,8 @@
+future==0.16.0
+h5py==2.7.1
+numpy==1.14.3
+pandas==0.22.0
+python-dateutil==2.7.2
+pytz==2018.4
+scipy==1.0.1
+six==1.11.0
