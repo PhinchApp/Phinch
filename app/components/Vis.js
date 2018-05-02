@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 
 import { nest } from 'd3-collection';
-import { scaleLinear, scaleLog, scaleOrdinal } from 'd3-scale';
+import { scaleLinear, scaleOrdinal } from 'd3-scale';
 import { interpolateRainbow } from 'd3-scale-chromatic';
 
 import DataContainer from '../DataContainer';
