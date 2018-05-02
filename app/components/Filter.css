@@ -145,7 +145,7 @@
   min-width: 150px;
   margin-right: 0.25rem;
 }
-.id {
+.biomid {
   width: 10vw;
   min-width: 100px;
   margin-right: 0.25rem;
@@ -196,7 +196,6 @@
 .button {
   cursor: pointer;
   padding: 0.5rem 0.25rem;
-  margin: 0.25rem;
   display: inline-block;
   vertical-align: top;
   max-width: 124px;

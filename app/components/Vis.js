@@ -309,7 +309,7 @@ export default class Vis extends Component {
           Levels
           {levels}
         </div>
-        <div style={{height: (this.state.height - 80), overflowY: 'scroll'}}>
+        <div style={{height: (this.state.height - 195), overflowY: 'scroll'}}>
           {bars}
         </div>
       </div>

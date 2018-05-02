@@ -25,7 +25,7 @@ export default class Filter extends Component {
 
     this.sort = {
       reverse: false,
-      key: 'id',
+      key: 'biomid',
     };
 
     this.state = {
@@ -169,11 +169,11 @@ export default class Filter extends Component {
         ),
       },
       {
-        title: this.generateTableTitle('id', true),
-        dataIndex: 'id',
-        key: 'id',
+        title: this.generateTableTitle('biomid', true),
+        dataIndex: 'biomid',
+        key: 'biomid',
         render: (t) => (
-          <div className={styles.id}>
+          <div className={styles.biomid}>
             <div className={styles.cell}>
               {t}
             </div>
@@ -198,7 +198,10 @@ export default class Filter extends Component {
         key: 'reads',
         render: (t) => (
           <div className={styles.cell}>
-            {t.toLocaleString()}
+            {
+              t
+              /*t.toLocaleString()*/
+            }
           </div>
         ),
       },
@@ -301,7 +304,7 @@ export default class Filter extends Component {
     }
     const names = {
       phinchName: 'Phinch Name',
-      id: 'BIOM ID',
+      biomid: 'BIOM ID',
       sampleName: 'Sample Name',
       reads: 'Sequence Reads',
     };
@@ -675,8 +678,8 @@ export default class Filter extends Component {
               </tr>
             </tbody>
           </table>
+          {/*
           <div className={styles.button}>
-            {/*
             <div className={styles.heading} onClick={() => {
               // show picker to allow custom name?
               this.setState({ loading: true});
@@ -688,8 +691,8 @@ export default class Filter extends Component {
             }}>
               Export Filtered BIOM File
             </div>
-            */}
           </div>
+          */}
           <div className={styles.button}>
             <div className={styles.heading} onClick={() => {
               setProjectFilters(

@@ -51,7 +51,7 @@ class DataContainer {
     /* 
       SIDE EFFECTS
     */
-    const seqeuncereads = [];
+    const seqeuncereads = {};
     this.data.data.forEach((d) => {
       if (seqeuncereads[d[1]]) {
         seqeuncereads[d[1]] += d[2];
@@ -59,24 +59,37 @@ class DataContainer {
         seqeuncereads[d[1]] = d[2];
       }
     });
+    // const seqids = Object.keys(seqeuncereads).map(k => parseInt(k))
+    // console.log(seqids);
+    // const colids = this.data.columns.slice().map(c => c.metadata.phinchID)
+    // console.log(colids);
+    // const diff = seqids.filter(x => !colids.includes(x))
+    // console.log(diff);
 
     this.summary.samples = this.data.columns.length;
     this.summary.observations = this.data.rows.length;
     
+    // console.log(this.data.columns.slice());
+
     this.data.columns = this.data.columns.map((c, i) => {
+      // c.metadata['phinchID'] = c.metadata['phinchID'] ? c.metadata['phinchID'] : i;
       c.metadata['phinchID'] = i;
       return {
-        phinchName: c.metadata.phinchID ? c.id : '',
+        biomid: i + 1,
+        id: c.id,
         sampleName: c.id,
+        phinchName: c.phinchName ? c.phinchName : ( c.metadata.phinchName ? c.metadata.phinchName : c.id),
+        // phinchName: name, // c.metadata.phinchID ? c.id : '',
         metadata: c.metadata,
         reads: seqeuncereads[i],
-        id: i + 1,
       };
     });
+    // console.log(this.data.columns.slice()[2]);
     this.samples = this.data.columns;
 
     this.data.rows = this.data.rows.map((r, i) => {
       r.metadata['phinchID'] = i;
+      // r.metadata['phinchID'] = r.metadata['phinchID'] ? r.metadata['phinchID'] : i;
       return r;
     });
     this.observations = this.data.rows;
