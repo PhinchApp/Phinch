@@ -66,7 +66,7 @@ class DataContainer {
     this.data.columns = this.data.columns.map((c, i) => {
       c.metadata['phinchID'] = i;
       return {
-        phinchName: 'phinchID' in c.metadata ? c.id : '',
+        phinchName: c.phinchName ? c.phinchName : ('phinchID' in c.metadata ? c.id : ''),
         sampleName: c.id,
         metadata: c.metadata,
         reads: seqeuncereads[i],
