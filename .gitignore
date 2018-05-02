@@ -1,6 +1,7 @@
 # biomhandler binary & virtualenv
 biomhandler/dist/*
 biomhandler/virtualenv/*
+biomhandler/build/**
 
 # Logs
 logs

@@ -48,7 +48,7 @@ class DataContainer {
   setData(data) {
     this.data = data;
 
-    /* 
+    /*
       SIDE EFFECTS
     */
     const seqeuncereads = {};
@@ -68,8 +68,6 @@ class DataContainer {
 
     this.summary.samples = this.data.columns.length;
     this.summary.observations = this.data.rows.length;
-    
-    // console.log(this.data.columns.slice());
 
     this.data.columns = this.data.columns.map((c, i) => {
       // c.metadata['phinchID'] = c.metadata['phinchID'] ? c.metadata['phinchID'] : i;
@@ -79,7 +77,6 @@ class DataContainer {
         id: c.id,
         sampleName: c.id,
         phinchName: c.phinchName ? c.phinchName : ( c.metadata.phinchName ? c.metadata.phinchName : c.id),
-        // phinchName: name, // c.metadata.phinchID ? c.id : '',
         metadata: c.metadata,
         reads: seqeuncereads[i],
       };
@@ -93,7 +90,7 @@ class DataContainer {
       return r;
     });
     this.observations = this.data.rows;
-    /* 
+    /*
       SIDE EFFECTS
     */
   }
