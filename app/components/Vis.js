@@ -7,6 +7,7 @@ import { interpolateRainbow } from 'd3-scale-chromatic';
 
 import DataContainer from '../DataContainer';
 import StackedBar from './StackedBar';
+import StackedBarTooltip from './StackedBarTooltip';
 
 import styles from './Vis.css';
 import logo from 'images/phinch.png';
@@ -22,6 +23,7 @@ export default class Vis extends Component {
       height: window.innerHeight,
       redirect: null,
       level: 1,
+      highlightedDatum: null,
     };
 
     this.levels = [];
@@ -45,10 +47,12 @@ export default class Vis extends Component {
       c: scaleOrdinal(),
     };
 
+    this.totalDataReads = 0;
+
     if (Object.keys(this.state.initdata).length === 0) {
       this.state.redirect = '/';
     } else {
-      
+
       // Autogenerate levels from data
       // TODO: Test w/ addtional data formats
 
@@ -136,6 +140,14 @@ export default class Vis extends Component {
     window.removeEventListener('resize', this.updateDimensions);
   }
 
+  _hoverDatum = (datum, sample, position) => {
+    if (datum == null) {
+      this.setState({ highlightedDatum: null })
+    } else {
+      this.setState({ highlightedDatum: { datum, sample, position }})
+    }
+  }
+
   updateDimensions() {
     this.setState({
       height: window.innerHeight,
@@ -183,8 +195,9 @@ export default class Vis extends Component {
 
   // Move to data container?
   formatTaxonomyData(data, level) {
+    let totalDataReads = 0;
     const formatedData = data.columns.map((c, i) => {
-      
+
       const matches = data.data
         .filter(d => d[1] === c.metadata.phinchID)
         .map(d => {
@@ -206,7 +219,8 @@ export default class Vis extends Component {
             reads: s.values.map(v => v.count).reduce((a, v) => a + v),
           };
         });
-        
+
+      totalDataReads += c.reads;
       return {
         phinchID: c.metadata.phinchID,
         order: c.order,
@@ -217,7 +231,7 @@ export default class Vis extends Component {
         matches: matches,
       };
     });
-
+    this.totalDataReads = totalDataReads;
     return formatedData;
   }
 
@@ -253,12 +267,15 @@ export default class Vis extends Component {
               {d.phinchID}
             </div>
             <StackedBar
+              onHoverDatum={this._hoverDatum}
               data={sequence}
+              sample={d}
               width={this.scales.x(d.reads)}
               height={this.metrics.barHeight}
               xscale={this.scales.x}
               cscale={this.scales.c}
               rainbow={interpolateRainbow}
+              highlightedDatum={this.state.highlightedDatum}
             />
           </div>
         );
@@ -287,13 +304,15 @@ export default class Vis extends Component {
         </div>
       );
     });
-    
+
     this.scales.x
       .domain([0, Math.max(...this.state.data.map(d => d.reads))])
       .range([0, (this.state.width - (this.metrics.padding * (2 + this.metrics.digitPadding)))]);
 
     const bars = this.renderBars(this.state.data);
 
+    const tooltip = this.state.highlightedDatum == null ? null :
+      <StackedBarTooltip {...this.state.highlightedDatum} totalDataReads={this.totalDataReads} />
     return (
       <div className={styles.container}>
         {redirect}
@@ -311,6 +330,7 @@ export default class Vis extends Component {
         </div>
         <div style={{height: (this.state.height - 195), overflowY: 'scroll'}}>
           {bars}
+          {tooltip}
         </div>
       </div>
     );
