@@ -34,6 +34,8 @@ export default class Vis extends Component {
       idWidth: 32,
       nameWidth: 144,
     };
+    this.metrics.chartWidth = this.state.width - ((this.metrics.padding * 4) + (this.metrics.idWidth + this.metrics.nameWidth));
+    this.metrics.chartHeight = this.state.height - 195;
 
     this.time = {
       start: performance.now(),
@@ -137,9 +139,11 @@ export default class Vis extends Component {
   }
 
   updateDimensions() {
+    this.metrics.chartWidth = window.innerWidth - ((this.metrics.padding * 4) + (this.metrics.idWidth + this.metrics.nameWidth));
+    this.metrics.chartHeight = window.innerHeight - 195;
     this.setState({
-      height: window.innerHeight,
       width: window.innerWidth,
+      height: window.innerHeight,
     });
   }
 
@@ -290,10 +294,38 @@ export default class Vis extends Component {
     
     this.scales.x
       .domain([1, Math.max(...this.state.data.map(d => d.reads))])
-      .range([1, (this.state.width - ((this.metrics.padding * 2) + this.metrics.idWidth + this.metrics.nameWidth))])
+      .range([1, this.metrics.chartWidth])
       .clamp();
 
     const bars = this.renderBars(this.state.data);
+
+    const ticks = [0].concat(...this.scales.x.ticks(9)).map(t => {
+      return (
+        <g
+          key={`g-${t}`}
+          transform={`
+            translate(${this.scales.x(t)}, ${(this.metrics.lineHeight)})
+          `}
+        >
+          <text
+            fontSize={10}
+            textAnchor='middle'
+            dy={-4}
+            fill='#808080'
+          >
+            {t.toLocaleString()}
+          </text>
+          <line
+            x1={-1}
+            y1={0}
+            x2={-1}
+            y2={this.metrics.chartHeight}
+            stroke='#808080'
+            strokeWidth={0.5}
+          />
+        </g>
+      );
+    });
 
     return (
       <div className={styles.container}>
@@ -310,7 +342,33 @@ export default class Vis extends Component {
           Levels
           {levels}
         </div>
-        <div style={{height: (this.state.height - 195), overflowY: 'scroll'}}>
+        <div style={{
+          position: 'relative',
+          textAlign: 'center',
+          height: this.metrics.lineHeight * 2,
+          fontSize: this.metrics.barHeight,
+        }}>
+          Sequence Reads
+          <svg style={{
+            position: 'absolute',
+            left: 0,
+            width: (this.state.width - (this.metrics.padding * 2)),
+            height: (this.metrics.chartHeight + (this.metrics.lineHeight * 2)),
+          }}>
+            <g transform={`
+              translate(
+                ${this.metrics.idWidth + this.metrics.nameWidth},
+                ${this.metrics.lineHeight}
+              )
+            `}>
+              {ticks}
+            </g>
+          </svg>
+        </div>
+        <div style={{
+          height: this.metrics.chartHeight,
+          overflowY: 'scroll',
+        }}>
           {bars}
         </div>
       </div>

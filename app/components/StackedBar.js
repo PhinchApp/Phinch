@@ -49,7 +49,7 @@ export default class StackedBar extends Component {
           outline: 'none',
           border: 'none',
           overflow: 'hidden',
-          verticalAlign: 'middle',
+          verticalAlign: 'top',
         }}
       />
     );
