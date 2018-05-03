@@ -27,6 +27,11 @@ export default class Vis extends Component {
       highlightedDatum: null,
     };
 
+    this.sort = {
+      reverse: true,
+      key: 'biomid',
+    };
+
     this.levels = [];
 
     this.metrics = {
@@ -120,7 +125,11 @@ export default class Vis extends Component {
           return l;
         });
 
-      this.state.data = this.formatTaxonomyData(this.state.initdata, this.state.level);
+      this.state.data = this.sortBy(
+        this.sort.key,
+        this.formatTaxonomyData(this.state.initdata, this.state.level),
+        false,
+        );
       // this.updateColorScale(this.state.data);
       this.setColorScale(this.state.data);
     }
@@ -229,6 +238,7 @@ export default class Vis extends Component {
 
       totalDataReads += c.reads;
       return {
+        biomid: c.biomid,
         phinchID: c.metadata.phinchID,
         order: c.order,
         sampleName: c.sampleName,
@@ -259,9 +269,10 @@ export default class Vis extends Component {
   }
 
   renderBars(data) {
-    return data.sort((a, b) => {
-        return a.phinchID - b.phinchID;
-      })
+    // data.sort((a, b) => {
+    //   return a.phinchID - b.phinchID;
+    // })
+    return data
       .map((d, i) => {
         const sequence = d.sequences
           .sort((a, b) => {
@@ -271,7 +282,7 @@ export default class Vis extends Component {
         return (
           <div key={d.sampleName} className={styles.row}>
             <div className={styles.rowLabel} style={{width: this.metrics.idWidth}}>
-              {d.phinchID}
+              {d.biomid}
             </div>
             <div className={styles.rowLabel} style={{width: this.metrics.nameWidth}}>
               {d.phinchName}
@@ -290,6 +301,66 @@ export default class Vis extends Component {
           </div>
         );
       });
+  }
+
+  sortBy(key, indata, setState) {
+    this.sort.key = key;
+    const data = indata.sort((a, b) => {
+      if (this.sort.reverse) {
+        if (a[key] < b[key]) return -1;
+        if (a[key] > b[key]) return 1;
+        return 0;
+      } else {
+        if (b[key] < a[key]) return -1;
+        if (b[key] > a[key]) return 1;
+        return 0;
+      }
+    });
+    this.sort.reverse = !this.sort.reverse;
+    if (setState) {
+      this.setState({data});
+    } else {
+      return data;
+    }
+  }
+
+  getSortArrow(key) {
+    if (key === this.sort.key) {
+      const angle = this.sort.reverse ? 180 : 0;
+      return (<div className={styles.arrow} style={{transform: `rotate(${angle}deg)`}}>⌃</div>);
+    } else {
+      return '';
+    }
+  }
+
+  renderSort() {
+    const buttons = [
+      {
+        id: 'biomid',
+        name: 'BIOM ID',
+      },
+      {
+        id: 'phinchName',
+        name: 'Phinch Name',
+      },
+      {
+        id: 'reads',
+        name: 'Sequence Reads',
+      },
+    ];
+    return buttons.map(b => {
+      const onClick = () => { this.sortBy(b.id, this.state.data, true) };
+      const arrow = this.getSortArrow(b.id);
+      return (
+        <div
+          key={b.id}
+          className={`${styles.heading} ${styles.button}`}
+          onClick={onClick}
+        >
+          {b.name} {arrow}
+        </div>
+      );
+    });
   }
 
   render() {
@@ -319,6 +390,8 @@ export default class Vis extends Component {
       .clamp();
 
     const bars = this.renderBars(this.state.data);
+
+    const sortButtons = this.renderSort();
 
     const ticks = [0].concat(...this.scales.x.ticks(9)).map(t => {
       return (
@@ -360,10 +433,16 @@ export default class Vis extends Component {
           </Link>
         </div>
         <Link to="/Filter">
-          Back to Filter
+          <div className={`${styles.button} ${styles.heading}`}>
+            <div className={styles.arrow} style={{transform: `rotate(${-90}deg)`}}>⌃</div>
+            Back to Filter
+          </div>
         </Link>
         <div>
           {levels}
+        </div>
+        <div>
+          {sortButtons}
         </div>
         <div style={{
           position: 'relative',
