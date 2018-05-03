@@ -9,6 +9,7 @@ import DataContainer from '../DataContainer';
 import StackedBar from './StackedBar';
 import StackedBarTooltip from './StackedBarTooltip';
 import palette from '../palette';
+import Summary from './Summary';
 
 import styles from './Vis.css';
 import logo from 'images/phinch.png';
@@ -18,6 +19,7 @@ export default class Vis extends Component {
     super(props);
 
     this.state = {
+      summary: DataContainer.getSummary(),
       initdata: DataContainer.getFilteredData(),
       data: [],
       width: window.innerWidth,
@@ -46,10 +48,10 @@ export default class Vis extends Component {
     this.metrics.chartWidth = this.state.width - ((this.metrics.padding * 4) + (this.metrics.idWidth + this.metrics.nameWidth));
     this.metrics.chartHeight = this.state.height - 195;
 
-    this.time = {
-      start: performance.now(),
-      end: null,
-    };
+    // this.time = {
+    //   start: performance.now(),
+    //   end: null,
+    // };
 
     this.scales = {
       x: scaleLinear(),
@@ -139,15 +141,15 @@ export default class Vis extends Component {
   }
 
   componentDidMount() {
-    this.time.end = performance.now();
-    console.log(`executed in ${(this.time.end - this.time.start).toLocaleString()}ms`);
+    // this.time.end = performance.now();
+    // console.log(`executed in ${(this.time.end - this.time.start).toLocaleString()}ms`);
     window.addEventListener('resize', this.updateDimensions);
   }
 
-  componentDidUpdate() {
-    this.time.end = performance.now();
-    console.log(`executed in ${(this.time.end - this.time.start).toLocaleString()}ms`);
-  }
+  // componentDidUpdate() {
+  //   this.time.end = performance.now();
+  //   console.log(`executed in ${(this.time.end - this.time.start).toLocaleString()}ms`);
+  // }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.updateDimensions);
@@ -202,7 +204,7 @@ export default class Vis extends Component {
   }
 
   setLevel(level) {
-    this.time.start = performance.now();
+    // this.time.start = performance.now();
     const data = this.updateTaxonomyData(this.state.data, level);
     // this.updateColorScale(data);
     this.setState({level, data});
@@ -484,6 +486,7 @@ export default class Vis extends Component {
             <img src={logo} alt='Phinch' />
           </Link>
         </div>
+        <Summary summary={this.state.summary} datalength={this.state.data.length} />
         <Link to="/Filter">
           <div className={`${styles.button} ${styles.heading}`}>
             <div className={styles.arrow} style={{transform: `rotate(${-90}deg)`}}>⌃</div>

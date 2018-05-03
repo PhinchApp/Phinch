@@ -10,6 +10,7 @@ import { setProjectFilters, getProjectFilters, exportProjectData } from '../proj
 import FrequencyChart from './FrequencyChart';
 import FilterChart from './FilterChart';
 import CheckBoxes from './CheckBoxes';
+import Summary from './Summary';
 import Loader from './Loader';
 
 import styles from './Filter.css';
@@ -662,22 +663,7 @@ export default class Filter extends Component {
               <img src={logo} alt='Phinch' />
             </Link>
           </div>
-          <table className={styles.info}>
-            <tbody>
-              <tr>
-                <td className={`${styles.label} ${styles.summary}`}>File Name:</td>
-                <td className={styles.summary}>{this.state.summary.name} ({this.state.summary.size})</td>
-              </tr>
-              <tr>
-                <td className={`${styles.label} ${styles.summary}`}>Observations:</td>
-                <td className={styles.summary}>{this.state.summary.observations.toLocaleString()}</td>
-              </tr>
-              <tr>
-                <td className={`${styles.label} ${styles.summary}`}>Selected Samples:</td>
-                <td className={styles.summary}>{`${this.state.data.length.toLocaleString()} / ${this.state.summary.samples.toLocaleString()}`}</td>
-              </tr>
-            </tbody>
-          </table>
+          <Summary summary={this.state.summary} datalength={this.state.data.length} />
           {/*
           <div className={styles.button}>
             <div className={styles.heading} onClick={() => {
