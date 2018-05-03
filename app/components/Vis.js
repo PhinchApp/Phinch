@@ -8,6 +8,7 @@ import { interpolateRainbow } from 'd3-scale-chromatic';
 import DataContainer from '../DataContainer';
 import StackedBar from './StackedBar';
 import StackedBarTooltip from './StackedBarTooltip';
+import palette from '../palette';
 
 import styles from './Vis.css';
 import logo from 'images/phinch.png';
@@ -46,7 +47,7 @@ export default class Vis extends Component {
 
     this.scales = {
       x: scaleLinear(),
-      c: scaleOrdinal(),
+      c: scaleOrdinal().range(palette),
     };
 
     this.totalDataReads = 0;
@@ -182,10 +183,12 @@ export default class Vis extends Component {
       )
     )];
     // .sort();
-    const sequenceRange = uniqSequences.map((s,i) => {
-      return ((i + 1) / uniqSequences.length);
-    });
-    this.scales.c.domain(uniqSequences).range(sequenceRange);
+    // const sequenceRange = uniqSequences.map((s,i) => {
+    //   return ((i + 1) / uniqSequences.length);
+    // });
+    // const sequenceRange = 
+    this.scales.c.domain(uniqSequences)
+    // .range(sequenceRange);
   }
 
   setLevel(level) {
@@ -304,7 +307,7 @@ export default class Vis extends Component {
           className={`${styles.button} ${selected}`}
           onClick={() => this.setLevel(l.order)}
         >
-          {(i === 0) ? '' : (<div class={styles.dash}>—</div>)}
+          {(i === 0) ? '' : (<div className={styles.dash}>—</div>)}
           {l.name}
         </div>
       );
