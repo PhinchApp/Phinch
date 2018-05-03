@@ -43,6 +43,11 @@ export default class StackedBar extends Component {
     }
     const ctx = this._canvas.getContext('2d')
     ctx.clearRect(0, 0, this.props.width, this.props.height);
+    //
+    if (this.props.isPercent) {
+      this.props.xscale.domain([0, this.props.data.map(d => d.reads).reduce((a, v) => a + v)]);
+    }
+    //
     let offset = 0;
     this.props.data.forEach((d, i) => {
       // ctx.fillStyle = this.props.rainbow(this.props.cscale(d.name));

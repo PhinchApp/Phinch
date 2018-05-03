@@ -3,7 +3,7 @@ import { Link, Redirect } from 'react-router-dom';
 
 import { nest } from 'd3-collection';
 import { scaleLinear, scaleOrdinal } from 'd3-scale';
-import { interpolateRainbow } from 'd3-scale-chromatic';
+// import { interpolateRainbow } from 'd3-scale-chromatic';
 
 import DataContainer from '../DataContainer';
 import StackedBar from './StackedBar';
@@ -25,6 +25,7 @@ export default class Vis extends Component {
       redirect: null,
       level: 1,
       highlightedDatum: null,
+      mode: 'value',
     };
 
     this.sort = {
@@ -268,6 +269,49 @@ export default class Vis extends Component {
     });
   }
 
+  renderTicks() {
+    let tickArray = [0].concat(...this.scales.x.ticks(10));
+    const xMax = this.scales.x.domain()[1];
+    if (this.state.mode !== 'value') {
+      tickArray = [];
+      for (let i=0; i<11; i++) {
+        tickArray.push((xMax / 10) * i);
+      }
+    }
+    return tickArray.map(t => {
+      const label = (this.state.mode === 'value') ? (
+          t.toLocaleString()
+        ) : (
+          `${Math.round((t / xMax) * 100).toLocaleString()}%`
+        );
+      return (
+        <g
+          key={`g-${t}`}
+          transform={`
+            translate(${this.scales.x(t)}, ${(this.metrics.lineHeight)})
+          `}
+        >
+          <text
+            fontSize={10}
+            textAnchor='middle'
+            dy={-4}
+            fill='#808080'
+          >
+            {label}
+          </text>
+          <line
+            x1={-1}
+            y1={0}
+            x2={-1}
+            y2={this.metrics.chartHeight}
+            stroke='#808080'
+            strokeWidth={0.5}
+          />
+        </g>
+      );
+    });
+  }
+
   renderBars(data) {
     // data.sort((a, b) => {
     //   return a.phinchID - b.phinchID;
@@ -291,11 +335,13 @@ export default class Vis extends Component {
               onHoverDatum={this._hoverDatum}
               data={sequence}
               sample={d}
-              width={this.scales.x(d.reads)}
+              // width={this.scales.x(d.reads)}
+              width={this.metrics.chartWidth}
               height={this.metrics.barHeight}
               xscale={this.scales.x}
               cscale={this.scales.c}
-              rainbow={interpolateRainbow}
+              isPercent={(this.state.mode === 'percent')}
+              // rainbow={interpolateRainbow}
               highlightedDatum={this.state.highlightedDatum}
             />
           </div>
@@ -363,6 +409,36 @@ export default class Vis extends Component {
     });
   }
 
+  renderToggle() {
+    const buttons = [
+      {
+        id: 'value',
+        name: 'Value',
+      },
+      {
+        id: 'percent',
+        name: '%',
+      },
+    ];
+    return buttons.map(b => {
+      const classes = (this.state.mode === b.id) ? (
+          `${styles.heading} ${styles.button}`
+        ) : `${styles.heading} ${styles.button} ${styles.deselected}`;
+      const onClick = () => {
+        this.setState({mode: b.id});
+      }
+      return (
+        <div
+          key={b.id}
+          className={classes}
+          onClick={onClick}
+        >
+          {b.name}
+        </div>
+      );
+    });
+  }
+
   render() {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
 
@@ -393,33 +469,9 @@ export default class Vis extends Component {
 
     const sortButtons = this.renderSort();
 
-    const ticks = [0].concat(...this.scales.x.ticks(9)).map(t => {
-      return (
-        <g
-          key={`g-${t}`}
-          transform={`
-            translate(${this.scales.x(t)}, ${(this.metrics.lineHeight)})
-          `}
-        >
-          <text
-            fontSize={10}
-            textAnchor='middle'
-            dy={-4}
-            fill='#808080'
-          >
-            {t.toLocaleString()}
-          </text>
-          <line
-            x1={-1}
-            y1={0}
-            x2={-1}
-            y2={this.metrics.chartHeight}
-            stroke='#808080'
-            strokeWidth={0.5}
-          />
-        </g>
-      );
-    });
+    const viewToggle = this.renderToggle();
+
+    const ticks = this.renderTicks();
 
     const tooltip = this.state.highlightedDatum == null ? null :
       <StackedBarTooltip {...this.state.highlightedDatum} totalDataReads={this.totalDataReads} />
@@ -439,10 +491,31 @@ export default class Vis extends Component {
           </div>
         </Link>
         <div>
+          <div style={{
+            display: 'inline-block',
+            margin: '0 0.5rem',
+          }}>
+            Level
+          </div>
           {levels}
         </div>
-        <div>
+        <div style={{display: 'inline-block'}}>
+          <div style={{
+            display: 'inline-block',
+            margin: '0 0.5rem',
+          }}>
+            Sort
+          </div>
           {sortButtons}
+        </div>
+        <div style={{display: 'inline-block'}}>
+          <div style={{
+            display: 'inline-block',
+            margin: '0 0.5rem',
+          }}>
+            View
+          </div>
+          {viewToggle}
         </div>
         <div style={{
           position: 'relative',
