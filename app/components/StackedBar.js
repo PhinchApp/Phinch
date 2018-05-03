@@ -4,41 +4,69 @@ import ReactDOM from 'react-dom';
 export default class StackedBar extends Component {
   constructor(props) {
     super(props);
-    this.scale = 2;
+    this.scale = 1; // KISS
   }
 
   componentDidMount() {
-    this.updateCanvas(ReactDOM.findDOMNode(this).getContext('2d'));
+    this.updateCanvas();
   }
 
   componentDidUpdate() {
-    this.updateCanvas(ReactDOM.findDOMNode(this).getContext('2d'));
+    this.updateCanvas();
   }
 
-  updateCanvas(ctx) {  
+  _mouseMove = (event) => {
+    const containerOffset = this._canvas.getBoundingClientRect();
+    const pageMouse = {x: event.clientX, y: event.clientY};
+    const mouse = {
+      x: pageMouse.x - containerOffset.left,
+      y: pageMouse.y - containerOffset.top
+    };
+
+    let selectedDatum = null;
+    this.props.data.forEach(d => {
+      if (d.x <= mouse.x && d.x + d.width >= mouse.x) {
+        selectedDatum = d
+      }
+    })
+    if (selectedDatum) {
+      this.props.onHoverDatum(selectedDatum, this.props.sample, pageMouse);
+    }
+  }
+
+  _mouseOut = () => {
+    this.props.onHoverDatum(null);
+  }
+  updateCanvas() {
+    if (!this._canvas) {
+      return
+    }
+    const ctx = this._canvas.getContext('2d')
+    ctx.clearRect(0, 0, this.props.width, this.props.height);
     let offset = 0;
     this.props.data.forEach((d, i) => {
       ctx.fillStyle = this.props.rainbow(this.props.cscale(d.name));
+      const alpha = this.props.highlightedDatum == null ? 1 :
+        this.props.highlightedDatum.datum.name === d.name ? 1 : 0.5;
+      ctx.globalAlpha = alpha
+
+      d.x = offset * this.scale
+      d.width = this.props.xscale(d.reads)
+
       ctx.fillRect(
-        offset * this.scale,
+        d.x,
         0 * this.scale,
-        this.props.xscale(d.reads) * this.scale,
+        d.width * this.scale - 1,
         this.props.height * this.scale,
         );
-      ctx.fillStyle = 'white';
-      ctx.fillRect(
-        offset * this.scale,
-        0 * this.scale,
-        0.25 * this.scale,
-        this.props.height * this.scale,
-        );
-      offset += this.props.xscale(d.reads);
+      offset += d.width;
     });
   }
 
   render() {
     return (
       <canvas
+        ref={(c) => (this._canvas = c)}
         width={this.props.width * this.scale}
         height={this.props.height * this.scale}
         style={{
@@ -51,6 +79,9 @@ export default class StackedBar extends Component {
           overflow: 'hidden',
           verticalAlign: 'top',
         }}
+        onMouseOver={this._mouseMove}
+        onMouseMove={this._mouseMove}
+        onMouseOut={this._mouseOut}
       />
     );
   }
