@@ -296,7 +296,7 @@ export default class Vis extends Component {
       this.metrics.height = (this.state.data.length * this.metrics.lineHeight);
     }
 
-    const levels = this.levels.map(l => {
+    const levels = this.levels.map((l, i) => {
       const selected = (l.order <= this.state.level) ? styles.selected : '';
       return (
         <div
@@ -304,6 +304,7 @@ export default class Vis extends Component {
           className={`${styles.button} ${selected}`}
           onClick={() => this.setLevel(l.order)}
         >
+          {(i === 0) ? '' : (<div class={styles.dash}>—</div>)}
           {l.name}
         </div>
       );
@@ -359,7 +360,6 @@ export default class Vis extends Component {
           Back to Filter
         </Link>
         <div>
-          Levels
           {levels}
         </div>
         <div style={{

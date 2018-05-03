@@ -11,12 +11,25 @@
 
 .button {
   cursor: pointer;
-  margin: 0.25rem;
+  margin: 0.25rem 0;
   padding: 0.5rem 0.25rem;
   display: inline-block;
+  color: #808080;
+}
+
+.dash {
+  display: inline-block;
+  margin: 0;
+  margin-right: 0.5rem;
+  padding: 0;
 }
 
 .selected {
+  color: #2b2b2b;
+  font-weight: 600;
+}
+
+.button:hover {
   background: #2b2b2b;
   color: white;
 }
