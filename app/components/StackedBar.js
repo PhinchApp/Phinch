@@ -78,6 +78,7 @@ export default class StackedBar extends Component {
           border: 'none',
           overflow: 'hidden',
           verticalAlign: 'top',
+          cursor: 'pointer',
         }}
         onMouseOver={this._mouseMove}
         onMouseMove={this._mouseMove}

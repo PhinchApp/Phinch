@@ -372,6 +372,7 @@ export default class Vis extends Component {
           <svg style={{
             position: 'absolute',
             left: 0,
+            pointerEvents: 'none',
             width: (this.state.width - (this.metrics.padding * 2)),
             height: (this.metrics.chartHeight + (this.metrics.lineHeight * 2)),
           }}>
