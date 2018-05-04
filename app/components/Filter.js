@@ -485,12 +485,12 @@ export default class Filter extends Component {
             this.setState({showHidden});
           }}
         >
-          {label} Hidden Samples
+          {label} Removed Samples
         </div>
       ) : '';
     const table = this.state.showHidden ? (
         <div className={styles.modal}>
-          <p>Hidden Samples</p>
+          <p>Removed Samples</p>
           <Table
             className={styles.table}
             rowClassName={(r, i) => {

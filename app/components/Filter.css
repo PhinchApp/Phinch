@@ -134,6 +134,7 @@
 .reads {
   width: calc(((100vw - 510px) / 100) * 35);
   min-width: 150px;
+  max-width: 210px;
   margin-right: 0.25rem;
 }
 
