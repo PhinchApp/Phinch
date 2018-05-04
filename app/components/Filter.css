@@ -107,10 +107,7 @@
 }
 
 .left {
-  /*overflow-y: overlay;*/
   padding-right: 1rem;
-  /*width: 265px;*/
-  /*overflow-x: hidden;*/
 }
 .right {
 }
