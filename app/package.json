@@ -13,8 +13,5 @@
     "electron-rebuild": "node -r babel-register ../internals/scripts/ElectronRebuild.js",
     "postinstall": "npm run electron-rebuild"
   },
-  "license": "BSD-2-Clause",
-  "dependencies": {
-    "rc-slider": "^8.6.1"
-  }
+  "license": "BSD-2-Clause"
 }
