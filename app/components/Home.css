@@ -1,6 +1,6 @@
 .container {
-  /*margin-top: 1rem;*/
 }
+
 .container p {
   font-size: 0.7rem;
 }
@@ -9,6 +9,7 @@
   display: inline-block;
   height: 100vh;
 }
+
 .area {
   padding: 1rem;
 }
@@ -38,6 +39,7 @@
 .about p {
   margin: 0.5rem;
 }
+
 .links {
   background: #2b2b2b;
   height: 64vh;

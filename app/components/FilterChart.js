@@ -39,7 +39,6 @@ export default class FilterChart extends Component {
     this.updateScales();
     const isDate = (this.props.name.toLowerCase().includes('date'));
     const barWidth = (this.xscale(1) - this.xscale(0));
-    //
     const bars = this.props.data.values.map((d, i) => {
       const valueInRange = (isDate) ? (          
           !(
@@ -68,7 +67,6 @@ export default class FilterChart extends Component {
         />
       );
     });
-    //
     let range = '';
     const marks = {};
     if (this.props.filter.expanded) {
@@ -85,8 +83,7 @@ export default class FilterChart extends Component {
           {range}
         </div>
       ) : (<div></div>);
-    const style = { width: (this.props.width - (this.padding * 2)), margin: this.padding };
-    //
+    const style = { width: (this.props.width - (this.padding * 2)), margin: '0 16px' };
     const brush = this.props.filter.expanded ? (
         <div style={style}>
           <Range
@@ -107,7 +104,10 @@ export default class FilterChart extends Component {
         <svg
           width={this.props.width}
           height={this.props.height}
-          style={{marginTop: '8px'}}
+          style={{
+            margin: '0 16px',
+            marginTop: '8px',
+          }}
           onMouseOut={() => {document.addEventListener('mousemove', null)}}
         >
           {bars}

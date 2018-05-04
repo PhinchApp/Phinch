@@ -149,8 +149,6 @@ export default class Filter extends Component {
       }
     }
 
-    // console.log(this.state.data.map(d => d.reads).sort());
-
     this.columns = [
       {
         title: this.generateTableTitle('phinchName', true),
@@ -199,10 +197,7 @@ export default class Filter extends Component {
         key: 'reads',
         render: (t) => (
           <div className={styles.cell}>
-            {
-              t
-              /*t.toLocaleString()*/
-            }
+            {t.toLocaleString()}
           </div>
         ),
       },
@@ -212,7 +207,7 @@ export default class Filter extends Component {
         key: 'chart',
         render: (d) => (
           <div className={styles.cell}>
-            <FrequencyChart data={this.state.data} value={d.reads} width={125 * 2} height={18 * 2} />
+            <FrequencyChart data={this.state.data.concat(this.state.deleted)} value={d.reads} width={125 * 2} height={18 * 2} />
           </div>
         ),
       },
@@ -246,7 +241,7 @@ export default class Filter extends Component {
       return Object.assign({}, c);
     }).filter((c) => {
       return !(c.key === 'remove' || c.key === 'drag');
-    }).map((c) => { 
+    }).map((c) => {
       c.title = this.generateTableTitle(c.key, false);
       return c;
     });
@@ -279,7 +274,6 @@ export default class Filter extends Component {
 
   componentDidMount() {
     window.addEventListener('resize', this.updateDimensions);
-
     this.applyFilters(this.state.filters, this.state.names, this.state.deleted);
   }
 
@@ -505,7 +499,7 @@ export default class Filter extends Component {
               }
               return;
             }}
-            scroll={{ y: (360) }}
+            scroll={{ y: (296) }}
             columns={this.deletedColumns}
             data={this.state.deleted}
             rowKey={row => `d-${row.id}`}
@@ -514,8 +508,8 @@ export default class Filter extends Component {
       ) : '';
     return (
       <div>
-        {button}
         {table}
+        {button}
       </div>
     );
   }
@@ -616,7 +610,7 @@ export default class Filter extends Component {
     this.over = null;
     this.dragged = null;
     //
-    this.sort.reverse = !this.sort.reverse;
+    this.sort.reverse = true;
     this.sortBy('order', data, true);
   }
   dragOver(e) {
@@ -643,7 +637,6 @@ export default class Filter extends Component {
   }
 
   render() {
-    // const redirect = (this.state.summary.name && this.state.summary.size) ? '' : <Redirect push to='/' />;
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
     const resultStyle = this.state.result === 'error' ? styles.error : styles.success;
     const result = (
@@ -720,7 +713,7 @@ export default class Filter extends Component {
           <div className={`${styles.section} ${styles.left}`} style={{
             display: 'inline-block',
             height: (this.state.height - 125),
-            overflowY: 'scroll',
+            overflowY: 'overlay', // 'scroll',
           }}>
             {this.displayFilters()}
             <div
@@ -734,7 +727,7 @@ export default class Filter extends Component {
           <div className={`${styles.section} ${styles.right}`}>
             <Table
               className={styles.table}
-              scroll={{ y: (this.state.height - 195) }}
+              scroll={{ y: (this.state.height - 194) }}
               columns={this.columns}
               data={this.state.data}
               rowKey={row => row.id}
