@@ -1,9 +1,11 @@
 
 .StackedBarTooltip {
   position: absolute;
-  font-size: 1em;
+  font-size: 12px;
   top: 0;
   left: 0;
+  width: 332px;
+  height: 232px;
   background-color: #fff;
   pointer-events: none;
   padding: 1em;
@@ -17,7 +19,7 @@
 
 .value {
   font-weight: bold;
-  font-size: 115%;
+  overflow-wrap: break-word;
   margin-bottom: 1em;
 }
 

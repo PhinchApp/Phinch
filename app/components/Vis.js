@@ -46,7 +46,7 @@ export default class Vis extends Component {
       nameWidth: 144,
     };
     this.metrics.chartWidth = this.state.width - ((this.metrics.padding * 4) + (this.metrics.idWidth + this.metrics.nameWidth));
-    this.metrics.chartHeight = this.state.height - 195;
+    this.metrics.chartHeight = this.state.height - 215;
 
     // this.time = {
     //   start: performance.now(),
@@ -215,7 +215,8 @@ export default class Vis extends Component {
   // Move to data container?
   formatTaxonomyData(data, level) {
     let totalDataReads = 0;
-    const formatedData = data.columns.map((c, i) => {
+    const formatedData = this.updateTaxonomyData(
+      data.columns.map((c, i) => {
 
       const matches = data.data
         .filter(d => d[1] === c.metadata.phinchID)
@@ -228,17 +229,6 @@ export default class Vis extends Component {
           };
         });
 
-      const sequences = nest()
-        .key(d => d.taxonomy.slice(0, level + 1))
-        .entries(matches)
-        .map(s => {
-          return {
-            name: s.key,
-            taxonomy: s.values[0].taxonomy,
-            reads: s.values.map(v => v.count).reduce((a, v) => a + v),
-          };
-        });
-
       totalDataReads += c.reads;
       return {
         biomid: c.biomid,
@@ -247,25 +237,36 @@ export default class Vis extends Component {
         sampleName: c.sampleName,
         phinchName: c.phinchName,
         reads: c.reads,
-        sequences: sequences,
+        sequences: [],
         matches: matches,
       };
-    });
+    }), level);
+
     this.totalDataReads = totalDataReads;
     return formatedData;
   }
 
   updateTaxonomyData(data, level) {
+    let readsBySequence = {};
     return data.map(d => {
       d.sequences = nest()
         .key(d => d.taxonomy.slice(0, level + 1))
         .entries(d.matches)
         .map(s => {
+          const reads = s.values.map(v => v.count).reduce((a, v) => a + v)
+          if (s.key in readsBySequence) {
+            readsBySequence[s.key] += reads;
+          } else {
+            readsBySequence[s.key] = reads;
+          }
           return {
             name: s.key,
             taxonomy: s.values[0].taxonomy,
-            reads: s.values.map(v => v.count).reduce((a, v) => a + v),
+            reads: reads,
           };
+        }).map(s => {
+          s.totalReads = readsBySequence[s.name];
+          return s;
         });
       return d;
     });
@@ -315,9 +316,6 @@ export default class Vis extends Component {
   }
 
   renderBars(data) {
-    // data.sort((a, b) => {
-    //   return a.phinchID - b.phinchID;
-    // })
     return data
       .map((d, i) => {
         const sequence = d.sequences
@@ -337,13 +335,11 @@ export default class Vis extends Component {
               onHoverDatum={this._hoverDatum}
               data={sequence}
               sample={d}
-              // width={this.scales.x(d.reads)}
               width={this.metrics.chartWidth}
               height={this.metrics.barHeight}
               xscale={this.scales.x}
               cscale={this.scales.c}
               isPercent={(this.state.mode === 'percent')}
-              // rainbow={interpolateRainbow}
               highlightedDatum={this.state.highlightedDatum}
             />
           </div>

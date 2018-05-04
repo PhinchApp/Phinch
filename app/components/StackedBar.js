@@ -50,7 +50,6 @@ export default class StackedBar extends Component {
     //
     let offset = 0;
     this.props.data.forEach((d, i) => {
-      // ctx.fillStyle = this.props.rainbow(this.props.cscale(d.name));
       ctx.fillStyle = this.props.cscale(d.name);
       const alpha = this.props.highlightedDatum == null ? 1 :
         this.props.highlightedDatum.datum.name === d.name ? 1 : 0.5;
