@@ -53,6 +53,7 @@
 }
 
 .filter {
+  /*padding: 0.25rem 0.5rem;*/
   padding: 0.25rem 0.5rem;
   font-size: 0.75rem;
 }
@@ -116,23 +117,29 @@
   background: #f4f4f4;
 }
 
+.order {
+  background: none;
+  width: calc(((100vw - 370px) / 100) * 5.085);
+  min-width: 30px;
+  margin-right: 0.25rem;
+}
 .phinchName {
-  width: calc(((100vw - 510px) / 100) * 20);
-  min-width: 130px;
+  width: calc(((100vw - 370px) / 100) * 20.85);
+  min-width: 123px;
   margin-right: 0.25rem;
 }
 .biomid {
-  width: calc(((100vw - 106px) / 100) * 10);
-  min-width: 90px;
+  width: calc(((100vw - 370px) / 100) * 15.085);
+  min-width: 89px;
   margin-right: 0.25rem;
 }
 .sampleName {
-  width: calc(((100vw - 510px) / 100) * 20);
-  min-width: 130px;
+  width: calc(((100vw - 370px) / 100) * 21.865);
+  min-width: 129px;
   margin-right: 0.25rem;
 }
 .reads {
-  width: calc(((100vw - 510px) / 100) * 35);
+  width: calc(((100vw - 370px) / 100) * 35);
   min-width: 150px;
   max-width: 210px;
   margin-right: 0.25rem;
@@ -188,6 +195,10 @@
 
 .button .heading {
   height: 57px;
+}
+
+.cell.noLeft {
+  padding-left: 0;
 }
 
 .error {

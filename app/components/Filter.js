@@ -151,6 +151,18 @@ export default class Filter extends Component {
 
     this.columns = [
       {
+        title: this.generateTableTitle('order', false),
+        dataIndex: 'order',
+        key: 'order',
+        render: (t) => (
+          <div className={styles.order}>
+            <div className={styles.cell}>
+              {(t !== undefined) ? t.toLocaleString() : ''}
+            </div>
+          </div>
+        ),
+      },
+      {
         title: this.generateTableTitle('phinchName', true),
         dataIndex: 'phinchName',
         key: 'phinchName',
@@ -207,7 +219,7 @@ export default class Filter extends Component {
         key: 'chart',
         render: (d) => (
           <div className={styles.cell}>
-            <FrequencyChart data={this.state.data.concat(this.state.deleted)} value={d.reads} width={125 * 2} height={18 * 2} />
+            <FrequencyChart data={this.state.data.concat(this.state.deleted)} value={d.reads} width={120 * 2} height={18 * 2} />
           </div>
         ),
       },
@@ -228,7 +240,7 @@ export default class Filter extends Component {
         dataIndex: '',
         key: 'remove',
         render: (r) => (
-          <div className={styles.cell}>
+          <div className={`${styles.cell} ${styles.noLeft}`}>
             <div onClick={() => { this.removeRows([r]) }}>
               <div className={styles.delete}>x</div>
             </div>
@@ -240,7 +252,7 @@ export default class Filter extends Component {
     this.deletedColumns = this.columns.map((c) => {
       return Object.assign({}, c);
     }).filter((c) => {
-      return !(c.key === 'remove' || c.key === 'drag');
+      return !(c.key === 'remove' || c.key === 'drag' || c.key === 'order');
     }).map((c) => {
       c.title = this.generateTableTitle(c.key, false);
       return c;
@@ -297,7 +309,11 @@ export default class Filter extends Component {
     if (key === 'remove' || key === 'chart' || key === 'drag') {
       return '';
     }
+    if (key === 'order') {
+      click = false;
+    }
     const names = {
+      order: '',
       phinchName: 'Phinch Name',
       biomid: 'BIOM ID',
       sampleName: 'Sample Name',
