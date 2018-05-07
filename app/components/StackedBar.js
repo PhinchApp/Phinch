@@ -49,10 +49,18 @@ export default class StackedBar extends Component {
     }
     //
     let offset = 0;
+    // this.props.data
+    //   .sort((a, b) => {
+    //     return b.reads - a.reads;
+    //     // const readDifference = ;
+    //     // console.log(a);
+    //     // if (readDifference === 0) {
+    //     //   return a.
+    //     // }
+    //     // return readDifference;
+    //     // return this.props.xscale(b.reads) - this.props.xscale(a.reads);
+    //   })
     this.props.data
-      .sort((a, b) => {
-        return this.props.xscale(b.reads) - this.props.xscale(a.reads);
-      })
       .forEach((d, i) => {
         ctx.fillStyle = this.props.cscale(d.name);
         const alpha = this.props.highlightedDatum == null ? 1 :

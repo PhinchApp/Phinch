@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 
+import Table from 'rc-table';
+import _sortBy from 'lodash.sortby';
 import { nest } from 'd3-collection';
 import { scaleLinear, scaleOrdinal } from 'd3-scale';
 // import { interpolateRainbow } from 'd3-scale-chromatic';
@@ -28,6 +30,7 @@ export default class Vis extends Component {
       level: 1,
       highlightedDatum: null,
       mode: 'value',
+      showSequences: false,
     };
 
     this.sort = {
@@ -36,6 +39,7 @@ export default class Vis extends Component {
     };
 
     this.levels = [];
+    this.readsBySequence = {};
 
     this.metrics = {
       padding: 16,
@@ -45,7 +49,7 @@ export default class Vis extends Component {
       idWidth: 32,
       nameWidth: 144,
     };
-    this.metrics.chartWidth = this.state.width - ((this.metrics.padding * 4) + (this.metrics.idWidth + this.metrics.nameWidth));
+    this.metrics.chartWidth = this.state.width - ((this.metrics.padding * 4.5) + (this.metrics.idWidth + this.metrics.nameWidth));
     this.metrics.chartHeight = this.state.height - 215;
 
     // this.time = {
@@ -164,7 +168,7 @@ export default class Vis extends Component {
   }
 
   updateDimensions() {
-    this.metrics.chartWidth = window.innerWidth - ((this.metrics.padding * 4) + (this.metrics.idWidth + this.metrics.nameWidth));
+    this.metrics.chartWidth = window.innerWidth - ((this.metrics.padding * 4.5) + (this.metrics.idWidth + this.metrics.nameWidth));
     this.metrics.chartHeight = window.innerHeight - 195;
     this.setState({
       width: window.innerWidth,
@@ -247,33 +251,38 @@ export default class Vis extends Component {
   }
 
   updateTaxonomyData(data, level) {
-    let readsBySequence = {};
+    this.readsBySequence = {};
     return data.map(d => {
       d.sequences = nest()
         .key(d => d.taxonomy.slice(0, level + 1))
         .entries(d.matches)
         .map(s => {
           const reads = s.values.map(v => v.count).reduce((a, v) => a + v)
-          if (s.key in readsBySequence) {
-            readsBySequence[s.key] += reads;
+          if (s.key in this.readsBySequence) {
+            this.readsBySequence[s.key] += reads;
           } else {
-            readsBySequence[s.key] = reads;
+            this.readsBySequence[s.key] = reads;
           }
           return {
             name: s.key,
             taxonomy: s.values[0].taxonomy,
             reads: reads,
           };
-        }).map(s => {
-          s.totalReads = readsBySequence[s.name];
-          return s;
         });
+        // .map(s => {
+        //   s.totalReads = readsBySequence[s.name];
+        //   return s;
+        // });
       return d;
     });
   }
 
   renderTicks() {
-    let tickArray = [0].concat(...this.scales.x.ticks(10));
+    const ticks = this.scales.x.ticks(10);
+    if (!ticks.length) {
+      return '';
+    }
+    let tickArray = [0].concat(...ticks);
     const xMax = this.scales.x.domain()[1];
     if (this.state.mode !== 'value') {
       tickArray = [];
@@ -318,11 +327,7 @@ export default class Vis extends Component {
   renderBars(data) {
     return data
       .map((d, i) => {
-        const sequence = d.sequences
-          .sort((a, b) => {
-            return b.reads - a.reads;
-          });
-        // this.scales.c.domain([sequence.length, 1]);
+        const sequence = _sortBy(d.sequences, (s) => -s.reads);
         return (
           <div key={d.sampleName} className={styles.row}>
             <div className={styles.rowLabel} style={{width: this.metrics.idWidth}}>
@@ -398,7 +403,7 @@ export default class Vis extends Component {
       return (
         <div
           key={b.id}
-          className={`${styles.heading} ${styles.button}`}
+          className={`${styles.heading} ${styles.button} ${styles.controlMargin}`}
           onClick={onClick}
         >
           {b.name} {arrow}
@@ -437,6 +442,103 @@ export default class Vis extends Component {
     });
   }
 
+  renderTopSequences(seqObj) {
+    ///
+    const label = this.state.showSequences ? 'Hide' : 'Show';
+    const button = (
+        <div
+          className={`${styles.heading}`}
+          style={{
+            cursor: 'pointer',
+          }}
+          onClick={() => {
+            const showSequences = !this.state.showSequences;
+            this.setState({showSequences});
+          }}
+        >
+          {label} Top Sequences
+        </div>
+      );
+    const columns = [
+      {
+        title: (<div className={`${styles.heading} ${styles.rank}`}>Rank</div>),
+        dataIndex: 'rank',
+        key: 'rank',
+        render: (d) => {
+          return (
+            <div className={styles.rank}>
+              <div className={styles.cell}>
+                {d.toLocaleString()}
+              </div>
+            </div>
+          );
+        }
+      },
+      {
+        title: (<div className={`${styles.heading} ${styles.name}`}>Name</div>),
+        dataIndex: 'name',
+        key: 'name',
+        render: (d) => {
+          return (
+            <div className={styles.name}>
+              <div className={styles.cell}>
+                {d}
+              </div>
+            </div>
+          );
+        }
+      },
+      {
+        title: (<div className={`${styles.heading} ${styles.reads}`}>Reads</div>),
+        dataIndex: 'reads',
+        key: 'reads',
+        render: (d) => {
+          return (
+            <div className={styles.reads}>
+              <div className={styles.cell}>
+                {d.toLocaleString()}
+              </div>
+            </div>
+          );
+        }
+      },
+    ];
+    const sequences = Object.keys(seqObj).map(k => {
+      return {
+        name: k,
+        reads: seqObj[k],
+      };
+    }).sort((a, b) => {
+      return b.reads - a.reads;
+    }).map((s, i) => {
+      s.rank = (i + 1);
+      return s;
+    });
+    const table = this.state.showSequences ? (
+        <div className={styles.modal}>
+          <Table
+            className={styles.table}
+            rowClassName={(r, i) => {
+              if (i%2 === 0) {
+                return styles.grey;
+              }
+              return;
+            }}
+            scroll={{ y: (332) }}
+            columns={columns}
+            data={sequences}
+            rowKey={row => `d-${row.name}`}
+          />
+        </div>
+      ) : '';
+    return (
+      <div>
+        {button}
+        {table}
+      </div>
+    );
+  }
+
   render() {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
 
@@ -469,6 +571,8 @@ export default class Vis extends Component {
 
     const viewToggle = this.renderToggle();
 
+    const topSequences = this.renderTopSequences(this.readsBySequence);
+
     const ticks = this.renderTicks();
 
     const tooltip = this.state.highlightedDatum == null ? null :
@@ -484,7 +588,7 @@ export default class Vis extends Component {
         </div>
         <Summary summary={this.state.summary} datalength={this.state.data.length} />
         <Link to="/Filter">
-          <div className={`${styles.button} ${styles.heading}`}>
+          <div className={`${styles.button} ${styles.heading} ${styles.controlMargin}`}>
             <div className={styles.arrow} style={{transform: `rotate(${-90}deg)`}}>⌃</div>
             Back to Filter
           </div>
@@ -514,7 +618,20 @@ export default class Vis extends Component {
           }}>
             View
           </div>
-          {viewToggle}
+          <div style={{display: 'inline-block'}} className={styles.controlMargin}>
+            {viewToggle}
+          </div>
+        </div>
+        <div style={{display: 'inline-block'}}>
+          <div style={{
+            display: 'inline-block',
+            margin: '0 0.5rem',
+          }}>
+            Sequences
+          </div>
+          <div style={{display: 'inline-block'}} className={styles.controlMargin}>
+            {topSequences}
+          </div>
         </div>
         <div style={{
           position: 'relative',
@@ -527,7 +644,8 @@ export default class Vis extends Component {
             position: 'absolute',
             left: 0,
             pointerEvents: 'none',
-            width: (this.state.width - (this.metrics.padding * 2)),
+            paddingLeft: this.metrics.padding * 0.5,
+            width: (this.state.width - (this.metrics.padding * 2.5)),
             height: (this.metrics.chartHeight + (this.metrics.lineHeight * 2)),
           }}>
             <g transform={`
@@ -542,6 +660,7 @@ export default class Vis extends Component {
         </div>
         <div style={{
           height: this.metrics.chartHeight,
+          paddingLeft: this.metrics.padding * 0.5,
           overflowY: 'scroll',
         }}>
           {bars}

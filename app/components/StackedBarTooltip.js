@@ -26,7 +26,6 @@ export default function StackedBarTooltip(props) {
 
   const samplePercent = props.datum.reads / props.sample.reads
   const totalPercentReads = props.datum.reads / props.totalDataReads
-  // const totalPercentReads = props.datum.reads / props.datum.totalReads
 
   return (
     <div style={style} className={styles.StackedBarTooltip}>
@@ -50,7 +49,6 @@ export default function StackedBarTooltip(props) {
         {percentFormatter(totalPercentReads)}
         <span className={styles.small}>
           {` ${props.datum.reads.toLocaleString()} out of ${props.totalDataReads.toLocaleString()}`}
-          {/*` ${props.datum.reads.toLocaleString()} out of ${props.datum.totalReads.toLocaleString()}`*/}
         </span>
         <PercentageBarGraph percent={totalPercentReads} width='300px' />
       </div>
