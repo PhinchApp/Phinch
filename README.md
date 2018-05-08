@@ -21,7 +21,7 @@ $ cd phinch
 $ yarn
 ```
 
-You'll also need to install hdf5 in order to be able to load hdf5 biom files. You can obtain it from the [HDF Group](https://support.hdfgroup.org/HDF5/release/obtain5.html), or from a package manager like brew:
+You'll also need to install hdf5 in order to be able to load hdf5 biom files. You can obtain it from the [HDF Group](https://www.hdfgroup.org/downloads/hdf5/), or from a package manager like brew:
 
 ```bash
 $ brew install hdf5
