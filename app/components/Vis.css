@@ -122,13 +122,15 @@
   padding: 0;
   font-size: 12px;
   line-height: 12px;
+  padding-right: 0.25rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   display: inline-block;
+  vertical-align: top;
 }
 
-.modal {
+.modaltop {
   /*position: relative;*/
   position: absolute;
   background: white;
@@ -162,5 +164,48 @@
 }
 .reads {
   width: 108px;
+  margin-right: 0.25rem;
+}
+.delete {
+  cursor: pointer;
+  width: 12px;
+  height: 12px;
+  font-size: 12px;
+  line-height: 0.75rem;
+  padding: 0;
+  margin: 0;
+  background: #2b2b2b;
+  color: white;
+  text-align: center;
+  vertical-align: top;
+  border-radius: 6px;
+}
+
+.modalbottom {
+  position: relative;
+  margin-top: -360px;
+  overflow: hidden;
+  padding: 0.5rem 0;
+  height: 360px;
+  background: white;
+  border: 1px solid #2b2b2b;
+}
+.modalbottom p {
+  margin: 0;
+  margin-bottom: 0.5rem;
+  padding: 0 0.5rem;
+}
+
+.phinchName {
+  width: 144px;
+  margin-right: 0.25rem;
+}
+.biomid {
+  width: 72px;
+  margin-right: 0.25rem; 
+}
+.restore {
+  background: none;
+  width:  36px;
   margin-right: 0.25rem;
 }

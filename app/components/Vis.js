@@ -24,6 +24,7 @@ export default class Vis extends Component {
       summary: DataContainer.getSummary(),
       initdata: DataContainer.getFilteredData(),
       data: [],
+      deleted: [],
       width: window.innerWidth,
       height: window.innerHeight,
       redirect: null,
@@ -31,6 +32,7 @@ export default class Vis extends Component {
       highlightedDatum: null,
       mode: 'value',
       showSequences: false,
+      showHidden: false,
     };
 
     this.sort = {
@@ -46,11 +48,12 @@ export default class Vis extends Component {
       lineHeight: 14,
       barHeight: 12,
       height: 600,
+      hideWidth: 20,
       idWidth: 32,
       nameWidth: 144,
     };
-    this.metrics.chartWidth = this.state.width - ((this.metrics.padding * 4.5) + (this.metrics.idWidth + this.metrics.nameWidth));
-    this.metrics.chartHeight = this.state.height - 215;
+    this.metrics.chartWidth = this.state.width - ((this.metrics.padding * 4.5) + (this.metrics.idWidth + this.metrics.hideWidth + this.metrics.nameWidth));
+    this.metrics.chartHeight = this.state.height - 251;
 
     // this.time = {
     //   start: performance.now(),
@@ -168,8 +171,8 @@ export default class Vis extends Component {
   }
 
   updateDimensions() {
-    this.metrics.chartWidth = window.innerWidth - ((this.metrics.padding * 4.5) + (this.metrics.idWidth + this.metrics.nameWidth));
-    this.metrics.chartHeight = window.innerHeight - 195;
+    this.metrics.chartWidth = window.innerWidth - ((this.metrics.padding * 4.5) + (this.metrics.idWidth + this.metrics.hideWidth + this.metrics.nameWidth));
+    this.metrics.chartHeight = window.innerHeight - 251;
     this.setState({
       width: window.innerWidth,
       height: window.innerHeight,
@@ -277,6 +280,147 @@ export default class Vis extends Component {
     });
   }
 
+  removeRows(rows) {
+    const data = this.state.data.filter((d) => {
+      return !rows.includes(d);
+    });
+    const deleted = this.state.deleted.concat(rows);
+    this.setState({data, deleted});
+  }
+
+  restoreRows(rows) {
+    const deleted = this.state.deleted.filter((d) => {
+      return !rows.includes(d);
+    });
+    const data = this.state.data.concat(rows).sort((a, b) => {
+      if (!this.sort.reverse) {
+        if (a[this.sort.key] < b[this.sort.key]) return -1;
+        if (a[this.sort.key] > b[this.sort.key]) return 1;
+        return 0;
+      } else {
+        if (b[this.sort.key] < a[this.sort.key]) return -1;
+        if (b[this.sort.key] > a[this.sort.key]) return 1;
+        return 0;
+      }
+    });
+    const showHidden = deleted.length ? true : false;
+    this.setState({data, deleted, showHidden});
+  }
+
+  displayHiddenSamples() {
+    const label = this.state.showHidden ? 'Hide' : 'Show';
+
+    const xscale = scaleLinear();
+    xscale.domain([1, Math.max(...this.state.deleted.map(d => d.reads))])
+      .range([1, this.metrics.chartWidth])
+      .clamp();
+
+    const button = this.state.deleted.length ? (
+        <div
+          className={styles.heading}
+          style={{
+            marginTop: '1rem',
+            cursor: 'pointer',
+          }}
+          onClick={() => {
+            const showHidden = !this.state.showHidden;
+            this.setState({showHidden});
+          }}
+        >
+          {label} Removed Samples
+        </div>
+      ) : '';
+    const deletedColumns = [
+      {
+        title: (<div className={`${styles.heading} ${styles.restore}`}>Restore</div>),
+        dataIndex: '',
+        key: 'remove',
+        render: (r) => (
+          <div className={styles.restore}>
+            <div className={styles.cell}>
+              <div
+                className={styles.delete}
+                style={{fontSize: 8}}
+                onClick={() => { this.restoreRows([r]) }}
+              >
+                ⤴
+              </div>
+            </div>
+          </div>
+        ),
+      },
+      {
+        title: (<div className={`${styles.heading} ${styles.biomid}`}>BIOM ID</div>),
+        dataIndex: 'biomid',
+        key: 'biomid',
+        render: (t) => (
+          <div className={styles.biomid}>
+            <div className={styles.cell}>
+              {t}
+            </div>
+          </div>
+        ),
+      },
+      {
+        title: (<div className={`${styles.heading} ${styles.phinchName}`}>Phinch Name</div>),
+        dataIndex: 'phinchName',
+        key: 'phinchName',
+        render: (t) => (
+          <div className={styles.phinchName}>
+            <div className={styles.cell}>
+              {t}
+            </div>
+          </div>
+        ),
+      },
+      {
+        title: '',
+        dataIndex: '',
+        key: '',
+        render: (r) => {
+          const sequence = _sortBy(r.sequences, (s) => -s.reads);
+          return (
+            <div className={styles.cell}>
+              <StackedBar
+                data={sequence}
+                sample={r}
+                width={(this.metrics.chartWidth - 48)}
+                height={this.metrics.barHeight}
+                xscale={xscale}
+                cscale={this.scales.c}
+                isPercent={(this.state.mode === 'percent')}
+              />
+            </div>
+          )
+        },
+      },
+    ]
+    const table = this.state.showHidden ? (
+        <div className={styles.modalbottom}>
+          <p>Removed Samples</p>
+          <Table
+            className={styles.table}
+            rowClassName={(r, i) => {
+              if (i%2 === 0) {
+                return styles.grey;
+              }
+              return;
+            }}
+            scroll={{ y: (296) }}
+            columns={deletedColumns}
+            data={this.state.deleted}
+            rowKey={row => `d-${row.biomid}`}
+          />
+        </div>
+      ) : '';
+    return (
+      <div>
+        {table}
+        {button}
+      </div>
+    );
+  }
+
   renderTicks() {
     const ticks = this.scales.x.ticks(10);
     if (!ticks.length) {
@@ -330,6 +474,11 @@ export default class Vis extends Component {
         const sequence = _sortBy(d.sequences, (s) => -s.reads);
         return (
           <div key={d.sampleName} className={styles.row}>
+            <div className={styles.rowLabel} style={{width: this.metrics.hideWidth}}>
+              <div onClick={() => { this.removeRows([d]) }}>
+                <div className={styles.delete}>x</div>
+              </div>
+            </div>
             <div className={styles.rowLabel} style={{width: this.metrics.idWidth}}>
               {d.biomid}
             </div>
@@ -515,7 +664,7 @@ export default class Vis extends Component {
       return s;
     });
     const table = this.state.showSequences ? (
-        <div className={styles.modal}>
+        <div className={styles.modaltop}>
           <Table
             className={styles.table}
             rowClassName={(r, i) => {
@@ -650,7 +799,7 @@ export default class Vis extends Component {
           }}>
             <g transform={`
               translate(
-                ${this.metrics.idWidth + this.metrics.nameWidth},
+                ${this.metrics.idWidth + this.metrics.hideWidth + this.metrics.nameWidth},
                 ${this.metrics.lineHeight}
               )
             `}>
@@ -666,6 +815,7 @@ export default class Vis extends Component {
           {bars}
           {tooltip}
         </div>
+        {this.displayHiddenSamples()}
       </div>
     );
   }
