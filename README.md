@@ -21,9 +21,13 @@ $ cd phinch
 $ yarn
 ```
 
-Finally, here's *the tricky part*. Phinch uses a python script in the  `biomhandler` folder to load hdf5 biom files. To make Phinch easy to install, we use PyInstaller to package that script into a standablone executable. Follow these steps to generate the executable:
+You'll also need to install hdf5 in order to be able to load hdf5 biom files. You can obtain it from the [HDF Group](https://support.hdfgroup.org/HDF5/release/obtain5.html), or from a package manager like brew:
 
-TODO: Mention something about installing hdf5. Either via `brew` or downloading a binary
+```bash
+$ brew install hdf5
+```
+
+Finally, here's *the tricky part*. Phinch uses a python script in the  `biomhandler` folder to load hdf5 biom files. To make Phinch easy to install, we use PyInstaller to package that script into a standablone executable. Follow these steps to generate the executable:
 
 ```bash
 cd biomhandler
