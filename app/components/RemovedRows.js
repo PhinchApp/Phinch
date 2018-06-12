@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import Table from 'rc-table';
 
 import styles from './Filter.css';
+import gstyle from './general.css';
 import tstyle from './tables.css';
 
 export default class RemovedRows extends Component {
@@ -25,7 +26,7 @@ export default class RemovedRows extends Component {
     const label = this.state.showHidden ? 'Hide' : 'Show';
     const button = this.props.deleted.length ? (
         <div
-          className={styles.heading}
+          className={gstyle.heading}
           style={{
             marginTop: '1rem',
             cursor: 'pointer',

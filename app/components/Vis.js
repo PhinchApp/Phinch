@@ -272,7 +272,7 @@ export default class Vis extends Component {
       .clamp();
     const deletedColumns = [
       {
-        title: (<div className={`${styles.heading} ${styles.restore}`}>Restore</div>),
+        title: (<div className={`${gstyle.heading} ${styles.restore}`}>Restore</div>),
         dataIndex: '',
         key: 'remove',
         render: (r) => (
@@ -290,7 +290,7 @@ export default class Vis extends Component {
         ),
       },
       {
-        title: (<div className={`${styles.heading} ${styles.biomid}`}>BIOM ID</div>),
+        title: (<div className={`${gstyle.heading} ${styles.biomid}`}>BIOM ID</div>),
         dataIndex: 'biomid',
         key: 'biomid',
         render: (t) => (
@@ -302,7 +302,7 @@ export default class Vis extends Component {
         ),
       },
       {
-        title: (<div className={`${styles.heading} ${styles.phinchName}`}>Phinch Name</div>),
+        title: (<div className={`${gstyle.heading} ${styles.phinchName}`}>Phinch Name</div>),
         dataIndex: 'phinchName',
         key: 'phinchName',
         render: (t) => (
@@ -417,7 +417,7 @@ export default class Vis extends Component {
         );
       });
   }
-  
+
   renderSort() {
     const buttons = [
       {
@@ -439,7 +439,7 @@ export default class Vis extends Component {
       return (
         <div
           key={b.id}
-          className={`${styles.heading} ${styles.button} ${styles.controlMargin}`}
+          className={`${gstyle.heading} ${styles.controlMargin}`}
           onClick={onClick}
         >
           {b.name} {arrow}
@@ -461,8 +461,8 @@ export default class Vis extends Component {
     ];
     return buttons.map(b => {
       const classes = (this.state.mode === b.id) ? (
-          `${styles.heading} ${styles.button}`
-        ) : `${styles.heading} ${styles.button} ${styles.deselected}`;
+          `${gstyle.heading}`
+        ) : `${gstyle.heading} ${styles.deselected}`;
       const onClick = () => {
         this.setState({mode: b.id});
       }
@@ -483,7 +483,7 @@ export default class Vis extends Component {
     const label = this.state.showSequences ? 'Hide' : 'Show';
     const button = (
         <div
-          className={`${styles.heading}`}
+          className={`${gstyle.heading}`}
           style={{
             cursor: 'pointer',
           }}
@@ -497,7 +497,7 @@ export default class Vis extends Component {
       );
     const columns = [
       {
-        title: (<div className={`${styles.heading} ${styles.rank}`}>Rank</div>),
+        title: (<div className={`${gstyle.heading} ${styles.rank}`}>Rank</div>),
         dataIndex: 'rank',
         key: 'rank',
         render: (d) => {
@@ -511,7 +511,7 @@ export default class Vis extends Component {
         }
       },
       {
-        title: (<div className={`${styles.heading} ${styles.name}`}>Name</div>),
+        title: (<div className={`${gstyle.heading} ${styles.name}`}>Name</div>),
         dataIndex: 'name',
         key: 'name',
         render: (d) => {
@@ -525,7 +525,7 @@ export default class Vis extends Component {
         }
       },
       {
-        title: (<div className={`${styles.heading} ${styles.reads}`}>Reads</div>),
+        title: (<div className={`${gstyle.heading} ${styles.reads}`}>Reads</div>),
         dataIndex: 'reads',
         key: 'reads',
         render: (d) => {
@@ -587,7 +587,7 @@ export default class Vis extends Component {
       return (
         <div
           key={l.name}
-          className={`${styles.button} ${selected}`}
+          className={`${gstyle.button} ${selected} ${styles.selector}`}
           onClick={() => this.setLevel(l.order)}
         >
           {(i === 0) ? '' : (<div className={styles.dash}>—</div>)}
@@ -622,7 +622,7 @@ export default class Vis extends Component {
         </div>
         <Summary summary={this.state.summary} datalength={this.state.data.length} />
         <Link to="/Filter">
-          <div className={`${styles.button} ${styles.heading} ${styles.controlMargin}`}>
+          <div className={`${gstyle.heading} ${styles.controlMargin}`}>
             <div className={gstyle.arrow} style={{transform: `rotate(${-90}deg)`}}>⌃</div>
             Back to Filter
           </div>

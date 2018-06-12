@@ -1,16 +1,8 @@
-.heading {
-  display: inline-block;
-  padding: 0.25rem 0.5rem;
-  background: #2b2b2b;
-  color: white;
-}
-
 .outline {
   border: 1px solid #2b2b2b;
 }
 
 .filter {
-  /*padding: 0.25rem 0.5rem;*/
   padding: 0.25rem 0.5rem;
   font-size: 0.75rem;
 }
@@ -26,10 +18,6 @@
   text-align: center;
 }
 
-/*.table .heading {
-  margin-bottom: 15px;
-}*/
-
 .input {
   box-sizing: border-box;
   display: inline-block;
@@ -39,7 +27,6 @@
   padding: 0;
   border: none;
   background: none;
-  /**/
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -115,27 +102,19 @@
   background: white;
   border: 1px solid #2b2b2b;
 }
-
 .modal p {
   margin: 0;
   margin-bottom: 0.5rem;
   padding: 0 0.5rem;
 }
 
-.button {
-  cursor: pointer;
-  padding: 0.5rem 0.25rem;
-  display: inline-block;
+.previewButton {
   vertical-align: top;
-  max-width: 124px;
-}
-
-.button .heading {
   height: 57px;
 }
 
-.filterCell.noLeft {
-  padding-left: 0;
+.noLeft {
+  padding-left: 0 !important;
 }
 
 .error {

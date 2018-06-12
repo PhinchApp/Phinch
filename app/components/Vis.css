@@ -2,24 +2,9 @@
   background: #f4f4f4;
 }
 
-.button {
-  cursor: pointer;
-  margin: 0;
-  padding: 0.5rem 0.25rem;
-  display: inline-block;
-  color: #808080;
-}
-.button:hover {
+.selector:hover {
   background: #2b2b2b;
   color: white;
-}
-
-.heading {
-  display: inline-block;
-  background: #2b2b2b;
-  color: white;
-  padding: 0.25rem 0.5rem;
-  margin: 0;
 }
 
 .controlMargin {
@@ -69,18 +54,13 @@
 }
 
 .modaltop {
-  /*position: relative;*/
   position: absolute;
   background: white;
   left: 1.5rem;
-  /*left: 17.5rem;*/
-  
-  /*margin-top: -360px;*/
   overflow: hidden;
   padding: 0;
   margin: 0;
   margin-top: 0.5rem;
-  /*padding: 0.5rem 0;*/
   height: 360px;
   background: white;
   border: 1px solid #2b2b2b;
@@ -92,8 +72,6 @@
   margin-right: 0.25rem;
 }
 .name {
-  /*width: 720px;*/
-  /*744*/
   width: calc(100vw - 240px);
   margin-right: 0.25rem;
   overflow: hidden;

@@ -325,7 +325,7 @@ export default class Filter extends Component {
     const arrow = click ? (getSortArrow(this, key)) : '';
     return (
       <div
-        className={`${styles.heading} ${styles[key]}`}
+        className={`${gstyle.heading} ${styles[key]}`}
         onClick={onClick}
       >
         {names[key]} {arrow}
@@ -478,7 +478,7 @@ export default class Filter extends Component {
       });
       return (
         <div key={k} className={styles.bottom}>
-          <div className={styles.heading}>
+          <div className={gstyle.heading}>
             {SectionNames[k]}
           </div>
           <div className={styles.outline}>
@@ -548,7 +548,7 @@ export default class Filter extends Component {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
     const resultStyle = this.state.result === 'error' ? styles.error : styles.success;
     const result = (
-      <div className={styles.button}>
+      <div className={gstyle.button}>
         <div className={resultStyle} onClick={this.clearResult}>
           {this.state.result}
         </div>
@@ -566,8 +566,8 @@ export default class Filter extends Component {
           </div>
           <Summary summary={this.state.summary} datalength={this.state.data.length} />
           {/*
-          <div className={styles.button}>
-            <div className={styles.heading} onClick={() => {
+          <div className={gstyle.button}>
+            <div className={gstyle.heading} onClick={() => {
               // show picker to allow custom name?
               this.setState({ loading: true});
               // this is more consistent than the setState callback
@@ -580,8 +580,8 @@ export default class Filter extends Component {
             </div>
           </div>
           */}
-          <div className={styles.button}>
-            <div className={styles.heading} onClick={() => {
+          <div className={gstyle.button}>
+            <div className={`${gstyle.heading} ${styles.previewButton}`} onClick={() => {
               setProjectFilters(
                 this.state.summary.path,
                 this.state.summary.name,
@@ -595,8 +595,8 @@ export default class Filter extends Component {
               Save Filters
             </div>
           </div>
-          <div className={styles.button}>
-            <div className={styles.heading} onClick={() => {
+          <div className={gstyle.button}>
+            <div className={`${gstyle.heading} ${styles.previewButton}`} onClick={() => {
               this.setState({ loading: true});
               setTimeout(() => {
                 DataContainer.applyFiltersToData(this.state.data);
@@ -625,7 +625,7 @@ export default class Filter extends Component {
           }}>
             {this.displayFilters()}
             <div
-              className={styles.heading}
+              className={gstyle.heading}
               style={{ cursor: 'pointer' }}
               onClick={this.resetFilters}
             >
