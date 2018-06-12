@@ -5,15 +5,19 @@ import Table from 'rc-table';
 import _sortBy from 'lodash.sortby';
 import { nest } from 'd3-collection';
 import { scaleLinear, scaleOrdinal } from 'd3-scale';
-// import { interpolateRainbow } from 'd3-scale-chromatic';
 
+import { removeRows, restoreRows, sortBy, getSortArrow } from '../FilterFunctions';
 import DataContainer from '../DataContainer';
+
 import StackedBar from './StackedBar';
 import StackedBarTooltip from './StackedBarTooltip';
+import RemovedRows from './RemovedRows';
 import palette from '../palette';
 import Summary from './Summary';
 
 import styles from './Vis.css';
+import tstyle from './tables.css';
+import gstyle from './general.css';
 import logo from 'images/phinch.png';
 
 export default class Vis extends Component {
@@ -32,7 +36,6 @@ export default class Vis extends Component {
       highlightedDatum: null,
       mode: 'value',
       showSequences: false,
-      showHidden: false,
     };
 
     this.sort = {
@@ -54,11 +57,6 @@ export default class Vis extends Component {
     };
     this.metrics.chartWidth = this.state.width - ((this.metrics.padding * 4.5) + (this.metrics.idWidth + this.metrics.hideWidth + this.metrics.nameWidth));
     this.metrics.chartHeight = this.state.height - 251;
-
-    // this.time = {
-    //   start: performance.now(),
-    //   end: null,
-    // };
 
     this.scales = {
       x: scaleLinear(),
@@ -135,12 +133,13 @@ export default class Vis extends Component {
           return l;
         });
 
-      this.state.data = this.sortBy(
+      this.state.data = sortBy(
+        this,
         this.sort.key,
         this.formatTaxonomyData(this.state.initdata, this.state.level),
         false,
+        false,
         );
-      // this.updateColorScale(this.state.data);
       this.setColorScale(this.state.data);
     }
 
@@ -148,16 +147,8 @@ export default class Vis extends Component {
   }
 
   componentDidMount() {
-    // this.time.end = performance.now();
-    // console.log(`executed in ${(this.time.end - this.time.start).toLocaleString()}ms`);
     window.addEventListener('resize', this.updateDimensions);
   }
-
-  // componentDidUpdate() {
-  //   this.time.end = performance.now();
-  //   console.log(`executed in ${(this.time.end - this.time.start).toLocaleString()}ms`);
-  // }
-
   componentWillUnmount() {
     window.removeEventListener('resize', this.updateDimensions);
   }
@@ -201,20 +192,13 @@ export default class Vis extends Component {
         })
       )
     )];
-    // .sort();
-    // const sequenceRange = uniqSequences.map((s,i) => {
-    //   return ((i + 1) / uniqSequences.length);
-    // });
-    // const sequenceRange = 
-    this.scales.c.domain(uniqSequences)
-    // .range(sequenceRange);
+    this.scales.c.domain(uniqSequences);
   }
 
   setLevel(level) {
-    // this.time.start = performance.now();
-    const data = this.updateTaxonomyData(this.state.data, level);
-    // this.updateColorScale(data);
-    this.setState({level, data});
+    const data = this.updateTaxonomyData(this.state.data, level, true);
+    const deleted = this.updateTaxonomyData(this.state.deleted, level, false);
+    this.setState({level, data, deleted});
   }
 
   // data.data schema: [row(observations), column(samples), count]
@@ -238,6 +222,7 @@ export default class Vis extends Component {
 
       totalDataReads += c.reads;
       return {
+        id: c.id,
         biomid: c.biomid,
         phinchID: c.metadata.phinchID,
         order: c.order,
@@ -247,24 +232,28 @@ export default class Vis extends Component {
         sequences: [],
         matches: matches,
       };
-    }), level);
+    }), level, true);
 
     this.totalDataReads = totalDataReads;
     return formatedData;
   }
 
-  updateTaxonomyData(data, level) {
-    this.readsBySequence = {};
+  updateTaxonomyData(data, level, updateSequences) {
+    if (updateSequences) {
+      this.readsBySequence = {};
+    }
     return data.map(d => {
       d.sequences = nest()
         .key(d => d.taxonomy.slice(0, level + 1))
         .entries(d.matches)
         .map(s => {
           const reads = s.values.map(v => v.count).reduce((a, v) => a + v)
-          if (s.key in this.readsBySequence) {
-            this.readsBySequence[s.key] += reads;
-          } else {
-            this.readsBySequence[s.key] = reads;
+          if (updateSequences) {
+            if (s.key in this.readsBySequence) {
+              this.readsBySequence[s.key] += reads;
+            } else {
+              this.readsBySequence[s.key] = reads;
+            }
           }
           return {
             name: s.key,
@@ -272,64 +261,15 @@ export default class Vis extends Component {
             reads: reads,
           };
         });
-        // .map(s => {
-        //   s.totalReads = readsBySequence[s.name];
-        //   return s;
-        // });
       return d;
     });
   }
 
-  removeRows(rows) {
-    const data = this.state.data.filter((d) => {
-      return !rows.includes(d);
-    });
-    const deleted = this.state.deleted.concat(rows);
-    this.setState({data, deleted});
-  }
-
-  restoreRows(rows) {
-    const deleted = this.state.deleted.filter((d) => {
-      return !rows.includes(d);
-    });
-    const data = this.state.data.concat(rows).sort((a, b) => {
-      if (!this.sort.reverse) {
-        if (a[this.sort.key] < b[this.sort.key]) return -1;
-        if (a[this.sort.key] > b[this.sort.key]) return 1;
-        return 0;
-      } else {
-        if (b[this.sort.key] < a[this.sort.key]) return -1;
-        if (b[this.sort.key] > a[this.sort.key]) return 1;
-        return 0;
-      }
-    });
-    const showHidden = deleted.length ? true : false;
-    this.setState({data, deleted, showHidden});
-  }
-
-  displayHiddenSamples() {
-    const label = this.state.showHidden ? 'Hide' : 'Show';
-
+  generateDeletedColumns() {
     const xscale = scaleLinear();
     xscale.domain([1, Math.max(...this.state.deleted.map(d => d.reads))])
       .range([1, this.metrics.chartWidth])
       .clamp();
-
-    const button = this.state.deleted.length ? (
-        <div
-          className={styles.heading}
-          style={{
-            marginTop: '1rem',
-            cursor: 'pointer',
-          }}
-          onClick={() => {
-            const showHidden = !this.state.showHidden;
-            this.setState({showHidden});
-          }}
-        >
-          {label} Removed Samples
-        </div>
-      ) : '';
     const deletedColumns = [
       {
         title: (<div className={`${styles.heading} ${styles.restore}`}>Restore</div>),
@@ -337,11 +277,11 @@ export default class Vis extends Component {
         key: 'remove',
         render: (r) => (
           <div className={styles.restore}>
-            <div className={styles.cell}>
+            <div className={tstyle.filterCell}>
               <div
                 className={styles.delete}
                 style={{fontSize: 8}}
-                onClick={() => { this.restoreRows([r]) }}
+                onClick={() => { restoreRows(this, [r]) }}
               >
                 ⤴
               </div>
@@ -354,8 +294,8 @@ export default class Vis extends Component {
         dataIndex: 'biomid',
         key: 'biomid',
         render: (t) => (
-          <div className={styles.biomid}>
-            <div className={styles.cell}>
+          <div className={`${styles.biomid} ${styles.rowLabel}`}>
+            <div className={tstyle.filterCell}>
               {t}
             </div>
           </div>
@@ -366,8 +306,8 @@ export default class Vis extends Component {
         dataIndex: 'phinchName',
         key: 'phinchName',
         render: (t) => (
-          <div className={styles.phinchName}>
-            <div className={styles.cell}>
+          <div className={`${styles.phinchName} ${styles.rowLabel}`}>
+            <div className={tstyle.filterCell}>
               {t}
             </div>
           </div>
@@ -380,7 +320,7 @@ export default class Vis extends Component {
         render: (r) => {
           const sequence = _sortBy(r.sequences, (s) => -s.reads);
           return (
-            <div className={styles.cell}>
+            <div className={tstyle.filterCell}>
               <StackedBar
                 data={sequence}
                 sample={r}
@@ -394,31 +334,8 @@ export default class Vis extends Component {
           )
         },
       },
-    ]
-    const table = this.state.showHidden ? (
-        <div className={styles.modalbottom}>
-          <p>Removed Samples</p>
-          <Table
-            className={styles.table}
-            rowClassName={(r, i) => {
-              if (i%2 === 0) {
-                return styles.grey;
-              }
-              return;
-            }}
-            scroll={{ y: (296) }}
-            columns={deletedColumns}
-            data={this.state.deleted}
-            rowKey={row => `d-${row.biomid}`}
-          />
-        </div>
-      ) : '';
-    return (
-      <div>
-        {table}
-        {button}
-      </div>
-    );
+    ];
+    return deletedColumns;
   }
 
   renderTicks() {
@@ -475,7 +392,7 @@ export default class Vis extends Component {
         return (
           <div key={d.sampleName} className={styles.row}>
             <div className={styles.rowLabel} style={{width: this.metrics.hideWidth}}>
-              <div onClick={() => { this.removeRows([d]) }}>
+              <div onClick={() => { removeRows(this, [d]) }}>
                 <div className={styles.delete}>x</div>
               </div>
             </div>
@@ -500,37 +417,7 @@ export default class Vis extends Component {
         );
       });
   }
-
-  sortBy(key, indata, setState) {
-    this.sort.key = key;
-    const data = indata.sort((a, b) => {
-      if (this.sort.reverse) {
-        if (a[key] < b[key]) return -1;
-        if (a[key] > b[key]) return 1;
-        return 0;
-      } else {
-        if (b[key] < a[key]) return -1;
-        if (b[key] > a[key]) return 1;
-        return 0;
-      }
-    });
-    this.sort.reverse = !this.sort.reverse;
-    if (setState) {
-      this.setState({data});
-    } else {
-      return data;
-    }
-  }
-
-  getSortArrow(key) {
-    if (key === this.sort.key) {
-      const angle = this.sort.reverse ? 180 : 0;
-      return (<div className={styles.arrow} style={{transform: `rotate(${angle}deg)`}}>⌃</div>);
-    } else {
-      return '';
-    }
-  }
-
+  
   renderSort() {
     const buttons = [
       {
@@ -547,8 +434,8 @@ export default class Vis extends Component {
       },
     ];
     return buttons.map(b => {
-      const onClick = () => { this.sortBy(b.id, this.state.data, true) };
-      const arrow = this.getSortArrow(b.id);
+      const onClick = () => { sortBy(this, b.id, this.state.data, true, false) };
+      const arrow = getSortArrow(this, b.id);
       return (
         <div
           key={b.id}
@@ -616,7 +503,7 @@ export default class Vis extends Component {
         render: (d) => {
           return (
             <div className={styles.rank}>
-              <div className={styles.cell}>
+              <div className={tstyle.visCell}>
                 {d.toLocaleString()}
               </div>
             </div>
@@ -630,7 +517,7 @@ export default class Vis extends Component {
         render: (d) => {
           return (
             <div className={styles.name}>
-              <div className={styles.cell}>
+              <div className={tstyle.visCell}>
                 {d}
               </div>
             </div>
@@ -644,8 +531,8 @@ export default class Vis extends Component {
         render: (d) => {
           return (
             <div className={styles.reads}>
-              <div className={styles.cell}>
-                {d.toLocaleString()}
+              <div className={tstyle.visCell}>
+                {d.toLocaleString()}  
               </div>
             </div>
           );
@@ -666,7 +553,7 @@ export default class Vis extends Component {
     const table = this.state.showSequences ? (
         <div className={styles.modaltop}>
           <Table
-            className={styles.table}
+            className={tstyle.table}
             rowClassName={(r, i) => {
               if (i%2 === 0) {
                 return styles.grey;
@@ -715,22 +602,20 @@ export default class Vis extends Component {
       .clamp();
 
     const bars = this.renderBars(this.state.data);
-
     const sortButtons = this.renderSort();
-
     const viewToggle = this.renderToggle();
-
     const topSequences = this.renderTopSequences(this.readsBySequence);
-
     const ticks = this.renderTicks();
 
     const tooltip = this.state.highlightedDatum == null ? null :
       <StackedBarTooltip {...this.state.highlightedDatum} totalDataReads={this.totalDataReads} />
 
+    this.deletedColumns = this.generateDeletedColumns();
+
     return (
-      <div className={styles.container}>
+      <div className={gstyle.container}>
         {redirect}
-        <div className={styles.logo}>
+        <div className={gstyle.logo}>
           <Link to="/">
             <img src={logo} alt='Phinch' />
           </Link>
@@ -738,7 +623,7 @@ export default class Vis extends Component {
         <Summary summary={this.state.summary} datalength={this.state.data.length} />
         <Link to="/Filter">
           <div className={`${styles.button} ${styles.heading} ${styles.controlMargin}`}>
-            <div className={styles.arrow} style={{transform: `rotate(${-90}deg)`}}>⌃</div>
+            <div className={gstyle.arrow} style={{transform: `rotate(${-90}deg)`}}>⌃</div>
             Back to Filter
           </div>
         </Link>
@@ -815,7 +700,10 @@ export default class Vis extends Component {
           {bars}
           {tooltip}
         </div>
-        {this.displayHiddenSamples()}
+        <RemovedRows
+          deleted={this.state.deleted}
+          deletedColumns={this.deletedColumns}
+        />
       </div>
     );
   }

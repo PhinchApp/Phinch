@@ -1,9 +1,3 @@
-.container {
-  width: 100%;
-  height: 100vh;
-  padding: 1rem;
-}
-
 .drag {
   background: #bffbbf;
 }
@@ -12,13 +6,7 @@
   pointer-events: none;
 }
 
-.logo {
-  width: 140px;
-  display: inline-block;
-  vertical-align: top;
-}
-
-.container h1 {
+h1.heading {
   color: #2b2b2b;
   margin: 1rem 0;
 }

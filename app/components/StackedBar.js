@@ -43,34 +43,18 @@ export default class StackedBar extends Component {
     }
     const ctx = this._canvas.getContext('2d')
     ctx.clearRect(0, 0, this.props.width, this.props.height);
-    //
     if (this.props.isPercent) {
       this.props.xscale.domain([0, this.props.data.map(d => d.reads).reduce((a, v) => a + v)]);
     }
-    //
     let offset = 0;
-    // this.props.data
-    //   .sort((a, b) => {
-    //     return b.reads - a.reads;
-    //     // const readDifference = ;
-    //     // console.log(a);
-    //     // if (readDifference === 0) {
-    //     //   return a.
-    //     // }
-    //     // return readDifference;
-    //     // return this.props.xscale(b.reads) - this.props.xscale(a.reads);
-    //   })
     this.props.data
       .forEach((d, i) => {
         ctx.fillStyle = this.props.cscale(d.name);
         const alpha = this.props.highlightedDatum == null ? 1 :
           this.props.highlightedDatum.datum.name === d.name ? 1 : 0.25;
-
         ctx.globalAlpha = alpha;
-
         d.x = offset * this.scale;
         d.width = this.props.xscale(d.reads);
-
         ctx.fillRect(
           d.x,
           0 * this.scale,
@@ -98,9 +82,9 @@ export default class StackedBar extends Component {
           verticalAlign: 'top',
           cursor: 'pointer',
         }}
-        onMouseOver={this._mouseMove}
-        onMouseMove={this._mouseMove}
-        onMouseOut={this._mouseOut}
+        onMouseOver={this.props.onHoverDatum ? this._mouseMove : null}
+        onMouseMove={this.props.onHoverDatum ? this._mouseMove : null}
+        onMouseOut={this.props.onHoverDatum ? this._mouseOut : null}
       />
     );
   }

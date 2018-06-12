@@ -1,0 +1,20 @@
+/* Styles that appear as one-offs across components */
+
+.container {
+  min-width: 960px;
+  height: 100vh;
+  padding: 1rem;
+}
+
+.logo {
+  width: 140px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.arrow {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  line-height: 1rem;
+}

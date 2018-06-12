@@ -5,15 +5,19 @@ import { nest } from 'd3-collection';
 import Table from 'rc-table';
 
 import DataContainer from '../DataContainer';
+import { removeRows, restoreRows, sortBy, getSortArrow } from '../FilterFunctions';
 import { setProjectFilters, getProjectFilters, exportProjectData } from '../projects.js';
 
 import FrequencyChart from './FrequencyChart';
 import FilterChart from './FilterChart';
+import RemovedRows from './RemovedRows';
 import CheckBoxes from './CheckBoxes';
 import Summary from './Summary';
 import Loader from './Loader';
 
 import styles from './Filter.css';
+import tstyle from './tables.css';
+import gstyle from './general.css';
 import logo from 'images/phinch.png';
 
 import vis from 'images/vis-placeholder-sm.png';
@@ -37,7 +41,6 @@ export default class Filter extends Component {
       height: window.innerHeight,
       filters: {},
       result: null,
-      showHidden: false,
       loading: false,
       redirect: null,
     };
@@ -156,7 +159,7 @@ export default class Filter extends Component {
         key: 'order',
         render: (t) => (
           <div className={styles.order}>
-            <div className={styles.cell}>
+            <div className={tstyle.filterCell}>
               {(t !== undefined) ? t.toLocaleString() : ''}
             </div>
           </div>
@@ -168,7 +171,7 @@ export default class Filter extends Component {
         key: 'phinchName',
         render: (t, r) => (
           <div className={styles.phinchName}>
-            <div className={styles.cell}>
+            <div className={tstyle.filterCell}>
               <input
                 className={styles.input}
                 type="text"
@@ -185,7 +188,7 @@ export default class Filter extends Component {
         key: 'biomid',
         render: (t) => (
           <div className={styles.biomid}>
-            <div className={styles.cell}>
+            <div className={tstyle.filterCell}>
               {t}
             </div>
           </div>
@@ -197,7 +200,7 @@ export default class Filter extends Component {
         key: 'sampleName',
         render: (t) => (
           <div className={styles.sampleName}>
-            <div className={styles.cell}>
+            <div className={tstyle.filterCell}>
               {t}
             </div>
           </div>
@@ -208,7 +211,7 @@ export default class Filter extends Component {
         dataIndex: 'reads',
         key: 'reads',
         render: (t) => (
-          <div className={styles.cell}>
+          <div className={tstyle.filterCell}>
             {t.toLocaleString()}
           </div>
         ),
@@ -218,7 +221,7 @@ export default class Filter extends Component {
         dataIndex: '',
         key: 'chart',
         render: (d) => (
-          <div className={styles.cell}>
+          <div className={tstyle.filterCell}>
             <FrequencyChart data={this.state.data.concat(this.state.deleted)} value={d.reads} width={120 * 2} height={18 * 2} />
           </div>
         ),
@@ -228,7 +231,7 @@ export default class Filter extends Component {
         dataIndex: '',
         key: 'drag',
         render: (r) => (
-          <div className={styles.cell}>
+          <div className={tstyle.filterCell}>
             <div>
               <div className={`${styles.delete} ${styles.drag}`} style={{'transform': 'rotate(90deg)'}}>||</div>
             </div>
@@ -240,8 +243,8 @@ export default class Filter extends Component {
         dataIndex: '',
         key: 'remove',
         render: (r) => (
-          <div className={`${styles.cell} ${styles.noLeft}`}>
-            <div onClick={() => { this.removeRows([r]) }}>
+          <div className={`${tstyle.filterCell} ${styles.noLeft}`}>
+            <div onClick={() => { removeRows(this, [r]) }}>
               <div className={styles.delete}>x</div>
             </div>
           </div>
@@ -262,8 +265,8 @@ export default class Filter extends Component {
       dataIndex: '',
       key: 'remove',
       render: (r) => (
-        <div className={styles.cell}>
-          <div onClick={() => { this.restoreRows([r]) }}>
+        <div className={tstyle.filterCell}>
+          <div onClick={() => { restoreRows(this, [r]) }}>
             <div className={styles.delete}>⤴</div>
           </div>
         </div>
@@ -276,7 +279,6 @@ export default class Filter extends Component {
     this.setResult = this.setResult.bind(this);
     this.clearResult = this.clearResult.bind(this);
     this.updateChecks = this.updateChecks.bind(this);
-    this.getSortArrow = this.getSortArrow.bind(this);
     this.applyFilters = this.applyFilters.bind(this);
     this.resetFilters = this.resetFilters.bind(this);
     this.updateFilters = this.updateFilters.bind(this);
@@ -319,8 +321,8 @@ export default class Filter extends Component {
       sampleName: 'Sample Name',
       reads: 'Sequence Reads',
     };
-    const onClick = click ? (() => { this.sortBy(key, this.state.data, true) }) : (() => {});
-    const arrow = click ? (this.getSortArrow(key)) : '';
+    const onClick = click ? (() => { sortBy(this, key, this.state.data, true, true) }) : (() => {});
+    const arrow = click ? (getSortArrow(this, key)) : '';
     return (
       <div
         className={`${styles.heading} ${styles[key]}`}
@@ -397,7 +399,7 @@ export default class Filter extends Component {
       return include;
     });
     this.sort.reverse = !this.sort.reverse;
-    data = this.sortBy(this.sort.key, data, false);
+    data = sortBy(this, this.sort.key, data, false, true);
     this.setState({filters, data});
   }
 
@@ -487,49 +489,6 @@ export default class Filter extends Component {
     });
   }
 
-  displayHiddenSamples() {
-    const label = this.state.showHidden ? 'Hide' : 'Show';
-    const button = this.state.deleted.length ? (
-        <div
-          className={styles.heading}
-          style={{
-            marginTop: '1rem',
-            cursor: 'pointer',
-          }}
-          onClick={() => {
-            const showHidden = !this.state.showHidden;
-            this.setState({showHidden});
-          }}
-        >
-          {label} Removed Samples
-        </div>
-      ) : '';
-    const table = this.state.showHidden ? (
-        <div className={styles.modal}>
-          <p>Removed Samples</p>
-          <Table
-            className={styles.table}
-            rowClassName={(r, i) => {
-              if (i%2 === 0) {
-                return styles.grey;
-              }
-              return;
-            }}
-            scroll={{ y: (296) }}
-            columns={this.deletedColumns}
-            data={this.state.deleted}
-            rowKey={row => `d-${row.id}`}
-          />
-        </div>
-      ) : '';
-    return (
-      <div>
-        {table}
-        {button}
-      </div>
-    );
-  }
-
   updatePhinchName(e, r) {
     const names = this.state.names;
     const data = this.state.data.map((d) => {
@@ -542,70 +501,6 @@ export default class Filter extends Component {
     this.setState({data, names});
   }
 
-  removeRows(rows) {
-    const data = this.state.data.filter((d) => {
-      return !rows.includes(d);
-    });
-    const deleted = this.state.deleted.concat(rows);
-    this.setState({data, deleted});
-  }
-
-  restoreRows(rows) {
-    const deleted = this.state.deleted.filter((d) => {
-      return !rows.includes(d);
-    });
-    const data = this.state.data.concat(rows).sort((a, b) => {
-      if (!this.sort.reverse) {
-        if (a[this.sort.key] < b[this.sort.key]) return -1;
-        if (a[this.sort.key] > b[this.sort.key]) return 1;
-        return 0;
-      } else {
-        if (b[this.sort.key] < a[this.sort.key]) return -1;
-        if (b[this.sort.key] > a[this.sort.key]) return 1;
-        return 0;
-      }
-    });
-    const showHidden = deleted.length ? true : false;
-    this.setState({data, deleted, showHidden});
-  }
-
-  getSortArrow(key) {
-    if (key === this.sort.key) {
-      const angle = this.sort.reverse ? 180 : 0;
-      return (<div className={styles.arrow} style={{transform: `rotate(${angle}deg)`}}>⌃</div>);
-    } else {
-      return '';
-    }
-  }
-
-  sortBy(key, indata, setstate) {
-    this.sort.key = key;
-    const data = indata.sort((a, b) => {
-      if (this.sort.reverse) {
-        if (a[key] < b[key]) return -1;
-        if (a[key] > b[key]) return 1;
-        return 0;
-      } else {
-        if (b[key] < a[key]) return -1;
-        if (b[key] > a[key]) return 1;
-        return 0;
-      }
-    }).map((d, i) => {
-      d.order = i;
-      return d;
-    });
-    this.sort.reverse = !this.sort.reverse;
-    this.columns = this.columns.map((c) => {
-      c.title = this.generateTableTitle(c.key, true);
-      return c;
-    });
-    if (setstate) {
-      this.setState({data});
-    } else {
-      return data;
-    }
-  }
-
   dragEnd(e) {
     let target = Number(this.over.dataset.id);
     if ((e.clientY - this.over.offsetTop) > (this.over.offsetHeight / 2)) {
@@ -614,20 +509,17 @@ export default class Filter extends Component {
     if (this.dragged <= target) {
       target--;
     }
-    //
     let data = this.state.data;
     data.splice(target, 0, data.splice(this.dragged, 1)[0]);
     data = data.map((d, i) => {
       d.order = i;
       return d;
-    });
-    // 
+    }); 
     this.over.style = null;
     this.over = null;
     this.dragged = null;
-    //
     this.sort.reverse = true;
-    this.sortBy('order', data, true);
+    sortBy(this, 'order', data, true, true);
   }
   dragOver(e) {
     e.preventDefault();
@@ -663,11 +555,11 @@ export default class Filter extends Component {
       </div>
       );
     return (
-      <div className={styles.container}>
+      <div className={gstyle.container}>
         <Loader loading={this.state.loading} />
         {redirect}
         <div className={styles.header}>
-          <div className={styles.logo}>
+          <div className={gstyle.logo}>
             <Link to="/">
               <img src={logo} alt='Phinch' />
             </Link>
@@ -719,7 +611,7 @@ export default class Filter extends Component {
                   );
               }, 1);
             }}>
-              Save & View <div className={styles.arrow} style={{transform: `rotate(${90}deg)`}}>⌃</div><br />
+              Save & View <div className={gstyle.arrow} style={{transform: `rotate(${90}deg)`}}>⌃</div><br />
               <img src={vis} alt='' style={{width: '112px', height: '24px', margin: '2px 0'}}/>
             </div>
           </div>
@@ -742,7 +634,7 @@ export default class Filter extends Component {
           </div>
           <div className={`${styles.section} ${styles.right}`}>
             <Table
-              className={styles.table}
+              className={tstyle.table}
               scroll={{ y: (this.state.height - 194) }}
               columns={this.columns}
               data={this.state.data}
@@ -762,7 +654,10 @@ export default class Filter extends Component {
                 }
               }}
             />
-            {this.displayHiddenSamples()}
+            <RemovedRows
+              deleted={this.state.deleted}
+              deletedColumns={this.deletedColumns}
+            />
           </div>
         </div>
       </div>

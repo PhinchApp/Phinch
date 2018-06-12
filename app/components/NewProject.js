@@ -8,6 +8,8 @@ import loadFile from '../DataLoader';
 import DataContainer from '../DataContainer';
 
 import styles from './NewProject.css';
+import gstyle from './general.css';
+
 import logo from 'images/phinch.png';
 import loading from 'images/loading.gif';
 
@@ -140,13 +142,13 @@ export default class NewProject extends Component {
     const loader = this.state.loading ? <img src={loading} alt='loading' /> : '';
     const indicateDrag = this.state.dragging ? styles.drag : '';
     return (
-      <div className={styles.container}>
-        <div className={styles.logo}>
+      <div className={gstyle.container}>
+        <div className={gstyle.logo}>
           <Link to="/">
             <img src={logo} alt='Phinch' />
           </Link>
         </div>
-        <h1>New Project</h1>
+        <h1 className={styles.heading}>New Project</h1>
         <p>To start a new project, you can browse for a file on your local hard drive or drag the file to the box below.</p>
         <input type="text" value={this.state.name} disabled />
         <button id='open' onClick={this.handleOpenButton}>Browse</button>
