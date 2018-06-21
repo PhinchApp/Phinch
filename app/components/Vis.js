@@ -35,7 +35,7 @@ export default class Vis extends Component {
       level: 1,
       highlightedDatum: null,
       showTooltip: false,
-      mode: 'value',
+      mode: 'percent',
       showSequences: false,
     };
 
@@ -483,7 +483,7 @@ export default class Vis extends Component {
             checked={checked}
             onChange={onRadioChange}
           />
-          <label for={o.name}>{o.name}</label>
+          <label htmlFor={o.name}>{o.name}</label>
         </div>
       );
     });
@@ -505,28 +505,30 @@ export default class Vis extends Component {
   renderToggle() {
     const buttons = [
       {
-        id: 'value',
-        name: 'Value',
+        id: 'percent',
+        name: 'Relative',
       },
       {
-        id: 'percent',
-        name: '%',
+        id: 'value',
+        name: 'Absolute',
       },
     ];
     return buttons.map(b => {
-      const classes = (this.state.mode === b.id) ? (
-          `${gstyle.heading}`
-        ) : `${gstyle.heading} ${styles.deselected}`;
-      const onClick = () => {
-        this.setState({mode: b.id});
+      const onRadioChange = (event) => {
+        console.log(event.target);
+        this.setState({mode: event.target.id});
       }
+      const checked = this.state.mode === b.id ? 'checked' : '';
       return (
-        <div
-          key={b.id}
-          className={classes}
-          onClick={onClick}
-        >
-          {b.name}
+        <div className={styles.inlineControl}>
+          <input
+            type='radio'
+            id={b.id}
+            name={b.name}
+            checked={checked}
+            onChange={onRadioChange}
+          />
+          <label htmlFor={b.value}>{b.name}</label>
         </div>
       );
     });
@@ -658,7 +660,7 @@ export default class Vis extends Component {
     const bars = this.renderBars(this.state.data);
     const sortSelect = this.renderSort();
     const viewToggle = this.renderToggle();
-    const topSequences = this.renderTopSequences(this.readsBySequence);
+    // const topSequences = this.renderTopSequences(this.readsBySequence);
     const ticks = this.renderTicks();
 
     const tooltip = this.state.showTooltip ?
@@ -696,7 +698,7 @@ export default class Vis extends Component {
             display: 'inline-block',
             margin: '0 0.5rem',
           }}>
-            <label for='sortSelect'>
+            <label htmlFor='sortSelect'>
               Sort by:
             </label>
           </div>
@@ -707,12 +709,13 @@ export default class Vis extends Component {
             display: 'inline-block',
             margin: '0 0.5rem',
           }}>
-            View
+            {/* View */}
           </div>
           <div style={{display: 'inline-block'}} className={styles.controlMargin}>
             {viewToggle}
           </div>
         </div>
+        {/*
         <div style={{display: 'inline-block'}}>
           <div style={{
             display: 'inline-block',
@@ -724,6 +727,7 @@ export default class Vis extends Component {
             {topSequences}
           </div>
         </div>
+        */}
         <div style={{
           position: 'relative',
           textAlign: 'center',
