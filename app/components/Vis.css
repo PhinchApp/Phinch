@@ -11,6 +11,11 @@
   margin: 0.25rem;
 }
 
+.inlineControl {
+  display: inline-block;
+  margin-right: 0.25rem;
+}
+
 .dash {
   display: inline-block;
   margin: 0;

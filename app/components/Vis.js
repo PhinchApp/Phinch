@@ -6,7 +6,7 @@ import _sortBy from 'lodash.sortby';
 import { nest } from 'd3-collection';
 import { scaleLinear, scaleOrdinal } from 'd3-scale';
 
-import { removeRows, restoreRows, sortBy, getSortArrow } from '../FilterFunctions';
+import { removeRows, restoreRows, visSortBy, getSortArrow } from '../FilterFunctions';
 import DataContainer from '../DataContainer';
 
 import StackedBar from './StackedBar';
@@ -140,11 +140,9 @@ export default class Vis extends Component {
           return l;
         });
 
-      this.state.data = sortBy(
+      this.state.data = visSortBy(
         this,
-        this.sort.key,
         this.formatTaxonomyData(this.state.initdata, this.state.level),
-        false,
         false,
         );
       this.setColorScale(this.state.data);
@@ -435,7 +433,7 @@ export default class Vis extends Component {
   }
 
   renderSort() {
-    const buttons = [
+    const sortOptions = [
       {
         id: 'biomid',
         name: 'BIOM ID',
@@ -452,23 +450,55 @@ export default class Vis extends Component {
     /* 
       TODO: add deselect when manually sorted
     */
-
-    const options = buttons.map(o => {
+    const options = sortOptions.map(o => {
       return <option value={o.id}>{o.name}</option>;
     });
-
-    const onChange = (event) => {
-      sortBy(this, event.target.value, this.state.data, true, false);
+    const onSelectChange = (event) => {
+      this.sort.key = event.target.value;
+      visSortBy(this, this.state.data, true);
     };
 
+    const radioOptions = [
+      {
+        name: 'Ascending',
+        value: true,
+      },
+      {
+        name: 'Descending',
+        value: false,
+      },
+    ];
+    const onRadioChange = (event) => {
+      this.sort.reverse = (event.target.name === 'Ascending');
+      visSortBy(this, this.state.data, true);
+    }
+    const buttons = radioOptions.map(o => {
+      const checked = this.sort.reverse === o.value ? 'checked' : '';
+      return (
+        <div className={styles.inlineControl}>
+          <input
+            type='radio'
+            id={o.name}
+            name={o.name}
+            checked={checked}
+            onChange={onRadioChange}
+          />
+          <label for={o.name}>{o.name}</label>
+        </div>
+      );
+    });
+
     return (
-      <select
-        id='sortSelect'
-        className={`${gstyle.heading} ${styles.controlMargin}`}
-        onChange={onChange}
-      >
-        {options}
-      </select>
+      <div className={styles.inlineControl}>
+        <select
+          id='sortSelect'
+          onChange={onSelectChange}
+          className={styles.inlineControl}
+        >
+          {options}
+        </select>
+        {buttons}
+      </div>
     );
   }
 
@@ -626,13 +656,11 @@ export default class Vis extends Component {
       .clamp();
 
     const bars = this.renderBars(this.state.data);
-    const sortButtons = this.renderSort();
+    const sortSelect = this.renderSort();
     const viewToggle = this.renderToggle();
     const topSequences = this.renderTopSequences(this.readsBySequence);
     const ticks = this.renderTicks();
 
-    // const tooltip = this.state.highlightedDatum == null ? null :
-    // const tooltip = this.tooltip.show ?
     const tooltip = this.state.showTooltip ?
       <StackedBarTooltip {...this.state.highlightedDatum} totalDataReads={this.totalDataReads} />
       : null;
@@ -672,7 +700,7 @@ export default class Vis extends Component {
               Sort by:
             </label>
           </div>
-          {sortButtons}
+          {sortSelect}
         </div>
         <div style={{display: 'inline-block'}}>
           <div style={{

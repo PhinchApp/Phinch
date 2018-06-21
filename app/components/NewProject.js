@@ -150,7 +150,7 @@ export default class NewProject extends Component {
         </div>
         <h1 className={styles.heading}>New Project</h1>
         <p>To start a new project, you can browse for a file on your local hard drive or drag the file to the box below.</p>
-        <input type="text" value={this.state.name} disabled />
+        <input className={styles.wide} type="text" value={this.state.name} disabled />
         <button id='open' onClick={this.handleOpenButton}>Browse</button>
         <textarea
           rows="3"

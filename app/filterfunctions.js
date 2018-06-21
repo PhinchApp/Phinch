@@ -27,7 +27,29 @@ export function restoreRows(context, rows) {
   context.setState({data, deleted});
 }
 
-export function sortBy(context, key, indata, setstate, updateTitles) {
+export function visSortBy(context, indata, setState) {
+  const data = indata.sort((a, b) => {
+    if (context.sort.reverse) {
+      if (a[context.sort.key] < b[context.sort.key]) return -1;
+      if (a[context.sort.key] > b[context.sort.key]) return 1;
+      return 0;
+    } else {
+      if (b[context.sort.key] < a[context.sort.key]) return -1;
+      if (b[context.sort.key] > a[context.sort.key]) return 1;
+      return 0;
+    }
+  }).map((d, i) => {
+    d.order = i;
+    return d;
+  });
+  if (setState) {
+    context.setState({data});
+  } else {
+    return data;
+  }
+}
+
+export function sortBy(context, key, indata, setState, updateTitles) {
   context.sort.key = key;
   const data = indata.sort((a, b) => {
     if (context.sort.reverse) {
@@ -50,7 +72,7 @@ export function sortBy(context, key, indata, setstate, updateTitles) {
       return c;
     });
   }
-  if (setstate) {
+  if (setState) {
     context.setState({data});
   } else {
     return data;
