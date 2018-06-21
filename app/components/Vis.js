@@ -449,19 +449,27 @@ export default class Vis extends Component {
         name: 'Sequence Reads',
       },
     ];
-    return buttons.map(b => {
-      const onClick = () => { sortBy(this, b.id, this.state.data, true, false) };
-      const arrow = getSortArrow(this, b.id);
-      return (
-        <div
-          key={b.id}
-          className={`${gstyle.heading} ${styles.controlMargin}`}
-          onClick={onClick}
-        >
-          {b.name} {arrow}
-        </div>
-      );
+    /* 
+      TODO: add deselect when manually sorted
+    */
+
+    const options = buttons.map(o => {
+      return <option value={o.id}>{o.name}</option>;
     });
+
+    const onChange = (event) => {
+      sortBy(this, event.target.value, this.state.data, true, false);
+    };
+
+    return (
+      <select
+        id='sortSelect'
+        className={`${gstyle.heading} ${styles.controlMargin}`}
+        onChange={onChange}
+      >
+        {options}
+      </select>
+    );
   }
 
   renderToggle() {
@@ -660,7 +668,9 @@ export default class Vis extends Component {
             display: 'inline-block',
             margin: '0 0.5rem',
           }}>
-            Sort
+            <label for='sortSelect'>
+              Sort by:
+            </label>
           </div>
           {sortButtons}
         </div>
