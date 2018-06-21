@@ -34,8 +34,15 @@ export default class Vis extends Component {
       redirect: null,
       level: 1,
       highlightedDatum: null,
+      showTooltip: false,
       mode: 'value',
       showSequences: false,
+    };
+
+    this.tooltip = {
+      // show: false,
+      timer: null,
+      duration: 2000,
     };
 
     this.sort = {
@@ -155,8 +162,17 @@ export default class Vis extends Component {
 
   _hoverDatum = (datum, sample, position) => {
     if (datum == null) {
-      this.setState({ highlightedDatum: null })
+      clearTimeout(this.tooltip.handle);
+      this.setState({
+        highlightedDatum: null,
+        showTooltip: false,
+      });
     } else {
+      if (!this.state.tooltip) {
+        this.tooltip.handle = setTimeout(() => {
+          this.setState({ showTooltip: true });
+        }, this.tooltip.duration);
+      }
       this.setState({ highlightedDatum: { datum, sample, position }})
     }
   }
@@ -607,8 +623,11 @@ export default class Vis extends Component {
     const topSequences = this.renderTopSequences(this.readsBySequence);
     const ticks = this.renderTicks();
 
-    const tooltip = this.state.highlightedDatum == null ? null :
+    // const tooltip = this.state.highlightedDatum == null ? null :
+    // const tooltip = this.tooltip.show ?
+    const tooltip = this.state.showTooltip ?
       <StackedBarTooltip {...this.state.highlightedDatum} totalDataReads={this.totalDataReads} />
+      : null;
 
     this.deletedColumns = this.generateDeletedColumns();
 

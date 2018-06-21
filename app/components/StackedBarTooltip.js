@@ -9,6 +9,10 @@ const percentFormatter = (value) => {
 }
 
 export default function StackedBarTooltip(props) {
+  if (props.datum == null) {
+    return null;
+  }
+
   const size = {
     x: 332,
     y: 232,
