@@ -40,9 +40,8 @@ export default class Vis extends Component {
     };
 
     this.tooltip = {
-      // show: false,
       timer: null,
-      duration: 2000,
+      duration: 1500,
     };
 
     this.sort = {
@@ -166,7 +165,7 @@ export default class Vis extends Component {
         showTooltip: false,
       });
     } else {
-      if (!this.state.tooltip) {
+      if (!this.state.showTooltip) {
         this.tooltip.handle = setTimeout(() => {
           this.setState({ showTooltip: true });
         }, this.tooltip.duration);
@@ -451,7 +450,7 @@ export default class Vis extends Component {
       TODO: add deselect when manually sorted
     */
     const options = sortOptions.map(o => {
-      return <option value={o.id}>{o.name}</option>;
+      return <option key={o.id} value={o.id}>{o.name}</option>;
     });
     const onSelectChange = (event) => {
       this.sort.key = event.target.value;
@@ -479,6 +478,7 @@ export default class Vis extends Component {
           <input
             type='radio'
             id={o.name}
+            key={o.name}
             name={o.name}
             checked={checked}
             onChange={onRadioChange}
@@ -515,7 +515,6 @@ export default class Vis extends Component {
     ];
     return buttons.map(b => {
       const onRadioChange = (event) => {
-        console.log(event.target);
         this.setState({mode: event.target.id});
       }
       const checked = this.state.mode === b.id ? 'checked' : '';
