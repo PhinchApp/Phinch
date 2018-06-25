@@ -11,6 +11,7 @@ import DataContainer from '../DataContainer';
 
 import StackedBar from './StackedBar';
 import StackedBarTooltip from './StackedBarTooltip';
+import FilterChart from './FilterChart';
 import RemovedRows from './RemovedRows';
 import palette from '../palette';
 import Summary from './Summary';
@@ -29,6 +30,7 @@ export default class Vis extends Component {
       initdata: DataContainer.getFilteredData(),
       data: [],
       deleted: [],
+      segments: {},
       width: window.innerWidth,
       height: window.innerHeight,
       redirect: null,
@@ -37,6 +39,7 @@ export default class Vis extends Component {
       showTooltip: false,
       mode: 'percent',
       showSequences: false,
+      showRightSidebar: false,
     };
 
     this.tooltip = {
@@ -60,9 +63,13 @@ export default class Vis extends Component {
       hideWidth: 20,
       idWidth: 32,
       nameWidth: 144,
+      heightOffset: 251,
+      rightSidebar: 216,
     };
-    this.metrics.chartWidth = this.state.width - ((this.metrics.padding * 4.5) + (this.metrics.idWidth + this.metrics.hideWidth + this.metrics.nameWidth));
-    this.metrics.chartHeight = this.state.height - 251;
+
+    this.metrics.nonbarWidth = (this.metrics.padding * 3) + (this.metrics.idWidth + this.metrics.hideWidth + this.metrics.nameWidth);
+    this.metrics.chartWidth = this.state.width - this.metrics.nonbarWidth;
+    this.metrics.chartHeight = this.state.height - this.metrics.heightOffset;
 
     this.scales = {
       x: scaleLinear(),
@@ -154,6 +161,7 @@ export default class Vis extends Component {
     window.addEventListener('resize', this.updateDimensions);
   }
   componentWillUnmount() {
+    if (this.tooltip.handle) { clearTimeout(this.tooltip.handle) };
     window.removeEventListener('resize', this.updateDimensions);
   }
 
@@ -174,14 +182,60 @@ export default class Vis extends Component {
     }
   }
 
+  _clickDatum = (datum) => {
+    const segments = this.state.segments;
+    if (segments.hasOwnProperty(datum.name)) {
+      delete segments[datum.name];
+    } else {
+      const sequences = [];
+      this.state.data.forEach(d => {
+        d.sequences.forEach(s => {
+          if (datum.name === s.name) {
+            sequences.push(s);
+          }
+        });
+      });
+      segments[datum.name] = sequences;
+    }
+    //
+    const showRightSidebar = Object.keys(segments).length > 0 ? true : false;
+    if (showRightSidebar) {
+      this.metrics.chartWidth = window.innerWidth - (this.metrics.rightSidebar + this.metrics.nonbarWidth);
+    } else {
+      this.metrics.chartWidth = window.innerWidth - this.metrics.nonbarWidth;
+    }
+    //
+    this.setState({ segments, showRightSidebar });
+  }
+
   updateDimensions() {
-    this.metrics.chartWidth = window.innerWidth - ((this.metrics.padding * 4.5) + (this.metrics.idWidth + this.metrics.hideWidth + this.metrics.nameWidth));
-    this.metrics.chartHeight = window.innerHeight - 251;
+    // this.metrics.chartWidth = window.innerWidth - this.metrics.nonbarWidth;
+    if (this.state.showRightSidebar) {
+      this.metrics.chartWidth = window.innerWidth - (this.metrics.rightSidebar + this.metrics.nonbarWidth);
+    } else {
+      this.metrics.chartWidth = window.innerWidth - this.metrics.nonbarWidth;
+    }
+    this.metrics.chartHeight = window.innerHeight - this.metrics.heightOffset;
     this.setState({
       width: window.innerWidth,
       height: window.innerHeight,
     });
   }
+
+
+  // 
+  // Might be replaced / moved to bar controls
+  // toggleSidebar() {
+  //   const showRightSidebar = !this.state.showRightSidebar
+  //   if (showRightSidebar) {
+  //     this.metrics.chartWidth = window.innerWidth - (this.metrics.rightSidebar + this.metrics.nonbarWidth);
+  //   } else {
+  //     this.metrics.chartWidth = window.innerWidth - this.metrics.nonbarWidth;
+  //   }
+  //   this.setState({ showRightSidebar });
+  // }
+  //
+
 
   setColorScale(data) {
     const uniqSequences = [...new Set(
@@ -398,6 +452,55 @@ export default class Vis extends Component {
     });
   }
 
+  renderSegments(data) {
+    if (Object.keys(data).length) {
+      const segments = Object.keys(data).map(k => {
+        const segment = _sortBy(data[k].filter(s => s.reads > 0), (s) => -s.reads);
+        const datum = {
+          values: segment.map((s, i) => {
+            return {
+              index: i,
+              value: i,
+              count: s.reads,
+            };
+          }),
+          unit: ""
+        };
+        // move this up a level to be store in component / saved to file
+        const filter = {
+          range: {
+            max: datum.values[datum.values.length - 1],
+            min: datum.values[0],
+          },
+          expanded: true,
+        };
+        return (
+          <FilterChart
+            name={k}
+            data={datum}
+            width={this.metrics.rightSidebar - this.metrics.padding * 2}
+            height={this.metrics.rightSidebar / 4}
+            filter={filter}
+            update={() => { return null; }}
+          />
+        );
+      });
+      return (
+        <div
+          className={styles.panel}
+          style={{
+            width: this.metrics.rightSidebar,
+            height: this.metrics.chartHeight,
+          }}
+        >
+          {segments}
+        </div>
+      );
+    } else {
+      return null;
+    }
+  }
+
   renderBars(data) {
     return data
       .map((d, i) => {
@@ -417,6 +520,7 @@ export default class Vis extends Component {
             </div>
             <StackedBar
               onHoverDatum={this._hoverDatum}
+              onClickDatum={this._clickDatum}
               data={sequence}
               sample={d}
               width={this.metrics.chartWidth}
@@ -668,6 +772,8 @@ export default class Vis extends Component {
 
     this.deletedColumns = this.generateDeletedColumns();
 
+    const displaySegments = this.renderSegments(this.state.segments);
+
     return (
       <div className={gstyle.container}>
         {redirect}
@@ -752,14 +858,18 @@ export default class Vis extends Component {
             </g>
           </svg>
         </div>
-        <div style={{
-          height: this.metrics.chartHeight,
-          paddingLeft: this.metrics.padding * 0.5,
-          overflowY: 'scroll',
-        }}>
+        <div
+          className={styles.panel}
+          style={{
+            height: this.metrics.chartHeight,
+            // paddingLeft: this.metrics.padding * 0.5,
+            // overflowY: 'scroll',
+          }}
+        >
           {bars}
           {tooltip}
         </div>
+        {displaySegments}
         <RemovedRows
           deleted={this.state.deleted}
           deletedColumns={this.deletedColumns}

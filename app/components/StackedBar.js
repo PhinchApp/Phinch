@@ -15,20 +15,24 @@ export default class StackedBar extends Component {
     this.updateCanvas();
   }
 
-  _mouseMove = (event) => {
+  _getDatum(event) {
     const containerOffset = this._canvas.getBoundingClientRect();
     const pageMouse = {x: event.clientX, y: event.clientY};
     const mouse = {
       x: pageMouse.x - containerOffset.left,
       y: pageMouse.y - containerOffset.top
     };
-
     let selectedDatum = null;
     this.props.data.forEach(d => {
       if (d.x <= mouse.x && d.x + d.width >= mouse.x) {
         selectedDatum = d
       }
-    })
+    });
+    return [selectedDatum, pageMouse];
+  }
+
+  _mouseMove = (event) => {
+    const [selectedDatum, pageMouse] = this._getDatum(event);
     if (selectedDatum) {
       this.props.onHoverDatum(selectedDatum, this.props.sample, pageMouse);
     }
@@ -37,6 +41,14 @@ export default class StackedBar extends Component {
   _mouseOut = () => {
     this.props.onHoverDatum(null);
   }
+
+  _mouseClick = (event) => {
+    const [selectedDatum] = this._getDatum(event);
+    if (selectedDatum) {
+      this.props.onClickDatum(selectedDatum);
+    }
+  }
+
   updateCanvas() {
     if (!this._canvas) {
       return
@@ -85,6 +97,7 @@ export default class StackedBar extends Component {
         onMouseOver={this.props.onHoverDatum ? this._mouseMove : null}
         onMouseMove={this.props.onHoverDatum ? this._mouseMove : null}
         onMouseOut={this.props.onHoverDatum ? this._mouseOut : null}
+        onClick={this.props.onClickDatum ? this._mouseClick : null}
       />
     );
   }
