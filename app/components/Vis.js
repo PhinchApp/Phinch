@@ -6,7 +6,7 @@ import _sortBy from 'lodash.sortby';
 import { nest } from 'd3-collection';
 import { scaleLinear, scaleOrdinal } from 'd3-scale';
 
-import { removeRows, restoreRows, visSortBy, getSortArrow } from '../FilterFunctions';
+import { updateFilters, removeRows, restoreRows, visSortBy, getSortArrow } from '../FilterFunctions';
 import DataContainer from '../DataContainer';
 
 import StackedBar from './StackedBar';
@@ -29,8 +29,9 @@ export default class Vis extends Component {
       summary: DataContainer.getSummary(),
       initdata: DataContainer.getFilteredData(),
       data: [],
+      preData: [],
       deleted: [],
-      segments: {},
+      filters: {},
       width: window.innerWidth,
       height: window.innerHeight,
       redirect: null,
@@ -41,6 +42,8 @@ export default class Vis extends Component {
       showSequences: false,
       showRightSidebar: false,
     };
+
+    this.filters = {};
 
     this.tooltip = {
       timer: null,
@@ -151,10 +154,12 @@ export default class Vis extends Component {
         this.formatTaxonomyData(this.state.initdata, this.state.level),
         false,
         );
+      this.state.preData = this.state.data;
       this.setColorScale(this.state.data);
     }
 
     this.updateDimensions = this.updateDimensions.bind(this);
+    this.applyFilters = this.applyFilters.bind(this);
   }
 
   componentDidMount() {
@@ -183,33 +188,51 @@ export default class Vis extends Component {
   }
 
   _clickDatum = (datum) => {
-    const segments = this.state.segments;
-    if (segments.hasOwnProperty(datum.name)) {
-      delete segments[datum.name];
+    if (!this.filters.hasOwnProperty(this.state.level)) {
+      this.filters[this.state.level] = {};
+    }
+    const filters = this.state.filters;
+    if (this.filters[this.state.level].hasOwnProperty(datum.name)) {
+      // delete filters[datum.name];
+      console.log('found existing - delete or do nothing?');
     } else {
       const sequences = [];
       this.state.data.forEach(d => {
         d.sequences.forEach(s => {
-          if (datum.name === s.name) {
+          if (datum.name === s.name && s.reads > 0) {
             sequences.push(s);
           }
         });
       });
-      segments[datum.name] = sequences;
+      const values = _sortBy(sequences, (s) => s.reads).map((s, i) => {
+        return {
+          index: i,
+          value: s.reads,
+          count: s.reads,
+        };
+      });
+      this.filters[this.state.level][datum.name] = {
+        key: datum.name,
+        values: values,
+        unit: '',
+        range: {
+          min: values[0],
+          max: values[values.length - 1],
+        },
+        expanded: true,
+      };
+      filters[datum.name] = this.filters[this.state.level][datum.name];
     }
-    //
-    const showRightSidebar = Object.keys(segments).length > 0 ? true : false;
+    const showRightSidebar = Object.keys(filters).length > 0 ? true : false;
     if (showRightSidebar) {
       this.metrics.chartWidth = window.innerWidth - (this.metrics.rightSidebar + this.metrics.nonbarWidth);
     } else {
       this.metrics.chartWidth = window.innerWidth - this.metrics.nonbarWidth;
     }
-    //
-    this.setState({ segments, showRightSidebar });
+    this.setState({ filters, showRightSidebar });
   }
 
   updateDimensions() {
-    // this.metrics.chartWidth = window.innerWidth - this.metrics.nonbarWidth;
     if (this.state.showRightSidebar) {
       this.metrics.chartWidth = window.innerWidth - (this.metrics.rightSidebar + this.metrics.nonbarWidth);
     } else {
@@ -221,21 +244,6 @@ export default class Vis extends Component {
       height: window.innerHeight,
     });
   }
-
-
-  // 
-  // Might be replaced / moved to bar controls
-  // toggleSidebar() {
-  //   const showRightSidebar = !this.state.showRightSidebar
-  //   if (showRightSidebar) {
-  //     this.metrics.chartWidth = window.innerWidth - (this.metrics.rightSidebar + this.metrics.nonbarWidth);
-  //   } else {
-  //     this.metrics.chartWidth = window.innerWidth - this.metrics.nonbarWidth;
-  //   }
-  //   this.setState({ showRightSidebar });
-  // }
-  //
-
 
   setColorScale(data) {
     const uniqSequences = [...new Set(
@@ -264,8 +272,9 @@ export default class Vis extends Component {
 
   setLevel(level) {
     const data = this.updateTaxonomyData(this.state.data, level, true);
+    const preData = data;
     const deleted = this.updateTaxonomyData(this.state.deleted, level, false);
-    this.setState({level, data, deleted});
+    this.setState({level, data, preData, deleted});
   }
 
   // data.data schema: [row(observations), column(samples), count]
@@ -275,32 +284,29 @@ export default class Vis extends Component {
     let totalDataReads = 0;
     const formatedData = this.updateTaxonomyData(
       data.columns.map((c, i) => {
-
-      const matches = data.data
-        .filter(d => d[1] === c.metadata.phinchID)
-        .map(d => {
-          const row = data.rows[d[0]];
-          return {
-            id: row.id,
-            taxonomy: row.metadata.taxonomy,
-            count: d[2]
-          };
-        });
-
-      totalDataReads += c.reads;
-      return {
-        id: c.id,
-        biomid: c.biomid,
-        phinchID: c.metadata.phinchID,
-        order: c.order,
-        sampleName: c.sampleName,
-        phinchName: c.phinchName,
-        reads: c.reads,
-        sequences: [],
-        matches: matches,
-      };
-    }), level, true);
-
+        const matches = data.data
+          .filter(d => d[1] === c.metadata.phinchID)
+          .map(d => {
+            const row = data.rows[d[0]];
+            return {
+              id: row.id,
+              taxonomy: row.metadata.taxonomy,
+              count: d[2]
+            };
+          });
+        totalDataReads += c.reads;
+        return {
+          id: c.id,
+          biomid: c.biomid,
+          phinchID: c.metadata.phinchID,
+          order: c.order,
+          sampleName: c.sampleName,
+          phinchName: c.phinchName,
+          reads: c.reads,
+          sequences: [],
+          matches: matches,
+        };
+      }), level, true);
     this.totalDataReads = totalDataReads;
     return formatedData;
   }
@@ -452,36 +458,41 @@ export default class Vis extends Component {
     });
   }
 
-  renderSegments(data) {
-    if (Object.keys(data).length) {
-      const segments = Object.keys(data).map(k => {
-        const segment = _sortBy(data[k].filter(s => s.reads > 0), (s) => -s.reads);
-        const datum = {
-          values: segment.map((s, i) => {
-            return {
-              index: i,
-              value: i,
-              count: s.reads,
-            };
-          }),
-          unit: ""
-        };
-        // move this up a level to be store in component / saved to file
-        const filter = {
-          range: {
-            max: datum.values[datum.values.length - 1],
-            min: datum.values[0],
-          },
-          expanded: true,
-        };
+  applyFilters(filters) {
+    const deletedSamples = this.state.deleted.map(d => d.sampleName);
+    const samples = this.state.preData.filter(s => {
+      let include = true;
+      if (deletedSamples.includes(s.sampleName)) {
+        include = false;
+      }
+      Object.keys(filters).forEach((k) => {
+        const [sequence] = s.sequences.filter(d => (d.name === k));
+        if (sequence) {
+          const value = sequence.reads;
+          if (value < filters[k].range.min.value || value > filters[k].range.max.value) {
+            include = false;
+          }          
+        }
+      });
+      return include;
+    });
+    const data = visSortBy(this, samples, false);
+    this.setState({filters, data});
+  }
+
+  renderFilters() {
+    if (Object.keys(this.state.filters).length) {
+      const segments = Object.keys(this.state.filters).map(k => {
         return (
           <FilterChart
+            key={k}
             name={k}
-            data={datum}
+            data={this.state.filters[k]}
             width={this.metrics.rightSidebar - this.metrics.padding * 2}
             height={this.metrics.rightSidebar / 4}
-            filter={filter}
-            update={() => { return null; }}
+            filters={this.state.filters}
+            update={updateFilters}
+            callback={this.applyFilters}
           />
         );
       });
@@ -578,7 +589,7 @@ export default class Vis extends Component {
     const buttons = radioOptions.map(o => {
       const checked = this.sort.reverse === o.value ? 'checked' : '';
       return (
-        <div className={styles.inlineControl}>
+        <div key={o.name} className={styles.inlineControl}>
           <input
             type='radio'
             id={o.name}
@@ -623,7 +634,7 @@ export default class Vis extends Component {
       }
       const checked = this.state.mode === b.id ? 'checked' : '';
       return (
-        <div className={styles.inlineControl}>
+        <div key={b.id} className={styles.inlineControl}>
           <input
             type='radio'
             id={b.id}
@@ -772,7 +783,7 @@ export default class Vis extends Component {
 
     this.deletedColumns = this.generateDeletedColumns();
 
-    const displaySegments = this.renderSegments(this.state.segments);
+    const displayFilters = this.renderFilters();
 
     return (
       <div className={gstyle.container}>
@@ -861,15 +872,14 @@ export default class Vis extends Component {
         <div
           className={styles.panel}
           style={{
+            width: (this.metrics.chartWidth + this.metrics.nonbarWidth - this.metrics.padding * 2),
             height: this.metrics.chartHeight,
-            // paddingLeft: this.metrics.padding * 0.5,
-            // overflowY: 'scroll',
           }}
         >
           {bars}
           {tooltip}
         </div>
-        {displaySegments}
+        {displayFilters}
         <RemovedRows
           deleted={this.state.deleted}
           deletedColumns={this.deletedColumns}

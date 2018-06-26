@@ -5,7 +5,7 @@ import { nest } from 'd3-collection';
 import Table from 'rc-table';
 
 import DataContainer from '../DataContainer';
-import { removeRows, restoreRows, sortBy, getSortArrow } from '../FilterFunctions';
+import { updateFilters, removeRows, restoreRows, sortBy, getSortArrow } from '../FilterFunctions';
 import { setProjectFilters, getProjectFilters, exportProjectData } from '../projects.js';
 
 import FrequencyChart from './FrequencyChart';
@@ -281,14 +281,13 @@ export default class Filter extends Component {
     this.updateChecks = this.updateChecks.bind(this);
     this.applyFilters = this.applyFilters.bind(this);
     this.resetFilters = this.resetFilters.bind(this);
-    this.updateFilters = this.updateFilters.bind(this);
     this.redirectToVis = this.redirectToVis.bind(this);
     this.updateDimensions = this.updateDimensions.bind(this);
   }
 
   componentDidMount() {
     window.addEventListener('resize', this.updateDimensions);
-    this.applyFilters(this.state.filters, this.state.names, this.state.deleted);
+    this.applyFilters(this.state.filters);
   }
 
   componentWillUnmount() {
@@ -361,14 +360,14 @@ export default class Filter extends Component {
       }
       filters[k] = filter;
     });
-    this.applyFilters(filters, this.state.names, this.state.deleted);
+    this.applyFilters(filters);
   }
 
-  applyFilters(filters, names, deleted) {
-    const deletedSamples = deleted.map(d => d.sampleName);
+  applyFilters(filters) {
+    const deletedSamples = this.state.deleted.map(d => d.sampleName);
     let data = DataContainer.getSamples().map((d, i) => {
-      if (names[d.sampleName]) {
-        d.phinchName = names[d.sampleName];
+      if (this.state.names[d.sampleName]) {
+        d.phinchName = this.state.names[d.sampleName];
       }
       return d;
     }).filter((d, i) => {
@@ -406,34 +405,7 @@ export default class Filter extends Component {
   updateChecks(attribute, type, value) {
     const filters = this.state.filters;
     filters[attribute].range[type] = value;
-    this.applyFilters(filters, this.state.names, this.state.deleted);
-  }
-
-  updateFilters(attribute, min, max) {
-    const filters = this.state.filters;
-    let minValue = Object.assign({}, this.state.filters[attribute].values[min]);
-    if (min >= this.state.filters[attribute].values.length) {
-      minValue = Object.assign({}, this.state.filters[attribute].values[this.state.filters[attribute].values.length - 1]);
-      if (minValue.value instanceof Date) {
-        minValue.value = new Date(minValue.value.valueOf() + 1);
-      } else {
-        minValue.value += 1;
-      }
-    }
-    let maxValue = Object.assign({}, this.state.filters[attribute].values[max]);
-    if (max < 0) {
-      maxValue = Object.assign({}, this.state.filters[attribute].values[0]);
-      if (maxValue.value instanceof Date) {
-        maxValue.value = new Date(maxValue.value.valueOf() - 1);
-      } else {
-        maxValue.value -= 1;
-      }
-    }
-    filters[attribute].range = {
-      min: minValue,
-      max: maxValue,
-    };
-    this.applyFilters(filters, this.state.names, this.state.deleted);
+    this.applyFilters(filters);
   }
 
   displayFilters() {
@@ -456,13 +428,15 @@ export default class Filter extends Component {
               update={this.updateChecks}
             />
           ) : (
+            // filter={this.state.filters[g]}
             <FilterChart
               name={g}
               data={this.filters[k][g]}
               width={width}
               height={height}
-              filter={this.state.filters[g]}
-              update={this.updateFilters}
+              filters={this.state.filters}
+              update={updateFilters}
+              callback={this.applyFilters}
             />
           );
         return (

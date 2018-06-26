@@ -1,6 +1,33 @@
 import React from 'react';
 import gstyle from 'components/general.css';
 
+export function updateFilters(filters, attribute, min, max, callback) {
+  // const filters = context.state.filters;
+  let minValue = Object.assign({}, filters[attribute].values[min]);
+  if (min >= filters[attribute].values.length) {
+    minValue = Object.assign({}, filters[attribute].values[filters[attribute].values.length - 1]);
+    if (minValue.value instanceof Date) {
+      minValue.value = new Date(minValue.value.valueOf() + 1);
+    } else {
+      minValue.value += 1;
+    }
+  }
+  let maxValue = Object.assign({}, filters[attribute].values[max]);
+  if (max < 0) {
+    maxValue = Object.assign({}, filters[attribute].values[0]);
+    if (maxValue.value instanceof Date) {
+      maxValue.value = new Date(maxValue.value.valueOf() - 1);
+    } else {
+      maxValue.value -= 1;
+    }
+  }
+  filters[attribute].range = {
+    min: minValue,
+    max: maxValue,
+  };
+  callback(filters);
+}
+
 export function removeRows(context, rows) {
   const data = context.state.data.filter((d) => {
     return !rows.includes(d);
