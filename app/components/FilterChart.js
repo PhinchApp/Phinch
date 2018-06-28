@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
 import Slider, { Range } from 'rc-slider';
-import { scaleLinear } from 'd3-scale';
+import { scaleLinear, scaleLog } from 'd3-scale';
 
 export default class FilterChart extends Component {
   constructor(props) {
@@ -10,17 +10,30 @@ export default class FilterChart extends Component {
 
     this.state = {
       update: false,
-    }
+    };
+    this.state.log = this.props.log;
 
+    this.toggleLog = this.toggleLog.bind(this);
     this.updateFilter = this.updateFilter.bind(this);
+  }
+
+  toggleLog() {
+    const log = !this.state.log;
+    this.setState({log});
   }
 
   updateScales() {
     this.padding = 0;
     const counts = this.props.data.values.map(d => d.count);
-    this.yscale = scaleLinear()
-      .domain([0, Math.max(...counts)])
-      .range([0, this.props.height - this.padding]);
+    if (this.state.log) {
+      this.yscale = scaleLog()
+        .domain([1, Math.max(...counts)])
+        .range([1, this.props.height - this.padding]);
+    } else {
+      this.yscale = scaleLinear()
+        .domain([0, Math.max(...counts)])
+        .range([0, this.props.height - this.padding]);
+    }
     this.xscale = scaleLinear()
       .clamp(true)
       .domain([0, this.props.data.values.length])
@@ -64,7 +77,7 @@ export default class FilterChart extends Component {
           y={this.props.height - (this.yscale(d.count))}
           width={barWidth}
           height={this.yscale(d.count)}
-          fill='#2b2b2b'
+          fill={this.props.fill}
           fillOpacity={fillOpacity}
           stroke='white'
         />
@@ -80,8 +93,14 @@ export default class FilterChart extends Component {
       marks[this.xscale(filter.range.min.index)] = { label: <div style={markStyle}>{min}</div> };
       marks[this.xscale(filter.range.max.index + 1)] = { label: <div style={markStyle}>{max}</div> };
     }
+    // const remove = this.props.remove !== undefined ? (
+    //     <div
+    //       onClick={this.props.remove(this.props.name)}
+    //     >x</div>
+    //   ) : '';
     const info = filter.expanded ? (
         <div>
+          {remove}
           <span>{this.props.data.unit}</span>
           {range}
         </div>
@@ -95,9 +114,22 @@ export default class FilterChart extends Component {
             marks={marks}
             step={barWidth}
             allowCross={false}
+            trackStyle={[{background: this.props.fill}]}
+            handleStyle={[{background: this.props.handle}, {background: this.props.handle}]}
             value={[this.xscale(filter.range.min.index), this.xscale(filter.range.max.index + 1)]}
             onChange={(values) => this.updateFilter(this.props.name, values)}
           />
+        </div>
+      ) : '';
+    const scaleToggle = this.props.showScale ? (
+        <div>
+          <input
+            id="scale"
+            type="checkbox"
+            checked={this.state.log}
+            onChange={this.toggleLog}
+          />
+          <label htmlFor="scale">Log Scale</label>
         </div>
       ) : '';
     return (
@@ -116,6 +148,7 @@ export default class FilterChart extends Component {
           {bars}
         </svg>
         {brush}
+        {scaleToggle}
       </div>
     );
   }

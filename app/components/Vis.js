@@ -60,8 +60,9 @@ export default class Vis extends Component {
 
     this.metrics = {
       padding: 16,
-      lineHeight: 14,
-      barHeight: 12,
+      lineHeight: 14, //14,
+      barContainerHeight: 56, // 70,
+      barHeight: 48, //60, //12,
       height: 600,
       hideWidth: 20,
       idWidth: 32,
@@ -70,7 +71,7 @@ export default class Vis extends Component {
       rightSidebar: 216,
     };
 
-    this.metrics.nonbarWidth = (this.metrics.padding * 3) + (this.metrics.idWidth + this.metrics.hideWidth + this.metrics.nameWidth);
+    this.metrics.nonbarWidth = (this.metrics.padding * 4) + (this.metrics.idWidth + this.metrics.hideWidth + this.metrics.nameWidth);
     this.metrics.chartWidth = this.state.width - this.metrics.nonbarWidth;
     this.metrics.chartHeight = this.state.height - this.metrics.heightOffset;
 
@@ -197,7 +198,7 @@ export default class Vis extends Component {
       console.log('found existing - delete or do nothing?');
     } else {
       const sequences = [];
-      this.state.data.forEach(d => {
+      this.state.preData.forEach(d => {
         d.sequences.forEach(s => {
           if (datum.name === s.name && s.reads > 0) {
             sequences.push(s);
@@ -224,20 +225,24 @@ export default class Vis extends Component {
       filters[datum.name] = this.filters[this.state.level][datum.name];
     }
     const showRightSidebar = Object.keys(filters).length > 0 ? true : false;
+    this.updateChartWidth(showRightSidebar);
+    this.setState({ filters, showRightSidebar });
+  }
+
+  removeFilter(name) {
+    delete this.filters[name];
+  }
+
+  updateChartWidth(showRightSidebar) {
     if (showRightSidebar) {
       this.metrics.chartWidth = window.innerWidth - (this.metrics.rightSidebar + this.metrics.nonbarWidth);
     } else {
       this.metrics.chartWidth = window.innerWidth - this.metrics.nonbarWidth;
     }
-    this.setState({ filters, showRightSidebar });
   }
 
   updateDimensions() {
-    if (this.state.showRightSidebar) {
-      this.metrics.chartWidth = window.innerWidth - (this.metrics.rightSidebar + this.metrics.nonbarWidth);
-    } else {
-      this.metrics.chartWidth = window.innerWidth - this.metrics.nonbarWidth;
-    }
+    this.updateChartWidth(this.state.showRightSidebar);
     this.metrics.chartHeight = window.innerHeight - this.metrics.heightOffset;
     this.setState({
       width: window.innerWidth,
@@ -271,10 +276,24 @@ export default class Vis extends Component {
   }
 
   setLevel(level) {
-    const data = this.updateTaxonomyData(this.state.data, level, true);
+    const data = this.updateTaxonomyData(this.state.preData, level, true);
     const preData = data;
     const deleted = this.updateTaxonomyData(this.state.deleted, level, false);
-    this.setState({level, data, preData, deleted});
+    //
+    if (!this.filters.hasOwnProperty(level)) {
+      this.filters[level] = {};
+    }
+    const filters = this.filters[level];
+    Object.keys(filters).forEach(k => { // reset filters (apply to data instead?)
+      filters[k].range = {
+        min: filters[k].values[0],
+        max: filters[k].values[filters[k].values.length - 1],
+      };
+    });
+    const showRightSidebar = Object.keys(filters).length > 0 ? true : false;
+    this.updateChartWidth(showRightSidebar);
+    //
+    this.setState({level, data, preData, deleted, filters, showRightSidebar});
   }
 
   // data.data schema: [row(observations), column(samples), count]
@@ -441,6 +460,7 @@ export default class Vis extends Component {
             fontSize={10}
             textAnchor='middle'
             dy={-4}
+            dx={-1}
             fill='#808080'
           >
             {label}
@@ -487,11 +507,16 @@ export default class Vis extends Component {
           <FilterChart
             key={k}
             name={k}
+            log={true}
+            showScale={true}
+            fill={this.scales.c(k)}
+            handle={this.scales.c(k)}
             data={this.state.filters[k]}
-            width={this.metrics.rightSidebar - this.metrics.padding * 2}
+            width={this.metrics.rightSidebar - this.metrics.padding * 3}
             height={this.metrics.rightSidebar / 4}
             filters={this.state.filters}
             update={updateFilters}
+            // remove={this.removeFilter}
             callback={this.applyFilters}
           />
         );
@@ -516,8 +541,16 @@ export default class Vis extends Component {
     return data
       .map((d, i) => {
         const sequence = _sortBy(d.sequences, (s) => -s.reads);
+        const className = (i%2 === 0) ? (styles.grey) : '';
         return (
-          <div key={d.sampleName} className={styles.row}>
+          <div
+            key={d.sampleName}
+            className={`${styles.row} ${className}`}
+            style={{
+              height: this.metrics.barContainerHeight,
+              lineHeight: this.metrics.barContainerHeight,
+            }}
+          >
             <div className={styles.rowLabel} style={{width: this.metrics.hideWidth}}>
               <div onClick={() => { removeRows(this, [d]) }}>
                 <div className={styles.delete}>x</div>
@@ -774,7 +807,7 @@ export default class Vis extends Component {
     const bars = this.renderBars(this.state.data);
     const sortSelect = this.renderSort();
     const viewToggle = this.renderToggle();
-    // const topSequences = this.renderTopSequences(this.readsBySequence);
+    const topSequences = this.renderTopSequences(this.readsBySequence);
     const ticks = this.renderTicks();
 
     const tooltip = this.state.showTooltip ?
@@ -831,24 +864,17 @@ export default class Vis extends Component {
             {viewToggle}
           </div>
         </div>
-        {/*
         <div style={{display: 'inline-block'}}>
-          <div style={{
-            display: 'inline-block',
-            margin: '0 0.5rem',
-          }}>
-            Sequences
-          </div>
           <div style={{display: 'inline-block'}} className={styles.controlMargin}>
             {topSequences}
           </div>
         </div>
-        */}
         <div style={{
           position: 'relative',
           textAlign: 'center',
           height: this.metrics.lineHeight * 2,
-          fontSize: this.metrics.barHeight,
+          fontSize: 12,
+          // fontSize: this.metrics.barHeight,
         }}>
           Sequence Reads
           <svg style={{

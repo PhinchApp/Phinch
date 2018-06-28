@@ -431,6 +431,7 @@ export default class Filter extends Component {
             // filter={this.state.filters[g]}
             <FilterChart
               name={g}
+              fill={'#2b2b2b'}
               data={this.filters[k][g]}
               width={width}
               height={height}
