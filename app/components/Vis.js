@@ -41,6 +41,7 @@ export default class Vis extends Component {
       mode: 'percent',
       showSequences: false,
       showRightSidebar: false,
+      showLeftSidebar: false,
     };
 
     this.filters = {};
@@ -63,16 +64,24 @@ export default class Vis extends Component {
       lineHeight: 14, //14,
       barContainerHeight: 56, // 70,
       barHeight: 48, //60, //12,
+      miniBarContainerHeight: 8,
+      miniBarHeight: 6,
       height: 600,
       hideWidth: 20,
       idWidth: 32,
       nameWidth: 144,
       heightOffset: 251,
+      leftSidebar: 26,
+      left: {
+        min: 26,
+        max: 126,
+      },
       rightSidebar: 216,
     };
 
     this.metrics.nonbarWidth = (this.metrics.padding * 4) + (this.metrics.idWidth + this.metrics.hideWidth + this.metrics.nameWidth);
-    this.metrics.chartWidth = this.state.width - this.metrics.nonbarWidth;
+    // this.metrics.chartWidth = this.state.width - this.metrics.nonbarWidth;
+    this.metrics.chartWidth = this.state.width - (this.metrics.leftSidebar + this.metrics.nonbarWidth);
     this.metrics.chartHeight = this.state.height - this.metrics.heightOffset;
 
     this.scales = {
@@ -161,6 +170,8 @@ export default class Vis extends Component {
 
     this.updateDimensions = this.updateDimensions.bind(this);
     this.applyFilters = this.applyFilters.bind(this);
+    this.removeFilter = this.removeFilter.bind(this);
+    this.toggleMenu = this.toggleMenu.bind(this);
   }
 
   componentDidMount() {
@@ -230,14 +241,19 @@ export default class Vis extends Component {
   }
 
   removeFilter(name) {
-    delete this.filters[name];
+    const filters = this.state.filters;
+    delete filters[name];
+    this.filters[this.state.level] = filters;
+    const showRightSidebar = Object.keys(filters).length > 0 ? true : false;
+    this.updateChartWidth(showRightSidebar);
+    this.setState({ filters, showRightSidebar });
   }
 
   updateChartWidth(showRightSidebar) {
     if (showRightSidebar) {
-      this.metrics.chartWidth = window.innerWidth - (this.metrics.rightSidebar + this.metrics.nonbarWidth);
+      this.metrics.chartWidth = window.innerWidth - (this.metrics.leftSidebar + this.metrics.rightSidebar + this.metrics.nonbarWidth);
     } else {
-      this.metrics.chartWidth = window.innerWidth - this.metrics.nonbarWidth;
+      this.metrics.chartWidth = window.innerWidth - (this.metrics.leftSidebar + this.metrics.nonbarWidth);
     }
   }
 
@@ -504,26 +520,32 @@ export default class Vis extends Component {
     if (Object.keys(this.state.filters).length) {
       const segments = Object.keys(this.state.filters).map(k => {
         return (
-          <FilterChart
+          <div
             key={k}
-            name={k}
-            log={true}
-            showScale={true}
-            fill={this.scales.c(k)}
-            handle={this.scales.c(k)}
-            data={this.state.filters[k]}
-            width={this.metrics.rightSidebar - this.metrics.padding * 3}
-            height={this.metrics.rightSidebar / 4}
-            filters={this.state.filters}
-            update={updateFilters}
-            // remove={this.removeFilter}
-            callback={this.applyFilters}
-          />
+            style={{
+              borderBottom: '1px solid #262626',
+              margin: '0.5rem',
+            }}>
+            <FilterChart
+              name={k}
+              log={true}
+              showScale={true}
+              fill={this.scales.c(k)}
+              handle={this.scales.c(k)}
+              data={this.state.filters[k]}
+              width={this.metrics.rightSidebar - this.metrics.padding * 3}
+              height={this.metrics.rightSidebar / 4}
+              filters={this.state.filters}
+              update={updateFilters}
+              remove={this.removeFilter}
+              callback={this.applyFilters}
+            />
+          </div>
         );
       });
       return (
         <div
-          className={styles.panel}
+          className={`${styles.panel} ${styles.leftGutter}`}
           style={{
             width: this.metrics.rightSidebar,
             height: this.metrics.chartHeight,
@@ -537,18 +559,108 @@ export default class Vis extends Component {
     }
   }
 
+  toggleMenu() {
+    console.log('toggleMenu');
+    const showLeftSidebar = !this.state.showLeftSidebar;
+    this.metrics.leftSidebar = showLeftSidebar ?
+      this.metrics.left.max : this.metrics.left.min;
+    this.updateChartWidth(this.state.showRightSidebar);
+    this.setState({showLeftSidebar});
+  }
+
+  renderMenu() {
+    const items = [
+      (<Link key='filter' to='/Filter'>
+        <div className={styles.menuItem}>
+          <div className={styles.menuBox}>
+            <div className={gstyle.arrow} style={{transform: `rotate(${-90}deg)`}}>⌃</div>
+          </div>
+          Back
+          {/* to Filter*/}
+        </div>
+      </Link>)
+    ];
+    const menuItems = this.state.showLeftSidebar ? (
+      <div
+        className={`${styles.panel} ${styles.menu}`}
+        style={{
+          width: (this.metrics.leftSidebar - this.metrics.left.min),
+          height: this.metrics.chartHeight,
+        }}
+      >
+        {items}
+      </div>
+    ) : '';
+    const arrow = this.state.showLeftSidebar ? '<-' : '->';
+    // const rotation = this.state.showLeftSidebar ? 90 : -90;
+    return (
+      <div
+        className={styles.panel}
+        style={{
+          width: this.metrics.leftSidebar,
+          height: this.metrics.chartHeight,
+        }}
+      >
+        {menuItems}
+        <div
+          className={styles.panel}
+          style={{
+            width: this.metrics.left.min,
+            height: this.metrics.chartHeight,
+          }}
+        >
+          <div className={styles.toggleSquare}></div>
+          <div
+            className={styles.menuToggle}
+            onClick={this.toggleMenu}
+          >
+            {/*<div className={gstyle.arrow} style={{transform: `rotate(${rotation}deg)`}}>⌃</div>*/}
+            {arrow}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   renderBars(data) {
     return data
       .map((d, i) => {
         const sequence = _sortBy(d.sequences, (s) => -s.reads);
         const className = (i%2 === 0) ? (styles.grey) : '';
+        const miniBars = [];
+        Object.keys(this.state.filters).forEach(k => {
+          const [miniSequence] = d.sequences.filter(s => (s.name === k));
+          if (miniSequence) {
+            miniBars.push(
+              <div
+                key={k}
+                style={{
+                  paddingTop: '2px',
+                  height: this.metrics.miniBarContainerHeight,
+                  marginLeft: this.metrics.nonbarWidth - (this.metrics.padding * 4),
+                  display: 'block',
+                }}
+              >
+                <StackedBar
+                  data={[miniSequence]}
+                  sample={d}
+                  width={this.metrics.chartWidth}
+                  height={(this.metrics.miniBarHeight)}
+                  xscale={this.scales.x}
+                  cscale={this.scales.c}
+                  isPercent={false}
+                />
+              </div>
+            );
+          }
+        });
+        //
         return (
           <div
             key={d.sampleName}
             className={`${styles.row} ${className}`}
             style={{
-              height: this.metrics.barContainerHeight,
-              lineHeight: this.metrics.barContainerHeight,
+              height: this.metrics.barContainerHeight + (this.metrics.miniBarContainerHeight * miniBars.length),
             }}
           >
             <div className={styles.rowLabel} style={{width: this.metrics.hideWidth}}>
@@ -574,6 +686,7 @@ export default class Vis extends Component {
               isPercent={(this.state.mode === 'percent')}
               highlightedDatum={this.state.highlightedDatum}
             />
+            {miniBars}
           </div>
         );
       });
@@ -816,6 +929,7 @@ export default class Vis extends Component {
 
     this.deletedColumns = this.generateDeletedColumns();
 
+    const displayMenu = this.renderMenu();
     const displayFilters = this.renderFilters();
 
     return (
@@ -827,12 +941,14 @@ export default class Vis extends Component {
           </Link>
         </div>
         <Summary summary={this.state.summary} datalength={this.state.data.length} />
+        {/*
         <Link to="/Filter">
           <div className={`${gstyle.heading} ${styles.controlMargin}`}>
             <div className={gstyle.arrow} style={{transform: `rotate(${-90}deg)`}}>⌃</div>
             Back to Filter
           </div>
         </Link>
+        */}
         <div>
           <div style={{
             display: 'inline-block',
@@ -854,12 +970,6 @@ export default class Vis extends Component {
           {sortSelect}
         </div>
         <div style={{display: 'inline-block'}}>
-          <div style={{
-            display: 'inline-block',
-            margin: '0 0.5rem',
-          }}>
-            {/* View */}
-          </div>
           <div style={{display: 'inline-block'}} className={styles.controlMargin}>
             {viewToggle}
           </div>
@@ -874,12 +984,12 @@ export default class Vis extends Component {
           textAlign: 'center',
           height: this.metrics.lineHeight * 2,
           fontSize: 12,
-          // fontSize: this.metrics.barHeight,
         }}>
           Sequence Reads
           <svg style={{
             position: 'absolute',
-            left: 0,
+            // left: 0,
+            left: this.metrics.leftSidebar,
             pointerEvents: 'none',
             paddingLeft: this.metrics.padding * 0.5,
             width: (this.state.width - (this.metrics.padding * 2.5)),
@@ -895,8 +1005,11 @@ export default class Vis extends Component {
             </g>
           </svg>
         </div>
+        {/**/}
+        {displayMenu}
+        {/**/}
         <div
-          className={styles.panel}
+          className={`${styles.panel} ${styles.leftGutter}`}
           style={{
             width: (this.metrics.chartWidth + this.metrics.nonbarWidth - this.metrics.padding * 2),
             height: this.metrics.chartHeight,

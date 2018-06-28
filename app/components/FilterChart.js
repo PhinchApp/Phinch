@@ -4,6 +4,8 @@ import ReactDOM from 'react-dom';
 import Slider, { Range } from 'rc-slider';
 import { scaleLinear, scaleLog } from 'd3-scale';
 
+import styles from './FilterChart.css';
+
 export default class FilterChart extends Component {
   constructor(props) {
     super(props);
@@ -89,15 +91,15 @@ export default class FilterChart extends Component {
       const min = isDate ? new Date(filter.range.min.value).toLocaleString().split(', ')[0] : filter.range.min.value;
       const max = isDate ? new Date(filter.range.max.value).toLocaleString().split(', ')[0] : filter.range.max.value;
       range = min !== undefined ? (<div>range: [{min} — {max}]</div>) : '';
-      const markStyle = {fontSize: '8px', display: 'inline-block'};
-      marks[this.xscale(filter.range.min.index)] = { label: <div style={markStyle}>{min}</div> };
-      marks[this.xscale(filter.range.max.index + 1)] = { label: <div style={markStyle}>{max}</div> };
+      marks[this.xscale(filter.range.min.index)] = { label: <div className={styles.mark}>{min}</div> };
+      marks[this.xscale(filter.range.max.index + 1)] = { label: <div className={styles.mark}>{max}</div> };
     }
-    // const remove = this.props.remove !== undefined ? (
-    //     <div
-    //       onClick={this.props.remove(this.props.name)}
-    //     >x</div>
-    //   ) : '';
+    const remove = (this.props.remove !== undefined) ? (
+        <div
+          className={styles.remove}
+          onClick={() => { this.props.remove(this.props.name) }}
+        >x</div>
+      ) : '';
     const info = filter.expanded ? (
         <div>
           {remove}
@@ -133,16 +135,13 @@ export default class FilterChart extends Component {
         </div>
       ) : '';
     return (
-      <div>
+      <div className={styles.filterChart}>
         <label>{this.props.name}</label>
         {info}
         <svg
           width={this.props.width}
           height={this.props.height}
-          style={{
-            margin: '0 16px',
-            marginTop: '8px',
-          }}
+          className={styles.svg}
           onMouseOut={() => {document.addEventListener('mousemove', null)}}
         >
           {bars}
