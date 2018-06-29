@@ -9,6 +9,7 @@ import { scaleLinear, scaleOrdinal } from 'd3-scale';
 import { updateFilters, removeRows, restoreRows, visSortBy, getSortArrow } from '../FilterFunctions';
 import DataContainer from '../DataContainer';
 
+import SideMenu from './SideMenu';
 import StackedBar from './StackedBar';
 import StackedBarTooltip from './StackedBarTooltip';
 import FilterChart from './FilterChart';
@@ -44,6 +45,15 @@ export default class Vis extends Component {
       showLeftSidebar: false,
     };
 
+    this.menuItems = [
+      {
+        id: 'filter',
+        link: '/Filter',
+        icon: (<div className={gstyle.arrow} style={{transform: `rotate(${-90}deg)`}}>⌃</div>),
+        name: 'Back',
+      },
+    ];
+
     this.filters = {};
 
     this.tooltip = {
@@ -71,10 +81,10 @@ export default class Vis extends Component {
       idWidth: 32,
       nameWidth: 144,
       heightOffset: 251,
-      leftSidebar: 26,
+      leftSidebar: 25,
       left: {
-        min: 26,
-        max: 126,
+        min: 25,
+        max: 125,
       },
       rightSidebar: 216,
     };
@@ -545,7 +555,7 @@ export default class Vis extends Component {
       });
       return (
         <div
-          className={`${styles.panel} ${styles.leftGutter}`}
+          className={`${gstyle.panel} ${styles.leftGutter}`}
           style={{
             width: this.metrics.rightSidebar,
             height: this.metrics.chartHeight,
@@ -560,66 +570,11 @@ export default class Vis extends Component {
   }
 
   toggleMenu() {
-    console.log('toggleMenu');
     const showLeftSidebar = !this.state.showLeftSidebar;
     this.metrics.leftSidebar = showLeftSidebar ?
       this.metrics.left.max : this.metrics.left.min;
     this.updateChartWidth(this.state.showRightSidebar);
     this.setState({showLeftSidebar});
-  }
-
-  renderMenu() {
-    const items = [
-      (<Link key='filter' to='/Filter'>
-        <div className={styles.menuItem}>
-          <div className={styles.menuBox}>
-            <div className={gstyle.arrow} style={{transform: `rotate(${-90}deg)`}}>⌃</div>
-          </div>
-          Back
-          {/* to Filter*/}
-        </div>
-      </Link>)
-    ];
-    const menuItems = this.state.showLeftSidebar ? (
-      <div
-        className={`${styles.panel} ${styles.menu}`}
-        style={{
-          width: (this.metrics.leftSidebar - this.metrics.left.min),
-          height: this.metrics.chartHeight,
-        }}
-      >
-        {items}
-      </div>
-    ) : '';
-    const arrow = this.state.showLeftSidebar ? '<-' : '->';
-    // const rotation = this.state.showLeftSidebar ? 90 : -90;
-    return (
-      <div
-        className={styles.panel}
-        style={{
-          width: this.metrics.leftSidebar,
-          height: this.metrics.chartHeight,
-        }}
-      >
-        {menuItems}
-        <div
-          className={styles.panel}
-          style={{
-            width: this.metrics.left.min,
-            height: this.metrics.chartHeight,
-          }}
-        >
-          <div className={styles.toggleSquare}></div>
-          <div
-            className={styles.menuToggle}
-            onClick={this.toggleMenu}
-          >
-            {/*<div className={gstyle.arrow} style={{transform: `rotate(${rotation}deg)`}}>⌃</div>*/}
-            {arrow}
-          </div>
-        </div>
-      </div>
-    );
   }
 
   renderBars(data) {
@@ -654,7 +609,6 @@ export default class Vis extends Component {
             );
           }
         });
-        //
         return (
           <div
             key={d.sampleName}
@@ -717,7 +671,6 @@ export default class Vis extends Component {
       this.sort.key = event.target.value;
       visSortBy(this, this.state.data, true);
     };
-
     const radioOptions = [
       {
         name: 'Ascending',
@@ -748,7 +701,6 @@ export default class Vis extends Component {
         </div>
       );
     });
-
     return (
       <div className={styles.inlineControl}>
         <select
@@ -795,7 +747,6 @@ export default class Vis extends Component {
   }
 
   renderTopSequences(seqObj) {
-    ///
     const label = this.state.showSequences ? 'Hide' : 'Show';
     const button = (
         <div
@@ -929,7 +880,6 @@ export default class Vis extends Component {
 
     this.deletedColumns = this.generateDeletedColumns();
 
-    const displayMenu = this.renderMenu();
     const displayFilters = this.renderFilters();
 
     return (
@@ -941,14 +891,6 @@ export default class Vis extends Component {
           </Link>
         </div>
         <Summary summary={this.state.summary} datalength={this.state.data.length} />
-        {/*
-        <Link to="/Filter">
-          <div className={`${gstyle.heading} ${styles.controlMargin}`}>
-            <div className={gstyle.arrow} style={{transform: `rotate(${-90}deg)`}}>⌃</div>
-            Back to Filter
-          </div>
-        </Link>
-        */}
         <div>
           <div style={{
             display: 'inline-block',
@@ -988,7 +930,6 @@ export default class Vis extends Component {
           Sequence Reads
           <svg style={{
             position: 'absolute',
-            // left: 0,
             left: this.metrics.leftSidebar,
             pointerEvents: 'none',
             paddingLeft: this.metrics.padding * 0.5,
@@ -1005,11 +946,16 @@ export default class Vis extends Component {
             </g>
           </svg>
         </div>
-        {/**/}
-        {displayMenu}
-        {/**/}
+        <SideMenu
+          showLeftSidebar={this.state.showLeftSidebar}
+          leftSidebar={this.metrics.leftSidebar}
+          leftMin={this.metrics.left.min}
+          chartHeight={this.metrics.chartHeight}
+          items={this.menuItems}
+          toggleMenu={this.toggleMenu}
+        />
         <div
-          className={`${styles.panel} ${styles.leftGutter}`}
+          className={`${gstyle.panel} ${styles.leftGutter}`}
           style={{
             width: (this.metrics.chartWidth + this.metrics.nonbarWidth - this.metrics.padding * 2),
             height: this.metrics.chartHeight,

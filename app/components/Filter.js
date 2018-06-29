@@ -8,6 +8,7 @@ import DataContainer from '../DataContainer';
 import { updateFilters, removeRows, restoreRows, sortBy, getSortArrow } from '../FilterFunctions';
 import { setProjectFilters, getProjectFilters, exportProjectData } from '../projects.js';
 
+import SideMenu from './SideMenu';
 import FrequencyChart from './FrequencyChart';
 import FilterChart from './FilterChart';
 import RemovedRows from './RemovedRows';
@@ -43,7 +44,31 @@ export default class Filter extends Component {
       result: null,
       loading: false,
       redirect: null,
+      showRightSidebar: false,
     };
+
+    this.metrics = {
+      padding: 16,
+      filterWidth: 175,
+      filter: {
+        min: 75,
+        max: 175,
+      },
+      leftSidebar: 25,
+      left: {
+        min: 25,
+        max: 125,
+      },
+    };
+
+    this.menuItems = [
+      {
+        id: 'home',
+        link: '/Home',
+        icon: (<div className={gstyle.arrow} style={{transform: `rotate(${-90}deg)`}}>⌃</div>),
+        name: 'Back',
+      },
+    ];
 
     this.state.redirect = (this.state.summary.name && this.state.summary.size) ? null : '/';
 
@@ -283,6 +308,7 @@ export default class Filter extends Component {
     this.resetFilters = this.resetFilters.bind(this);
     this.redirectToVis = this.redirectToVis.bind(this);
     this.updateDimensions = this.updateDimensions.bind(this);
+    this.toggleMenu = this.toggleMenu.bind(this);
   }
 
   componentDidMount() {
@@ -418,7 +444,7 @@ export default class Filter extends Component {
       const group = Object.keys(this.filters[k]).map((g) => {
         const expanded = this.state.filters[g].expanded;
         const icon = expanded ? '-' : '+';
-        const width = 200;
+        // const width = 200;
         const height = expanded ? 60 : 20;
         const filter = (this.state.filters[g].type === 'string') ? (
             <CheckBoxes
@@ -433,7 +459,7 @@ export default class Filter extends Component {
               name={g}
               fill={'#2b2b2b'}
               data={this.filters[k][g]}
-              width={width}
+              width={this.metrics.filterWidth}
               height={height}
               filters={this.state.filters}
               update={updateFilters}
@@ -452,7 +478,9 @@ export default class Filter extends Component {
         );
       });
       return (
-        <div key={k} className={styles.bottom}>
+        <div key={k} className={styles.bottom} style={{
+          width: this.metrics.filterWidth + this.metrics.padding * 3,
+        }}>
           <div className={gstyle.heading}>
             {SectionNames[k]}
           </div>
@@ -509,6 +537,15 @@ export default class Filter extends Component {
     this.dragged = Number(e.currentTarget.dataset.id);
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/html', null);
+  }
+
+  toggleMenu() {
+    const showLeftSidebar = !this.state.showLeftSidebar;
+    this.metrics.leftSidebar = showLeftSidebar ?
+      this.metrics.left.max : this.metrics.left.min;
+    this.metrics.filterWidth = showLeftSidebar ?
+    this.metrics.filter.min : this.metrics.filter.max;
+    this.setState({showLeftSidebar});
   }
 
   redirectToVis(result) {
@@ -593,6 +630,14 @@ export default class Filter extends Component {
           {result}
         </div>
         <div>
+          <SideMenu
+            showLeftSidebar={this.state.showLeftSidebar}
+            leftSidebar={this.metrics.leftSidebar}
+            leftMin={this.metrics.left.min}
+            chartHeight={(this.state.height - 125)}
+            items={this.menuItems}
+            toggleMenu={this.toggleMenu}
+          />
           <div className={`${styles.section} ${styles.left}`} style={{
             display: 'inline-block',
             height: (this.state.height - 125),
