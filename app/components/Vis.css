@@ -37,7 +37,8 @@
   color: #ffffff;
   background: #333333;
   font-weight: 400;
-  font-size: 20px;
+  font-size: 18px;
+  text-transform: uppercase;
 }
 
 .menuItem {
