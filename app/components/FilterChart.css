@@ -1,0 +1,27 @@
+.remove {
+  display: inline-block;
+  cursor: pointer;
+  color: #b3b2b3;
+  background: #666666;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 0.7rem;
+  line-height: 0.9rem;
+  vertical-align: middle;
+}
+
+.mark {
+  display: inline-block;
+  font-size: 8px;
+}
+
+.svg {
+  margin: 0 16px;
+  margin-top: 8px;
+}
+
+.filterChart {
+  /*border-bottom: 1px solid #262626;*/
+}

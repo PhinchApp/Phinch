@@ -7,6 +7,12 @@
   padding: 1rem;
 }
 
+.panel {
+  vertical-align: top;
+  display: inline-block;
+  overflow-y: scroll;
+}
+
 .logo {
   width: 140px;
   display: inline-block;

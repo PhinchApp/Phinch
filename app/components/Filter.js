@@ -5,9 +5,10 @@ import { nest } from 'd3-collection';
 import Table from 'rc-table';
 
 import DataContainer from '../DataContainer';
-import { removeRows, restoreRows, sortBy, getSortArrow } from '../FilterFunctions';
+import { updateFilters, removeRows, restoreRows, sortBy, getSortArrow } from '../FilterFunctions';
 import { setProjectFilters, getProjectFilters, exportProjectData } from '../projects.js';
 
+import SideMenu from './SideMenu';
 import FrequencyChart from './FrequencyChart';
 import FilterChart from './FilterChart';
 import RemovedRows from './RemovedRows';
@@ -43,7 +44,31 @@ export default class Filter extends Component {
       result: null,
       loading: false,
       redirect: null,
+      showRightSidebar: false,
     };
+
+    this.metrics = {
+      padding: 16,
+      filterWidth: 175,
+      filter: {
+        min: 75,
+        max: 175,
+      },
+      leftSidebar: 25,
+      left: {
+        min: 25,
+        max: 125,
+      },
+    };
+
+    this.menuItems = [
+      {
+        id: 'home',
+        link: '/Home',
+        icon: (<div className={gstyle.arrow} style={{transform: `rotate(${-90}deg)`}}>⌃</div>),
+        name: 'Back',
+      },
+    ];
 
     this.state.redirect = (this.state.summary.name && this.state.summary.size) ? null : '/';
 
@@ -281,14 +306,14 @@ export default class Filter extends Component {
     this.updateChecks = this.updateChecks.bind(this);
     this.applyFilters = this.applyFilters.bind(this);
     this.resetFilters = this.resetFilters.bind(this);
-    this.updateFilters = this.updateFilters.bind(this);
     this.redirectToVis = this.redirectToVis.bind(this);
     this.updateDimensions = this.updateDimensions.bind(this);
+    this.toggleMenu = this.toggleMenu.bind(this);
   }
 
   componentDidMount() {
     window.addEventListener('resize', this.updateDimensions);
-    this.applyFilters(this.state.filters, this.state.names, this.state.deleted);
+    this.applyFilters(this.state.filters);
   }
 
   componentWillUnmount() {
@@ -361,14 +386,14 @@ export default class Filter extends Component {
       }
       filters[k] = filter;
     });
-    this.applyFilters(filters, this.state.names, this.state.deleted);
+    this.applyFilters(filters);
   }
 
-  applyFilters(filters, names, deleted) {
-    const deletedSamples = deleted.map(d => d.sampleName);
+  applyFilters(filters) {
+    const deletedSamples = this.state.deleted.map(d => d.sampleName);
     let data = DataContainer.getSamples().map((d, i) => {
-      if (names[d.sampleName]) {
-        d.phinchName = names[d.sampleName];
+      if (this.state.names[d.sampleName]) {
+        d.phinchName = this.state.names[d.sampleName];
       }
       return d;
     }).filter((d, i) => {
@@ -406,34 +431,7 @@ export default class Filter extends Component {
   updateChecks(attribute, type, value) {
     const filters = this.state.filters;
     filters[attribute].range[type] = value;
-    this.applyFilters(filters, this.state.names, this.state.deleted);
-  }
-
-  updateFilters(attribute, min, max) {
-    const filters = this.state.filters;
-    let minValue = Object.assign({}, this.state.filters[attribute].values[min]);
-    if (min >= this.state.filters[attribute].values.length) {
-      minValue = Object.assign({}, this.state.filters[attribute].values[this.state.filters[attribute].values.length - 1]);
-      if (minValue.value instanceof Date) {
-        minValue.value = new Date(minValue.value.valueOf() + 1);
-      } else {
-        minValue.value += 1;
-      }
-    }
-    let maxValue = Object.assign({}, this.state.filters[attribute].values[max]);
-    if (max < 0) {
-      maxValue = Object.assign({}, this.state.filters[attribute].values[0]);
-      if (maxValue.value instanceof Date) {
-        maxValue.value = new Date(maxValue.value.valueOf() - 1);
-      } else {
-        maxValue.value -= 1;
-      }
-    }
-    filters[attribute].range = {
-      min: minValue,
-      max: maxValue,
-    };
-    this.applyFilters(filters, this.state.names, this.state.deleted);
+    this.applyFilters(filters);
   }
 
   displayFilters() {
@@ -446,7 +444,7 @@ export default class Filter extends Component {
       const group = Object.keys(this.filters[k]).map((g) => {
         const expanded = this.state.filters[g].expanded;
         const icon = expanded ? '-' : '+';
-        const width = 200;
+        // const width = 200;
         const height = expanded ? 60 : 20;
         const filter = (this.state.filters[g].type === 'string') ? (
             <CheckBoxes
@@ -456,13 +454,16 @@ export default class Filter extends Component {
               update={this.updateChecks}
             />
           ) : (
+            // filter={this.state.filters[g]}
             <FilterChart
               name={g}
+              fill={'#2b2b2b'}
               data={this.filters[k][g]}
-              width={width}
+              width={this.metrics.filterWidth}
               height={height}
-              filter={this.state.filters[g]}
-              update={this.updateFilters}
+              filters={this.state.filters}
+              update={updateFilters}
+              callback={this.applyFilters}
             />
           );
         return (
@@ -477,7 +478,9 @@ export default class Filter extends Component {
         );
       });
       return (
-        <div key={k} className={styles.bottom}>
+        <div key={k} className={styles.bottom} style={{
+          width: this.metrics.filterWidth + this.metrics.padding * 3,
+        }}>
           <div className={gstyle.heading}>
             {SectionNames[k]}
           </div>
@@ -534,6 +537,15 @@ export default class Filter extends Component {
     this.dragged = Number(e.currentTarget.dataset.id);
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/html', null);
+  }
+
+  toggleMenu() {
+    const showLeftSidebar = !this.state.showLeftSidebar;
+    this.metrics.leftSidebar = showLeftSidebar ?
+      this.metrics.left.max : this.metrics.left.min;
+    this.metrics.filterWidth = showLeftSidebar ?
+    this.metrics.filter.min : this.metrics.filter.max;
+    this.setState({showLeftSidebar});
   }
 
   redirectToVis(result) {
@@ -618,6 +630,14 @@ export default class Filter extends Component {
           {result}
         </div>
         <div>
+          <SideMenu
+            showLeftSidebar={this.state.showLeftSidebar}
+            leftSidebar={this.metrics.leftSidebar}
+            leftMin={this.metrics.left.min}
+            chartHeight={(this.state.height - 125)}
+            items={this.menuItems}
+            toggleMenu={this.toggleMenu}
+          />
           <div className={`${styles.section} ${styles.left}`} style={{
             display: 'inline-block',
             height: (this.state.height - 125),
