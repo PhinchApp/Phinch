@@ -188,7 +188,8 @@ export default class Vis extends Component {
     window.addEventListener('resize', this.updateDimensions);
   }
   componentWillUnmount() {
-    if (this.tooltip.handle) { clearTimeout(this.tooltip.handle) };
+    // if (this.tooltip.handle) { clearTimeout(this.tooltip.handle) };
+    clearTimeout(this.tooltip.handle);
     window.removeEventListener('resize', this.updateDimensions);
   }
 
@@ -214,10 +215,7 @@ export default class Vis extends Component {
       this.filters[this.state.level] = {};
     }
     const filters = this.state.filters;
-    if (this.filters[this.state.level].hasOwnProperty(datum.name)) {
-      // delete filters[datum.name];
-      console.log('found existing - delete or do nothing?');
-    } else {
+    if (!this.filters[this.state.level].hasOwnProperty(datum.name)) {
       const sequences = [];
       this.state.preData.forEach(d => {
         d.sequences.forEach(s => {
@@ -256,7 +254,8 @@ export default class Vis extends Component {
     this.filters[this.state.level] = filters;
     const showRightSidebar = Object.keys(filters).length > 0 ? true : false;
     this.updateChartWidth(showRightSidebar);
-    this.setState({ filters, showRightSidebar });
+    const data = this.filterData(filters, this.state.preData, this.state.deleted);
+    this.setState({ data, filters, showRightSidebar });
   }
 
   updateChartWidth(showRightSidebar) {
@@ -302,23 +301,15 @@ export default class Vis extends Component {
   }
 
   setLevel(level) {
-    const data = this.updateTaxonomyData(this.state.preData, level, true);
-    const preData = data;
-    const deleted = this.updateTaxonomyData(this.state.deleted, level, false);
-    //
     if (!this.filters.hasOwnProperty(level)) {
       this.filters[level] = {};
     }
+    const preData = this.updateTaxonomyData(this.state.preData, level, true);
+    const deleted = this.updateTaxonomyData(this.state.deleted, level, false);
     const filters = this.filters[level];
-    Object.keys(filters).forEach(k => { // reset filters (apply to data instead?)
-      filters[k].range = {
-        min: filters[k].values[0],
-        max: filters[k].values[filters[k].values.length - 1],
-      };
-    });
     const showRightSidebar = Object.keys(filters).length > 0 ? true : false;
     this.updateChartWidth(showRightSidebar);
-    //
+    const data = this.filterData(filters, preData, deleted);
     this.setState({level, data, preData, deleted, filters, showRightSidebar});
   }
 
@@ -504,9 +495,9 @@ export default class Vis extends Component {
     });
   }
 
-  applyFilters(filters) {
-    const deletedSamples = this.state.deleted.map(d => d.sampleName);
-    const samples = this.state.preData.filter(s => {
+  filterData(filters, preData, deleted) {
+    const deletedSamples = deleted.map(d => d.sampleName);
+    const samples = preData.filter(s => {
       let include = true;
       if (deletedSamples.includes(s.sampleName)) {
         include = false;
@@ -522,7 +513,12 @@ export default class Vis extends Component {
       });
       return include;
     });
-    const data = visSortBy(this, samples, false);
+    const data = visSortBy(this, samples, false);    
+    return data;
+  }
+
+  applyFilters(filters) {
+    const data = this.filterData(filters, this.state.preData, this.state.deleted);
     this.setState({filters, data});
   }
 
