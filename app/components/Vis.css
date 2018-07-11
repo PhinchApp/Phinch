@@ -64,7 +64,7 @@
 }
 
 .selector:hover {
-  background: #2b2b2b;
+  background: #1fbbd8;
   color: white;
 }
 
@@ -86,7 +86,10 @@
 }
 
 .selected {
-  color: #2b2b2b;
+  /*color: #2b2b2b;*/
+  /*color: #eee;*/
+  /*color: #1fbbd8;*/
+  background: #1fbbd8;
   font-weight: 600;
 }
 /*.deselected {

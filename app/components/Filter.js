@@ -458,6 +458,7 @@ export default class Filter extends Component {
             <FilterChart
               name={g}
               fill={'#2b2b2b'}
+              stroke={'#ffffff'}
               data={this.filters[k][g]}
               width={this.metrics.filterWidth}
               height={height}
@@ -629,7 +630,7 @@ export default class Filter extends Component {
           </div>
           {result}
         </div>
-        <div>
+        <div style={{backgroundColor: '#ffffff', color: '#808080'}}>
           <SideMenu
             showLeftSidebar={this.state.showLeftSidebar}
             leftSidebar={this.metrics.leftSidebar}

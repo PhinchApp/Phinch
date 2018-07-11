@@ -11,11 +11,13 @@
 
 body {
   position: relative;
-  color: #808080;
+  /*color: #808080;*/
   height: 100vh;
   /*min-width: 960px;*/
   font-weight: 200;
-  background-color: white;
+  /*background-color: white;*/
+  background-color: #333333;
+  color: #eeeeee;
   font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
   margin: 0;
   overflow-x: scroll;

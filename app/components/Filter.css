@@ -94,8 +94,10 @@
 }
 
 .modal {
-  position: relative;
-  margin-top: -360px;
+  /*position: relative;*/
+  /*margin-top: -360px;*/
+  position: absolute;
+  bottom: 3rem;
   overflow: hidden;
   padding: 0.5rem 0;
   height: 360px;

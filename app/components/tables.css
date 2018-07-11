@@ -16,6 +16,10 @@
   border-collapse: collapse !important;
 }
 
+.table {
+  color: #808080;
+}
+
 .table thead {
   display: table-header-group;
 }

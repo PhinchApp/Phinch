@@ -3,6 +3,7 @@ import { Link, Redirect } from 'react-router-dom';
 
 import Table from 'rc-table';
 import _sortBy from 'lodash.sortby';
+import _cloneDeep from 'lodash.clonedeep';
 import { nest } from 'd3-collection';
 import { scaleLinear, scaleOrdinal } from 'd3-scale';
 
@@ -537,6 +538,7 @@ export default class Vis extends Component {
               log={true}
               showScale={true}
               fill={this.scales.c(k)}
+              stroke={'#333333'}
               handle={this.scales.c(k)}
               data={this.state.filters[k]}
               width={this.metrics.rightSidebar - this.metrics.padding * 3}
@@ -576,11 +578,11 @@ export default class Vis extends Component {
   renderBars(data) {
     return data
       .map((d, i) => {
-        const sequence = _sortBy(d.sequences, (s) => -s.reads);
+        const sequence = _sortBy(_cloneDeep(d.sequences), (s) => -s.reads);
         const className = (i%2 === 0) ? (styles.grey) : '';
         const miniBars = [];
         Object.keys(this.state.filters).forEach(k => {
-          const [miniSequence] = d.sequences.filter(s => (s.name === k));
+          const [miniSequence] = _cloneDeep(sequence).filter(s => (s.name === k));
           if (miniSequence) {
             miniBars.push(
               <div
@@ -953,6 +955,8 @@ export default class Vis extends Component {
         <div
           className={`${gstyle.panel} ${styles.leftGutter}`}
           style={{
+            backgroundColor: '#ffffff',
+            color: '#808080',
             width: (this.metrics.chartWidth + this.metrics.nonbarWidth - this.metrics.padding * 2),
             height: this.metrics.chartHeight,
           }}

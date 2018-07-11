@@ -51,6 +51,7 @@ export default class SideMenu extends Component {
         <div
           className={gstyle.panel}
           style={{
+            backgroundColor: '#ffffff',
             width: this.props.leftMin,
             height: this.props.chartHeight,
           }}

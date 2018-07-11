@@ -81,7 +81,7 @@ export default class FilterChart extends Component {
           height={this.yscale(d.count)}
           fill={this.props.fill}
           fillOpacity={fillOpacity}
-          stroke='white'
+          stroke={this.props.stroke}
         />
       );
     });

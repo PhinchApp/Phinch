@@ -28,6 +28,8 @@ export default class RemovedRows extends Component {
         <div
           className={gstyle.heading}
           style={{
+            position: 'absolute',
+            bottom: '1.5rem',
             marginTop: '1rem',
             cursor: 'pointer',
           }}
