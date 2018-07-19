@@ -9,6 +9,20 @@
   -webkit-box-sizing: border-box;
 }
 
+::-webkit-scrollbar {
+  -webkit-appearance: none;
+  display: none;
+}
+
+/*
+::-webkit-scrollbar, ::-webkit-scrollbar-corner {
+  background: none;
+}
+::-webkit-scrollbar-thumb {
+  background: #eeeeee;
+}
+*/
+
 body {
   position: relative;
   /*color: #808080;*/
@@ -20,7 +34,7 @@ body {
   color: #eeeeee;
   font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
   margin: 0;
-  overflow-x: scroll;
+  overflow-x: hidden;
   overflow-y: hidden;
 }
 

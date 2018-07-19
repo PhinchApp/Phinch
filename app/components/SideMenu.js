@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import styles from './SideMenu.css';
 import gstyle from './general.css';
 
+import arrow from 'images/arrow.png';
+
 export default class SideMenu extends Component {
   constructor(props) {
     super(props);
@@ -38,30 +40,29 @@ export default class SideMenu extends Component {
         {items}
       </div>
     ) : '';
-    const arrow = this.props.showLeftSidebar ? '<-' : '->';
+    const rotation = this.props.showLeftSidebar ? styles.rotated : '';
     return (
-      <div
-        className={gstyle.panel}
-        style={{
-          width: this.props.leftSidebar,
-          height: this.props.chartHeight,
-        }}
-      >
+      <div 
+        className={gstyle.panel} style={{
+          overflowY: 'hidden',
+        }}>
         {menuItems}
         <div
           className={gstyle.panel}
           style={{
             backgroundColor: '#ffffff',
+            borderLeft: '6px solid #333333',
             width: this.props.leftMin,
             height: this.props.chartHeight,
+            overflowY: 'hidden',
           }}
         >
           <div className={styles.toggleSquare}></div>
           <div
-            className={styles.menuToggle}
+            className={`${styles.menuToggle} ${rotation}`}
             onClick={this.props.toggleMenu}
           >
-            {arrow}
+            <img src={arrow} alt='arrow-toggle-menu' />
           </div>
         </div>
       </div>

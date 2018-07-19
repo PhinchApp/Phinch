@@ -67,8 +67,8 @@
 }
 .rc-slider-mark {
   position: absolute;
-  /*top: 18px;*/
-  top: 16px;
+  /*top: 16px;*/
+  top: 10px;
   left: 0;
   width: 100%;
   font-size: 12px;

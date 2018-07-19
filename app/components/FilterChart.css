@@ -1,20 +1,29 @@
 .remove {
   display: inline-block;
   cursor: pointer;
+  font-weight: 200;
+
   color: #b3b2b3;
   background: #666666;
   width: 1rem;
   height: 1rem;
-  border-radius: 4px;
+  border-radius: 2px;
   text-align: center;
-  font-size: 0.7rem;
-  line-height: 0.9rem;
+  float: right;
+  font-size: 12px;
+  line-height: 0.85rem;
   vertical-align: middle;
+}
+
+.range {
+  font-size: 12px;
 }
 
 .mark {
   display: inline-block;
   font-size: 8px;
+  overflow: visible;
+  color: #cccccc;
 }
 
 .svg {
@@ -22,6 +31,19 @@
   margin-top: 8px;
 }
 
+.circle {
+  vertical-align: bottom;
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  border: 1px solid #262626;
+  display: inline-block;
+  margin-right: 0.25rem;
+}
+
 .filterChart {
-  /*border-bottom: 1px solid #262626;*/
+  vertical-align: top;
+  display: inline-block;
+  font-size: 16px;
+  color: #cccccc;
 }

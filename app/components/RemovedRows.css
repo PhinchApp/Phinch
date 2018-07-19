@@ -54,12 +54,13 @@
   padding: 0.5rem 0;
   height: 360px;
   background: white;
-  border: 1px solid #2b2b2b;
+  outline: 4px solid #1a1a1a;
+  color: #808080;
 }
-.modal p {
+.modal .title {
   margin: 0;
   margin-bottom: 0.5rem;
-  padding: 0 0.5rem;
+  padding: 0 0.75rem;
 }
 
 .phinchName {

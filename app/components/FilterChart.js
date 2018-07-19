@@ -82,6 +82,7 @@ export default class FilterChart extends Component {
           fill={this.props.fill}
           fillOpacity={fillOpacity}
           stroke={this.props.stroke}
+          strokeWidth={0.25}
         />
       );
     });
@@ -90,9 +91,9 @@ export default class FilterChart extends Component {
     if (filter.expanded) {
       const min = isDate ? new Date(filter.range.min.value).toLocaleString().split(', ')[0] : filter.range.min.value;
       const max = isDate ? new Date(filter.range.max.value).toLocaleString().split(', ')[0] : filter.range.max.value;
-      range = min !== undefined ? (<div>range: [{min} — {max}]</div>) : '';
-      marks[this.xscale(filter.range.min.index)] = { label: <div className={styles.mark}>{min}</div> };
-      marks[this.xscale(filter.range.max.index + 1)] = { label: <div className={styles.mark}>{max}</div> };
+      range = min !== undefined ? (<div className={styles.range}>min: {min.toLocaleString()} — max: {max.toLocaleString()}</div>) : '';
+      marks[this.xscale(filter.range.min.index)] = { label: <div className={styles.mark}>{min.toLocaleString()}</div> };
+      marks[this.xscale(filter.range.max.index + 1)] = { label: <div className={styles.mark}>{max.toLocaleString()}</div> };
     }
     const remove = (this.props.remove !== undefined) ? (
         <div
@@ -102,7 +103,6 @@ export default class FilterChart extends Component {
       ) : '';
     const info = filter.expanded ? (
         <div>
-          {remove}
           <span>{this.props.data.unit}</span>
           {range}
         </div>
@@ -134,9 +134,13 @@ export default class FilterChart extends Component {
           <label htmlFor="scale">Log Scale</label>
         </div>
       ) : '';
+    const taxa = this.props.name.split(',');
+    const name = taxa[taxa.length - 1];
     return (
       <div className={styles.filterChart}>
-        <label>{this.props.name}</label>
+        <div className={styles.circle} style={{background: this.props.fill}} />
+        <label>{name}</label>
+        {remove}
         {info}
         <svg
           width={this.props.width}

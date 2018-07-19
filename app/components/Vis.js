@@ -21,7 +21,7 @@ import Summary from './Summary';
 import styles from './Vis.css';
 import tstyle from './tables.css';
 import gstyle from './general.css';
-import logo from 'images/phinch.png';
+import logo from 'images/phinch-logo.png';
 
 export default class Vis extends Component {
   constructor(props) {
@@ -55,6 +55,21 @@ export default class Vis extends Component {
       },
     ];
 
+    this.sortOptions = [
+      {
+        id: 'biomid',
+        name: 'BIOM ID',
+      },
+      {
+        id: 'phinchName',
+        name: 'Phinch Name',
+      },
+      {
+        id: 'reads',
+        name: 'Sequence Reads',
+      },
+    ];
+
     this.filters = {};
 
     this.tooltip = {
@@ -74,24 +89,26 @@ export default class Vis extends Component {
       padding: 16,
       lineHeight: 14, //14,
       barContainerHeight: 56, // 70,
-      barHeight: 48, //60, //12,
+      barHeight: 44, //60, //12,
       miniBarContainerHeight: 8,
       miniBarHeight: 6,
       height: 600,
       hideWidth: 20,
-      idWidth: 32,
-      nameWidth: 144,
-      heightOffset: 251,
+      idWidth: 28,
+      nameWidth: 140,
+      // heightOffset: 251,
+      heightOffset: 158,
       leftSidebar: 25,
       left: {
         min: 25,
-        max: 125,
+        max: 119,
+        // max: 125,
       },
       rightSidebar: 216,
     };
 
-    this.metrics.nonbarWidth = (this.metrics.padding * 4) + (this.metrics.idWidth + this.metrics.hideWidth + this.metrics.nameWidth);
-    // this.metrics.chartWidth = this.state.width - this.metrics.nonbarWidth;
+    // this.metrics.nonbarWidth = (this.metrics.padding * 4) + (this.metrics.idWidth + this.metrics.hideWidth + this.metrics.nameWidth);
+    this.metrics.nonbarWidth = (this.metrics.padding * 3) + (this.metrics.idWidth + this.metrics.hideWidth + this.metrics.nameWidth);
     this.metrics.chartWidth = this.state.width - (this.metrics.leftSidebar + this.metrics.nonbarWidth);
     this.metrics.chartHeight = this.state.height - this.metrics.heightOffset;
 
@@ -108,7 +125,6 @@ export default class Vis extends Component {
 
       // Autogenerate levels from data
       // TODO: Test w/ addtional data formats
-
       const uniq_taxa = [...new Set(
           [].concat(...
             [...new Set(
@@ -189,7 +205,6 @@ export default class Vis extends Component {
     window.addEventListener('resize', this.updateDimensions);
   }
   componentWillUnmount() {
-    // if (this.tooltip.handle) { clearTimeout(this.tooltip.handle) };
     clearTimeout(this.tooltip.handle);
     window.removeEventListener('resize', this.updateDimensions);
   }
@@ -382,44 +397,34 @@ export default class Vis extends Component {
       .clamp();
     const deletedColumns = [
       {
-        title: (<div className={`${gstyle.heading} ${styles.restore}`}>Restore</div>),
+        title: '',
         dataIndex: '',
         key: 'remove',
         render: (r) => (
-          <div className={styles.restore}>
-            <div className={tstyle.filterCell}>
-              <div
-                className={styles.delete}
-                style={{fontSize: 8}}
-                onClick={() => { restoreRows(this, [r]) }}
-              >
-                ⤴
-              </div>
+          <div className={styles.rowLabel} style={{width: this.metrics.hideWidth}}>
+            <div onClick={() => { restoreRows(this, [r]) }}>
+              <div style={{fontSize: 8}} className={styles.delete}>⤴</div>
             </div>
           </div>
         ),
       },
       {
-        title: (<div className={`${gstyle.heading} ${styles.biomid}`}>BIOM ID</div>),
+        title: '',
         dataIndex: 'biomid',
         key: 'biomid',
         render: (t) => (
-          <div className={`${styles.biomid} ${styles.rowLabel}`}>
-            <div className={tstyle.filterCell}>
-              {t}
-            </div>
+          <div className={styles.rowLabel} style={{width: this.metrics.idWidth}}>
+            {t}
           </div>
         ),
       },
       {
-        title: (<div className={`${gstyle.heading} ${styles.phinchName}`}>Phinch Name</div>),
+        title: '',
         dataIndex: 'phinchName',
         key: 'phinchName',
         render: (t) => (
-          <div className={`${styles.phinchName} ${styles.rowLabel}`}>
-            <div className={tstyle.filterCell}>
-              {t}
-            </div>
+          <div className={styles.rowLabel} style={{width: this.metrics.nameWidth}}>
+            {t}
           </div>
         ),
       },
@@ -430,11 +435,11 @@ export default class Vis extends Component {
         render: (r) => {
           const sequence = _sortBy(r.sequences, (s) => -s.reads);
           return (
-            <div className={tstyle.filterCell}>
+            <div style={{paddingRight: this.metrics.padding}}>
               <StackedBar
                 data={sequence}
                 sample={r}
-                width={(this.metrics.chartWidth - 48)}
+                width={this.metrics.chartWidth}
                 height={this.metrics.barHeight}
                 xscale={xscale}
                 cscale={this.scales.c}
@@ -449,7 +454,8 @@ export default class Vis extends Component {
   }
 
   renderTicks() {
-    const ticks = this.scales.x.ticks(10);
+    const tickCount = Math.floor(this.metrics.chartWidth / 64);
+    const ticks = this.scales.x.ticks(tickCount);
     if (!ticks.length) {
       return '';
     }
@@ -530,6 +536,7 @@ export default class Vis extends Component {
           <div
             key={k}
             style={{
+              display: 'inline-block',
               borderBottom: '1px solid #262626',
               margin: '0.5rem',
             }}>
@@ -553,7 +560,8 @@ export default class Vis extends Component {
       });
       return (
         <div
-          className={`${gstyle.panel} ${styles.leftGutter}`}
+          // className={`${gstyle.panel} ${styles.leftGutter}`}
+          className={`${gstyle.panel}`}
           style={{
             width: this.metrics.rightSidebar,
             height: this.metrics.chartHeight,
@@ -579,7 +587,7 @@ export default class Vis extends Component {
     return data
       .map((d, i) => {
         const sequence = _sortBy(_cloneDeep(d.sequences), (s) => -s.reads);
-        const className = (i%2 === 0) ? (styles.grey) : '';
+        const className = (i%2 === 0) ? '' : (gstyle.grey);
         const miniBars = [];
         Object.keys(this.state.filters).forEach(k => {
           const [miniSequence] = _cloneDeep(sequence).filter(s => (s.name === k));
@@ -589,9 +597,9 @@ export default class Vis extends Component {
                 key={k}
                 style={{
                   paddingTop: '2px',
-                  height: this.metrics.miniBarContainerHeight,
-                  marginLeft: this.metrics.nonbarWidth - (this.metrics.padding * 4),
                   display: 'block',
+                  height: this.metrics.miniBarContainerHeight,
+                  marginLeft: this.metrics.nonbarWidth - (this.metrics.padding * 3),
                 }}
               >
                 <StackedBar
@@ -644,25 +652,34 @@ export default class Vis extends Component {
       });
   }
 
+  renderShow() {
+    const options = this.sortOptions.map(o => {
+      return <option key={o.id} value={o.id}>{o.name}</option>;
+    });
+    const onSelectChange = (event) => {
+      console.log('change display now');
+      // this.sort.key = event.target.value;
+      // visSortBy(this, this.state.data, true);
+    };
+    return (
+      <div className={styles.inlineControl}>
+        <label htmlFor='showSelect'>Show:</label>
+        <select
+          id='showSelect'
+          onChange={onSelectChange}
+          className={styles.inlineControl}
+        >
+          {options}
+        </select>
+      </div>
+    );
+  }
+
   renderSort() {
-    const sortOptions = [
-      {
-        id: 'biomid',
-        name: 'BIOM ID',
-      },
-      {
-        id: 'phinchName',
-        name: 'Phinch Name',
-      },
-      {
-        id: 'reads',
-        name: 'Sequence Reads',
-      },
-    ];
     /* 
       TODO: add deselect when manually sorted
     */
-    const options = sortOptions.map(o => {
+    const options = this.sortOptions.map(o => {
       return <option key={o.id} value={o.id}>{o.name}</option>;
     });
     const onSelectChange = (event) => {
@@ -688,6 +705,7 @@ export default class Vis extends Component {
       return (
         <div key={o.name} className={styles.inlineControl}>
           <input
+            // className={styles.radio}
             type='radio'
             id={o.name}
             key={o.name}
@@ -701,6 +719,7 @@ export default class Vis extends Component {
     });
     return (
       <div className={styles.inlineControl}>
+        <label htmlFor='sortSelect'>Sort by:</label>
         <select
           id='sortSelect'
           onChange={onSelectChange}
@@ -821,7 +840,7 @@ export default class Vis extends Component {
             className={tstyle.table}
             rowClassName={(r, i) => {
               if (i%2 === 0) {
-                return styles.grey;
+                return gstyle.grey;
               }
               return;
             }}
@@ -850,13 +869,16 @@ export default class Vis extends Component {
     const levels = this.levels.map((l, i) => {
       const selected = (l.order <= this.state.level) ? styles.selected : '';
       return (
-        <div
-          key={l.name}
-          className={`${gstyle.button} ${selected} ${styles.selector}`}
-          onClick={() => this.setLevel(l.order)}
-        >
-          {(i === 0) ? '' : (<div className={styles.dash}>—</div>)}
-          {l.name}
+        <div style={{display: 'inline-block'}}>
+          {(i === 0) ? '' : (<div className={`${selected} ${styles.dash}`}>—</div>)}
+          <div
+            key={l.name}
+            // className={`${gstyle.button} ${selected} ${styles.selector}`}
+            className={`${selected} ${styles.selector}`}
+            onClick={() => this.setLevel(l.order)}
+          >
+            {l.name}
+          </div>
         </div>
       );
     });
@@ -867,6 +889,7 @@ export default class Vis extends Component {
       .clamp();
 
     const bars = this.renderBars(this.state.data);
+    const showSelect = this.renderShow();
     const sortSelect = this.renderSort();
     const viewToggle = this.renderToggle();
     const topSequences = this.renderTopSequences(this.readsBySequence);
@@ -888,84 +911,85 @@ export default class Vis extends Component {
             <img src={logo} alt='Phinch' />
           </Link>
         </div>
-        <Summary summary={this.state.summary} datalength={this.state.data.length} />
-        <div>
-          <div style={{
-            display: 'inline-block',
-            margin: '0 0.5rem',
-          }}>
-            Level
+        <div className={styles.heading}>
+          <Summary summary={this.state.summary} datalength={this.state.data.length} />
+          <div className={styles.controls}>
+            {/* ROW 1 */}
+            <div className={styles.controlRow}>
+              <input type='text' value='Search' className={styles.search} />
+              {showSelect}
+              {sortSelect}
+              {viewToggle}
+            </div>
+            {/* ROW 2 */}
+            <div className={styles.controlRow}>
+              {levels}
+              <div style={{display: 'inline-block', float: 'right'}}>{topSequences}</div>
+            </div>
           </div>
-          {levels}
-        </div>
-        <div style={{display: 'inline-block'}}>
-          <div style={{
-            display: 'inline-block',
-            margin: '0 0.5rem',
-          }}>
-            <label htmlFor='sortSelect'>
-              Sort by:
-            </label>
-          </div>
-          {sortSelect}
-        </div>
-        <div style={{display: 'inline-block'}}>
-          <div style={{display: 'inline-block'}} className={styles.controlMargin}>
-            {viewToggle}
-          </div>
-        </div>
-        <div style={{display: 'inline-block', float: 'right'}}>
-          <div style={{display: 'inline-block'}} className={styles.controlMargin}>
-            {topSequences}
-          </div>
-        </div>
-        <div style={{
-          position: 'relative',
-          textAlign: 'center',
-          height: this.metrics.lineHeight * 2,
-          fontSize: 12,
-        }}>
-          Sequence Reads
-          <svg style={{
-            position: 'absolute',
-            left: this.metrics.leftSidebar,
-            pointerEvents: 'none',
-            paddingLeft: this.metrics.padding * 0.5,
-            width: (this.state.width - (this.metrics.padding * 2.5)),
-            height: (this.metrics.chartHeight + (this.metrics.lineHeight * 2)),
-          }}>
-            <g transform={`
-              translate(
-                ${this.metrics.idWidth + this.metrics.hideWidth + this.metrics.nameWidth},
-                ${this.metrics.lineHeight}
-              )
-            `}>
-              {ticks}
-            </g>
-          </svg>
         </div>
         <SideMenu
           showLeftSidebar={this.state.showLeftSidebar}
           leftSidebar={this.metrics.leftSidebar}
           leftMin={this.metrics.left.min}
-          chartHeight={this.metrics.chartHeight}
+          chartHeight={this.metrics.chartHeight + this.metrics.lineHeight * 2}
           items={this.menuItems}
           toggleMenu={this.toggleMenu}
         />
-        <div
-          className={`${gstyle.panel} ${styles.leftGutter}`}
-          style={{
-            backgroundColor: '#ffffff',
-            color: '#808080',
-            width: (this.metrics.chartWidth + this.metrics.nonbarWidth - this.metrics.padding * 2),
-            height: this.metrics.chartHeight,
-          }}
-        >
-          {bars}
-          {tooltip}
+        <div style={{
+          display: 'inline-block',
+          width: (
+            this.metrics.chartWidth + this.metrics.nonbarWidth + (
+                this.state.showRightSidebar ? this.metrics.rightSidebar : 0
+              )
+            ),
+        }}>
+          <div
+            className={styles.axis}
+            style={{
+              width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
+              height: this.metrics.lineHeight * 2,
+              fontSize: 12,
+            }}
+          >
+            Sequence Reads
+            <svg style={{
+              position: 'absolute',
+              left: this.metrics.leftSidebar + 2,
+              pointerEvents: 'none',
+              paddingLeft: this.metrics.padding * 0.5,
+              width: (this.state.width - (this.metrics.padding * 2.5)),
+              height: (this.metrics.chartHeight + (this.metrics.lineHeight * 2)),
+            }}>
+              <g transform={`
+                translate(
+                  ${this.metrics.idWidth + this.metrics.hideWidth + this.metrics.nameWidth},
+                  ${this.metrics.lineHeight}
+                )
+              `}>
+                {ticks}
+              </g>
+            </svg>
+          </div>
+          <div
+            className={`${gstyle.panel} ${styles.leftGutter}`}
+            style={{
+              backgroundColor: '#ffffff',
+              display: 'inline-block',
+              color: '#808080',
+              width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
+              height: this.metrics.chartHeight,
+            }}
+          >
+            {bars}
+            {tooltip}
+          </div>
+          {displayFilters}
         </div>
-        {displayFilters}
         <RemovedRows
+          left={this.metrics.leftSidebar}
+          width={this.metrics.chartWidth + this.metrics.nonbarWidth}
+          rowStyles={`${styles.row} ${styles.modalRow}`}
           deleted={this.state.deleted}
           deletedColumns={this.deletedColumns}
         />

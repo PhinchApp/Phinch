@@ -2,19 +2,27 @@
 
 .container {
   min-width: 960px;
-  overflow: scroll;
+  /*overflow: scroll;*/
+  overflow: hidden;
   height: 100vh;
-  padding: 1rem;
+  padding: 0;
+  margin: 0;
+  /*padding: 1rem;*/
 }
 
 .panel {
   vertical-align: top;
   display: inline-block;
   overflow-y: scroll;
+  overflow-x: hidden;
+  /*transition: width 0.25s linear;*/
 }
 
 .logo {
-  width: 140px;
+  background: #1a1a1a;
+  width: 100px;
+  height: 130px;
+  padding: 2rem 1rem;
   display: inline-block;
   vertical-align: top;
 }
@@ -40,4 +48,8 @@
   margin: 0;
   padding: 0.5rem 0.25rem;
   display: inline-block;
+}
+
+.grey {
+  background: #f4f4f4;
 }
