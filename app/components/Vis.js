@@ -87,27 +87,24 @@ export default class Vis extends Component {
 
     this.metrics = {
       padding: 16,
-      lineHeight: 14, //14,
-      barContainerHeight: 56, // 70,
-      barHeight: 44, //60, //12,
+      lineHeight: 14,
+      barContainerHeight: 56,
+      barHeight: 44,
       miniBarContainerHeight: 8,
       miniBarHeight: 6,
       height: 600,
       hideWidth: 20,
       idWidth: 28,
       nameWidth: 140,
-      // heightOffset: 251,
       heightOffset: 158,
       leftSidebar: 25,
       left: {
         min: 25,
         max: 119,
-        // max: 125,
       },
       rightSidebar: 216,
     };
 
-    // this.metrics.nonbarWidth = (this.metrics.padding * 4) + (this.metrics.idWidth + this.metrics.hideWidth + this.metrics.nameWidth);
     this.metrics.nonbarWidth = (this.metrics.padding * 3) + (this.metrics.idWidth + this.metrics.hideWidth + this.metrics.nameWidth);
     this.metrics.chartWidth = this.state.width - (this.metrics.leftSidebar + this.metrics.nonbarWidth);
     this.metrics.chartHeight = this.state.height - this.metrics.heightOffset;
@@ -392,8 +389,8 @@ export default class Vis extends Component {
 
   generateDeletedColumns() {
     const xscale = scaleLinear();
-    xscale.domain([1, Math.max(...this.state.deleted.map(d => d.reads))])
-      .range([1, this.metrics.chartWidth])
+    xscale.domain([0, Math.max(...this.state.deleted.map(d => d.reads))])
+      .range([0, this.metrics.chartWidth])
       .clamp();
     const deletedColumns = [
       {
@@ -459,7 +456,7 @@ export default class Vis extends Component {
     if (!ticks.length) {
       return '';
     }
-    let tickArray = [0].concat(...ticks);
+    let tickArray = [...new Set([0].concat(...ticks))];
     const xMax = this.scales.x.domain()[1];
     if (this.state.mode !== 'value') {
       tickArray = [];
@@ -560,7 +557,6 @@ export default class Vis extends Component {
       });
       return (
         <div
-          // className={`${gstyle.panel} ${styles.leftGutter}`}
           className={`${gstyle.panel}`}
           style={{
             width: this.metrics.rightSidebar,
@@ -705,7 +701,6 @@ export default class Vis extends Component {
       return (
         <div key={o.name} className={styles.inlineControl}>
           <input
-            // className={styles.radio}
             type='radio'
             id={o.name}
             key={o.name}
@@ -869,11 +864,9 @@ export default class Vis extends Component {
     const levels = this.levels.map((l, i) => {
       const selected = (l.order <= this.state.level) ? styles.selected : '';
       return (
-        <div style={{display: 'inline-block'}}>
+        <div key={l.name} style={{display: 'inline-block'}}>
           {(i === 0) ? '' : (<div className={`${selected} ${styles.dash}`}>—</div>)}
           <div
-            key={l.name}
-            // className={`${gstyle.button} ${selected} ${styles.selector}`}
             className={`${selected} ${styles.selector}`}
             onClick={() => this.setLevel(l.order)}
           >
@@ -884,8 +877,8 @@ export default class Vis extends Component {
     });
 
     this.scales.x
-      .domain([1, Math.max(...this.state.data.map(d => d.reads))])
-      .range([1, this.metrics.chartWidth])
+      .domain([0, Math.max(...this.state.data.map(d => d.reads))])
+      .range([0, this.metrics.chartWidth])
       .clamp();
 
     const bars = this.renderBars(this.state.data);
@@ -895,9 +888,16 @@ export default class Vis extends Component {
     const topSequences = this.renderTopSequences(this.readsBySequence);
     const ticks = this.renderTicks();
 
-    const tooltip = this.state.showTooltip ?
-      <StackedBarTooltip {...this.state.highlightedDatum} totalDataReads={this.totalDataReads} />
-      : null;
+    const color = this.state.highlightedDatum ? (
+        this.scales.c(this.state.highlightedDatum.datum.name)
+      ) : '';
+    const tooltip = this.state.showTooltip ? (
+        <StackedBarTooltip
+          {...this.state.highlightedDatum}
+          totalDataReads={this.totalDataReads}
+          color={color}
+        />
+      ) : null;
 
     this.deletedColumns = this.generateDeletedColumns();
 
@@ -916,7 +916,14 @@ export default class Vis extends Component {
           <div className={styles.controls}>
             {/* ROW 1 */}
             <div className={styles.controlRow}>
-              <input type='text' value='Search' className={styles.search} />
+              <input
+                type='text'
+                value='Search'
+                className={styles.search}
+                onChange={(event) => {
+                  console.log(event.target.value);
+                }}
+              />
               {showSelect}
               {sortSelect}
               {viewToggle}
@@ -955,7 +962,7 @@ export default class Vis extends Component {
             Sequence Reads
             <svg style={{
               position: 'absolute',
-              left: this.metrics.leftSidebar + 2,
+              left: this.metrics.leftSidebar + 3,
               pointerEvents: 'none',
               paddingLeft: this.metrics.padding * 0.5,
               width: (this.state.width - (this.metrics.padding * 2.5)),

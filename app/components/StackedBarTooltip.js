@@ -14,8 +14,8 @@ export default function StackedBarTooltip(props) {
   }
 
   const size = {
-    x: 332,
-    y: 232,
+    x: 316,
+    y: 216,
   };
   const position = props.position;
   if (position.x + size.x > window.innerWidth) {
@@ -39,22 +39,26 @@ export default function StackedBarTooltip(props) {
       <div className={styles.label}>Taxonomy:</div>
       <div className={styles.value}>{props.datum.name}</div>
 
-      <div className={styles.label}>Taxonomy Occurence in this sample</div>
+      <div className={styles.label}>Taxonomy Occurence in this sample:</div>
       <div className={styles.value}>
         {percentFormatter(samplePercent)}
         <span className={styles.small}>
-          {` ${props.datum.reads.toLocaleString()} out of ${props.sample.reads.toLocaleString()}`}
+          {` (${props.datum.reads.toLocaleString()} out of ${props.sample.reads.toLocaleString()})`}
         </span>
-        <PercentageBarGraph percent={samplePercent} width='300px' />
+        <div className={styles.bar}>
+          <PercentageBarGraph percent={samplePercent} color={props.color} width='284px' />
+        </div>
       </div>
 
-      <div className={styles.label}>Out of Total Taxonomy Occurence in all samples</div>
+      <div className={styles.label}>Out of Total Taxonomy Occurence in all samples:</div>
       <div className={styles.value}>
         {percentFormatter(totalPercentReads)}
         <span className={styles.small}>
-          {` ${props.datum.reads.toLocaleString()} out of ${props.totalDataReads.toLocaleString()}`}
+          {` (${props.datum.reads.toLocaleString()} out of ${props.totalDataReads.toLocaleString()})`}
         </span>
-        <PercentageBarGraph percent={totalPercentReads} width='300px' />
+        <div className={styles.bar}>
+          <PercentageBarGraph percent={totalPercentReads} color={props.color} width='284px' />
+        </div>
       </div>
     </div>
   );

@@ -41,7 +41,7 @@ export function restoreRows(context, rows) {
     return !rows.includes(d);
   });
   const data = context.state.data.concat(rows).sort((a, b) => {
-    if (!context.sort.reverse) {
+    if (context.sort.reverse) {
       if (a[context.sort.key] < b[context.sort.key]) return -1;
       if (a[context.sort.key] > b[context.sort.key]) return 1;
       return 0;

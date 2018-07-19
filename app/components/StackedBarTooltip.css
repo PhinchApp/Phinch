@@ -4,28 +4,35 @@
   font-size: 12px;
   top: 0;
   left: 0;
-  width: 332px;
-  height: 232px;
-  background-color: #fff;
+  width: 316px; /* 332px; */
+  height: 216px; /* 232px; */
+  color: #ffffff;
+  background-color: #000000;
   pointer-events: none;
   padding: 1em;
-  border: 1px solid #ccc;
+  border: 1px solid #333333;
+  border-radius: 8px;
   z-index: 10;
 }
 
 .label {
   text-transform: uppercase;
-  font-size: 80%;
+  font-size: 11px;
 }
 
 .value {
-  font-weight: bold;
+  font-weight: 400;
+  font-size: 13px;
   overflow-wrap: break-word;
-  margin-bottom: 1em;
+  margin-bottom: 0.5em;
 }
 
 .small {
-  font-size: 70%;
+  font-size: 11px;
   font-weight: normal;
   text-transform: initial;
+}
+
+.bar {
+  margin: 0.25rem 0;
 }

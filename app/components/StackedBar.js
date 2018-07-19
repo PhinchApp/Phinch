@@ -56,7 +56,10 @@ export default class StackedBar extends Component {
     const ctx = this._canvas.getContext('2d')
     ctx.clearRect(0, 0, this.props.width, this.props.height);
     if (this.props.isPercent) {
-      this.props.xscale.domain([0, this.props.data.map(d => d.reads).reduce((a, v) => a + v)]);
+      this.props.xscale
+        .domain([0, this.props.data.map(d => d.reads).reduce((a, v) => a + v)])
+        .range([0, this.props.width])
+        .clamp();
     }
     let offset = 0;
     this.props.data
@@ -73,7 +76,7 @@ export default class StackedBar extends Component {
           d.width * this.scale,
           this.props.height * this.scale,
           );
-        offset += d.width;
+        offset += this.props.xscale(d.reads);
       });
   }
 

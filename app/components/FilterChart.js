@@ -117,6 +117,7 @@ export default class FilterChart extends Component {
             step={barWidth}
             allowCross={false}
             trackStyle={[{background: this.props.fill}]}
+            railStyle={{background: '#262626'}}
             handleStyle={[{background: this.props.handle}, {background: this.props.handle}]}
             value={[this.xscale(filter.range.min.index), this.xscale(filter.range.max.index + 1)]}
             onChange={(values) => this.updateFilter(this.props.name, values)}
