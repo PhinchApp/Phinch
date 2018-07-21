@@ -1,0 +1,31 @@
+.toggle {
+  width: 192px;
+  font-size: 16px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  z-index: 10;
+}
+
+.modal {
+  overflow: hidden;
+  padding: 0.5rem 0;
+  height: 360px;
+  background: white;
+  outline: 4px solid #1a1a1a;
+  color: #808080;
+  z-index: 5;
+}
+
+.modal .title {
+  font-size: 16px;
+  margin: 0;
+  margin-bottom: 0.5rem;
+  padding: 0 0.35rem;
+}
+
+.dataContainer {
+  margin: 0 0.25rem;
+  height: 320px;
+  overflow-y: scroll;
+}

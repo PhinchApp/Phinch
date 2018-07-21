@@ -9,14 +9,15 @@ import { scaleLinear, scaleOrdinal } from 'd3-scale';
 
 import { updateFilters, removeRows, restoreRows, visSortBy, getSortArrow } from '../FilterFunctions';
 import DataContainer from '../DataContainer';
+import palette from '../palette';
 
 import SideMenu from './SideMenu';
-import StackedBar from './StackedBar';
+import StackedBarRow from './StackedBarRow';
 import StackedBarTooltip from './StackedBarTooltip';
 import FilterChart from './FilterChart';
 import RemovedRows from './RemovedRows';
-import palette from '../palette';
 import Summary from './Summary';
+import Modal from './Modal';
 
 import styles from './Vis.css';
 import tstyle from './tables.css';
@@ -387,69 +388,6 @@ export default class Vis extends Component {
     });
   }
 
-  generateDeletedColumns() {
-    const xscale = scaleLinear();
-    xscale.domain([0, Math.max(...this.state.deleted.map(d => d.reads))])
-      .range([0, this.metrics.chartWidth])
-      .clamp();
-    const deletedColumns = [
-      {
-        title: '',
-        dataIndex: '',
-        key: 'remove',
-        render: (r) => (
-          <div className={styles.rowLabel} style={{width: this.metrics.hideWidth}}>
-            <div onClick={() => { restoreRows(this, [r]) }}>
-              <div style={{fontSize: 8}} className={styles.delete}>⤴</div>
-            </div>
-          </div>
-        ),
-      },
-      {
-        title: '',
-        dataIndex: 'biomid',
-        key: 'biomid',
-        render: (t) => (
-          <div className={styles.rowLabel} style={{width: this.metrics.idWidth}}>
-            {t}
-          </div>
-        ),
-      },
-      {
-        title: '',
-        dataIndex: 'phinchName',
-        key: 'phinchName',
-        render: (t) => (
-          <div className={styles.rowLabel} style={{width: this.metrics.nameWidth}}>
-            {t}
-          </div>
-        ),
-      },
-      {
-        title: '',
-        dataIndex: '',
-        key: '',
-        render: (r) => {
-          const sequence = _sortBy(r.sequences, (s) => -s.reads);
-          return (
-            <div style={{paddingRight: this.metrics.padding}}>
-              <StackedBar
-                data={sequence}
-                sample={r}
-                width={this.metrics.chartWidth}
-                height={this.metrics.barHeight}
-                xscale={xscale}
-                cscale={this.scales.c}
-                isPercent={(this.state.mode === 'percent')}
-              />
-            </div>
-          )
-        },
-      },
-    ];
-    return deletedColumns;
-  }
-
   renderTicks() {
     const tickCount = Math.floor(this.metrics.chartWidth / 64);
     const ticks = this.scales.x.ticks(tickCount);
@@ -559,8 +497,9 @@ export default class Vis extends Component {
         <div
           className={`${gstyle.panel}`}
           style={{
-            width: this.metrics.rightSidebar,
-            height: this.metrics.chartHeight,
+            borderTop: '1px solid #262626',
+            width: this.state.showRightSidebar ? this.metrics.rightSidebar : 0,
+            height: this.metrics.chartHeight + this.metrics.lineHeight * 2,
           }}
         >
           {segments}
@@ -579,71 +518,25 @@ export default class Vis extends Component {
     this.setState({showLeftSidebar});
   }
 
-  renderBars(data) {
+  renderBars(data, isRemoved) {
     return data
       .map((d, i) => {
-        const sequence = _sortBy(_cloneDeep(d.sequences), (s) => -s.reads);
-        const className = (i%2 === 0) ? '' : (gstyle.grey);
-        const miniBars = [];
-        Object.keys(this.state.filters).forEach(k => {
-          const [miniSequence] = _cloneDeep(sequence).filter(s => (s.name === k));
-          if (miniSequence) {
-            miniBars.push(
-              <div
-                key={k}
-                style={{
-                  paddingTop: '2px',
-                  display: 'block',
-                  height: this.metrics.miniBarContainerHeight,
-                  marginLeft: this.metrics.nonbarWidth - (this.metrics.padding * 3),
-                }}
-              >
-                <StackedBar
-                  data={[miniSequence]}
-                  sample={d}
-                  width={this.metrics.chartWidth}
-                  height={(this.metrics.miniBarHeight)}
-                  xscale={this.scales.x}
-                  cscale={this.scales.c}
-                  isPercent={false}
-                />
-              </div>
-            );
-          }
-        });
         return (
-          <div
-            key={d.sampleName}
-            className={`${styles.row} ${className}`}
-            style={{
-              height: this.metrics.barContainerHeight + (this.metrics.miniBarContainerHeight * miniBars.length),
-            }}
-          >
-            <div className={styles.rowLabel} style={{width: this.metrics.hideWidth}}>
-              <div onClick={() => { removeRows(this, [d]) }}>
-                <div className={styles.delete}>x</div>
-              </div>
-            </div>
-            <div className={styles.rowLabel} style={{width: this.metrics.idWidth}}>
-              {d.biomid}
-            </div>
-            <div className={styles.rowLabel} style={{width: this.metrics.nameWidth}}>
-              {d.phinchName}
-            </div>
-            <StackedBar
-              onHoverDatum={this._hoverDatum}
-              onClickDatum={this._clickDatum}
-              data={sequence}
-              sample={d}
-              width={this.metrics.chartWidth}
-              height={this.metrics.barHeight}
-              xscale={this.scales.x}
-              cscale={this.scales.c}
-              isPercent={(this.state.mode === 'percent')}
-              highlightedDatum={this.state.highlightedDatum}
-            />
-            {miniBars}
-          </div>
+          <StackedBarRow
+            key={d.id}
+            data={d}
+            index={i}
+            filters={this.state.filters}
+            metrics={this.metrics}
+            scales={this.scales}
+            isPercent={(this.state.mode === 'percent')}
+            isRemoved={isRemoved}
+            highlightedDatum={this.state.highlightedDatum}
+            removeDatum={() => { removeRows(this, [d]) }}
+            restoreDatum={() => { restoreRows(this, [d]) }}
+            hoverDatum={this._hoverDatum}
+            clickDatum={this._clickDatum}
+          />
         );
       });
   }
@@ -759,21 +652,21 @@ export default class Vis extends Component {
   }
 
   renderTopSequences(seqObj) {
-    const rotation = this.state.showSequences ? -180 : 0;
-    const button = (
-        <div
-          className={`${gstyle.heading}`}
-          style={{
-            cursor: 'pointer',
-          }}
-          onClick={() => {
-            const showSequences = !this.state.showSequences;
-            this.setState({showSequences});
-          }}
-        >
-          Top Sequences <div className={gstyle.arrow} style={{transform: `rotate(${rotation}deg)`}}>⌃</div>
-        </div>
-      );
+    // const rotation = this.state.showSequences ? -180 : 0;
+    // const button = (
+    //     <div
+    //       className={`${gstyle.heading}`}
+    //       style={{
+    //         cursor: 'pointer',
+    //       }}
+    //       onClick={() => {
+    //         const showSequences = !this.state.showSequences;
+    //         this.setState({showSequences});
+    //       }}
+    //     >
+    //       Top Sequences <div className={gstyle.arrow} style={{transform: `rotate(${rotation}deg)`}}>⌃</div>
+    //     </div>
+    //   );
     const columns = [
       {
         title: (<div className={`${gstyle.heading} ${styles.rank}`}>Rank</div>),
@@ -818,6 +711,7 @@ export default class Vis extends Component {
         }
       },
     ];
+
     const sequences = Object.keys(seqObj).map(k => {
       return {
         name: k,
@@ -829,37 +723,26 @@ export default class Vis extends Component {
       s.rank = (i + 1);
       return s;
     });
-    const table = this.state.showSequences ? (
-        <div className={styles.modaltop}>
-          <Table
-            className={tstyle.table}
-            rowClassName={(r, i) => {
-              if (i%2 === 0) {
-                return gstyle.grey;
-              }
-              return;
-            }}
-            scroll={{ y: (332) }}
-            columns={columns}
-            data={sequences}
-            rowKey={row => `d-${row.name}`}
-          />
-        </div>
-      ) : '';
+
     return (
-      <div>
-        {button}
-        {table}
-      </div>
+      <Table
+        className={tstyle.table}
+        rowClassName={(r, i) => {
+          if (i%2 === 0) {
+            return gstyle.grey;
+          }
+          return;
+        }}
+        scroll={{ y: (292) }}
+        columns={columns}
+        data={sequences}
+        rowKey={row => `d-${row.name}`}
+      />
     );
   }
 
   render() {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
-
-    if (this.state.data.length) {
-      this.metrics.height = (this.state.data.length * this.metrics.lineHeight);
-    }
 
     const levels = this.levels.map((l, i) => {
       const selected = (l.order <= this.state.level) ? styles.selected : '';
@@ -881,12 +764,7 @@ export default class Vis extends Component {
       .range([0, this.metrics.chartWidth])
       .clamp();
 
-    const bars = this.renderBars(this.state.data);
-    const showSelect = this.renderShow();
-    const sortSelect = this.renderSort();
-    const viewToggle = this.renderToggle();
-    const topSequences = this.renderTopSequences(this.readsBySequence);
-    const ticks = this.renderTicks();
+    // const topSequences = this.renderTopSequences(this.readsBySequence);
 
     const color = this.state.highlightedDatum ? (
         this.scales.c(this.state.highlightedDatum.datum.name)
@@ -898,10 +776,6 @@ export default class Vis extends Component {
           color={color}
         />
       ) : null;
-
-    this.deletedColumns = this.generateDeletedColumns();
-
-    const displayFilters = this.renderFilters();
 
     return (
       <div className={gstyle.container}>
@@ -924,14 +798,29 @@ export default class Vis extends Component {
                   console.log(event.target.value);
                 }}
               />
-              {showSelect}
-              {sortSelect}
-              {viewToggle}
+              {this.renderShow()}
+              {this.renderSort()}
+              {this.renderToggle()}
             </div>
             {/* ROW 2 */}
             <div className={styles.controlRow}>
               {levels}
-              <div style={{display: 'inline-block', float: 'right'}}>{topSequences}</div>
+              <Modal
+                title={'Top Sequences'}
+                rotation={0}
+                buttonPosition={{
+                  position: 'absolute',
+                  top: 95,
+                  right: this.metrics.padding,
+                }}
+                modalPosition={{
+                  position: 'absolute',
+                  top: 130,
+                  left: this.metrics.leftSidebar + 4,
+                  width: this.metrics.chartWidth + this.metrics.nonbarWidth - (4 * 2),
+                }}
+                data={[this.renderTopSequences(this.readsBySequence)]}
+              />
             </div>
           </div>
         </div>
@@ -943,14 +832,10 @@ export default class Vis extends Component {
           items={this.menuItems}
           toggleMenu={this.toggleMenu}
         />
-        <div style={{
-          display: 'inline-block',
-          width: (
-            this.metrics.chartWidth + this.metrics.nonbarWidth + (
-                this.state.showRightSidebar ? this.metrics.rightSidebar : 0
-              )
-            ),
-        }}>
+        <div
+          className={gstyle.panel}
+          style={{width: this.metrics.chartWidth + this.metrics.nonbarWidth}}
+        >
           <div
             className={styles.axis}
             style={{
@@ -974,7 +859,7 @@ export default class Vis extends Component {
                   ${this.metrics.lineHeight}
                 )
               `}>
-                {ticks}
+                {this.renderTicks()}
               </g>
             </svg>
           </div>
@@ -988,17 +873,26 @@ export default class Vis extends Component {
               height: this.metrics.chartHeight,
             }}
           >
-            {bars}
+            {this.renderBars(this.state.data, false)}
             {tooltip}
           </div>
-          {displayFilters}
         </div>
-        <RemovedRows
-          left={this.metrics.leftSidebar}
-          width={this.metrics.chartWidth + this.metrics.nonbarWidth}
-          rowStyles={`${styles.row} ${styles.modalRow}`}
-          deleted={this.state.deleted}
-          deletedColumns={this.deletedColumns}
+        {this.renderFilters()}
+        <Modal
+          title={'Removed Samples'}
+          rotation={180}
+          buttonPosition={{
+            position: 'absolute',
+            bottom: 0,
+            left: this.metrics.leftSidebar + 4,
+          }}
+          modalPosition={{
+            position: 'absolute',
+            bottom: 0,
+            left: this.metrics.leftSidebar + 4,
+            width: this.metrics.chartWidth + this.metrics.nonbarWidth - (4 * 2),
+          }}
+          data={this.renderBars(this.state.deleted, true)}
         />
       </div>
     );
