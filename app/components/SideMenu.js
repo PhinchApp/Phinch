@@ -19,7 +19,9 @@ export default class SideMenu extends Component {
           <div className={styles.menuBox}>
             {l.icon}
           </div>
-          {l.name}
+          <span className={styles.menuItemLabel}>
+            {l.name}
+          </span>
         </div>
       </Link>
     );

@@ -93,7 +93,7 @@
   vertical-align: top;
   display: inline-block;
   padding: 1rem;
-  font-size: 14px;
+  font-size: 13px;
   padding-bottom: 0;
 }
 
@@ -103,9 +103,10 @@
   border-radius: 16px;
   text-align: center;
   line-height: 16px;
-  font-size: 14px;
+  font-size: 13px;
   cursor: pointer;
   border: 1px solid #999999;
+  text-transform: capitalize;
 }
 
 .selector:hover {
@@ -232,7 +233,9 @@
   margin-right: 0.25rem;
 }
 .name {
-  width: calc(100vw - 240px);
+  /*width: calc(100% - 240px);*/
+  /*width: auto;*/
+  width: 50%;
   margin-right: 0.25rem;
   overflow: hidden;
   text-overflow: ellipsis;

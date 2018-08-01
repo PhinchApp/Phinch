@@ -230,6 +230,7 @@ export default class Vis extends Component {
     }
     const filters = this.state.filters;
     if (!this.filters[this.state.level].hasOwnProperty(datum.name)) {
+      // const sequences = [{reads: 0}];
       const sequences = [];
       this.state.preData.forEach(d => {
         d.sequences.forEach(s => {
@@ -242,7 +243,7 @@ export default class Vis extends Component {
         return {
           index: i,
           value: s.reads,
-          count: s.reads,
+          count: (s.reads === 0) ? 1 : s.reads,
         };
       });
       this.filters[this.state.level][datum.name] = {
@@ -417,9 +418,10 @@ export default class Vis extends Component {
         >
           <text
             fontSize={10}
+            fontFamily='IBM Plex Sans Condensed'
             textAnchor='middle'
             dy={-4}
-            dx={-1}
+            dx={2}
             fill='#808080'
           >
             {label}
@@ -652,21 +654,6 @@ export default class Vis extends Component {
   }
 
   renderTopSequences(seqObj) {
-    // const rotation = this.state.showSequences ? -180 : 0;
-    // const button = (
-    //     <div
-    //       className={`${gstyle.heading}`}
-    //       style={{
-    //         cursor: 'pointer',
-    //       }}
-    //       onClick={() => {
-    //         const showSequences = !this.state.showSequences;
-    //         this.setState({showSequences});
-    //       }}
-    //     >
-    //       Top Sequences <div className={gstyle.arrow} style={{transform: `rotate(${rotation}deg)`}}>⌃</div>
-    //     </div>
-    //   );
     const columns = [
       {
         title: (<div className={`${gstyle.heading} ${styles.rank}`}>Rank</div>),
@@ -683,12 +670,24 @@ export default class Vis extends Component {
         }
       },
       {
-        title: (<div className={`${gstyle.heading} ${styles.name}`}>Name</div>),
+        title: (<div
+                  style={{
+                    width: `${this.metrics.chartWidth + this.metrics.nonbarWidth - (4 * 2 + 180)}px`
+                  }}
+                  className={`${gstyle.heading} ${styles.name}`}
+                >
+                  Name
+                </div>),
         dataIndex: 'name',
         key: 'name',
         render: (d) => {
           return (
-            <div className={styles.name}>
+            <div
+              style={{
+                width: `${this.metrics.chartWidth + this.metrics.nonbarWidth - (4 * 2 + 180)}px`
+              }}
+              className={styles.name}
+            >
               <div className={tstyle.visCell}>
                 {d}
               </div>

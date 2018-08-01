@@ -4,6 +4,8 @@
  */
 @import "~font-awesome/css/font-awesome.css";
 
+@import "~@ibm/plex/css/ibm-plex.css";
+
 * {
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -25,14 +27,12 @@
 
 body {
   position: relative;
-  /*color: #808080;*/
   height: 100vh;
-  /*min-width: 960px;*/
   font-weight: 200;
-  /*background-color: white;*/
   background-color: #333333;
   color: #eeeeee;
-  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  /*font-family:  Helvetica Neue, Helvetica, Arial, sans-serif;*/
+  font-family: 'IBM Plex Sans';
   margin: 0;
   overflow-x: hidden;
   overflow-y: hidden;

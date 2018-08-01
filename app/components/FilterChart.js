@@ -140,7 +140,7 @@ export default class FilterChart extends Component {
     return (
       <div className={styles.filterChart}>
         <div className={styles.circle} style={{background: this.props.fill}} />
-        <label>{name}</label>
+        <label className={styles.name}>{name}</label>
         {remove}
         {info}
         <svg
