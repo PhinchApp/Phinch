@@ -3,7 +3,9 @@
   padding: 0;
   font-size: 12px;
   line-height: 12px;
-  padding-right: 0.25rem;
+  /*padding-right: 0.25rem;*/
+  padding: 0.25rem;
+  padding-top: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -27,13 +29,17 @@
 
 .delete {
   cursor: pointer;
-  width: 12px;
+  /*width: 12px;*/
+  width: auto;
+  display: inline-block;
   height: 12px;
   font-size: 12px;
   line-height: 0.75rem;
-  padding: 0;
+  /*padding: 0;*/
+  padding: 0 4px;
   margin: 0;
-  background: #2b2b2b;
+  /*background: #2b2b2b;*/
+  background: #b2b2b2;
   color: white;
   text-align: center;
   vertical-align: top;

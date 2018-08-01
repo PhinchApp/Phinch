@@ -41,11 +41,13 @@ export default class StackedBarRow extends Component {
     });
     const action = this.props.isRemoved ? (
         <div onClick={this.props.restoreDatum}>
-          <div style={{fontSize: 8}} className={styles.delete}>⤴</div>
+          <div className={styles.delete}>Restore</div>
+          {/*<div style={{fontSize: 8}} className={styles.delete}>⤴</div>*/}
         </div>
       ) : (
         <div onClick={this.props.removeDatum}>
-          <div className={styles.delete}>x</div>
+          <div className={styles.delete}>Archive</div>
+          {/*<div className={styles.delete}>x</div>*/}
         </div>
       );
     return (
@@ -56,14 +58,25 @@ export default class StackedBarRow extends Component {
           height: this.props.metrics.barContainerHeight + (this.props.metrics.miniBarContainerHeight * miniBars.length),
         }}
       >
-        <div className={styles.rowLabel} style={{width: this.props.metrics.hideWidth}}>
+        {/*
+          <div className={styles.rowLabel} style={{width: this.props.metrics.hideWidth}}>
+            {action}
+          </div>
+          <div className={styles.rowLabel} style={{width: this.props.metrics.idWidth}}>
+            {this.props.data.biomid}
+          </div>
+          <div className={styles.rowLabel} style={{width: this.props.metrics.nameWidth}}>
+            {this.props.data.phinchName}
+          </div>
+        */}
+        <div className={styles.rowLabel} style={{ width: this.props.metrics.barInfoWidth }}>
+          <div className={styles.rowLabel} style={{width: this.props.metrics.idWidth}}>
+            {this.props.data.biomid}
+          </div>
+          <div className={styles.rowLabel} style={{width: this.props.metrics.nameWidth}}>
+            {this.props.data.phinchName}
+          </div>
           {action}
-        </div>
-        <div className={styles.rowLabel} style={{width: this.props.metrics.idWidth}}>
-          {this.props.data.biomid}
-        </div>
-        <div className={styles.rowLabel} style={{width: this.props.metrics.nameWidth}}>
-          {this.props.data.phinchName}
         </div>
         <StackedBar
           onHoverDatum={this.props.hoverDatum}

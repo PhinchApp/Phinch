@@ -97,6 +97,7 @@ export default class Vis extends Component {
       hideWidth: 20,
       idWidth: 28,
       nameWidth: 140,
+      barInfoWidth: 188,
       heightOffset: 158,
       leftSidebar: 25,
       left: {
@@ -106,7 +107,8 @@ export default class Vis extends Component {
       rightSidebar: 216,
     };
 
-    this.metrics.nonbarWidth = (this.metrics.padding * 3) + (this.metrics.idWidth + this.metrics.hideWidth + this.metrics.nameWidth);
+    // this.metrics.nonbarWidth = (this.metrics.padding * 3) + (this.metrics.idWidth + this.metrics.hideWidth + this.metrics.nameWidth);
+    this.metrics.nonbarWidth = (this.metrics.padding * 3) + (this.metrics.barInfoWidth);
     this.metrics.chartWidth = this.state.width - (this.metrics.leftSidebar + this.metrics.nonbarWidth);
     this.metrics.chartHeight = this.state.height - this.metrics.heightOffset;
 
