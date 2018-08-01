@@ -840,7 +840,7 @@ export default class Vis extends Component {
           <div
             className={styles.axis}
             style={{
-              width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
+              width: (this.metrics.chartWidth + this.metrics.nonbarWidth - this.metrics.padding),
               height: this.metrics.lineHeight * 2,
               fontSize: 12,
             }}
@@ -870,7 +870,7 @@ export default class Vis extends Component {
               backgroundColor: '#ffffff',
               display: 'inline-block',
               color: '#808080',
-              width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
+              width: (this.metrics.chartWidth + this.metrics.nonbarWidth - this.metrics.padding),
               height: this.metrics.chartHeight,
             }}
           >
