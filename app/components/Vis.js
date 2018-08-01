@@ -11,6 +11,7 @@ import { updateFilters, removeRows, restoreRows, visSortBy, getSortArrow } from 
 import DataContainer from '../DataContainer';
 import palette from '../palette';
 
+import Search from './Search';
 import SideMenu from './SideMenu';
 import StackedBarRow from './StackedBarRow';
 import StackedBarTooltip from './StackedBarTooltip';
@@ -195,6 +196,10 @@ export default class Vis extends Component {
       this.setColorScale(this.state.data);
     }
 
+    this.onSuggestionHighlighted = this.onSuggestionHighlighted.bind(this);
+    this.onSuggestionSelected = this.onSuggestionSelected.bind(this);
+    this.onValueCleared = this.onValueCleared.bind(this);
+
     this.updateDimensions = this.updateDimensions.bind(this);
     this.applyFilters = this.applyFilters.bind(this);
     this.removeFilter = this.removeFilter.bind(this);
@@ -222,7 +227,7 @@ export default class Vis extends Component {
           this.setState({ showTooltip: true });
         }, this.tooltip.duration);
       }
-      this.setState({ highlightedDatum: { datum, sample, position }})
+      this.setState({ highlightedDatum: { datum, sample, position }});
     }
   }
 
@@ -522,6 +527,48 @@ export default class Vis extends Component {
     this.setState({showLeftSidebar});
   }
 
+  onSuggestionSelected(e, { suggestion }) {
+    const data = this.filterData(
+      this.state.filters,
+      this.state.preData,
+      this.state.deleted,
+    ).filter(d => {
+      return d.sequences.map(d => d.name).includes(suggestion.name);
+    });
+    const highlightedDatum = {
+      datum: suggestion,
+      sample: null,
+      position: null,
+    };
+    const showTooltip = false;
+    this.setState({ data, highlightedDatum, showTooltip });
+  }
+
+  onSuggestionHighlighted({ suggestion }) {
+    if (suggestion === null) {
+      return;
+    }
+    const highlightedDatum = {
+      datum: suggestion,
+      sample: null,
+      position: null,
+    };
+    const showTooltip = false;
+    this.setState({ highlightedDatum, showTooltip });
+  }
+
+  onValueCleared() {
+    // const data = this.state.preData;
+    const data = this.filterData(
+      this.state.filters,
+      this.state.preData,
+      this.state.deleted,
+      );
+    const highlightedDatum = null;
+    const showTooltip = false;
+    this.setState({ data, highlightedDatum, showTooltip });
+  }
+
   renderBars(data, isRemoved) {
     return data
       .map((d, i) => {
@@ -655,7 +702,7 @@ export default class Vis extends Component {
     });
   }
 
-  renderTopSequences(seqObj) {
+  renderTopSequences(sequences) {
     const columns = [
       {
         title: (<div className={`${gstyle.heading} ${styles.rank}`}>Rank</div>),
@@ -713,18 +760,6 @@ export default class Vis extends Component {
       },
     ];
 
-    const sequences = Object.keys(seqObj).map(k => {
-      return {
-        name: k,
-        reads: seqObj[k],
-      };
-    }).sort((a, b) => {
-      return b.reads - a.reads;
-    }).map((s, i) => {
-      s.rank = (i + 1);
-      return s;
-    });
-
     return (
       <Table
         className={tstyle.table}
@@ -765,8 +800,6 @@ export default class Vis extends Component {
       .range([0, this.metrics.chartWidth])
       .clamp();
 
-    // const topSequences = this.renderTopSequences(this.readsBySequence);
-
     const color = this.state.highlightedDatum ? (
         this.scales.c(this.state.highlightedDatum.datum.name)
       ) : '';
@@ -777,6 +810,19 @@ export default class Vis extends Component {
           color={color}
         />
       ) : null;
+
+    const sequences = Object.keys(this.readsBySequence)
+      .map(k => {
+        return {
+          name: k,
+          reads: this.readsBySequence[k],
+        };
+      }).sort((a, b) => {
+        return b.reads - a.reads;
+      }).map((s, i) => {
+        s.rank = (i + 1);
+        return s;
+      });
 
     return (
       <div className={gstyle.container}>
@@ -791,13 +837,11 @@ export default class Vis extends Component {
           <div className={styles.controls}>
             {/* ROW 1 */}
             <div className={styles.controlRow}>
-              <input
-                type='text'
-                value='Search'
-                className={styles.search}
-                onChange={(event) => {
-                  console.log(event.target.value);
-                }}
+              <Search
+                options={sequences}
+                onValueCleared={this.onValueCleared}
+                onSuggestionSelected={this.onSuggestionSelected}
+                onSuggestionHighlighted={this.onSuggestionHighlighted}
               />
               {this.renderShow()}
               {this.renderSort()}
@@ -820,7 +864,7 @@ export default class Vis extends Component {
                   left: this.metrics.leftSidebar + 4,
                   width: this.metrics.chartWidth + this.metrics.nonbarWidth - (4 * 2),
                 }}
-                data={[this.renderTopSequences(this.readsBySequence)]}
+                data={[this.renderTopSequences(sequences)]}
               />
             </div>
           </div>
