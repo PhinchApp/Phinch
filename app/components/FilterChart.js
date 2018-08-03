@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
+import Toggle from 'react-toggle'
 import Slider, { Range } from 'rc-slider';
 import { scaleLinear, scaleLog } from 'd3-scale';
 
@@ -26,14 +27,16 @@ export default class FilterChart extends Component {
 
   updateScales() {
     this.padding = 0;
-    const counts = this.props.data.values.map(d => d.count);
+    
     if (this.state.log) {
+      const counts = this.props.data.values.map(d => d.count);
       this.yscale = scaleLog()
         .domain([1, Math.max(...counts)])
         .range([1, this.props.height - this.padding]);
     } else {
+      const percentages = this.props.data.values.map(d => d.percent);
       this.yscale = scaleLinear()
-        .domain([0, Math.max(...counts)])
+        .domain([0, Math.max(...percentages)])
         .range([0, this.props.height - this.padding]);
     }
     this.xscale = scaleLinear()
@@ -72,13 +75,18 @@ export default class FilterChart extends Component {
           )
         );
       const fillOpacity = valueInRange ? 1 : 0.3;
+      const height = this.state.log ? (
+          this.yscale(d.count)
+        ) : (
+          this.yscale(d.percent)
+        );
       return (
         <rect
           key={`r-${i}`}
           x={this.xscale(i)}
-          y={this.props.height - (this.yscale(d.count))}
+          y={this.props.height - height}
           width={barWidth}
-          height={this.yscale(d.count)}
+          height={height}
           fill={this.props.fill}
           fillOpacity={fillOpacity}
           stroke={this.props.stroke}
@@ -89,8 +97,24 @@ export default class FilterChart extends Component {
     let range = '';
     const marks = {};
     if (filter.expanded) {
-      const min = isDate ? new Date(filter.range.min.value).toLocaleString().split(', ')[0] : filter.range.min.value;
-      const max = isDate ? new Date(filter.range.max.value).toLocaleString().split(', ')[0] : filter.range.max.value;
+      const min = isDate ? (
+          new Date(filter.range.min.value).toLocaleString().split(', ')[0]
+        ) : (
+          this.state.log ? (
+            filter.range.min.value
+          ) : (
+            `${Math.floor(filter.range.min.percent * 10000)/100} %`
+          )
+        );
+      const max = isDate ? (
+          new Date(filter.range.max.value).toLocaleString().split(', ')[0]
+        ) : (
+          this.state.log ? (
+            filter.range.max.value
+          ) : (
+            `${Math.floor(filter.range.max.percent * 10000)/100} %`
+          )
+        );
       range = min !== undefined ? (<div className={styles.range}>min: {min.toLocaleString()} — max: {max.toLocaleString()}</div>) : '';
       marks[this.xscale(filter.range.min.index)] = { label: <div className={styles.mark}>{min.toLocaleString()}</div> };
       marks[this.xscale(filter.range.max.index + 1)] = { label: <div className={styles.mark}>{max.toLocaleString()}</div> };
@@ -126,13 +150,18 @@ export default class FilterChart extends Component {
       ) : '';
     const scaleToggle = this.props.showScale ? (
         <div>
-          <input
+          <div className={styles.toggleLabel}>
+            Percentage
+          </div>
+          <Toggle
             id="scale"
-            type="checkbox"
-            checked={this.state.log}
+            icons={false}
+            defaultChecked={this.state.log}
             onChange={this.toggleLog}
           />
-          <label htmlFor="scale">Log Scale</label>
+          <div className={styles.toggleLabel}>
+            Log Scale
+          </div>
         </div>
       ) : '';
     const taxa = this.props.name.split(',');

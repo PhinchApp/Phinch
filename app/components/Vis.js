@@ -246,11 +246,14 @@ export default class Vis extends Component {
           }
         });
       });
+      const totalReads = sequences.map(s => s.reads).reduce((s, v) => s + v);
       const values = _sortBy(sequences, (s) => s.reads).map((s, i) => {
         return {
           index: i,
           value: s.reads,
           count: (s.reads === 0) ? 1 : s.reads,
+          // percent: Math.floor((s.reads / totalReads) * 100),
+          percent: s.reads / totalReads,
         };
       });
       this.filters[this.state.level][datum.name] = {

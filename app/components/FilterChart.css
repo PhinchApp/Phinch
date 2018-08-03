@@ -55,3 +55,10 @@
   font-weight: 400;
   /*font-family: 'IBM Plex Sans Condensed';*/
 }
+
+.toggleLabel {
+  vertical-align: top;
+  display: inline-block;
+  height: 18px;
+  font-size: 12px;
+}
