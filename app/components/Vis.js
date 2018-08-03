@@ -43,6 +43,7 @@ export default class Vis extends Component {
       highlightedDatum: null,
       showTooltip: false,
       mode: 'percent',
+      labelKey: 'phinchName',
       showSequences: false,
       showRightSidebar: false,
       showLeftSidebar: false,
@@ -54,21 +55,6 @@ export default class Vis extends Component {
         link: '/Filter',
         icon: (<div className={gstyle.arrow} style={{transform: `rotate(${-90}deg)`}}>⌃</div>),
         name: 'Back',
-      },
-    ];
-
-    this.sortOptions = [
-      {
-        id: 'biomid',
-        name: 'BIOM ID',
-      },
-      {
-        id: 'phinchName',
-        name: 'Phinch Name',
-      },
-      {
-        id: 'reads',
-        name: 'Sequence Reads',
       },
     ];
 
@@ -580,6 +566,7 @@ export default class Vis extends Component {
             key={d.id}
             data={d}
             index={i}
+            labelKey={this.state.labelKey}
             filters={this.state.filters}
             metrics={this.metrics}
             scales={this.scales}
@@ -596,13 +583,22 @@ export default class Vis extends Component {
   }
 
   renderShow() {
-    const options = this.sortOptions.map(o => {
+    const showOptions = [
+      {
+        id: 'phinchName',
+        name: 'Phinch Name',
+      },
+      {
+        id: 'sampleName',
+        name: 'Sample Name',
+      },
+    ];
+    const options = showOptions.map(o => {
       return <option key={o.id} value={o.id}>{o.name}</option>;
     });
     const onSelectChange = (event) => {
-      console.log('change display now');
-      // this.sort.key = event.target.value;
-      // visSortBy(this, this.state.data, true);
+      const labelKey = event.target.value;
+      this.setState({ labelKey });
     };
     return (
       <div className={styles.inlineControl}>
@@ -622,7 +618,21 @@ export default class Vis extends Component {
     /* 
       TODO: add deselect when manually sorted
     */
-    const options = this.sortOptions.map(o => {
+    const sortOptions = [
+      {
+        id: 'biomid',
+        name: 'BIOM ID',
+      },
+      {
+        id: 'phinchName',
+        name: 'Phinch Name',
+      },
+      {
+        id: 'reads',
+        name: 'Sequence Reads',
+      },
+    ];
+    const options = sortOptions.map(o => {
       return <option key={o.id} value={o.id}>{o.name}</option>;
     });
     const onSelectChange = (event) => {
