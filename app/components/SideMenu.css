@@ -46,7 +46,8 @@
 }
 
 .menuItem {
-  margin: 1rem;
+  width: 100%;
+  margin: 1rem 0.5rem;
   color: #ffffff;
   text-align: center;
 }

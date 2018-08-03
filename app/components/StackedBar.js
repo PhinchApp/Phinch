@@ -33,9 +33,7 @@ export default class StackedBar extends Component {
 
   _mouseMove = (event) => {
     const [selectedDatum, pageMouse] = this._getDatum(event);
-    if (selectedDatum) {
-      this.props.onHoverDatum(selectedDatum, this.props.sample, pageMouse);
-    }
+    this.props.onHoverDatum(selectedDatum, this.props.sample, pageMouse);
   }
 
   _mouseOut = () => {

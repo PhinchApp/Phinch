@@ -428,7 +428,7 @@ export default class Vis extends Component {
             fontFamily='IBM Plex Sans Condensed'
             textAnchor='middle'
             dy={-4}
-            dx={2}
+            dx={-1}
             fill='#808080'
           >
             {label}
@@ -492,7 +492,7 @@ export default class Vis extends Component {
               stroke={'#333333'}
               handle={this.scales.c(k)}
               data={this.state.filters[k]}
-              width={this.metrics.rightSidebar - this.metrics.padding * 3}
+              width={this.metrics.rightSidebar - this.metrics.padding * 3.25}
               height={this.metrics.rightSidebar / 4}
               filters={this.state.filters}
               update={updateFilters}
@@ -504,7 +504,7 @@ export default class Vis extends Component {
       });
       return (
         <div
-          className={`${gstyle.panel}`}
+          className={`${gstyle.panel} ${gstyle.darkbgscrollbar}`}
           style={{
             borderTop: '1px solid #262626',
             width: this.state.showRightSidebar ? this.metrics.rightSidebar : 0,
@@ -878,13 +878,13 @@ export default class Vis extends Component {
           toggleMenu={this.toggleMenu}
         />
         <div
-          className={gstyle.panel}
+          className={`${gstyle.panel} ${gstyle.noscrollbar}`}
           style={{width: this.metrics.chartWidth + this.metrics.nonbarWidth}}
         >
           <div
             className={styles.axis}
             style={{
-              width: (this.metrics.chartWidth + this.metrics.nonbarWidth - this.metrics.padding),
+              width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
               height: this.metrics.lineHeight * 2,
               fontSize: 12,
             }}
@@ -895,12 +895,12 @@ export default class Vis extends Component {
               left: this.metrics.leftSidebar + 3,
               pointerEvents: 'none',
               paddingLeft: this.metrics.padding * 0.5,
-              width: (this.state.width - (this.metrics.padding * 2.5)),
+              width: (this.state.width - (this.metrics.padding * 2)),
               height: (this.metrics.chartHeight + (this.metrics.lineHeight * 2)),
             }}>
               <g transform={`
                 translate(
-                  ${this.metrics.idWidth + this.metrics.hideWidth + this.metrics.nameWidth},
+                  ${this.metrics.barInfoWidth},
                   ${this.metrics.lineHeight}
                 )
               `}>
@@ -914,7 +914,8 @@ export default class Vis extends Component {
               backgroundColor: '#ffffff',
               display: 'inline-block',
               color: '#808080',
-              width: (this.metrics.chartWidth + this.metrics.nonbarWidth - this.metrics.padding),
+              // width: (this.metrics.chartWidth + this.metrics.nonbarWidth - this.metrics.padding),
+              width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
               height: this.metrics.chartHeight,
             }}
           >

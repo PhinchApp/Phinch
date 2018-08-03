@@ -45,12 +45,14 @@ export default class SideMenu extends Component {
     const rotation = this.props.showLeftSidebar ? styles.rotated : '';
     return (
       <div 
-        className={gstyle.panel} style={{
+        className={`${gstyle.panel} ${gstyle.noscrollbar}`}
+        style={{
           overflowY: 'hidden',
-        }}>
+        }}
+      >
         {menuItems}
         <div
-          className={gstyle.panel}
+          className={`${gstyle.panel} ${gstyle.noscrollbar}`}
           style={{
             backgroundColor: '#ffffff',
             borderLeft: '6px solid #333333',

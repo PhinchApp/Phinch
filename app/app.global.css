@@ -11,34 +11,30 @@
   -webkit-box-sizing: border-box;
 }
 
-/*
-::-webkit-scrollbar {
-  -webkit-appearance: none;
-  display: none;
-}
-*/
 
 ::-webkit-scrollbar {
-    -webkit-appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+
 }
 
 ::-webkit-scrollbar:vertical {
-    width: 8px;
+  width: 10px;
 }
 
 ::-webkit-scrollbar:horizontal {
-    height: 8px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-    border-radius: 8px;
-    background-color: #999999;
+  border-radius: 8px;
+  background-color: #999999;
+  border: 2px solid white;
 }
 
-::-webkit-scrollbar-track { 
-    background-color: inherit; 
-    border-radius: 8px;
-} 
+::-webkit-scrollbar-track {
+  background-color: inherit;
+}
 
 
 body {

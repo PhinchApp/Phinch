@@ -53,3 +53,12 @@
 .grey {
   background: #f4f4f4;
 }
+
+.noscrollbar::-webkit-scrollbar {
+  -webkit-appearance: none;
+  display: none;
+}
+
+.darkbgscrollbar::-webkit-scrollbar-thumb {
+  border: 2px solid #333333;
+}
