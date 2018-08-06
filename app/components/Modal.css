@@ -20,25 +20,24 @@
   padding: 0.5rem 0;
   height: 360px;
   background: white;
-  /*outline: 4px solid #1a1a1a;*/
   border-radius: 8px;
+  border: 2px solid #333333;
   background: #1a1a1a;
   color: #808080;
   z-index: 5;
 }
 
 .modal .title {
-  /*display: inline-block;*/
   font-size: 14px;
   margin: 0;
   margin-bottom: 0.5rem;
-  padding: 0 0.35rem;
+  padding: 0 6px;
   color: #ffffff;
   font-weight: 400;
 }
 
 .dataContainer {
-  margin: 0 0.25rem;
+  margin: 0 6px;
   height: 320px;
   overflow-y: scroll;
 }

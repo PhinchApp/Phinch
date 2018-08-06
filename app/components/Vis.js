@@ -496,6 +496,7 @@ export default class Vis extends Component {
           className={`${gstyle.panel} ${gstyle.darkbgscrollbar}`}
           style={{
             borderTop: '1px solid #262626',
+            position: 'fixed',
             width: this.state.showRightSidebar ? this.metrics.rightSidebar : 0,
             height: this.metrics.chartHeight + this.metrics.lineHeight * 2,
           }}
@@ -547,7 +548,6 @@ export default class Vis extends Component {
   }
 
   onValueCleared() {
-    // const data = this.state.preData;
     const data = this.filterData(
       this.state.filters,
       this.state.preData,
@@ -716,78 +716,66 @@ export default class Vis extends Component {
   }
 
   renderTopSequences(sequences) {
-    const columns = [
-      {
-        title: (<div className={`${gstyle.heading} ${styles.rank}`}>Rank</div>),
-        dataIndex: 'rank',
-        key: 'rank',
-        render: (d) => {
-          return (
-            <div className={styles.rank}>
-              <div className={tstyle.visCell}>
-                {d.toLocaleString()}
-              </div>
-            </div>
-          );
-        }
-      },
-      {
-        title: (<div
-                  style={{
-                    width: `${this.metrics.chartWidth + this.metrics.nonbarWidth - (4 * 2 + 180)}px`
-                  }}
-                  className={`${gstyle.heading} ${styles.name}`}
-                >
-                  Name
-                </div>),
-        dataIndex: 'name',
-        key: 'name',
-        render: (d) => {
-          return (
+    const metrics = {
+      width: (this.metrics.chartWidth + this.metrics.nonbarWidth) - (4 + 30 + 20),
+      rank: 48,
+      circle: 24,
+      reads: 108,
+    };
+    metrics.name = metrics.width - (metrics.rank + metrics.circle + metrics.reads);
+    return sequences.map((s, i) => {
+      const color = this.scales.c(s.name);
+      const seqs = s.name.replace(/[a-zA-Z]__/g,'').trim().split(',').filter(q => q);
+      const name = seqs[seqs.length - 1];
+      const highlighted = this.state.filters.hasOwnProperty(s.name) ? (
+          styles.seqRowHighlighted
+        ) : '';
+      return (
+        <div
+          key={`${s.name}-${i}`}
+          style={{
+            backgroundColor: (i%2 === 0) ? '#121212' : '#000000',
+            color: highlighted ? color : '#ffffff',
+          }}
+          className={`${styles.seqRow} ${highlighted}`}
+          onClick={() => {
+            if (highlighted) {
+              this.removeFilter(s.name);
+            } else {
+              this._clickDatum(s);
+            }
+          }}
+        >
+          <div
+            className={`${styles.cell} ${styles.rank}`}
+            style={{width: metrics.rank}}
+          >
+            {s.rank.toLocaleString()}
+          </div>
+          <div
+            className={`${styles.cell} ${styles.circle}`}
+            style={{width: metrics.circle}}
+          >
             <div
-              style={{
-                width: `${this.metrics.chartWidth + this.metrics.nonbarWidth - (4 * 2 + 180)}px`
-              }}
-              className={styles.name}
-            >
-              <div className={tstyle.visCell}>
-                {d}
-              </div>
-            </div>
-          );
-        }
-      },
-      {
-        title: (<div className={`${gstyle.heading} ${styles.reads}`}>Reads</div>),
-        dataIndex: 'reads',
-        key: 'reads',
-        render: (d) => {
-          return (
-            <div className={styles.reads}>
-              <div className={tstyle.visCell}>
-                {d.toLocaleString()}  
-              </div>
-            </div>
-          );
-        }
-      },
-    ];
-
-    return (
-      <Table
-        className={tstyle.table}
-        rowClassName={(r, i) => {
-          if (i%2 === 0) {
-            return gstyle.grey;
-          }
-          return;
-        }}
-        scroll={{ y: (292) }}
-        columns={columns}
-        data={sequences}
-        rowKey={row => `d-${row.name}`}
-      />
-    );
+              className={gstyle.circle}
+              style={{background: color}}
+            />
+          </div>
+          <div
+            className={`${styles.cell} ${styles.name}`}
+            style={{width: metrics.name}}
+          >
+            {name}
+          </div>
+          <div
+            className={`${styles.cell} ${styles.reads}`}
+            style={{width: metrics.reads}}
+          >
+            {s.reads.toLocaleString()}
+          </div>
+        </div>
+      );
+    });
   }
 
   render() {
@@ -931,10 +919,10 @@ export default class Vis extends Component {
           modalPosition={{
             position: 'absolute',
             bottom: this.metrics.padding * 2.25,
-            left: this.metrics.leftSidebar + 4,
-            width: this.metrics.chartWidth + this.metrics.nonbarWidth - (4 * 2),
+            left: this.metrics.leftSidebar,
+            width: this.metrics.chartWidth + this.metrics.nonbarWidth - 4,
           }}
-          data={[this.renderTopSequences(sequences)]}
+          data={this.renderTopSequences(sequences)}
         />
         <Modal
           title={'Archived Samples'}
@@ -947,8 +935,8 @@ export default class Vis extends Component {
           modalPosition={{
             position: 'absolute',
             bottom: this.metrics.padding * 2.25,
-            left: this.metrics.leftSidebar + 4,
-            width: this.metrics.chartWidth + this.metrics.nonbarWidth - (4 * 2),
+            left: this.metrics.leftSidebar,
+            width: this.metrics.chartWidth + this.metrics.nonbarWidth - 4,
           }}
           data={this.renderBars(this.state.deleted, true)}
         />

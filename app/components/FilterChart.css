@@ -15,16 +15,6 @@
   margin-top: 8px;
 }
 
-.circle {
-  vertical-align: bottom;
-  width: 16px;
-  height: 16px;
-  border-radius: 8px;
-  border: 1px solid #262626;
-  display: inline-block;
-  margin-right: 0.25rem;
-}
-
 .filterChart {
   font-family: 'IBM Plex Sans Condensed';
   vertical-align: top;

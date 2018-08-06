@@ -1,3 +1,4 @@
+
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
@@ -169,7 +170,7 @@ export default class FilterChart extends Component {
     const name = taxa[taxa.length - 1];
     return (
       <div className={styles.filterChart}>
-        <div className={styles.circle} style={{background: this.props.fill}} />
+        <div className={gstyle.circle} style={{background: this.props.fill}} />
         <label className={styles.name}>{name}</label>
         {remove}
         {info}

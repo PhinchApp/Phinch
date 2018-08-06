@@ -1,8 +1,10 @@
-.panel {
+/*.panel {
   vertical-align: top;
   display: inline-block;
   overflow-y: scroll;
-}
+}*/
+
+
 
 .leftGutter {
   padding-left: 0.5rem;
@@ -193,19 +195,43 @@
   z-index: 5;
 }
 
-.rank {
-  width: 72px;
+
+.seqRow {
+  display: inline-block;
+  vertical-align: middle;
+  padding: 2px;
+  height: 24px;
+  line-height: 20px;
+  cursor: pointer;
+}
+.seqRow:hover {
+  background-color: #333 !important;
+}
+.seqRowHighlighted {
+  font-weight: 400;
+}
+.cell {
+  display: inline-block;
+  vertical-align: top;
   margin-right: 0.25rem;
+  font-size: 12px;
+}
+.rank {
+  text-align: right;
+}
+.circle {
+  margin-left: 0.25rem;
+  text-align: center;
+  line-height: 18px;
 }
 .name {
-  margin-right: 0.25rem;
+  text-align: left;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .reads {
-  width: 108px;
-  margin-right: 0.25rem;
+  text-align: right;
 }
 
 .modalbottom {
