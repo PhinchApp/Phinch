@@ -11,7 +11,8 @@ import gstyle from './general.css';
 export default class StackedBarRow extends Component {
   render() {
     const sequence = _sortBy(_cloneDeep(this.props.data.sequences), (s) => -s.reads);
-    const className = (this.props.index%2 === 0) ? '' : (gstyle.grey);
+    // const className = (this.props.index%2 === 0) ? '' : (gstyle.grey);
+    const className = (this.props.index%2 === 0) ? styles.white : gstyle.grey;
     const miniBars = [];
     Object.keys(this.props.filters).forEach(k => {
       const [miniSequence] = _cloneDeep(sequence).filter(s => (s.name === k));
@@ -57,10 +58,10 @@ export default class StackedBarRow extends Component {
         }}
       >
         <div className={styles.rowLabel} style={{ width: this.props.metrics.barInfoWidth }}>
-          <div className={styles.rowLabel} style={{width: this.props.metrics.idWidth}}>
+          <div className={styles.rowLabel} style={{ width: this.props.metrics.idWidth }}>
             {this.props.data.biomid}
           </div>
-          <div className={styles.rowLabel} style={{width: this.props.metrics.nameWidth}}>
+          <div className={styles.rowLabel} style={{ width: this.props.metrics.nameWidth }}>
             {this.props.data[this.props.labelKey]}
           </div>
           {action}

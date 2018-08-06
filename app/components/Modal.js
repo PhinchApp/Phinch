@@ -18,20 +18,16 @@ export default class Modal extends Component {
   }
 
   render() {
-    const rotation = this.state.showHidden ? (
-        -180 + this.props.rotation
-      ) : (
-        0 + this.props.rotation
-      );
+    const shownClass = this.state.showHidden ? styles.shown : '';
     const button = this.props.data.length ? (
         <div
-          className={`${gstyle.heading} ${styles.toggle}`}
+          className={`${gstyle.heading} ${styles.toggle} ${shownClass}`}
           style={{
             ...this.props.buttonPosition,
           }}
           onClick={this.toggleHidden}
         >
-          {this.props.title} <div className={gstyle.arrow} style={{transform: `rotate(${rotation}deg)`}}>⌃</div>
+          {this.props.title}
         </div>
       ) : '';
     const modal = (this.state.showHidden && this.props.data.length) ? (
@@ -41,8 +37,14 @@ export default class Modal extends Component {
             ...this.props.modalPosition,
           }}
         >
-          <div className={styles.title}>{this.props.title}</div>
-          <div className={styles.dataContainer}>
+          <div className={styles.title}>
+            {this.props.title}
+            <div
+              className={gstyle.close}
+              onClick={() => { this.toggleHidden() }}
+            >x</div>
+          </div>
+          <div className={`${styles.dataContainer} ${gstyle.darkbgscrollbar}`}>
             {this.props.data}
           </div>
         </div>

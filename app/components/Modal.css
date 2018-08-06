@@ -1,10 +1,18 @@
 .toggle {
-  width: 192px;
-  font-size: 14px;
+  width: 130px;
+  height: 32px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 400;
   text-align: center;
+  vertical-align: top;
   cursor: pointer;
   user-select: none;
   z-index: 10;
+}
+
+.toggle.shown {
+  background-color: #1fbbd8;
 }
 
 .modal {
@@ -12,16 +20,21 @@
   padding: 0.5rem 0;
   height: 360px;
   background: white;
-  outline: 4px solid #1a1a1a;
+  /*outline: 4px solid #1a1a1a;*/
+  border-radius: 8px;
+  background: #1a1a1a;
   color: #808080;
   z-index: 5;
 }
 
 .modal .title {
+  /*display: inline-block;*/
   font-size: 14px;
   margin: 0;
   margin-bottom: 0.5rem;
   padding: 0 0.35rem;
+  color: #ffffff;
+  font-weight: 400;
 }
 
 .dataContainer {

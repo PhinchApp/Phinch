@@ -863,22 +863,6 @@ export default class Vis extends Component {
             {/* ROW 2 */}
             <div className={styles.controlRow}>
               {levels}
-              <Modal
-                title={'Top Sequences'}
-                rotation={0}
-                buttonPosition={{
-                  position: 'absolute',
-                  top: 95,
-                  right: this.metrics.padding,
-                }}
-                modalPosition={{
-                  position: 'absolute',
-                  top: 130,
-                  left: this.metrics.leftSidebar + 4,
-                  width: this.metrics.chartWidth + this.metrics.nonbarWidth - (4 * 2),
-                }}
-                data={[this.renderTopSequences(sequences)]}
-              />
             </div>
           </div>
         </div>
@@ -927,7 +911,6 @@ export default class Vis extends Component {
               backgroundColor: '#ffffff',
               display: 'inline-block',
               color: '#808080',
-              // width: (this.metrics.chartWidth + this.metrics.nonbarWidth - this.metrics.padding),
               width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
               height: this.metrics.chartHeight,
             }}
@@ -938,16 +921,32 @@ export default class Vis extends Component {
         </div>
         {this.renderFilters()}
         <Modal
-          title={'Removed Samples'}
-          rotation={180}
+          title={'Top Sequences'}
           buttonPosition={{
             position: 'absolute',
             bottom: 0,
-            left: this.metrics.leftSidebar + 4,
+            marginBottom: '-8px',
+            left: this.metrics.leftSidebar + this.metrics.barInfoWidth + (this.metrics.padding / 2) + 2,
           }}
           modalPosition={{
             position: 'absolute',
+            bottom: this.metrics.padding * 2.25,
+            left: this.metrics.leftSidebar + 4,
+            width: this.metrics.chartWidth + this.metrics.nonbarWidth - (4 * 2),
+          }}
+          data={[this.renderTopSequences(sequences)]}
+        />
+        <Modal
+          title={'Archived Samples'}
+          buttonPosition={{
+            position: 'absolute',
             bottom: 0,
+            marginBottom: '-8px',
+            left: this.metrics.leftSidebar + this.metrics.barInfoWidth + this.metrics.padding + 2 + 130,
+          }}
+          modalPosition={{
+            position: 'absolute',
+            bottom: this.metrics.padding * 2.25,
             left: this.metrics.leftSidebar + 4,
             width: this.metrics.chartWidth + this.metrics.nonbarWidth - (4 * 2),
           }}

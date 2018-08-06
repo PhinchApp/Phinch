@@ -50,6 +50,22 @@
   display: inline-block;
 }
 
+.close {
+  display: inline-block;
+  cursor: pointer;
+  font-weight: 200;
+  color: #b3b2b3;
+  background: #666666;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 2px;
+  text-align: center;
+  float: right;
+  font-size: 14px;
+  line-height: 14px;
+  vertical-align: middle;
+}
+
 .grey {
   background: #f4f4f4;
 }

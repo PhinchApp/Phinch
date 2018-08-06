@@ -6,6 +6,7 @@ import Slider, { Range } from 'rc-slider';
 import { scaleLinear, scaleLog } from 'd3-scale';
 
 import styles from './FilterChart.css';
+import gstyle from './general.css';
 
 export default class FilterChart extends Component {
   constructor(props) {
@@ -121,7 +122,7 @@ export default class FilterChart extends Component {
     }
     const remove = (this.props.remove !== undefined) ? (
         <div
-          className={styles.remove}
+          className={gstyle.close}
           onClick={() => { this.props.remove(this.props.name) }}
         >x</div>
       ) : '';
