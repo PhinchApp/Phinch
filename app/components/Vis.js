@@ -918,7 +918,7 @@ export default class Vis extends Component {
           }}
           modalPosition={{
             position: 'absolute',
-            bottom: this.metrics.padding * 2.25,
+            bottom: this.metrics.padding * 2,
             left: this.metrics.leftSidebar,
             width: this.metrics.chartWidth + this.metrics.nonbarWidth - 4,
           }}
@@ -934,7 +934,7 @@ export default class Vis extends Component {
           }}
           modalPosition={{
             position: 'absolute',
-            bottom: this.metrics.padding * 2.25,
+            bottom: this.metrics.padding * 2,
             left: this.metrics.leftSidebar,
             width: this.metrics.chartWidth + this.metrics.nonbarWidth - 4,
           }}

@@ -167,7 +167,7 @@ export default class FilterChart extends Component {
         </div>
       ) : '';
     const taxa = this.props.name.split(',');
-    const name = taxa[taxa.length - 1];
+    const name = taxa[taxa.length - 1].replace(/[a-zA-Z]__/g,'');
     return (
       <div className={styles.filterChart}>
         <div className={gstyle.circle} style={{background: this.props.fill}} />
