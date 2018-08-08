@@ -198,7 +198,7 @@ export default class Filter extends Component {
           <div className={styles.phinchName}>
             <div className={tstyle.filterCell}>
               <input
-                className={styles.input}
+                className={gstyle.input}
                 type="text"
                 value={t}
                 onChange={(e) => this.updatePhinchName(e, r)}

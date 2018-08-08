@@ -9,6 +9,36 @@ import styles from './StackedBarRow.css';
 import gstyle from './general.css';
 
 export default class StackedBarRow extends Component {
+  constructor(props) {
+    super(props);
+    this.hoverHandle = null;
+    this.state = {
+      hovered: false,
+    };
+  }
+
+  componentWillUnmount() {
+    if (this.hoverHandle) {
+      clearTimeout(this.hoverHandle);
+    }
+  }
+
+  _hideEditable = () => {
+    if (this.hoverHandle) {
+      clearTimeout(this.hoverHandle);
+    }
+    if (this.state.hovered) {
+      this.setState({hovered: false});
+    }
+  }
+  _showEditable = () => {
+    if (!this.state.hovered) {
+      this.hoverHandle = setTimeout(() => {
+        this.setState({hovered: true});
+      }, 500);
+    }
+  }
+
   render() {
     const sequence = _sortBy(_cloneDeep(this.props.data.sequences), (s) => -s.reads);
     // const className = (this.props.index%2 === 0) ? '' : (gstyle.grey);
@@ -40,15 +70,53 @@ export default class StackedBarRow extends Component {
         );
       }
     });
-    const action = this.props.isRemoved ? (
-        <div onClick={this.props.restoreDatum}>
-          <div className={styles.delete}>Restore</div>
+    const edit = (this.state.hovered && (this.props.labelKey === 'phinchName')) ? (
+        <div
+          className={styles.button}
+          style={{
+            pointerEvents: 'none',
+            position: 'absolute',
+            top: 0,
+            right: 0,
+          }}
+        >edit</div>
+      ) : '';
+    const name = (this.props.labelKey === 'phinchName') ? (
+        <div className={styles.rowLabel} style={{ width: this.props.metrics.nameWidth }}>
+          <input
+            className={gstyle.input}
+            type="text"
+            value={this.props.data[this.props.labelKey]}
+            onChange={(e) => this.props.updatePhinchName(e, this.props.data, this.props.isRemoved)}
+          />
+          {edit}
         </div>
       ) : (
-        <div onClick={this.props.removeDatum}>
-          <div className={styles.delete}>Archive</div>
+        <div className={styles.rowLabel} style={{ width: this.props.metrics.nameWidth }}>
+          {this.props.data[this.props.labelKey]}
         </div>
       );
+    const action = this.state.hovered ? (
+        this.props.isRemoved ? (
+          <div>
+            <div
+              className={styles.button}
+              onClick={this.props.restoreDatum}
+            >
+              Restore
+            </div>
+          </div>
+        ) : (
+          <div>
+            <div
+              className={styles.button}
+              onClick={this.props.removeDatum}
+            >
+              Archive
+            </div>
+          </div>
+        )
+      ) : '';
     return (
       <div
         key={this.props.data.sampleName}
@@ -56,14 +124,17 @@ export default class StackedBarRow extends Component {
         style={{
           height: this.props.metrics.barContainerHeight + (this.props.metrics.miniBarContainerHeight * miniBars.length),
         }}
+        onMouseEnter={this._showEditable}
+        onMouseLeave={this._hideEditable}
       >
-        <div className={styles.rowLabel} style={{ width: this.props.metrics.barInfoWidth }}>
+        <div
+          className={styles.rowLabel}
+          style={{ width: this.props.metrics.barInfoWidth }}
+        >
           <div className={styles.rowLabel} style={{ width: this.props.metrics.idWidth }}>
             {this.props.data.biomid}
           </div>
-          <div className={styles.rowLabel} style={{ width: this.props.metrics.nameWidth }}>
-            {this.props.data[this.props.labelKey]}
-          </div>
+          {name}
           {action}
         </div>
         <StackedBar

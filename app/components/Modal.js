@@ -30,6 +30,14 @@ export default class Modal extends Component {
           {this.props.title}
         </div>
       ) : '';
+    const badge = (this.props.badge && this.props.data.length) ? (
+        <div
+          className={styles.badge}
+          style={{
+            ...this.props.buttonPosition,
+          }}
+        >{this.props.data.length}</div>
+      ) : '';
     const modal = (this.state.showHidden && this.props.data.length) ? (
         <div
           className={styles.modal}
@@ -53,6 +61,7 @@ export default class Modal extends Component {
       <div style={{display: 'inline-block'}}>
         {modal}
         {button}
+        {badge}
       </div>
     );
   }

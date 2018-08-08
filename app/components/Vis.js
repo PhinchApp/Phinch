@@ -187,6 +187,7 @@ export default class Vis extends Component {
     this.onValueCleared = this.onValueCleared.bind(this);
 
     this.updateDimensions = this.updateDimensions.bind(this);
+    this.updatePhinchName = this.updatePhinchName.bind(this);
     this.applyFilters = this.applyFilters.bind(this);
     this.removeFilter = this.removeFilter.bind(this);
     this.toggleMenu = this.toggleMenu.bind(this);
@@ -558,6 +559,27 @@ export default class Vis extends Component {
     this.setState({ data, highlightedDatum, showTooltip });
   }
 
+  updatePhinchName(e, r, isRemoved) {
+    // ugly - similar to function in Filter.js
+    if (isRemoved) {
+      const deleted = this.state.deleted.map((d) => {
+        if (d.sampleName === r.sampleName) {
+          d.phinchName = e.target.value;
+        }
+        return d;
+      });
+      this.setState({ deleted });
+    } else {
+      const data = this.state.data.map((d) => {
+        if (d.sampleName === r.sampleName) {
+          d.phinchName = e.target.value;
+        }
+        return d;
+      });
+      this.setState({ data });
+    }
+  }
+
   renderBars(data, isRemoved) {
     return data
       .map((d, i) => {
@@ -577,6 +599,7 @@ export default class Vis extends Component {
             restoreDatum={() => { restoreRows(this, [d]) }}
             hoverDatum={this._hoverDatum}
             clickDatum={this._clickDatum}
+            updatePhinchName={this.updatePhinchName}
           />
         );
       });
@@ -923,6 +946,7 @@ export default class Vis extends Component {
             width: this.metrics.chartWidth + this.metrics.nonbarWidth - 4,
           }}
           data={this.renderTopSequences(sequences)}
+          badge={false}
         />
         <Modal
           title={'Archived Samples'}
@@ -939,6 +963,7 @@ export default class Vis extends Component {
             width: this.metrics.chartWidth + this.metrics.nonbarWidth - 4,
           }}
           data={this.renderBars(this.state.deleted, true)}
+          badge={true}
         />
       </div>
     );

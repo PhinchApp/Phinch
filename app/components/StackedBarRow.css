@@ -1,9 +1,27 @@
 .rowLabel {
+  position: relative;
   margin: 0;
   font-size: 12px;
-  line-height: 12px;
+  line-height: 14px;
   padding: 0.25rem;
   padding-top: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.rowLabel input {
+  font-family: 'IBM Plex Sans';
+  color: #808080;
+  font-size: 12px;
+  line-height: 14px;
+  height: 14px;
+  font-weight: 200;
+  margin: 0;
+  padding: 0;
+  top: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -28,18 +46,21 @@
   background-color: white;
 }
 
-.delete {
+.button {
   cursor: pointer;
   width: auto;
   display: inline-block;
-  height: 12px;
-  font-size: 12px;
-  line-height: 0.75rem;
+  text-transform: uppercase;
+  height: 14px;
+  line-height: 12px;
+  font-size: 9px;
+  font-weight: 400;
   padding: 0 4px;
+  padding-top: 1px;
   margin: 0;
   background: #b2b2b2;
   color: white;
   text-align: center;
-  vertical-align: top;
+  vertical-align: middle;
   border-radius: 6px;
 }

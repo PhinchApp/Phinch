@@ -15,6 +15,23 @@
   background-color: #1fbbd8;
 }
 
+.badge {
+  vertical-align: middle;
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  display: inline-block;
+  background-color: #ff0000;
+  margin-left: 120px;
+  margin-bottom: 16px !important;
+  text-align: center;
+  font-family: 'IBM Plex Sans Condensed';
+  line-height: 24px;
+  font-size: 12px;
+  font-weight: 400;
+  z-index: 10;
+}
+
 .modal {
   overflow: hidden;
   padding: 0.5rem 0;

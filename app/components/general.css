@@ -18,6 +18,20 @@
   /*transition: width 0.25s linear;*/
 }
 
+.input {
+  box-sizing: border-box;
+  display: inline-block;
+  font-size: 0.75rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .logo {
   background: #1a1a1a;
   width: 100px;
