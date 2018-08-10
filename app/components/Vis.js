@@ -42,6 +42,7 @@ export default class Vis extends Component {
       level: 1,
       highlightedDatum: null,
       showTooltip: false,
+      showTags: false,
       mode: 'percent',
       labelKey: 'phinchName',
       showSequences: false,
@@ -57,6 +58,20 @@ export default class Vis extends Component {
         name: 'Back',
       },
     ];
+
+    const tagColors = [
+      '#ff0000',
+      '#ffc400',
+      '#00adff',
+      '#00ffc4',
+    ];
+    this.tags = tagColors.map((c, i) => {
+      return {
+        id: `tag-${i}`,
+        name: `Tag ${i}`,
+        color: c,
+      };
+    });
 
     this.filters = {};
 
@@ -199,6 +214,37 @@ export default class Vis extends Component {
   componentWillUnmount() {
     clearTimeout(this.tooltip.handle);
     window.removeEventListener('resize', this.updateDimensions);
+  }
+
+  _toggleTag = (datum, tag, isRemoved) => {
+    if (datum.tags[tag.id]) {
+      delete datum.tags[tag.id];
+    } else {
+      datum.tags[tag.id] = tag;
+    }
+    // ugly 
+    if (isRemoved) {
+      const deleted = this.state.deleted.map((d) => {
+        if (d.sampleName === datum.sampleName) {
+          d.tags = datum.tags;
+        }
+        return d;
+      });
+      this.setState({ deleted });
+    } else {
+      const data = this.state.data.map((d) => {
+        if (d.sampleName === datum.sampleName) {
+          d.tags = datum.tags;
+        }
+        return d;
+      });
+      this.setState({ data });
+    }
+  }
+
+  _toggleTags = () => {
+    const showTags = !this.state.showTags;
+    this.setState({ showTags });
   }
 
   _hoverDatum = (datum, sample, position) => {
@@ -352,6 +398,7 @@ export default class Vis extends Component {
           phinchName: c.phinchName,
           reads: c.reads,
           sequences: [],
+          tags: {}, // TODO: check for existing 
           matches: matches,
         };
       }), level, true);
@@ -592,6 +639,8 @@ export default class Vis extends Component {
             filters={this.state.filters}
             metrics={this.metrics}
             scales={this.scales}
+            tags={this.tags}
+            toggleTag={this._toggleTag}
             isPercent={(this.state.mode === 'percent')}
             isRemoved={isRemoved}
             highlightedDatum={this.state.highlightedDatum}
@@ -804,20 +853,26 @@ export default class Vis extends Component {
   render() {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
 
-    const levels = this.levels.map((l, i) => {
-      const selected = (l.order <= this.state.level) ? styles.selected : '';
-      return (
-        <div key={l.name} style={{display: 'inline-block'}}>
-          {(i === 0) ? '' : (<div className={`${selected} ${styles.dash}`}>—</div>)}
-          <div
-            className={`${selected} ${styles.selector}`}
-            onClick={() => this.setLevel(l.order)}
-          >
-            {l.name}
-          </div>
-        </div>
-      );
-    });
+    const levels = (
+      <div className={styles.inlineControl}>
+        {
+          this.levels.map((l, i) => {
+            const selected = (l.order <= this.state.level) ? styles.selected : '';
+            return (
+              <div key={l.name} style={{display: 'inline-block'}}>
+                {(i === 0) ? '' : (<div className={`${selected} ${styles.dash}`}>—</div>)}
+                <div
+                  className={`${selected} ${styles.selector}`}
+                  onClick={() => this.setLevel(l.order)}
+                >
+                  {l.name}
+                </div>
+              </div>
+            );
+          })
+        }
+      </div>
+    );
 
     this.scales.x
       .domain([0, Math.max(...this.state.data.map(d => d.reads))])
@@ -847,6 +902,88 @@ export default class Vis extends Component {
         s.rank = (i + 1);
         return s;
       });
+    
+    //
+    // Breakout -> function renderTagFilter();
+    const tagFilter = this.state.showTags ? (
+        <div key='tagFilter' className={styles.tagFilter}>
+          <div
+            className={gstyle.close}
+            onClick={() => { this._toggleTags() }}
+          >x</div>
+          {
+            [{ id: 'all', color: null, name: 'All' }, ...this.tags].map(t => {
+              const hasColor = t.color ? true : false;
+              // check for tags present in data...
+              const selected = true;
+              return (
+                <div
+                  key={`tf-${t.id}`}
+                  style={{
+                    padding: '2px 0',
+                  }}
+                >
+                  <label className={styles.checkbox}>
+                    <input
+                      type='checkbox'
+                      checked={selected}
+                      onChange={() => {}}
+                    />
+                    <span className={styles.checkmark}></span>
+                  </label>
+                  {
+                    hasColor ? (
+                      <div className={gstyle.circle} style={{
+                        backgroundColor: t.color,
+                        borderColor: '#333333',
+                        marginLeft: '4px',
+                      }} />
+                    ) : ''
+                  }
+                  <input
+                    className={`${gstyle.input} ${styles.tagName} ${selected ? styles.selected : ''}`}
+                    type="text"
+                    value={t.name}
+                    onChange={() => {}}
+                    // onChange={(e) => this.props.updatePhinchName(e, this.props.data, this.props.isRemoved)}
+                    disabled={!hasColor}
+                  />
+                </div>
+              );
+            })
+          }
+        </div>
+      ) : '';
+    const showTags = this.state.showTags ? styles.selected : '';
+    const tags = (
+      <div
+        className={styles.inlineControl}
+      >
+        <div
+          className={styles.inlineControl}
+          onClick={this._toggleTags}
+        >
+          <div key='tags' className={`${styles.selector} ${styles.button} ${showTags}`}>Tags</div>
+          {
+            this.tags.map(t => {
+              // check for tags present in data...
+              return true ? (
+                <div
+                  key={`c-${t.id}`}
+                  className={gstyle.circle}
+                  style={{
+                    background: t.color,
+                    verticalAlign: 'middle',
+                  }}
+                />
+              ) : '';
+            })
+          }
+        </div>
+        {tagFilter}
+      </div>
+    );
+    //
 
     return (
       <div className={gstyle.container}>
@@ -874,6 +1011,7 @@ export default class Vis extends Component {
             {/* ROW 2 */}
             <div className={styles.controlRow}>
               {levels}
+              {tags}
             </div>
           </div>
         </div>

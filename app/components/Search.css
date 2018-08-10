@@ -1,6 +1,7 @@
 .container {
   display: inline-block;
-  width: 15vw;
+  /*width: 15vw;*/
+  width: 144px;
   height: 24px;
   margin-right: 0.5rem;
   color: #808080;

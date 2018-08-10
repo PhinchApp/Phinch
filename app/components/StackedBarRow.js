@@ -14,6 +14,7 @@ export default class StackedBarRow extends Component {
     this.hoverHandle = null;
     this.state = {
       hovered: false,
+      showTags: false,
     };
   }
 
@@ -28,7 +29,7 @@ export default class StackedBarRow extends Component {
       clearTimeout(this.hoverHandle);
     }
     if (this.state.hovered) {
-      this.setState({hovered: false});
+      this.setState({ hovered: false, showTags: false });
     }
   }
   _showEditable = () => {
@@ -39,9 +40,13 @@ export default class StackedBarRow extends Component {
     }
   }
 
+  _toggleTagMenu = () => {
+    const showTags = !this.state.showTags;
+    this.setState({ showTags });
+  }
+
   render() {
     const sequence = _sortBy(_cloneDeep(this.props.data.sequences), (s) => -s.reads);
-    // const className = (this.props.index%2 === 0) ? '' : (gstyle.grey);
     const className = (this.props.index%2 === 0) ? styles.white : gstyle.grey;
     const miniBars = [];
     Object.keys(this.props.filters).forEach(k => {
@@ -74,15 +79,22 @@ export default class StackedBarRow extends Component {
         <div
           className={styles.button}
           style={{
-            pointerEvents: 'none',
             position: 'absolute',
+            pointerEvents: 'none',
             top: 0,
             right: 0,
           }}
         >edit</div>
       ) : '';
     const name = (this.props.labelKey === 'phinchName') ? (
-        <div className={styles.rowLabel} style={{ width: this.props.metrics.nameWidth }}>
+        <div
+          className={`${styles.rowLabel} ${styles.input}`}
+          style={{
+            width: this.props.metrics.nameWidth,
+            fontWeight: 400,
+            color: '#1a1a1a',
+          }}
+        >
           <input
             className={gstyle.input}
             type="text"
@@ -92,30 +104,102 @@ export default class StackedBarRow extends Component {
           {edit}
         </div>
       ) : (
-        <div className={styles.rowLabel} style={{ width: this.props.metrics.nameWidth }}>
+        <div
+          className={styles.rowLabel}
+          style={{
+            width: this.props.metrics.nameWidth,
+            fontWeight: 400,
+            color: '#1a1a1a',
+          }}
+        >
           {this.props.data[this.props.labelKey]}
         </div>
       );
+    const ellipsis = (
+        <div
+          style={{
+            display: 'inline-block',
+            width: '25px',
+          }}
+        >
+          {
+            this.state.hovered ? (
+              <div
+                className={styles.button}
+                style={{
+                  paddingLeft: '6px',
+                  lineHeight: '7px',
+                  fontWeight: 800,
+                  letterSpacing: '2px',
+                }}
+                onClick={this._toggleTagMenu}
+              >
+              ...
+              </div>
+            ) : ''
+          }
+        </div>
+      );
+    const tagMenu = this.state.showTags ? (
+        <div className={styles.tagMenu}>
+          {
+            this.props.tags.map(t => {
+              const selected = this.props.data.tags[t.id] ? true : false;
+              return (
+                <div
+                  key={`t-${t.color}`}
+                  className={`${styles.tag} ${selected ? styles.selected : ''}`}
+                  onClick={() => this.props.toggleTag(this.props.data, t)}
+                >
+                  <div
+                    className={`${gstyle.circle} ${styles.tagIcon}`}
+                    style={{ background: t.color }}
+                  >
+                    {selected ? '-' : '+'}
+                  </div>
+                  <span className={styles.tagLabel}>
+                    {t.name}
+                  </span>
+                </div>
+              );
+            })
+          }
+        </div>
+      ) : '';
+    const tagList = (
+      <div
+        style={{
+          display: 'inline-block',
+          marginLeft: '6px',
+          verticalAlign: 'middle',
+        }}
+      >
+        {
+          this.props.tags.map(t => {
+            return this.props.data.tags[t.id] ? (
+              <div
+                key={`c-${t.id}`}
+                className={`${gstyle.circle} ${styles.tagIcon}`}
+                style={{ background: t.color }}
+              />
+            ) : '';
+          })
+        }
+      </div>
+      );
     const action = this.state.hovered ? (
-        this.props.isRemoved ? (
-          <div>
-            <div
-              className={styles.button}
-              onClick={this.props.restoreDatum}
-            >
-              Restore
-            </div>
-          </div>
-        ) : (
-          <div>
-            <div
-              className={styles.button}
-              onClick={this.props.removeDatum}
-            >
-              Archive
-            </div>
-          </div>
-        )
+        <div
+          className={styles.button}
+          style={{
+            position: 'absolute',
+            right: '16px',
+          }}
+          onClick={
+            this.props.isRemoved ? this.props.restoreDatum : this.props.removeDatum
+          }
+        >
+          {this.props.isRemoved ? 'Restore' : 'Archive'}
+        </div>
       ) : '';
     return (
       <div
@@ -135,7 +219,12 @@ export default class StackedBarRow extends Component {
             {this.props.data.biomid}
           </div>
           {name}
-          {action}
+          <div>
+            {ellipsis}
+            {tagMenu}
+            {tagList}
+            {action}
+          </div>
         </div>
         <StackedBar
           onHoverDatum={this.props.hoverDatum}

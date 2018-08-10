@@ -1,11 +1,12 @@
 .rowLabel {
+  font-family: 'IBM Plex Sans Condensed';
   position: relative;
   margin: 0;
   font-size: 12px;
   line-height: 14px;
   padding: 0.25rem;
   padding-top: 0;
-  overflow: hidden;
+  /*overflow: hidden;*/
   text-overflow: ellipsis;
   white-space: nowrap;
   display: inline-block;
@@ -13,12 +14,12 @@
 }
 
 .rowLabel input {
-  font-family: 'IBM Plex Sans';
-  color: #808080;
+  font-family: 'IBM Plex Sans Condensed';
+  /*color: #808080;*/
   font-size: 12px;
   line-height: 14px;
   height: 14px;
-  font-weight: 200;
+  /*font-weight: 200;*/
   margin: 0;
   padding: 0;
   top: 0;
@@ -48,6 +49,7 @@
 
 .button {
   cursor: pointer;
+  user-select: none;
   width: auto;
   display: inline-block;
   text-transform: uppercase;
@@ -64,3 +66,55 @@
   vertical-align: middle;
   border-radius: 6px;
 }
+.button:hover {
+  background: #808080;
+}
+.input:hover .button {
+  background: #808080;
+  cursor: pointer;
+}
+
+.tagMenu {
+  position: absolute;
+  background: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  border: 2px solid #e9e9e9;
+  z-index: 10;
+  margin-top: -32px;
+  margin-left: 28px;
+}
+
+.tag {
+  line-height: 16px;
+  vertical-align: middle; 
+  color: #b2b2b2;
+  user-select: none;
+}
+
+.tagIcon {
+  color: white;
+  border-color: white;
+  text-align: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 7px;
+  font-size: 12px;
+  line-height: 12px;
+  font-weight: 400;
+}
+
+.tagLabel {
+  font-size: 11px;
+  font-family: 'IBM Plex Sans Condensed';
+}
+.tag:hover, .tag.selected {
+  color: #808080;
+}
+.tag:hover .tagIcon {
+  border-color: #b2b2b2;
+}
+.tag.selected:hover {
+  color: #b2b2b2;
+}
+

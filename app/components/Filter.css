@@ -18,7 +18,7 @@
   text-align: center;
 }
 
-.input {
+/*.input {
   box-sizing: border-box;
   display: inline-block;
   font-size: 0.75rem;
@@ -30,7 +30,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
+}*/
 
 .section {
   display: inline-block;

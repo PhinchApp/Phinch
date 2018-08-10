@@ -108,6 +108,15 @@
   color: white;
 }
 
+.button {
+  background-color: #4d4d4d;
+  border: 1px solid #4d4d4d;
+  border-radius: 4px;
+  margin: 0 8px;
+  font-weight: 400;
+  /*color: #;*/
+}
+
 .inlineControl {
   display: inline-block;
   margin: 0;
@@ -176,12 +185,82 @@
   background: #1fbbd8;
 }
 
-.modalRow {
-  margin-left: 0.25rem;
-  height: 56px;
+.tagFilter {
+  position: absolute;
+  background: #333333;
+  padding: 8px 12px;
+  border-radius: 8px;
+  z-index: 10;
+  margin-top: 16px;
+  margin-left: -54px;
 }
 
-.modaltop {
+.checkbox {
+  position: relative;
+  display: inline-block;
+  top: 0;
+  left: 0;
+  width: 16px;
+  height: 11px;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+}
+.checkbox input {
+  position: absolute;
+  top: 0;
+  left: -3px;
+  width: 16px;
+  height: 16px;
+  opacity: 1;
+}
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 2px;
+  background-color: #666666;
+}
+.checkmark:hover {
+  background-color: #4d4d4d;
+}
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+.checkbox input:checked ~ .checkmark:after {
+  display: block;
+}
+.checkbox .checkmark:after {
+  left: 4px;
+  top: 1px;
+  width: 4px;
+  height: 8px;
+  border: solid #1fbbd8;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.tagName {
+  font-size: 13px;
+  color: #999999;
+  width: 72px;
+}
+.tagName.selected {
+  color: white;
+}
+
+/*.modalRow {
+  margin-left: 0.25rem;
+  height: 56px;
+}*/
+
+/*.modaltop {
   position: absolute;
   background: white;
   left: 1.5rem;
@@ -194,8 +273,7 @@
   border: 1px solid #2b2b2b;
   z-index: 5;
 }
-
-
+*/
 .seqRow {
   display: inline-block;
   vertical-align: middle;
