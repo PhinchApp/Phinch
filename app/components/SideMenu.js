@@ -13,9 +13,27 @@ export default class SideMenu extends Component {
 
   constructItem(l) {
     // Add condition for non-links
-    return (
-      <Link key={l.id} to={l.link}>
-        <div className={styles.menuItem}>
+    if (l.link) {
+      return (
+        <Link key={l.id} to={l.link}>
+          <div className={styles.menuItem}>
+            <div className={styles.menuBox}>
+              {l.icon}
+            </div>
+            <span className={styles.menuItemLabel}>
+              {l.name}
+            </span>
+          </div>
+        </Link>
+      );
+    } else {
+    // } else if (l.action) {
+      return (
+        <div
+          key={l.id}
+          className={styles.menuItem}
+          onClick={l.action}
+        >
           <div className={styles.menuBox}>
             {l.icon}
           </div>
@@ -23,8 +41,11 @@ export default class SideMenu extends Component {
             {l.name}
           </span>
         </div>
-      </Link>
-    );
+      );
+    }
+     // else {
+      // console.warn('make sure your button does something');
+    // }
   }
 
   render() {

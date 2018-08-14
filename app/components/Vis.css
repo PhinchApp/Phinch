@@ -188,11 +188,11 @@
 .tagFilter {
   position: absolute;
   background: #333333;
-  padding: 8px 12px;
+  padding: 6px 12px;
   border-radius: 8px;
   z-index: 10;
   margin-top: 16px;
-  margin-left: -54px;
+  margin-left: -48px;
 }
 
 .checkbox {

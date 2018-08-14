@@ -8,6 +8,7 @@ import { nest } from 'd3-collection';
 import { scaleLinear, scaleOrdinal } from 'd3-scale';
 
 import { updateFilters, removeRows, restoreRows, visSortBy, getSortArrow } from '../FilterFunctions';
+import { setProjectFilters, getProjectFilters } from '../projects.js';
 import DataContainer from '../DataContainer';
 import palette from '../palette';
 
@@ -32,9 +33,11 @@ export default class Vis extends Component {
     this.state = {
       summary: DataContainer.getSummary(),
       initdata: DataContainer.getFilteredData(),
+      names: [],
       data: [],
       preData: [],
       deleted: [],
+      tags: [],
       filters: {},
       width: window.innerWidth,
       height: window.innerHeight,
@@ -50,30 +53,44 @@ export default class Vis extends Component {
       showLeftSidebar: false,
     };
 
+    // move to config or own file
+    // redirect instead of link?
+    // back should save! or warn
     this.menuItems = [
+      {
+        id: 'save',
+        link: null,
+        action: () => {
+          const viewMetadata = {
+            type: 'vis',
+            level: this.state.level,
+            filters: this.filters,
+            deleted: this.state.deleted,
+            sort: this.sort,
+          };
+          setProjectFilters(
+            this.state.summary.path,
+            this.state.summary.name,
+            this.state.names,
+            viewMetadata,
+            (value) => {
+              console.log(value);
+            },
+            );
+        },
+        icon: (<div className={gstyle.arrow} style={{transform: `rotate(${-180}deg)`}}>⌃</div>),
+        name: 'Save',
+      },
       {
         id: 'filter',
         link: '/Filter',
+        action: null,
         icon: (<div className={gstyle.arrow} style={{transform: `rotate(${-90}deg)`}}>⌃</div>),
         name: 'Back',
       },
     ];
 
-    const tagColors = [
-      '#ff0000',
-      '#ffc400',
-      '#00adff',
-      '#00ffc4',
-    ];
-    this.tags = tagColors.map((c, i) => {
-      return {
-        id: `tag-${i}`,
-        name: `Tag ${i}`,
-        color: c,
-      };
-    });
-
-    this.filters = {};
+    // this.filters = {};
 
     this.tooltip = {
       timer: null,
@@ -83,7 +100,33 @@ export default class Vis extends Component {
     this.sort = {
       reverse: true,
       key: 'biomid',
+      type: 'percent',
+      show: 'phinchName',
     };
+
+
+    // Move this to data
+    const tagColors = [
+      '#ff0000',
+      '#ffc400',
+      '#00adff',
+      '#00ffc4',
+    ];
+    this.state.tags = [
+      {
+        id: 'none',
+        color: null,
+        name: 'None',
+        selected: true
+      }, ...tagColors.map((c, i) => {
+        return {
+          id: `tag-${i}`,
+          name: `Tag ${i}`,
+          color: c,
+          selected: true,
+        };
+      })
+    ];
 
     this.levels = [];
     this.readsBySequence = {};
@@ -188,6 +231,18 @@ export default class Vis extends Component {
           return l;
         });
 
+      //
+      this.init = getProjectFilters(this.state.summary.path, this.state.summary.name, 'vis');
+      //
+      this.state.names = this.init.names;
+      this.state.level = (this.init.level !== undefined) ? this.init.level : this.state.level;
+      this.filters = this.init.filters ? this.init.filters : {};
+      this.state.deleted = this.init.deleted ? this.init.deleted : []; 
+      this.sort = this.init.sort ? this.init.sort : this.sort;
+      this.state.labelKey = this.sort.show;
+      this.state.mode = this.sort.type;
+      //
+
       this.state.data = visSortBy(
         this,
         this.formatTaxonomyData(this.state.initdata, this.state.level),
@@ -210,6 +265,7 @@ export default class Vis extends Component {
 
   componentDidMount() {
     window.addEventListener('resize', this.updateDimensions);
+    this.setLevel(this.state.level);
   }
   componentWillUnmount() {
     clearTimeout(this.tooltip.handle);
@@ -312,7 +368,7 @@ export default class Vis extends Component {
     this.filters[this.state.level] = filters;
     const showRightSidebar = Object.keys(filters).length > 0 ? true : false;
     this.updateChartWidth(showRightSidebar);
-    const data = this.filterData(filters, this.state.preData, this.state.deleted);
+    const data = this.filterData(filters, this.state.tags, this.state.preData, this.state.deleted);
     this.setState({ data, filters, showRightSidebar });
   }
 
@@ -367,7 +423,7 @@ export default class Vis extends Component {
     const filters = this.filters[level];
     const showRightSidebar = Object.keys(filters).length > 0 ? true : false;
     this.updateChartWidth(showRightSidebar);
-    const data = this.filterData(filters, preData, deleted);
+    const data = this.filterData(filters, this.state.tags, preData, deleted);
     this.setState({level, data, preData, deleted, filters, showRightSidebar});
   }
 
@@ -389,13 +445,17 @@ export default class Vis extends Component {
             };
           });
         totalDataReads += c.reads;
+        let phinchName = c.phinchName
+        if (this.state.names[c.sampleName]) {
+          phinchName = this.state.names[c.sampleName];
+        }
         return {
           id: c.id,
           biomid: c.biomid,
           phinchID: c.metadata.phinchID,
           order: c.order,
           sampleName: c.sampleName,
-          phinchName: c.phinchName,
+          phinchName: phinchName,
           reads: c.reads,
           sequences: [],
           tags: {}, // TODO: check for existing 
@@ -483,7 +543,7 @@ export default class Vis extends Component {
     });
   }
 
-  filterData(filters, preData, deleted) {
+  filterData(filters, tags, preData, deleted) {
     const deletedSamples = deleted.map(d => d.sampleName);
     const samples = preData.filter(s => {
       let include = true;
@@ -499,6 +559,17 @@ export default class Vis extends Component {
           }          
         }
       });
+      
+      const showNoneTags = (tags.filter(t => t.selected && t.id === 'none').length > 0);
+      const countTags = Object.keys(s.tags).length;
+      const countSelectedTags = Object.keys(s.tags).filter(t => !s.tags[t].selected).length;
+      if (
+        (!showNoneTags && countTags === 0)
+          ||
+        (countTags > 0 && countTags === countSelectedTags)
+      ) {
+        include = false;
+      }
       return include;
     });
     const data = visSortBy(this, samples, false);    
@@ -506,7 +577,7 @@ export default class Vis extends Component {
   }
 
   applyFilters(filters) {
-    const data = this.filterData(filters, this.state.preData, this.state.deleted);
+    const data = this.filterData(filters, this.state.tags, this.state.preData, this.state.deleted);
     this.setState({filters, data});
   }
 
@@ -568,6 +639,7 @@ export default class Vis extends Component {
   onSuggestionSelected(e, { suggestion }) {
     const data = this.filterData(
       this.state.filters,
+      this.state.tags,
       this.state.preData,
       this.state.deleted,
     ).filter(d => {
@@ -598,6 +670,7 @@ export default class Vis extends Component {
   onValueCleared() {
     const data = this.filterData(
       this.state.filters,
+      this.state.tags,
       this.state.preData,
       this.state.deleted,
       );
@@ -608,11 +681,13 @@ export default class Vis extends Component {
 
   updatePhinchName(e, r, isRemoved) {
     // ugly - similar to function in Filter.js
+    const names = this.state.names;
     if (isRemoved) {
       const deleted = this.state.deleted.map((d) => {
         if (d.sampleName === r.sampleName) {
           d.phinchName = e.target.value;
         }
+        names[d.sampleName] = d.phinchName;
         return d;
       });
       this.setState({ deleted });
@@ -621,10 +696,37 @@ export default class Vis extends Component {
         if (d.sampleName === r.sampleName) {
           d.phinchName = e.target.value;
         }
+        names[d.sampleName] = d.phinchName;
         return d;
       });
-      this.setState({ data });
+      this.setState({ data, names });
     }
+  }
+
+  updateTagName(event, tag) {
+    const tags = this.state.tags.map(t => {
+      if (t.id === tag.id) {
+        t.name = event.target.value;
+      }
+      return t;
+    });
+    this.setState({ tags });
+  }
+
+  filterByTag(event, tag) {
+    let tags = this.state.tags.map(t => {
+      if (tag.id === t.id) {
+        t.selected = event.target.checked;
+      }
+      return t;
+    });
+    const data = this.filterData(
+      this.state.filters,
+      tags,
+      this.state.preData,
+      this.state.deleted,
+      );
+    this.setState({ tags, data });
   }
 
   renderBars(data, isRemoved) {
@@ -639,7 +741,7 @@ export default class Vis extends Component {
             filters={this.state.filters}
             metrics={this.metrics}
             scales={this.scales}
-            tags={this.tags}
+            tags={this.state.tags.filter(t => t.id !== 'none')}
             toggleTag={this._toggleTag}
             isPercent={(this.state.mode === 'percent')}
             isRemoved={isRemoved}
@@ -670,6 +772,7 @@ export default class Vis extends Component {
     });
     const onSelectChange = (event) => {
       const labelKey = event.target.value;
+      this.sort.show = labelKey;
       this.setState({ labelKey });
     };
     return (
@@ -679,6 +782,7 @@ export default class Vis extends Component {
           id='showSelect'
           onChange={onSelectChange}
           className={styles.inlineControl}
+          value={this.state.labelKey}
         >
           {options}
         </select>
@@ -748,6 +852,7 @@ export default class Vis extends Component {
           id='sortSelect'
           onChange={onSelectChange}
           className={styles.inlineControl}
+          value={this.sort.key}
         >
           {options}
         </select>
@@ -769,6 +874,7 @@ export default class Vis extends Component {
     ];
     return buttons.map(b => {
       const onRadioChange = (event) => {
+        this.sort.type = event.target.id;
         this.setState({mode: event.target.id});
       }
       const checked = this.state.mode === b.id ? 'checked' : '';
@@ -909,13 +1015,14 @@ export default class Vis extends Component {
         <div key='tagFilter' className={styles.tagFilter}>
           <div
             className={gstyle.close}
+            style={{
+              margin: '4px 0',
+            }}
             onClick={() => { this._toggleTags() }}
           >x</div>
           {
-            [{ id: 'all', color: null, name: 'All' }, ...this.tags].map(t => {
+            this.state.tags.map(t => {
               const hasColor = t.color ? true : false;
-              // check for tags present in data...
-              const selected = true;
               return (
                 <div
                   key={`tf-${t.id}`}
@@ -926,8 +1033,8 @@ export default class Vis extends Component {
                   <label className={styles.checkbox}>
                     <input
                       type='checkbox'
-                      checked={selected}
-                      onChange={() => {}}
+                      checked={t.selected}
+                      onChange={(e) => this.filterByTag(e, t)}
                     />
                     <span className={styles.checkmark}></span>
                   </label>
@@ -937,15 +1044,15 @@ export default class Vis extends Component {
                         backgroundColor: t.color,
                         borderColor: '#333333',
                         marginLeft: '4px',
+                        opacity: t.selected ? 1 : 0.5,
                       }} />
                     ) : ''
                   }
                   <input
-                    className={`${gstyle.input} ${styles.tagName} ${selected ? styles.selected : ''}`}
+                    className={`${gstyle.input} ${styles.tagName} ${t.selected ? styles.selected : ''}`}
                     type="text"
                     value={t.name}
-                    onChange={() => {}}
-                    // onChange={(e) => this.props.updatePhinchName(e, this.props.data, this.props.isRemoved)}
+                    onChange={(e) => this.updateTagName(e, t)}
                     disabled={!hasColor}
                   />
                 </div>
@@ -965,14 +1072,14 @@ export default class Vis extends Component {
         >
           <div key='tags' className={`${styles.selector} ${styles.button} ${showTags}`}>Tags</div>
           {
-            this.tags.map(t => {
-              // check for tags present in data...
-              return true ? (
+            this.state.tags.map(t => {
+              return t.color ? (
                 <div
                   key={`c-${t.id}`}
                   className={gstyle.circle}
                   style={{
                     background: t.color,
+                    opacity: t.selected ? 1 : 0.5,
                     verticalAlign: 'middle',
                   }}
                 />

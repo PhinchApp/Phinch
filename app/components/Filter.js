@@ -72,7 +72,7 @@ export default class Filter extends Component {
 
     this.state.redirect = (this.state.summary.name && this.state.summary.size) ? null : '/';
 
-    this.init = getProjectFilters(this.state.summary.path, this.state.summary.name);
+    this.init = getProjectFilters(this.state.summary.path, this.state.summary.name, 'filter');
 
     this.filters = {
       date: {},
@@ -161,6 +161,9 @@ export default class Filter extends Component {
           values: filterValues,
           unit: unit,
         };
+        if (!this.init.filters) {
+          this.init.filters = [];
+        }
         if (this.init.filters[k]) {
           this.init.filters[k].values = filterValues;
           if (k.toLowerCase().trim().includes('date')) {
@@ -170,7 +173,7 @@ export default class Filter extends Component {
           this.state.filters[k] = this.init.filters[k];
         }
       });
-      this.state.deleted = this.init.deleted;
+      this.state.deleted = this.init.deleted ? this.init.deleted : [];
       this.state.names = this.init.names;
       if (this.init.sort) {
         this.sort = this.init.sort;
@@ -595,13 +598,17 @@ export default class Filter extends Component {
           */}
           <div className={gstyle.button}>
             <div className={`${gstyle.heading} ${styles.previewButton}`} onClick={() => {
+              const viewMetadata = {
+                type: 'filter',
+                filters: this.state.filters,
+                deleted: this.state.deleted,
+                sort: this.sort,
+              };
               setProjectFilters(
                 this.state.summary.path,
                 this.state.summary.name,
-                this.state.filters,
                 this.state.names,
-                this.state.deleted,
-                this.sort,
+                viewMetadata,
                 this.setResult,
                 );
             }}>
@@ -611,15 +618,19 @@ export default class Filter extends Component {
           <div className={gstyle.button}>
             <div className={`${gstyle.heading} ${styles.previewButton}`} onClick={() => {
               this.setState({ loading: true});
+              const viewMetadata = {
+                type: 'filter',
+                filters: this.state.filters,
+                deleted: this.state.deleted,
+                sort: this.sort,
+              };
               setTimeout(() => {
                 DataContainer.applyFiltersToData(this.state.data);
                 setProjectFilters(
                   this.state.summary.path,
                   this.state.summary.name,
-                  this.state.filters,
                   this.state.names,
-                  this.state.deleted,
-                  this.sort,
+                  viewMetadata,
                   this.redirectToVis,
                   );
               }, 1);

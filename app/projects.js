@@ -77,14 +77,21 @@ export function exportProjectData(path, name, data, callback) {
   }
 }
 
-export function setProjectFilters(path, name, filters, names, deleted, sort, callback) {
+export function setProjectFilters(path, name, names, view, callback) {
   name = name.replace('.biom', '.json');
   const metadataPath = join('/', ...path, name);
   const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
-  metadata.filters = filters;
   metadata.names = names;
-  metadata.deleted = deleted;
-  metadata.sort = sort;
+  // 
+  if (!metadata[view.type]) {
+    metadata[view.type] = {};
+  }
+  Object.keys(view).forEach(k => {
+    if (k !== 'type') {
+      metadata[view.type][k] = view[k];
+    }
+  });
+  //
   try {
     fs.writeFileSync(metadataPath, JSON.stringify(metadata));
     callback('Saved!');
@@ -93,20 +100,21 @@ export function setProjectFilters(path, name, filters, names, deleted, sort, cal
   }
 }
 
-export function getProjectFilters(path, name) {
+export function getProjectFilters(path, name, viewType) {
   name = name.replace('.biom', '.json');
   const metadataPath = join('/', ...path, name);
   const metadata = path.length ? JSON.parse(fs.readFileSync(metadataPath, 'utf8')) : {};
-  const filters = metadata['filters'] ? metadata['filters'] : {};
   const names = metadata['names'] ? metadata['names'] : {};
-  const deleted = metadata['deleted'] ? metadata['deleted'] : [];
-  const sort = metadata['sort'] ? metadata['sort'] : null;
-  return {
-    filters,
-    names,
-    deleted,
-    sort,
-  };
+  //
+  const filters = { names };
+  if (metadata[viewType]) {
+    Object.keys(metadata[viewType]).forEach(k => {
+      if (metadata[viewType][k]) {
+        filters[k] = metadata[viewType][k];
+      }
+    });
+  }
+  return filters;
 }
 
 export function createProject(project) {

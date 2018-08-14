@@ -50,6 +50,7 @@
   margin: 1rem 0.5rem;
   color: #ffffff;
   text-align: center;
+  cursor: pointer;
 }
 
 .menuItemLabel {
