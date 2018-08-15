@@ -38,6 +38,7 @@ export default class Vis extends Component {
       preData: [],
       deleted: [],
       tags: [],
+      rowTags: {},
       filters: {},
       width: window.innerWidth,
       height: window.innerHeight,
@@ -67,6 +68,8 @@ export default class Vis extends Component {
             filters: this.filters,
             deleted: this.state.deleted,
             sort: this.sort,
+            tags: this.state.tags,
+            rowTags: this.state.rowTags,
           };
           setProjectFilters(
             this.state.summary.path,
@@ -90,7 +93,7 @@ export default class Vis extends Component {
       },
     ];
 
-    // this.filters = {};
+    this.filters = {};
 
     this.tooltip = {
       timer: null,
@@ -232,15 +235,18 @@ export default class Vis extends Component {
           return l;
         });
 
-      //
+      // Break this whole chunk into a function or something
+      // 
       this.init = getProjectFilters(this.state.summary.path, this.state.summary.name, 'vis');
-      //
-      console.log(this.init.filters);
       //
       this.state.names = this.init.names;
       this.state.level = (this.init.level !== undefined) ? this.init.level : this.state.level;
       this.filters = this.init.filters ? this.init.filters : {};
       this.state.deleted = this.init.deleted ? this.init.deleted : []; 
+      this.state.tags = this.init.tags ? this.init.tags : this.state.tags;
+      this.state.rowTags = this.init.rowTags ? this.init.rowTags : this.state.rowTags;
+      //
+      // Consolidate these  VVVV
       this.sort = this.init.sort ? this.init.sort : this.sort;
       this.state.labelKey = this.sort.show;
       this.state.mode = this.sort.type;
@@ -281,6 +287,8 @@ export default class Vis extends Component {
     } else {
       datum.tags[tag.id] = tag;
     }
+    const rowTags = this.state.rowTags;
+    rowTags[datum.sampleName] = datum.tags;
     // ugly 
     if (isRemoved) {
       const deleted = this.state.deleted.map((d) => {
@@ -452,6 +460,11 @@ export default class Vis extends Component {
         if (this.state.names[c.sampleName]) {
           phinchName = this.state.names[c.sampleName];
         }
+        const tags = this.state.rowTags[c.sampleName] ? this.state.rowTags[c.sampleName] : {};
+        Object.keys(tags).forEach(k => {
+          const [tag] = this.state.tags.filter(t => t.id === k);
+          tags[k] = tag;
+        });
         const collectionDate = c.metadata.collection_date ? (
             new Date(c.metadata.collection_date).toLocaleString().split(', ')[0]
           ) : '';
@@ -464,9 +477,8 @@ export default class Vis extends Component {
           phinchName: phinchName,
           reads: c.reads,
           sequences: [],
-          // metadata: c.metadata,
           date: collectionDate,
-          tags: {}, // TODO: check for existing 
+          tags: tags,
           matches: matches,
         };
       }), level, true);
@@ -553,7 +565,7 @@ export default class Vis extends Component {
 
   filterData(filters, tags, preData, deleted) {
     const deletedSamples = deleted.map(d => d.sampleName);
-    const samples = preData.filter(s => {
+    const samples = preData.filter((s, i) => {
       let include = true;
       if (deletedSamples.includes(s.sampleName)) {
         include = false;
@@ -567,7 +579,6 @@ export default class Vis extends Component {
           }          
         }
       });
-      
       const showNoneTags = (tags.filter(t => t.selected && t.id === 'none').length > 0);
       const countTags = Object.keys(s.tags).length;
       const countSelectedTags = Object.keys(s.tags).filter(t => !s.tags[t].selected).length;
@@ -738,7 +749,6 @@ export default class Vis extends Component {
   }
 
   renderBars(data, isRemoved) {
-    console.log(data);
     return data
       .map((d, i) => {
         return (
