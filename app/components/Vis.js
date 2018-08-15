@@ -52,44 +52,26 @@ export default class Vis extends Component {
       showSequences: false,
       showRightSidebar: false,
       showLeftSidebar: false,
+      result: null,
     };
 
     // move to config or own file
-    // redirect instead of link?
-    // back should save! or warn
     this.menuItems = [
       {
         id: 'save',
-        link: null,
-        action: () => {
-          const viewMetadata = {
-            type: 'vis',
-            level: this.state.level,
-            filters: this.filters,
-            deleted: this.state.deleted,
-            sort: this.sort,
-            tags: this.state.tags,
-            rowTags: this.state.rowTags,
-          };
-          setProjectFilters(
-            this.state.summary.path,
-            this.state.summary.name,
-            this.state.names,
-            viewMetadata,
-            (value) => {
-              console.log(value);
-            },
-            );
+        name: 'Save',
+        action: () => { 
+          this.save(this.setResult);
         },
         icon: (<div className={gstyle.arrow} style={{transform: `rotate(${-180}deg)`}}>⌃</div>),
-        name: 'Save',
       },
       {
         id: 'filter',
-        link: '/Filter',
-        action: null,
-        icon: (<div className={gstyle.arrow} style={{transform: `rotate(${-90}deg)`}}>⌃</div>),
         name: 'Back',
+        action: () => { 
+          this.save(() => (this.setState({ redirect: '/Filter' })));
+        },
+        icon: (<div className={gstyle.arrow} style={{transform: `rotate(${-90}deg)`}}>⌃</div>),
       },
     ];
 
@@ -245,6 +227,13 @@ export default class Vis extends Component {
       this.state.deleted = this.init.deleted ? this.init.deleted : []; 
       this.state.tags = this.init.tags ? this.init.tags : this.state.tags;
       this.state.rowTags = this.init.rowTags ? this.init.rowTags : this.state.rowTags;
+      // 
+      // Ugly... 
+      this.state.showLeftSidebar = (this.init.showLeftSidebar !== undefined) ? (
+          this.init.showLeftSidebar
+        ) : this.state.showLeftSidebar;
+      this.metrics.leftSidebar = this.state.showLeftSidebar ?
+        this.metrics.left.max : this.metrics.left.min;
       //
       // Consolidate these  VVVV
       this.sort = this.init.sort ? this.init.sort : this.sort;
@@ -264,21 +253,59 @@ export default class Vis extends Component {
     this.onSuggestionHighlighted = this.onSuggestionHighlighted.bind(this);
     this.onSuggestionSelected = this.onSuggestionSelected.bind(this);
     this.onValueCleared = this.onValueCleared.bind(this);
-
     this.updateDimensions = this.updateDimensions.bind(this);
     this.updatePhinchName = this.updatePhinchName.bind(this);
     this.applyFilters = this.applyFilters.bind(this);
     this.removeFilter = this.removeFilter.bind(this);
     this.toggleMenu = this.toggleMenu.bind(this);
+    this.toggleLog = this.toggleLog.bind(this);
   }
 
   componentDidMount() {
     window.addEventListener('resize', this.updateDimensions);
     this.setLevel(this.state.level);
   }
+
   componentWillUnmount() {
     clearTimeout(this.tooltip.handle);
     window.removeEventListener('resize', this.updateDimensions);
+  }
+
+  save = (callback) => {
+    const viewMetadata = {
+      type: 'vis',
+      level: this.state.level,
+      filters: this.filters,
+      deleted: this.state.deleted,
+      sort: this.sort,
+      tags: this.state.tags,
+      rowTags: this.state.rowTags,
+      showLeftSidebar: this.state.showLeftSidebar,
+    };
+    setProjectFilters(
+      this.state.summary.path,
+      this.state.summary.name,
+      this.state.names,
+      viewMetadata,
+      (value) => {
+        callback(value);
+      },
+      );
+  }
+
+  setResult = (value) => {
+    const result = value;
+    this.timeout = setTimeout(() => {
+      this.clearResult();
+    }, 3000);
+    // const loading = false;
+    // this.setState({result, loading});
+    this.setState({result});
+  }
+
+  clearResult = () => {
+    const result = null;
+    this.setState({result});
   }
 
   _toggleTag = (datum, tag, isRemoved) => {
@@ -364,13 +391,22 @@ export default class Vis extends Component {
           min: values[0],
           max: values[values.length - 1],
         },
+        log: true,
         expanded: true,
       };
       filters[datum.name] = this.filters[this.state.level][datum.name];
     }
     const showRightSidebar = Object.keys(filters).length > 0 ? true : false;
+
     this.updateChartWidth(showRightSidebar);
     this.setState({ filters, showRightSidebar });
+  }
+
+  toggleLog(name) {
+    const filters = this.state.filters;
+    filters[name].log = !filters[name].log;
+    this.filters[this.state.level] = filters;
+    this.setState({ filters });
   }
 
   removeFilter(name) {
@@ -613,8 +649,8 @@ export default class Vis extends Component {
             }}>
             <FilterChart
               name={k}
-              log={true}
               showScale={true}
+              showCircle={true}
               fill={this.scales.c(k)}
               stroke={'#333333'}
               handle={this.scales.c(k)}
@@ -624,6 +660,7 @@ export default class Vis extends Component {
               filters={this.state.filters}
               update={updateFilters}
               remove={this.removeFilter}
+              toggleLog={this.toggleLog}
               callback={this.applyFilters}
             />
           </div>
@@ -1111,9 +1148,27 @@ export default class Vis extends Component {
     );
     //
 
+    const result = this.state.result ? (
+      <div 
+        className={gstyle.button}
+        style={{
+          position: 'absolute',
+          top: '148px',
+          left: '90px',
+          zIndex: 10,
+          fontWeight: 400,
+          background: (this.state.result === 'error') ? '#FF0000' : '#00FF00',
+        }}
+        onClick={this.clearResult}
+      >
+          {this.state.result}
+      </div>
+    ) : '';
+
     return (
       <div className={gstyle.container}>
         {redirect}
+        {result}
         <div className={gstyle.logo}>
           <Link to="/">
             <img src={logo} alt='Phinch' />

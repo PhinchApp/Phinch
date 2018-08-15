@@ -13,24 +13,12 @@ export default class FilterChart extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      update: false,
-    };
-    this.state.log = this.props.log;
-
-    this.toggleLog = this.toggleLog.bind(this);
     this.updateFilter = this.updateFilter.bind(this);
-  }
-
-  toggleLog() {
-    const log = !this.state.log;
-    this.setState({log});
   }
 
   updateScales() {
     this.padding = 0;
-    
-    if (this.state.log) {
+    if (this.props.data.log) {
       const counts = this.props.data.values.map(d => d.count);
       this.yscale = scaleLog()
         .domain([1, Math.max(...counts)])
@@ -77,7 +65,7 @@ export default class FilterChart extends Component {
           )
         );
       const fillOpacity = valueInRange ? 1 : 0.3;
-      const height = this.state.log ? (
+      const height = this.props.data.log ? (
           this.yscale(d.count)
         ) : (
           this.yscale(d.percent)
@@ -102,7 +90,7 @@ export default class FilterChart extends Component {
       const min = isDate ? (
           new Date(filter.range.min.value).toLocaleString().split(', ')[0]
         ) : (
-          this.state.log ? (
+          this.props.data.log ? (
             filter.range.min.value
           ) : (
             `${Math.floor(filter.range.min.percent * 10000)/100} %`
@@ -111,7 +99,7 @@ export default class FilterChart extends Component {
       const max = isDate ? (
           new Date(filter.range.max.value).toLocaleString().split(', ')[0]
         ) : (
-          this.state.log ? (
+          this.props.data.log ? (
             filter.range.max.value
           ) : (
             `${Math.floor(filter.range.max.percent * 10000)/100} %`
@@ -158,8 +146,8 @@ export default class FilterChart extends Component {
           <Toggle
             id="scale"
             icons={false}
-            defaultChecked={this.state.log}
-            onChange={this.toggleLog}
+            defaultChecked={this.props.data.log}
+            onChange={() => this.props.toggleLog(this.props.name)}
           />
           <div className={styles.toggleLabel}>
             Log Scale
@@ -168,9 +156,12 @@ export default class FilterChart extends Component {
       ) : '';
     const taxa = this.props.name.split(',');
     const name = taxa[taxa.length - 1].replace(/[a-zA-Z]__/g,'');
+    const circle = this.props.showCircle ? (
+          <div className={gstyle.circle} style={{background: this.props.fill}} />
+        ) : '';
     return (
       <div className={styles.filterChart}>
-        <div className={gstyle.circle} style={{background: this.props.fill}} />
+        {circle}
         <label className={styles.name}>{name}</label>
         {remove}
         {info}

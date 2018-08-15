@@ -12,40 +12,20 @@ export default class SideMenu extends Component {
   }
 
   constructItem(l) {
-    // Add condition for non-links
-    if (l.link) {
-      return (
-        <Link key={l.id} to={l.link}>
-          <div className={styles.menuItem}>
-            <div className={styles.menuBox}>
-              {l.icon}
-            </div>
-            <span className={styles.menuItemLabel}>
-              {l.name}
-            </span>
-          </div>
-        </Link>
-      );
-    } else {
-    // } else if (l.action) {
-      return (
-        <div
-          key={l.id}
-          className={styles.menuItem}
-          onClick={l.action}
-        >
-          <div className={styles.menuBox}>
-            {l.icon}
-          </div>
-          <span className={styles.menuItemLabel}>
-            {l.name}
-          </span>
+    return (
+      <div
+        key={l.id}
+        className={styles.menuItem}
+        onClick={l.action}
+      >
+        <div className={styles.menuBox}>
+          {l.icon}
         </div>
-      );
-    }
-     // else {
-      // console.warn('make sure your button does something');
-    // }
+        <span className={styles.menuItemLabel}>
+          {l.name}
+        </span>
+      </div>
+    );
   }
 
   render() {

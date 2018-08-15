@@ -45,6 +45,7 @@ export default class Filter extends Component {
       loading: false,
       redirect: null,
       showRightSidebar: false,
+      showLeftSidebar: false,
     };
 
     this.metrics = {
@@ -63,16 +64,39 @@ export default class Filter extends Component {
 
     this.menuItems = [
       {
-        id: 'home',
-        link: '/Home',
-        icon: (<div className={gstyle.arrow} style={{transform: `rotate(${-90}deg)`}}>⌃</div>),
+        id: 'save',
+        name: 'Save',
+        action: () => { 
+          this.save(this.setResult);
+        },
+        icon: (<div className={gstyle.arrow} style={{transform: `rotate(${-180}deg)`}}>⌃</div>),
+      },
+      {
+        id: 'back',
         name: 'Back',
+        action: () => { 
+          this.save(() => {
+            console.log('should redir now...');
+            this.setState({ redirect: '/Home' });
+          });
+        },
+        icon: (<div className={gstyle.arrow} style={{transform: `rotate(${-90}deg)`}}>⌃</div>),
       },
     ];
 
     this.state.redirect = (this.state.summary.name && this.state.summary.size) ? null : '/';
 
     this.init = getProjectFilters(this.state.summary.path, this.state.summary.name, 'filter');
+
+    // Ugly... 
+    this.state.showLeftSidebar = (this.init.showLeftSidebar !== undefined) ? (
+        this.init.showLeftSidebar
+      ) : this.state.showLeftSidebar;
+    this.metrics.leftSidebar = this.state.showLeftSidebar ?
+      this.metrics.left.max : this.metrics.left.min;
+    this.metrics.filterWidth = this.state.showLeftSidebar ?
+      this.metrics.filter.min : this.metrics.filter.max;
+    //
 
     this.filters = {
       date: {},
@@ -160,9 +184,10 @@ export default class Filter extends Component {
         this.filters[groupKey][k] = {
           values: filterValues,
           unit: unit,
+          log: true,
         };
         if (!this.init.filters) {
-          this.init.filters = [];
+          this.init.filters = {};
         }
         if (this.init.filters[k]) {
           this.init.filters[k].values = filterValues;
@@ -324,6 +349,24 @@ export default class Filter extends Component {
     window.removeEventListener('resize', this.updateDimensions);
   }
 
+  save = (callback) => {
+    const viewMetadata = {
+      type: 'filter',
+      filters: this.state.filters,
+      deleted: this.state.deleted,
+      sort: this.sort,
+      showLeftSidebar: this.state.showLeftSidebar,
+    };
+    setProjectFilters(
+      this.state.summary.path,
+      this.state.summary.name,
+      this.state.names,
+      viewMetadata,
+      // this.setResult,
+      callback,
+      );
+  }
+
   updateDimensions() {
     this.setState({height:window.innerHeight});
   }
@@ -443,11 +486,10 @@ export default class Filter extends Component {
       number: 'Numeric Range',
       string: 'Categories',
     };
-    return Object.keys(this.filters).map((k) => {
+    return Object.keys(this.filters).map((k, i) => {
       const group = Object.keys(this.filters[k]).map((g) => {
         const expanded = this.state.filters[g].expanded;
         const icon = expanded ? '-' : '+';
-        // const width = 200;
         const height = expanded ? 60 : 20;
         const filter = (this.state.filters[g].type === 'string') ? (
             <CheckBoxes
@@ -457,11 +499,13 @@ export default class Filter extends Component {
               update={this.updateChecks}
             />
           ) : (
-            // filter={this.state.filters[g]}
             <FilterChart
               name={g}
+              showScale={false}
+              showCircle={false}
               fill={'#2b2b2b'}
               stroke={'#ffffff'}
+              handle={'#ffffff'}
               data={this.filters[k][g]}
               width={this.metrics.filterWidth}
               height={height}
@@ -548,7 +592,7 @@ export default class Filter extends Component {
     this.metrics.leftSidebar = showLeftSidebar ?
       this.metrics.left.max : this.metrics.left.min;
     this.metrics.filterWidth = showLeftSidebar ?
-    this.metrics.filter.min : this.metrics.filter.max;
+      this.metrics.filter.min : this.metrics.filter.max;
     this.setState({showLeftSidebar});
   }
 
@@ -598,42 +642,12 @@ export default class Filter extends Component {
           */}
           <div className={gstyle.button}>
             <div className={`${gstyle.heading} ${styles.previewButton}`} onClick={() => {
-              const viewMetadata = {
-                type: 'filter',
-                filters: this.state.filters,
-                deleted: this.state.deleted,
-                sort: this.sort,
-              };
-              setProjectFilters(
-                this.state.summary.path,
-                this.state.summary.name,
-                this.state.names,
-                viewMetadata,
-                this.setResult,
-                );
-            }}>
-              Save Filters
-            </div>
-          </div>
-          <div className={gstyle.button}>
-            <div className={`${gstyle.heading} ${styles.previewButton}`} onClick={() => {
-              this.setState({ loading: true});
-              const viewMetadata = {
-                type: 'filter',
-                filters: this.state.filters,
-                deleted: this.state.deleted,
-                sort: this.sort,
-              };
-              setTimeout(() => {
-                DataContainer.applyFiltersToData(this.state.data);
-                setProjectFilters(
-                  this.state.summary.path,
-                  this.state.summary.name,
-                  this.state.names,
-                  viewMetadata,
-                  this.redirectToVis,
-                  );
-              }, 1);
+              this.setState({ loading: true }, () => {
+                setTimeout(() => {
+                  DataContainer.applyFiltersToData(this.state.data);
+                  this.save(this.redirectToVis);
+                }, 1);
+              });
             }}>
               Save & View <div className={gstyle.arrow} style={{transform: `rotate(${90}deg)`}}>⌃</div><br />
               <img src={vis} alt='' style={{width: '112px', height: '24px', margin: '2px 0'}}/>
