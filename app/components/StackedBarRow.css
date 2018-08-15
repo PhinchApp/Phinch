@@ -6,11 +6,19 @@
   line-height: 14px;
   padding: 0.25rem;
   padding-top: 0;
+  color: #1a1a1a;
   /*overflow: hidden;*/
   text-overflow: ellipsis;
   white-space: nowrap;
   display: inline-block;
   vertical-align: top;
+}
+
+.rowSection {
+  position: relative;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
 }
 
 .rowLabel input {

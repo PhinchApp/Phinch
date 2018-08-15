@@ -97,6 +97,7 @@ export default class Vis extends Component {
       duration: 1500,
     };
 
+    // duplicate values in state - move to state?
     this.sort = {
       reverse: true,
       key: 'biomid',
@@ -233,6 +234,8 @@ export default class Vis extends Component {
 
       //
       this.init = getProjectFilters(this.state.summary.path, this.state.summary.name, 'vis');
+      //
+      console.log(this.init.filters);
       //
       this.state.names = this.init.names;
       this.state.level = (this.init.level !== undefined) ? this.init.level : this.state.level;
@@ -449,6 +452,9 @@ export default class Vis extends Component {
         if (this.state.names[c.sampleName]) {
           phinchName = this.state.names[c.sampleName];
         }
+        const collectionDate = c.metadata.collection_date ? (
+            new Date(c.metadata.collection_date).toLocaleString().split(', ')[0]
+          ) : '';
         return {
           id: c.id,
           biomid: c.biomid,
@@ -458,6 +464,8 @@ export default class Vis extends Component {
           phinchName: phinchName,
           reads: c.reads,
           sequences: [],
+          // metadata: c.metadata,
+          date: collectionDate,
           tags: {}, // TODO: check for existing 
           matches: matches,
         };
@@ -730,6 +738,7 @@ export default class Vis extends Component {
   }
 
   renderBars(data, isRemoved) {
+    console.log(data);
     return data
       .map((d, i) => {
         return (

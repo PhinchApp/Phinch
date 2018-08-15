@@ -88,11 +88,11 @@ export default class StackedBarRow extends Component {
       ) : '';
     const name = (this.props.labelKey === 'phinchName') ? (
         <div
-          className={`${styles.rowLabel} ${styles.input}`}
+          className={`${styles.rowSection} ${styles.input}`}
           style={{
             width: this.props.metrics.nameWidth,
             fontWeight: 400,
-            color: '#1a1a1a',
+            // color: '#1a1a1a',
           }}
         >
           <input
@@ -105,11 +105,11 @@ export default class StackedBarRow extends Component {
         </div>
       ) : (
         <div
-          className={styles.rowLabel}
+          className={styles.rowSection}
           style={{
             width: this.props.metrics.nameWidth,
             fontWeight: 400,
-            color: '#1a1a1a',
+            // color: '#1a1a1a',
           }}
         >
           {this.props.data[this.props.labelKey]}
@@ -215,10 +215,18 @@ export default class StackedBarRow extends Component {
           className={styles.rowLabel}
           style={{ width: this.props.metrics.barInfoWidth }}
         >
-          <div className={styles.rowLabel} style={{ width: this.props.metrics.idWidth }}>
+          <div className={styles.rowSection} style={{ width: this.props.metrics.idWidth }}>
             {this.props.data.biomid}
           </div>
           {name}
+          <div>
+            <div className={styles.rowSection} style={{ width: this.props.metrics.idWidth }}>
+              {' '}
+            </div>
+            <div className={styles.rowSection}>
+              {this.props.data.date ? this.props.data.date : ''}
+            </div>
+          </div>
           <div>
             {ellipsis}
             {tagMenu}
