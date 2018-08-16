@@ -58,6 +58,14 @@
   margin-right: 0.25rem;
 }
 
+.header {
+  display: inline-block;
+  vertical-align: top;
+  width: calc(100% - 100px);
+  height: 130px;
+  overflow-y: hidden;
+}
+
 .heading {
   cursor: pointer;
   display: inline-block;

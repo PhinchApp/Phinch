@@ -19,7 +19,7 @@ import Loader from './Loader';
 import styles from './Filter.css';
 import tstyle from './tables.css';
 import gstyle from './general.css';
-import logo from 'images/phinch.png';
+import logo from 'images/phinch-logo.png';
 
 import vis from 'images/vis-placeholder-sm.png';
 
@@ -58,7 +58,7 @@ export default class Filter extends Component {
       leftSidebar: 25,
       left: {
         min: 25,
-        max: 125,
+        max: 119,
       },
     };
 
@@ -362,7 +362,6 @@ export default class Filter extends Component {
       this.state.summary.name,
       this.state.names,
       viewMetadata,
-      // this.setResult,
       callback,
       );
   }
@@ -394,6 +393,7 @@ export default class Filter extends Component {
     };
     const onClick = click ? (() => { sortBy(this, key, this.state.data, true, true) }) : (() => {});
     const arrow = click ? (getSortArrow(this, key)) : '';
+    console.log(styles[key]);
     return (
       <div
         className={`${gstyle.heading} ${styles[key]}`}
@@ -624,36 +624,39 @@ export default class Filter extends Component {
               <img src={logo} alt='Phinch' />
             </Link>
           </div>
-          <Summary summary={this.state.summary} datalength={this.state.data.length} />
-          {/*
-          <div className={gstyle.button}>
-            <div className={gstyle.heading} onClick={() => {
-              // show picker to allow custom name?
-              this.setState({ loading: true});
-              // this is more consistent than the setState callback
-              setTimeout(() => {
-                const biom = DataContainer.applyFiltersToData(this.state.data);
-                exportProjectData(this.state.summary.path, this.state.summary.name, biom, this.setResult);
-              }, 1);
-            }}>
-              Export Filtered BIOM File
-            </div>
-          </div>
-          */}
-          <div className={gstyle.button}>
-            <div className={`${gstyle.heading} ${styles.previewButton}`} onClick={() => {
-              this.setState({ loading: true }, () => {
+          <div className={gstyle.header}>
+            <Summary summary={this.state.summary} datalength={this.state.data.length} />
+
+            {/*
+            <div className={gstyle.button}>
+              <div className={gstyle.heading} onClick={() => {
+                // show picker to allow custom name?
+                this.setState({ loading: true});
+                // this is more consistent than the setState callback
                 setTimeout(() => {
-                  DataContainer.applyFiltersToData(this.state.data);
-                  this.save(this.redirectToVis);
+                  const biom = DataContainer.applyFiltersToData(this.state.data);
+                  exportProjectData(this.state.summary.path, this.state.summary.name, biom, this.setResult);
                 }, 1);
-              });
-            }}>
-              Save & View <div className={gstyle.arrow} style={{transform: `rotate(${90}deg)`}}>⌃</div><br />
-              <img src={vis} alt='' style={{width: '112px', height: '24px', margin: '2px 0'}}/>
+              }}>
+                Export Filtered BIOM File
+              </div>
             </div>
+            */}
+            <div className={gstyle.button}>
+              <div className={`${gstyle.heading} ${styles.previewButton}`} onClick={() => {
+                this.setState({ loading: true }, () => {
+                  setTimeout(() => {
+                    DataContainer.applyFiltersToData(this.state.data);
+                    this.save(this.redirectToVis);
+                  }, 1);
+                });
+              }}>
+                Save & View <div className={gstyle.arrow} style={{transform: `rotate(${90}deg)`}}>⌃</div><br />
+                <img src={vis} alt='' style={{width: '112px', height: '24px', margin: '2px 0'}}/>
+              </div>
+            </div>
+            {result}
           </div>
-          {result}
         </div>
         <div style={{backgroundColor: '#ffffff', color: '#808080'}}>
           <SideMenu
@@ -701,6 +704,7 @@ export default class Filter extends Component {
               }}
             />
             <RemovedRows
+              width={750}
               deleted={this.state.deleted}
               deletedColumns={this.deletedColumns}
             />

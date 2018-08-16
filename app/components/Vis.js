@@ -1174,7 +1174,7 @@ export default class Vis extends Component {
             <img src={logo} alt='Phinch' />
           </Link>
         </div>
-        <div className={styles.heading}>
+        <div className={gstyle.header}>
           <Summary summary={this.state.summary} datalength={this.state.data.length} />
           <div className={styles.controls}>
             {/* ROW 1 */}
