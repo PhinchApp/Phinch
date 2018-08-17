@@ -45,6 +45,7 @@ export default class Vis extends Component {
       redirect: null,
       level: 1,
       highlightedDatum: null,
+      selectedAttribute: '',
       showTooltip: false,
       showTags: false,
       mode: 'percent',
@@ -54,6 +55,8 @@ export default class Vis extends Component {
       showLeftSidebar: false,
       result: null,
     };
+
+    this.attributes = DataContainer.getMetadata();
 
     // move to config or own file
     this.menuItems = [
@@ -227,6 +230,9 @@ export default class Vis extends Component {
       this.state.deleted = this.init.deleted ? this.init.deleted : []; 
       this.state.tags = this.init.tags ? this.init.tags : this.state.tags;
       this.state.rowTags = this.init.rowTags ? this.init.rowTags : this.state.rowTags;
+      this.state.selectedAttribute = this.init.selectedAttribute ? (
+          this.init.selectedAttribute
+        ) : this.state.selectedAttribute;
       // 
       // Ugly... 
       this.state.showLeftSidebar = (this.init.showLeftSidebar !== undefined) ? (
@@ -246,6 +252,9 @@ export default class Vis extends Component {
         this.formatTaxonomyData(this.state.initdata, this.state.level),
         false,
         );
+      //
+      this.updateAttributeValues(this.state.selectedAttribute, this.state.data);
+      //
       this.state.preData = this.state.data;
       this.setColorScale(this.state.data);
     }
@@ -281,6 +290,7 @@ export default class Vis extends Component {
       tags: this.state.tags,
       rowTags: this.state.rowTags,
       showLeftSidebar: this.state.showLeftSidebar,
+      selectedAttribute: this.state.selectedAttribute,
     };
     setProjectFilters(
       this.state.summary.path,
@@ -416,6 +426,7 @@ export default class Vis extends Component {
     const showRightSidebar = Object.keys(filters).length > 0 ? true : false;
     this.updateChartWidth(showRightSidebar);
     const data = this.filterData(filters, this.state.tags, this.state.preData, this.state.deleted);
+    this.updateAttributeValues(this.state.selectedAttribute, data);
     this.setState({ data, filters, showRightSidebar });
   }
 
@@ -471,6 +482,7 @@ export default class Vis extends Component {
     const showRightSidebar = Object.keys(filters).length > 0 ? true : false;
     this.updateChartWidth(showRightSidebar);
     const data = this.filterData(filters, this.state.tags, preData, deleted);
+    this.updateAttributeValues(this.state.selectedAttribute, data);
     this.setState({level, data, preData, deleted, filters, showRightSidebar});
   }
 
@@ -633,6 +645,7 @@ export default class Vis extends Component {
 
   applyFilters(filters) {
     const data = this.filterData(filters, this.state.tags, this.state.preData, this.state.deleted);
+    this.updateAttributeValues(this.state.selectedAttribute, data);
     this.setState({filters, data});
   }
 
@@ -701,6 +714,7 @@ export default class Vis extends Component {
     ).filter(d => {
       return d.sequences.map(d => d.name).includes(suggestion.name);
     });
+    this.updateAttributeValues(this.state.selectedAttribute, data);
     const highlightedDatum = {
       datum: suggestion,
       sample: null,
@@ -730,6 +744,7 @@ export default class Vis extends Component {
       this.state.preData,
       this.state.deleted,
       );
+    this.updateAttributeValues(this.state.selectedAttribute, data);
     const highlightedDatum = null;
     const showTooltip = false;
     this.setState({ data, highlightedDatum, showTooltip });
@@ -782,7 +797,56 @@ export default class Vis extends Component {
       this.state.preData,
       this.state.deleted,
       );
+    this.updateAttributeValues(this.state.selectedAttribute, data);
     this.setState({ tags, data });
+  }
+
+  renderAttributeBars() {
+    const attribute = this.attributes[this.state.selectedAttribute]
+    this.scales.x
+      .domain([0, Math.max(...attribute.values.map(d  => d.reads))])
+      .range([0, this.metrics.chartWidth])
+      .clamp();
+    const rows = attribute.values
+      .sort((a, b) => {
+        if (this.sort.reverse) {
+          if (a.value < b.value) return -1;
+          if (a.value > b.value) return 1;
+          return 0;
+        } else {
+          if (b.value < a.value) return -1;
+          if (b.value > a.value) return 1;
+          return 0;
+        }
+      })
+      .map((d, i) => {
+        return (
+          <StackedBarRow
+            key={`${this.state.selectedAttribute}-${d.value}`}
+            data={d}
+            index={i}
+            labelKey={'name'}
+            metrics={this.metrics}
+            scales={this.scales}
+            filters={this.state.filters}
+            highlightedDatum={this.state.highlightedDatum}
+            hoverDatum={this._hoverDatum}
+            clickDatum={this._clickDatum}
+            isPercent={(this.state.mode === 'percent')}
+            isRemoved={null}
+            tags={[]}
+          />
+        );
+      });
+    const unit = attribute.unit ? `(${attribute.unit})` : '';
+    return (
+      <div>
+        <div className={styles.attrLabel}>
+          {attribute.key} {unit}
+        </div>
+        {rows}
+      </div>
+    );
   }
 
   renderBars(data, isRemoved) {
@@ -812,6 +876,57 @@ export default class Vis extends Component {
       });
   }
 
+  updateAttributeValues(attribute, data) {
+    if (attribute !== '') {
+      this.attributes[attribute].values.map(a => {
+        a.name = a.value.toLocaleString();
+        a.sampleObjects = a.samples.map(s => {
+          const [sample] = data.filter(d => d.sampleName === s);
+          return sample;
+        }).filter(s => s !== undefined);
+        a.reads = a.sampleObjects.map(s => s.reads).reduce((a, v) => a + v, 0);
+        a.sequences = nest()
+          .key(a => a.name)
+          .entries(a.sampleObjects
+            .map(s => s.sequences)
+            .reduce((a, v) => a.concat(v), [])
+          ).map(s => {
+            return {
+              name: s.key,
+              reads: s.values.map(v => v.reads).reduce((a, v) => a + v, 0),
+              taxonomy: s.values[0].taxonomy,
+            };
+          });
+        return a;
+      });
+    }
+  }
+
+  renderAttributesSelect() {
+    const options = [<option key={'none'} value={''}>{'None'}</option>]
+      .concat(Object.keys(this.attributes).map(a => {
+        return <option key={a} value={a}>{a}</option>;
+      }));
+    const onSelectChange = (event) => {
+      const selectedAttribute = event.target.value;
+      this.updateAttributeValues(selectedAttribute, this.state.data);
+      this.setState({ selectedAttribute });
+    };
+    return (
+      <div className={styles.inlineControl} style={{marginLeft: '4px'}}>
+        <label htmlFor='attributesSelect'>Attributes</label>
+        <select
+          id='attributesSelect'
+          onChange={onSelectChange}
+          className={styles.inlineControl}
+          value={this.state.selectedAttribute}
+        >
+          {options}
+        </select>
+      </div>
+    );
+  }
+
   renderShow() {
     const showOptions = [
       {
@@ -839,6 +954,7 @@ export default class Vis extends Component {
           onChange={onSelectChange}
           className={styles.inlineControl}
           value={this.state.labelKey}
+          disabled={this.state.selectedAttribute !== ''}
         >
           {options}
         </select>
@@ -909,6 +1025,7 @@ export default class Vis extends Component {
           onChange={onSelectChange}
           className={styles.inlineControl}
           value={this.sort.key}
+          disabled={this.state.selectedAttribute !== ''}
         >
           {options}
         </select>
@@ -1012,6 +1129,88 @@ export default class Vis extends Component {
     });
   }
 
+  renderTagFilter() {
+    const tagFilter = this.state.showTags ? (
+        <div key='tagFilter' className={styles.tagFilter}>
+          <div
+            className={gstyle.close}
+            style={{
+              margin: '4px 0',
+            }}
+            onClick={() => { this._toggleTags() }}
+          >x</div>
+          {
+            this.state.tags.map(t => {
+              const hasColor = t.color ? true : false;
+              return (
+                <div
+                  key={`tf-${t.id}`}
+                  style={{
+                    padding: '2px 0',
+                  }}
+                >
+                  <label className={styles.checkbox}>
+                    <input
+                      type='checkbox'
+                      checked={t.selected}
+                      onChange={(e) => this.filterByTag(e, t)}
+                    />
+                    <span className={styles.checkmark}></span>
+                  </label>
+                  {
+                    hasColor ? (
+                      <div className={gstyle.circle} style={{
+                        backgroundColor: t.color,
+                        borderColor: '#333333',
+                        marginLeft: '4px',
+                        opacity: t.selected ? 1 : 0.5,
+                      }} />
+                    ) : ''
+                  }
+                  <input
+                    className={`${gstyle.input} ${styles.tagName} ${t.selected ? styles.selected : ''}`}
+                    type="text"
+                    value={t.name}
+                    onChange={(e) => this.updateTagName(e, t)}
+                    disabled={!hasColor}
+                  />
+                </div>
+              );
+            })
+          }
+        </div>
+      ) : '';
+    const showTags = this.state.showTags ? styles.selected : '';
+    return (
+      <div
+        className={styles.inlineControl}
+      >
+        <div
+          className={styles.inlineControl}
+          onClick={this._toggleTags}
+        >
+          <div key='tags' className={`${styles.selector} ${styles.button} ${showTags}`}>Tags</div>
+          {
+            this.state.tags.map(t => {
+              return t.color ? (
+                <div
+                  key={`c-${t.id}`}
+                  className={gstyle.circle}
+                  style={{
+                    background: t.color,
+                    opacity: t.selected ? 1 : 0.5,
+                    verticalAlign: 'middle',
+                  }}
+                />
+              ) : '';
+            })
+          }
+        </div>
+        {tagFilter}
+      </div>
+    );
+  }
+
   render() {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
 
@@ -1064,89 +1263,6 @@ export default class Vis extends Component {
         s.rank = (i + 1);
         return s;
       });
-    
-    //
-    // Breakout -> function renderTagFilter();
-    const tagFilter = this.state.showTags ? (
-        <div key='tagFilter' className={styles.tagFilter}>
-          <div
-            className={gstyle.close}
-            style={{
-              margin: '4px 0',
-            }}
-            onClick={() => { this._toggleTags() }}
-          >x</div>
-          {
-            this.state.tags.map(t => {
-              const hasColor = t.color ? true : false;
-              return (
-                <div
-                  key={`tf-${t.id}`}
-                  style={{
-                    padding: '2px 0',
-                  }}
-                >
-                  <label className={styles.checkbox}>
-                    <input
-                      type='checkbox'
-                      checked={t.selected}
-                      onChange={(e) => this.filterByTag(e, t)}
-                    />
-                    <span className={styles.checkmark}></span>
-                  </label>
-                  {
-                    hasColor ? (
-                      <div className={gstyle.circle} style={{
-                        backgroundColor: t.color,
-                        borderColor: '#333333',
-                        marginLeft: '4px',
-                        opacity: t.selected ? 1 : 0.5,
-                      }} />
-                    ) : ''
-                  }
-                  <input
-                    className={`${gstyle.input} ${styles.tagName} ${t.selected ? styles.selected : ''}`}
-                    type="text"
-                    value={t.name}
-                    onChange={(e) => this.updateTagName(e, t)}
-                    disabled={!hasColor}
-                  />
-                </div>
-              );
-            })
-          }
-        </div>
-      ) : '';
-    const showTags = this.state.showTags ? styles.selected : '';
-    const tags = (
-      <div
-        className={styles.inlineControl}
-      >
-        <div
-          className={styles.inlineControl}
-          onClick={this._toggleTags}
-        >
-          <div key='tags' className={`${styles.selector} ${styles.button} ${showTags}`}>Tags</div>
-          {
-            this.state.tags.map(t => {
-              return t.color ? (
-                <div
-                  key={`c-${t.id}`}
-                  className={gstyle.circle}
-                  style={{
-                    background: t.color,
-                    opacity: t.selected ? 1 : 0.5,
-                    verticalAlign: 'middle',
-                  }}
-                />
-              ) : '';
-            })
-          }
-        </div>
-        {tagFilter}
-      </div>
-    );
-    //
 
     const result = this.state.result ? (
       <div 
@@ -1192,7 +1308,8 @@ export default class Vis extends Component {
             {/* ROW 2 */}
             <div className={styles.controlRow}>
               {levels}
-              {tags}
+              {this.renderAttributesSelect()}
+              {this.renderTagFilter()}
             </div>
           </div>
         </div>
@@ -1245,7 +1362,13 @@ export default class Vis extends Component {
               height: this.metrics.chartHeight,
             }}
           >
-            {this.renderBars(this.state.data, false)}
+            {
+              this.state.selectedAttribute === '' ? (
+                this.renderBars(this.state.data, false)
+              ) : (
+                this.renderAttributeBars()
+              )
+            }
             {tooltip}
           </div>
         </div>

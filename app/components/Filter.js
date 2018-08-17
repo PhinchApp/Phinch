@@ -76,7 +76,6 @@ export default class Filter extends Component {
         name: 'Back',
         action: () => { 
           this.save(() => {
-            console.log('should redir now...');
             this.setState({ redirect: '/Home' });
           });
         },
@@ -109,23 +108,30 @@ export default class Filter extends Component {
     */
     // TODO: Move this to data container or similar
     if (this.state.data.length) {
-      const metadata = this.state.data[0].metadata;
-      this.metadataKeys = Object.keys(metadata).filter(k => k !== 'phinchID');
+      this.metadataKeys = [...new Set(
+        this.state.data
+          .map(d => Object.keys(d.metadata))
+          .reduce((a, v) => a.concat(v), [])
+        )].filter(k => k !== 'phinchID');
       this.metadataKeys.forEach((k) => {
         const units = [];
         const values = nest()
-          .key(d => d)
-          .entries(this.state.data.slice().map((d) => {
+          .key(d => d.value)
+          .entries(this.state.data.slice().map((d, i) => {
             const [value,unit] = d.metadata[k].split(' ');
             if (unit !== undefined && !units.includes(unit)) {
               units.push(unit);
             }
-            return value;
+            return {
+              sampleName: d.sampleName,
+              value,
+            }
           }).filter(d => d !== 'no_data')).map((d, i) => {
             return {
               index: i,
               value: d.key,
               count: d.values.length,
+              samples: d.values.map(v => v.sampleName),
             };
           });
         const unit = units.length ? units[0] : '';
@@ -203,6 +209,9 @@ export default class Filter extends Component {
       if (this.init.sort) {
         this.sort = this.init.sort;
       }
+      //
+      DataContainer.setMetadata(this.state.filters);
+      //
     }
 
     this.columns = [
@@ -393,7 +402,6 @@ export default class Filter extends Component {
     };
     const onClick = click ? (() => { sortBy(this, key, this.state.data, true, true) }) : (() => {});
     const arrow = click ? (getSortArrow(this, key)) : '';
-    console.log(styles[key]);
     return (
       <div
         className={`${gstyle.heading} ${styles[key]}`}

@@ -123,7 +123,7 @@ export default class StackedBarRow extends Component {
           }}
         >
           {
-            this.state.hovered ? (
+            (this.state.hovered && (this.props.isRemoved !== null)) ? (
               <div
                 className={styles.button}
                 style={{
@@ -187,7 +187,7 @@ export default class StackedBarRow extends Component {
         }
       </div>
       );
-    const action = this.state.hovered ? (
+    const action = (this.state.hovered && (this.props.isRemoved !== null)) ? (
         <div
           className={styles.button}
           style={{

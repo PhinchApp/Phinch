@@ -55,7 +55,7 @@ export default class StackedBar extends Component {
     ctx.clearRect(0, 0, this.props.width, this.props.height);
     if (this.props.isPercent) {
       this.props.xscale
-        .domain([0, this.props.data.map(d => d.reads).reduce((a, v) => a + v)])
+        .domain([0, this.props.data.map(d => d.reads).reduce((a, v) => a + v, 0)])
         .range([0, this.props.width])
         .clamp();
     }

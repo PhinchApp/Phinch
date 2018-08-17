@@ -11,6 +11,7 @@ class DataContainer {
     };
     this.data = {};
     this.filteredData = {};
+    this.metadata = {};
     // this.filters = {};
     this.samples = [];
     this.observations = [];
@@ -125,6 +126,13 @@ class DataContainer {
   }
   getFilteredData() {
     return this.filteredData;
+  }
+
+  setMetadata(metadata) {
+    this.metadata = metadata;
+  }
+  getMetadata() {
+    return this.metadata;
   }
 }
 

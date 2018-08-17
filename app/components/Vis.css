@@ -130,6 +130,7 @@
   vertical-align: middle;
   margin: 0 0.25rem;
   padding: 0;
+  cursor: pointer;
 }
 .inlineControl input[type='radio']:after {
   width: 12px;
@@ -166,6 +167,9 @@
   height: 24px;
   padding: 0.25rem;
   margin-right: 0.5rem;
+}
+.inlineControl select[disabled] {
+  opacity: 0.5;
 }
 
 .dash {
@@ -235,6 +239,7 @@
   display: block;
 }
 .checkbox .checkmark:after {
+  cursor: pointer;
   left: 4px;
   top: 1px;
   width: 4px;
@@ -274,6 +279,23 @@
   z-index: 5;
 }
 */
+
+/*.titleCase {
+  text-transform: capitalize !important;
+}*/
+
+.attrLabel {
+  position: absolute;
+  margin-top: -24px;
+  padding: 0 0.5rem;
+  width: 144px;
+  /*text-align: right;*/
+  font-family: 'IBM Plex Sans Condensed';
+  font-weight: 400;
+  font-size: 15px;
+  color: #2b2b2b;
+}
+
 .seqRow {
   display: inline-block;
   vertical-align: middle;
