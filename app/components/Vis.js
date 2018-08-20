@@ -912,13 +912,16 @@ export default class Vis extends Component {
       this.updateAttributeValues(selectedAttribute, this.state.data);
       this.setState({ selectedAttribute });
     };
+    const active = (this.state.selectedAttribute !== '') ? styles.selected : '';
     return (
-      <div className={styles.inlineControl} style={{marginLeft: '4px'}}>
+      <div className={styles.inlineControl}>
         <label htmlFor='attributesSelect'>Attributes</label>
         <select
           id='attributesSelect'
           onChange={onSelectChange}
-          className={styles.inlineControl}
+          className={`${active}`}
+          style={{marginRight:0}}
+          // className={`${styles.inlineControl} ${active}`}
           value={this.state.selectedAttribute}
         >
           {options}
@@ -1018,7 +1021,7 @@ export default class Vis extends Component {
       );
     });
     return (
-      <div className={styles.inlineControl}>
+      <div className={styles.inlineControl} style={{marginRight: 0}}>
         <label htmlFor='sortSelect'>Sort by:</label>
         <select
           id='sortSelect'
@@ -1045,7 +1048,7 @@ export default class Vis extends Component {
         name: 'Absolute',
       },
     ];
-    return buttons.map(b => {
+    const toggle = buttons.map(b => {
       const onRadioChange = (event) => {
         this.sort.type = event.target.id;
         this.setState({mode: event.target.id});
@@ -1064,6 +1067,11 @@ export default class Vis extends Component {
         </div>
       );
     });
+    return (
+      <div className={styles.inlineControl}>
+        {toggle}
+      </div>
+    );
   }
 
   renderTopSequences(sequences) {
@@ -1281,6 +1289,8 @@ export default class Vis extends Component {
       </div>
     ) : '';
 
+    const spacer = <div className={styles.spacer} />;
+
     return (
       <div className={gstyle.container}>
         {redirect}
@@ -1303,12 +1313,15 @@ export default class Vis extends Component {
               />
               {this.renderShow()}
               {this.renderSort()}
+              {spacer}
               {this.renderToggle()}
             </div>
             {/* ROW 2 */}
             <div className={styles.controlRow}>
               {levels}
+              {spacer}
               {this.renderAttributesSelect()}
+              {spacer}
               {this.renderTagFilter()}
             </div>
           </div>

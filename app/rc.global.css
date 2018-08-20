@@ -1,6 +1,5 @@
 .rc-slider {
   position: relative;
-  /*margin-top: -25px;*/
   margin-top: -8px;
   margin-bottom: 16px;
   height: 14px;
@@ -28,12 +27,6 @@
   left: 0;
   height: 4px;
   background: #2b2b2b;
-  /*margin-top: -60px;*/
-  /*height: 60px;*/
-  /*opacity: 0.5;*/
-  /*border-radius: 6px;*/
-  /*background-color: #abe2fb;*/
-  /*background-color: #abe2fb;*/
 }
 .rc-slider-handle {
   position: absolute;
@@ -45,7 +38,6 @@
   cursor: -webkit-grab;
   cursor: grab;
   border-radius: 50%;
-  /*border: solid 2px #96dbfa;*/
   border: solid 2px #2b2b2b;
   background-color: #fff;
   -ms-touch-action: pan-x;

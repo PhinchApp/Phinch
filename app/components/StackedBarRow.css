@@ -46,6 +46,7 @@
   vertical-align: middle;
   border-radius: 8px;
   border: 2px solid #ffffff;
+  user-select: auto;
 }
 .row:hover {
   cursor: pointer;

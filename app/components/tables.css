@@ -12,6 +12,7 @@
   outline: none;
   border: none;
   border-style: none;
+  user-select: auto;
   border-spacing: 0 !important;
   border-collapse: collapse !important;
 }
@@ -30,6 +31,7 @@
   font-weight: 200;
   vertical-align: top;
   line-height: 1rem;
+  user-select: none;
   cursor: pointer;
 }
 
@@ -38,19 +40,6 @@
   width: 100%;
   line-height: 1rem;
   font-size: 0.75rem;
-  box-sizing: border-box;
-  display: inline-block;
-  vertical-align: middle;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.table .visCell {
-  padding: 0.25rem 0.5rem;
-  width: 100%;
-  line-height: 1rem;
-  font-size: 12px;
   box-sizing: border-box;
   display: inline-block;
   vertical-align: middle;

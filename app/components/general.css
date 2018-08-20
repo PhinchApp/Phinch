@@ -2,12 +2,12 @@
 
 .container {
   min-width: 960px;
-  /*overflow: scroll;*/
   overflow: hidden;
   height: 100vh;
   padding: 0;
   margin: 0;
-  /*padding: 1rem;*/
+  user-select: none;
+  /*overflow: scroll;*/
 }
 
 .panel {

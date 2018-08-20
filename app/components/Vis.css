@@ -1,22 +1,6 @@
-/*.panel {
-  vertical-align: top;
-  display: inline-block;
-  overflow-y: scroll;
-}*/
-
-
-
 .leftGutter {
   padding-left: 0.5rem;
 }
-
-/*.heading {
-  display: inline-block;
-  vertical-align: top;
-  width: calc(100% - 100px);
-  height: 130px;
-  overflow-y: hidden;
-}*/
 
 .controls {
   display: inline-block;
@@ -113,8 +97,8 @@
   border: 1px solid #4d4d4d;
   border-radius: 4px;
   margin: 0 8px;
+  margin-left: 0;
   font-weight: 400;
-  /*color: #;*/
 }
 
 .inlineControl {
@@ -159,17 +143,23 @@
   background: #1fbbd8;
 }
 .inlineControl select {
+  font-family: 'IBM Plex Sans Condensed';
+  font-weight: 300;
+  font-size: 14px;
   background: #4d4d4d;
   color: #ffffff;
   border-radius: 4px;
   border: none;
-  font-weight: 200;
   height: 24px;
   padding: 0.25rem;
   margin-right: 0.5rem;
 }
 .inlineControl select[disabled] {
   opacity: 0.5;
+}
+
+.inlineControl select.selected {
+  background: #1fbbd8;
 }
 
 .dash {
@@ -260,40 +250,24 @@
   color: white;
 }
 
-/*.modalRow {
-  margin-left: 0.25rem;
-  height: 56px;
-}*/
-
-/*.modaltop {
-  position: absolute;
-  background: white;
-  left: 1.5rem;
-  overflow: hidden;
-  padding: 0;
-  margin: 0;
-  margin-top: 0.5rem;
-  height: 360px;
-  background: white;
-  border: 1px solid #2b2b2b;
-  z-index: 5;
-}
-*/
-
-/*.titleCase {
-  text-transform: capitalize !important;
-}*/
-
 .attrLabel {
   position: absolute;
   margin-top: -24px;
   padding: 0 0.5rem;
   width: 144px;
-  /*text-align: right;*/
   font-family: 'IBM Plex Sans Condensed';
   font-weight: 400;
   font-size: 15px;
   color: #2b2b2b;
+}
+
+.spacer {
+  display: inline-block;
+  vertical-align: top;
+  width: 4px;
+  height: 20px;
+  border-left: 2px solid #4c4c4c;
+  margin: 2px 8px;
 }
 
 .seqRow {
