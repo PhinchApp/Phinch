@@ -468,7 +468,9 @@ export default class Vis extends Component {
           );
         })
       )
-    )];
+    )].sort((a, b) => { // sort to make adjacent less likely to be equal
+      return this.readsBySequence[b] - this.readsBySequence[a];
+    });
     this.scales.c.domain(uniqSequences);
   }
 
@@ -921,7 +923,6 @@ export default class Vis extends Component {
           onChange={onSelectChange}
           className={`${active}`}
           style={{marginRight:0}}
-          // className={`${styles.inlineControl} ${active}`}
           value={this.state.selectedAttribute}
         >
           {options}
