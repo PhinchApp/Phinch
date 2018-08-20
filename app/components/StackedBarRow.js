@@ -213,7 +213,10 @@ export default class StackedBarRow extends Component {
       >
         <div
           className={styles.rowLabel}
-          style={{ width: this.props.metrics.barInfoWidth }}
+          style={{
+            width: this.props.metrics.barInfoWidth,
+            height: this.props.metrics.barHeight,
+          }}
         >
           <div className={styles.rowSection} style={{ width: this.props.metrics.idWidth }}>
             {this.props.data.biomid}

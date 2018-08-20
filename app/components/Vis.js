@@ -141,7 +141,6 @@ export default class Vis extends Component {
       rightSidebar: 216,
     };
 
-    // this.metrics.nonbarWidth = (this.metrics.padding * 3) + (this.metrics.idWidth + this.metrics.hideWidth + this.metrics.nameWidth);
     this.metrics.nonbarWidth = (this.metrics.padding * 3) + (this.metrics.barInfoWidth);
     this.metrics.chartWidth = this.state.width - (this.metrics.leftSidebar + this.metrics.nonbarWidth);
     this.metrics.chartHeight = this.state.height - this.metrics.heightOffset;
@@ -389,7 +388,6 @@ export default class Vis extends Component {
           index: i,
           value: s.reads,
           count: (s.reads === 0) ? 1 : s.reads,
-          // percent: Math.floor((s.reads / totalReads) * 100),
           percent: s.reads / totalReads,
         };
       });
@@ -804,18 +802,27 @@ export default class Vis extends Component {
   }
 
   renderAttributeBars() {
-    const attribute = this.attributes[this.state.selectedAttribute]
+    const attribute = this.attributes[this.state.selectedAttribute];
     this.scales.x
       .domain([0, Math.max(...attribute.values.map(d  => d.reads))])
       .range([0, this.metrics.chartWidth])
       .clamp();
+    //
+    const attrMetrics = _cloneDeep(this.metrics);
+    attrMetrics.barHeight /= 2;
+    attrMetrics.barContainerHeight = attrMetrics.barHeight + 12;
+    // 
     const rows = attribute.values
       .sort((a, b) => {
         if (this.sort.reverse) {
+          if (a.value === 'no_data') return -Infinity;
+          if (b.value === 'no_data') return +Infinity;
           if (a.value < b.value) return -1;
           if (a.value > b.value) return 1;
           return 0;
         } else {
+          if (b.value === 'no_data') return -Infinity;
+          if (a.value === 'no_data') return +Infinity;
           if (b.value < a.value) return -1;
           if (b.value > a.value) return 1;
           return 0;
@@ -828,7 +835,7 @@ export default class Vis extends Component {
             data={d}
             index={i}
             labelKey={'name'}
-            metrics={this.metrics}
+            metrics={attrMetrics}
             scales={this.scales}
             filters={this.state.filters}
             highlightedDatum={this.state.highlightedDatum}
@@ -881,7 +888,7 @@ export default class Vis extends Component {
   updateAttributeValues(attribute, data) {
     if (attribute !== '') {
       this.attributes[attribute].values.map(a => {
-        a.name = a.value.toLocaleString();
+        a.name = (attribute === 'Year') ? a.value.toString() : a.value.toLocaleString();
         a.sampleObjects = a.samples.map(s => {
           const [sample] = data.filter(d => d.sampleName === s);
           return sample;
