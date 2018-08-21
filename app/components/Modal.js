@@ -58,7 +58,12 @@ export default class Modal extends Component {
         </div>
       ) : '';
     return (
-      <div style={{display: 'inline-block'}}>
+      <div
+        style={{
+          display: 'inline-block',
+          verticalAlign: 'top',
+        }}
+      >
         {modal}
         {button}
         {badge}

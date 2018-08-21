@@ -19,7 +19,10 @@ import Loader from './Loader';
 import styles from './Filter.css';
 import tstyle from './tables.css';
 import gstyle from './general.css';
+
 import logo from 'images/phinch-logo.png';
+import back from 'images/back.png';
+import save from 'images/save.png';
 
 import vis from 'images/vis-placeholder-sm.png';
 
@@ -69,7 +72,7 @@ export default class Filter extends Component {
         action: () => { 
           this.save(this.setResult);
         },
-        icon: (<div className={gstyle.arrow} style={{transform: `rotate(${-180}deg)`}}>⌃</div>),
+        icon: <img src={save} />,
       },
       {
         id: 'back',
@@ -79,7 +82,7 @@ export default class Filter extends Component {
             this.setState({ redirect: '/Home' });
           });
         },
-        icon: (<div className={gstyle.arrow} style={{transform: `rotate(${-90}deg)`}}>⌃</div>),
+        icon: <img src={back} />,
       },
     ];
 

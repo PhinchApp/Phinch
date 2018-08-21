@@ -12,7 +12,7 @@
 }
 
 .toggle.shown {
-  background-color: #1fbbd8;
+  background-color: #1fbbd8 !important;
 }
 
 .badge {

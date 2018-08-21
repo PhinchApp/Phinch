@@ -1,9 +1,7 @@
 .container {
   display: inline-block;
-  /*width: 15vw;*/
-  width: 144px;
+  width: 142px;
   height: 24px;
-  /*margin-right: 0.5rem;*/
   color: #808080;
 }
 
@@ -15,6 +13,7 @@
   border: none;
   text-align: right;
   padding: 0.25rem;
+  width: 130px;
   height: 24px;
   line-height: 24px;
 }

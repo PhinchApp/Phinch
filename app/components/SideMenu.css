@@ -63,11 +63,9 @@
 
 .menuBox {
   margin: auto;
-  /*margin-bottom: 0.5rem;*/
   width: 30px;
   height: 30px;
   background: #1fbbd8;
-  padding-left: 6px;
   font-size: 24px;
   text-align: center;
   border-radius: 8px;

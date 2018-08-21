@@ -24,7 +24,10 @@ import Modal from './Modal';
 import styles from './Vis.css';
 import tstyle from './tables.css';
 import gstyle from './general.css';
+
 import logo from 'images/phinch-logo.png';
+import back from 'images/back.png';
+import save from 'images/save.png';
 
 export default class Vis extends Component {
   constructor(props) {
@@ -66,7 +69,7 @@ export default class Vis extends Component {
         action: () => { 
           this.save(this.setResult);
         },
-        icon: (<div className={gstyle.arrow} style={{transform: `rotate(${-180}deg)`}}>⌃</div>),
+        icon: <img src={save} />,
       },
       {
         id: 'filter',
@@ -74,7 +77,7 @@ export default class Vis extends Component {
         action: () => { 
           this.save(() => (this.setState({ redirect: '/Filter' })));
         },
-        icon: (<div className={gstyle.arrow} style={{transform: `rotate(${-90}deg)`}}>⌃</div>),
+        icon: <img src={back} />,
       },
     ];
 
@@ -446,7 +449,7 @@ export default class Vis extends Component {
   }
 
   setColorScale(data) {
-    const uniqSequences = [...new Set(
+    const uniqSequences = _sortBy([...new Set(
       [].concat(
         ...data.map(d => {
           return [].concat(
@@ -466,9 +469,10 @@ export default class Vis extends Component {
           );
         })
       )
-    )].sort((a, b) => { // sort to make adjacent less likely to be equal
-      return this.readsBySequence[b] - this.readsBySequence[a];
-    });
+    )]);
+    // .sort((a, b) => { // sort to make adjacent less likely to be equal
+    //   return this.readsBySequence[b] - this.readsBySequence[a];
+    // });
     this.scales.c.domain(uniqSequences);
   }
 
@@ -1082,6 +1086,60 @@ export default class Vis extends Component {
     );
   }
 
+  renderLevelSelector(levels) {
+    const modalLevel = (this.state.width - 570) < ((755 / 12) * this.levels.length);
+
+    const levelButtons = levels.map((l, i) => {
+        const selected = (l.order <= this.state.level) ? styles.selected : '';
+        return (
+          <div
+            key={l.name}
+            style={{
+              display: 'inline-block',
+              marginBottom: '4px',
+            }}
+          >
+            {(i === 0) ? '' : (<div className={`${selected} ${styles.dash}`}>—</div>)}
+            <div
+              className={`${selected} ${styles.selector}`}
+              onClick={() => this.setLevel(l.order)}
+            >
+              {l.name}
+            </div>
+          </div>
+        );
+      });
+
+    const [currentLevel] = _cloneDeep(this.levels).filter(l => l.order === this.state.level);
+    const levelSelector = modalLevel ? (
+        <Modal
+          title={`Level: ${currentLevel.name}`}
+          buttonPosition={{
+            position: 'relative',
+            height: '24px',
+            borderRadius: '4px',
+            backgroundColor: '#4d4d4d',
+          }}
+          modalPosition={{
+            position: 'absolute',
+            top: 136,
+            left: this.metrics.leftSidebar,
+            width: this.metrics.chartWidth + this.metrics.nonbarWidth - 4,
+            height: '90px',
+            color: 'white',
+          }}
+          data={levelButtons}
+          badge={false}
+        />
+      ) : (
+        <div className={styles.inlineControl}>
+          {levelButtons}
+        </div>
+      );
+
+    return levelSelector;
+  }
+
   renderTopSequences(sequences) {
     const metrics = {
       width: (this.metrics.chartWidth + this.metrics.nonbarWidth) - (4 + 30 + 20),
@@ -1230,55 +1288,6 @@ export default class Vis extends Component {
   render() {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
 
-    // const levels = (
-    const levelButtons = (
-      // <div className={styles.inlineControl}>
-        // {
-          this.levels.map((l, i) => {
-            const selected = (l.order <= this.state.level) ? styles.selected : '';
-            return (
-              <div key={l.name} style={{display: 'inline-block'}}>
-                {(i === 0) ? '' : (<div className={`${selected} ${styles.dash}`}>—</div>)}
-                <div
-                  className={`${selected} ${styles.selector}`}
-                  onClick={() => this.setLevel(l.order)}
-                >
-                  {l.name}
-                </div>
-              </div>
-            );
-          })
-        // }
-      // </div>
-    );
-
-    const [currentLevel] = _cloneDeep(this.levels).filter(l => l.order === this.state.level);
-    const levels = (this.state.width - 570) < ((755 / 12) * this.levels.length) ? (
-        <Modal
-          title={`Level: ${currentLevel.name}`}
-          buttonPosition={{
-            position: 'relative',
-            height: '24px',
-            // backgroundColor: '#4d4d4d',
-            verticalAlign: 'top',
-          }}
-          modalPosition={{
-            position: 'absolute',
-            top: 136,
-            left: this.metrics.leftSidebar,
-            width: this.metrics.chartWidth + this.metrics.nonbarWidth - 4,
-            height: '90px',
-            color: 'white',
-          }}
-          data={levelButtons}
-          badge={false}
-        />
-      ) : (
-        <div className={styles.inlineControl}>
-          {levelButtons}
-        </div>
-      );
-
     this.scales.x
       .domain([0, Math.max(...this.state.data.map(d => d.reads))])
       .range([0, this.metrics.chartWidth])
@@ -1354,7 +1363,7 @@ export default class Vis extends Component {
             </div>
             {/* ROW 2 */}
             <div className={styles.controlRow}>
-              {levels}
+              {this.renderLevelSelector(this.levels)}
               {spacer}
               {this.renderAttributesSelect()}
               {spacer}
