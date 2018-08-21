@@ -1230,9 +1230,10 @@ export default class Vis extends Component {
   render() {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
 
-    const levels = (
-      <div className={styles.inlineControl}>
-        {
+    // const levels = (
+    const levelButtons = (
+      // <div className={styles.inlineControl}>
+        // {
           this.levels.map((l, i) => {
             const selected = (l.order <= this.state.level) ? styles.selected : '';
             return (
@@ -1247,9 +1248,36 @@ export default class Vis extends Component {
               </div>
             );
           })
-        }
-      </div>
+        // }
+      // </div>
     );
+
+    const [currentLevel] = _cloneDeep(this.levels).filter(l => l.order === this.state.level);
+    const levels = (this.state.width - 570) < ((755 / 12) * this.levels.length) ? (
+        <Modal
+          title={`Level: ${currentLevel.name}`}
+          buttonPosition={{
+            position: 'relative',
+            height: '24px',
+            // backgroundColor: '#4d4d4d',
+            verticalAlign: 'top',
+          }}
+          modalPosition={{
+            position: 'absolute',
+            top: 136,
+            left: this.metrics.leftSidebar,
+            width: this.metrics.chartWidth + this.metrics.nonbarWidth - 4,
+            height: '90px',
+            color: 'white',
+          }}
+          data={levelButtons}
+          badge={false}
+        />
+      ) : (
+        <div className={styles.inlineControl}>
+          {levelButtons}
+        </div>
+      );
 
     this.scales.x
       .domain([0, Math.max(...this.state.data.map(d => d.reads))])
