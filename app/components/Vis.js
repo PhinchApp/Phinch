@@ -47,6 +47,7 @@ export default class Vis extends Component {
       height: window.innerHeight,
       redirect: null,
       level: 1,
+      hoveredTag: null,
       highlightedDatum: null,
       selectedAttribute: '',
       showTooltip: false,
@@ -353,6 +354,22 @@ export default class Vis extends Component {
   _toggleTags = () => {
     const showTags = !this.state.showTags;
     this.setState({ showTags });
+  }
+
+  _hoverTag = (e) => {
+    const tagId = e.target.id;
+    if (tagId !== 'none' && tagId !== this.state.hoveredTag) {
+      this.tagHandle = setTimeout(() => {
+        const hoveredTag = tagId;
+        this.setState({ hoveredTag });
+      }, this.tooltip.duration);
+    }
+  }
+
+  _unhoverTag = () => {
+    clearTimeout(this.tagHandle);
+    const hoveredTag = null;
+    this.setState({ hoveredTag });
   }
 
   _hoverDatum = (datum, sample, position) => {
@@ -1247,11 +1264,19 @@ export default class Vis extends Component {
                     className={`${gstyle.input} ${styles.tagName} ${t.selected ? styles.selected : ''}`}
                     type="text"
                     value={t.name}
+                    id={t.id}
                     ref={i => this._inputs[t.id] = i}
                     onChange={(e) => this.updateTagName(e, t)}
                     onKeyDown={(e) => (e.key === 'Enter') ? this._inputs[t.id].blur() : null}
+                    onMouseOver={this._hoverTag}
+                    onMouseOut={this._unhoverTag}
                     disabled={!hasColor}
                   />
+                  {
+                    (this.state.hoveredTag === t.id) ? (
+                      <div className={styles.editTag}>edit</div>
+                    ) : ''
+                  }
                 </div>
               );
             })
