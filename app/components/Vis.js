@@ -59,6 +59,8 @@ export default class Vis extends Component {
       result: null,
     };
 
+    this._inputs = {};
+
     this.attributes = DataContainer.getMetadata();
 
     // move to config or own file
@@ -1245,7 +1247,9 @@ export default class Vis extends Component {
                     className={`${gstyle.input} ${styles.tagName} ${t.selected ? styles.selected : ''}`}
                     type="text"
                     value={t.name}
+                    ref={i => this._inputs[t.id] = i}
                     onChange={(e) => this.updateTagName(e, t)}
+                    onKeyDown={(e) => (e.key === 'Enter') ? this._inputs[t.id].blur() : null}
                     disabled={!hasColor}
                   />
                 </div>

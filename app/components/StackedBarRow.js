@@ -11,11 +11,13 @@ import gstyle from './general.css';
 export default class StackedBarRow extends Component {
   constructor(props) {
     super(props);
-    this.hoverHandle = null;
+    
     this.state = {
       hovered: false,
       showTags: false,
     };
+
+    this.hoverHandle = null;
   }
 
   componentWillUnmount() {
@@ -99,7 +101,9 @@ export default class StackedBarRow extends Component {
             className={gstyle.input}
             type="text"
             value={this.props.data[this.props.labelKey]}
+            ref={i => this._input = i}
             onChange={(e) => this.props.updatePhinchName(e, this.props.data, this.props.isRemoved)}
+            onKeyDown={(e) => (e.key === 'Enter') ? this._input.blur() : null}
           />
           {edit}
         </div>
