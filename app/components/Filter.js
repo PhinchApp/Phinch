@@ -4,6 +4,7 @@ import { Link, Redirect } from 'react-router-dom';
 import { nest } from 'd3-collection';
 import Table from 'rc-table';
 
+import { pageView } from '../analytics.js'
 import DataContainer from '../DataContainer';
 import { updateFilters, removeRows, restoreRows, sortBy, getSortArrow } from '../FilterFunctions';
 import { setProjectFilters, getProjectFilters, exportProjectData } from '../projects.js';
@@ -29,6 +30,8 @@ import vis from 'images/vis-placeholder-sm.png';
 export default class Filter extends Component {
   constructor(props) {
     super(props);
+
+    pageView('/filter');
 
     this.timeout = null;
 

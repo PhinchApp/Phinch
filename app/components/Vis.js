@@ -7,6 +7,7 @@ import _cloneDeep from 'lodash.clonedeep';
 import { nest } from 'd3-collection';
 import { scaleLinear, scaleOrdinal } from 'd3-scale';
 
+import { pageView } from '../analytics.js'
 import { updateFilters, removeRows, restoreRows, visSortBy, getSortArrow } from '../FilterFunctions';
 import { setProjectFilters, getProjectFilters } from '../projects.js';
 import DataContainer from '../DataContainer';
@@ -32,6 +33,8 @@ import save from 'images/save.png';
 export default class Vis extends Component {
   constructor(props) {
     super(props);
+
+    pageView('/vis');
 
     this.state = {
       summary: DataContainer.getSummary(),
@@ -234,6 +237,15 @@ export default class Vis extends Component {
       this.filters = this.init.filters ? this.init.filters : {};
       this.state.deleted = this.init.deleted ? this.init.deleted : []; 
       this.state.tags = this.init.tags ? this.init.tags : this.state.tags;
+      //
+      // Can lose this after next version
+      this.state.tags = this.state.tags.map(t => {
+        if (t.id === 'none') {
+          t.name = 'No Tags';
+        }
+        return t;
+      });
+      //
       this.state.rowTags = this.init.rowTags ? this.init.rowTags : this.state.rowTags;
       this.state.selectedAttribute = this.init.selectedAttribute ? (
           this.init.selectedAttribute

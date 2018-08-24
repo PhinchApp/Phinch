@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router';
 
-import loadFile from '../DataLoader';
-import DataContainer from '../DataContainer';
+import { pageView } from '../analytics.js'
+import loadFile from '../DataLoader.js';
+import DataContainer from '../DataContainer.js';
 import { getProjects, getSamples } from '../projects.js';
-
 import ProjectList from './ProjectList.js';
 import LinkList from './LinkList.js';
 import Loader from './Loader.js';
@@ -15,6 +15,8 @@ import logo from 'images/phinch.png';
 export default class Home extends Component {
   constructor(props) {
     super(props);
+
+    pageView('/');
 
     this.state = {
       loading: false,
