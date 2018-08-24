@@ -47,7 +47,7 @@ export default class Vis extends Component {
       height: window.innerHeight,
       redirect: null,
       level: 1,
-      hoveredTag: null,
+      // hoveredTag: null,
       highlightedDatum: null,
       selectedAttribute: '',
       showTooltip: false,
@@ -111,7 +111,7 @@ export default class Vis extends Component {
       {
         id: 'none',
         color: null,
-        name: 'None',
+        name: 'No Tags',
         selected: true
       }, ...tagColors.map((c, i) => {
         return {
@@ -139,10 +139,10 @@ export default class Vis extends Component {
       nameWidth: 140,
       barInfoWidth: 188,
       heightOffset: 158,
-      leftSidebar: 25,
+      leftSidebar: 27,
       left: {
-        min: 25,
-        max: 119,
+        min: 27,
+        max: 121,
       },
       rightSidebar: 216,
     };
@@ -356,21 +356,18 @@ export default class Vis extends Component {
     this.setState({ showTags });
   }
 
-  _hoverTag = (e) => {
-    const tagId = e.target.id;
-    if (tagId !== 'none' && tagId !== this.state.hoveredTag) {
-      this.tagHandle = setTimeout(() => {
-        const hoveredTag = tagId;
-        this.setState({ hoveredTag });
-      }, this.tooltip.duration);
-    }
-  }
+  // _hoverTag = (e) => {
+  //   const tagId = e.target.id;
+  //   if (tagId !== 'none' && tagId !== this.state.hoveredTag) {
+  //     const hoveredTag = tagId;
+  //     this.setState({ hoveredTag });
+  //   }
+  // }
 
-  _unhoverTag = () => {
-    clearTimeout(this.tagHandle);
-    const hoveredTag = null;
-    this.setState({ hoveredTag });
-  }
+  // _unhoverTag = () => {
+  //   const hoveredTag = null;
+  //   this.setState({ hoveredTag });
+  // }
 
   _hoverDatum = (datum, sample, position) => {
     if (datum == null) {
@@ -1235,12 +1232,14 @@ export default class Vis extends Component {
           {
             this.state.tags.map(t => {
               const hasColor = t.color ? true : false;
+              const tagClass = t.id === 'none' ? '' : styles.tag;
               return (
                 <div
                   key={`tf-${t.id}`}
                   style={{
                     padding: '2px 0',
                   }}
+                  className={tagClass}
                 >
                   <label className={styles.checkbox}>
                     <input
@@ -1272,11 +1271,7 @@ export default class Vis extends Component {
                     onMouseOut={this._unhoverTag}
                     disabled={!hasColor}
                   />
-                  {
-                    (this.state.hoveredTag === t.id) ? (
-                      <div className={styles.editTag}>edit</div>
-                    ) : ''
-                  }
+                  <div className={styles.editTag}>edit</div>
                 </div>
               );
             })

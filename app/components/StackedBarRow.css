@@ -97,7 +97,7 @@
 .tag {
   line-height: 16px;
   vertical-align: middle; 
-  color: #b2b2b2;
+  color: #808080;
   user-select: none;
 }
 
@@ -114,16 +114,17 @@
 }
 
 .tagLabel {
-  font-size: 11px;
+  font-size: 12px;
+  font-weight: 300;
   font-family: 'IBM Plex Sans Condensed';
 }
 .tag:hover, .tag.selected {
-  color: #808080;
+  color: #000000;
 }
 .tag:hover .tagIcon {
-  border-color: #b2b2b2;
+  border-color: #808080;
 }
 .tag.selected:hover {
-  color: #b2b2b2;
+  color: #808080;
 }
 

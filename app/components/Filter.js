@@ -58,10 +58,10 @@ export default class Filter extends Component {
         min: 75,
         max: 175,
       },
-      leftSidebar: 25,
+      leftSidebar: 27,
       left: {
-        min: 25,
-        max: 119,
+        min: 27,
+        max: 121,
       },
     };
 

@@ -102,6 +102,7 @@
 }
 
 .editTag {
+  display: none;
   position: absolute;
   pointer-events: none;
   right: 0;
@@ -115,8 +116,14 @@
   background: #666666;
   border-radius: 6px;
   text-align: center;
+  text-transform: uppercase;
   vertical-align: middle;
+  color: white;
   cursor: pointer;
+}
+
+.tag:hover .editTag {
+  display: block;
 }
 
 .inlineControl {
@@ -200,11 +207,12 @@
 .tagFilter {
   position: absolute;
   background: #333333;
+  width: 192px;
   padding: 6px 12px;
   border-radius: 8px;
   z-index: 10;
   margin-top: 16px;
-  margin-left: -48px;
+  margin-left: -72px;
 }
 
 .checkbox {
@@ -262,7 +270,7 @@
 .tagName {
   font-size: 13px;
   color: #999999;
-  width: 72px;
+  width: 116px;
 }
 .tagName.selected {
   color: white;
