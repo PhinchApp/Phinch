@@ -19,26 +19,10 @@ function Samples(props) {
           return (
             <div
               key={s.phinchName}
-              className={props.styles.row} // just replace this class
-              style={{
-                display: 'block',
-                width: '100%',
-                height: '11px',
-                lineHeight: '9px',
-                padding: '1px 0',
-                margin: 0,
-                overflow: 'hidden',
-                backgroundColor: (i%2 === 0) ? '#333333' : '#000000',
-              }}
+              className={styles.row}
+              style={{backgroundColor: (i%2 === 0) ? '#121212' : '#000000'}}
             >
-              <div
-                className={`${props.styles.cell} ${props.styles.name}`}
-                style={{
-                  width: '45%',
-                  fontSize: '9px',
-                  marginLeft: '0.25rem',
-                }}
-              >
+              <div className={`${props.styles.cell} ${props.styles.name} ${styles.name}`}>
                 {s.phinchName}
               </div>
               <div className={props.styles.cell}>
@@ -47,27 +31,14 @@ function Samples(props) {
                     return (
                       <div
                         key={t}
-                        className={props.styles.circle}
-                        style={{
-                          background: s.tags[t].color,
-                          width: '9px',
-                          height: '9px',
-                          lineHeight: '9px',
-                          borderRadius: '4.5px',
-                        }}
+                        className={`${props.styles.circle} ${styles.circle}`}
+                        style={{background: s.tags[t].color}}
                       />
                     )
                   })
                 }
               </div>
-              <div
-                className={`${props.styles.cell} ${props.styles.reads}`}
-                style={{
-                  width: '20%',
-                  fontSize: '9px',
-                  float: 'right',
-                }}
-              >
+              <div className={`${props.styles.cell} ${props.styles.reads} ${styles.reads}`}>
                 {s.reads.toLocaleString()}
               </div>
             </div>
@@ -134,12 +105,13 @@ export default function StackedBarTooltip(props) {
   if (props.showSamples) {
     size.y = 78 + (props.datum.sampleObjects.length * 11);
   }
+
   const position = props.position;
   if (position.x + size.x > window.innerWidth) {
-    position.x -= size.x;
+    position.x = Math.max(position.x -= size.x, 8);
   }
   if (position.y + size.y > window.innerHeight) {
-    position.y -= size.y;
+    position.y = Math.max(position.y -= size.y, 8);
   }
   const style = {
     transform: `translate(${position.x}px, ${position.y}px)`

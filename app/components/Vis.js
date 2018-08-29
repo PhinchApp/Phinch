@@ -834,11 +834,11 @@ export default class Vis extends Component {
   }
 
   _clearAttribute = () => {
-    // clearTimeout(this.tooltip.handle);
-    // this.setState({
-    //   highlightedDatum: null,
-    //   showTooltip: false,
-    // });
+    clearTimeout(this.tooltip.handle);
+    this.setState({
+      highlightedDatum: null,
+      showTooltip: false,
+    });
   }
 
   _hoverAttribute = (attribute, position) => {
@@ -851,7 +851,6 @@ export default class Vis extends Component {
         datum: attribute,
         sample: null,
         styles: {
-          row: styles.seqRow,
           cell: styles.cell,
           circle: gstyle.circle,
           name: styles.name,
@@ -864,17 +863,13 @@ export default class Vis extends Component {
 
   renderAttributeBars() {
     const attribute = this.attributes[this.state.selectedAttribute];
-    console.log(attribute);
-    //
     this.scales.x
       .domain([0, Math.max(...attribute.values.map(d  => d.reads))])
       .range([0, this.metrics.chartWidth])
       .clamp();
-    //
     const attrMetrics = _cloneDeep(this.metrics);
     attrMetrics.barHeight /= 2;
     attrMetrics.barContainerHeight = attrMetrics.barHeight + 12;
-    // 
     const rows = attribute.values
       .sort((a, b) => {
         if (this.sort.reverse) {
