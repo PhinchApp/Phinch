@@ -833,8 +833,39 @@ export default class Vis extends Component {
     this.setState({ tags, data });
   }
 
+  _clearAttribute = () => {
+    // clearTimeout(this.tooltip.handle);
+    // this.setState({
+    //   highlightedDatum: null,
+    //   showTooltip: false,
+    // });
+  }
+
+  _hoverAttribute = (attribute, position) => {
+    this.tooltip.handle = setTimeout(() => {
+      this.setState({ showTooltip: true });
+    }, 500);
+    this.setState({
+      highlightedDatum: {
+        showSamples: true,
+        datum: attribute,
+        sample: null,
+        styles: {
+          row: styles.seqRow,
+          cell: styles.cell,
+          circle: gstyle.circle,
+          name: styles.name,
+          reads: styles.reads,
+        },
+        position,
+      }
+    });
+  }
+
   renderAttributeBars() {
     const attribute = this.attributes[this.state.selectedAttribute];
+    console.log(attribute);
+    //
     this.scales.x
       .domain([0, Math.max(...attribute.values.map(d  => d.reads))])
       .range([0, this.metrics.chartWidth])
@@ -870,6 +901,8 @@ export default class Vis extends Component {
             metrics={attrMetrics}
             scales={this.scales}
             filters={this.state.filters}
+            hoverRow={this._hoverAttribute}
+            clearRow={this._clearAttribute}
             highlightedDatum={this.state.highlightedDatum}
             hoverDatum={this._hoverDatum}
             clickDatum={this._clickDatum}
@@ -921,6 +954,7 @@ export default class Vis extends Component {
     if (attribute !== '') {
       this.attributes[attribute].values.map(a => {
         a.name = (attribute === 'Year') ? a.value.toString() : a.value.toLocaleString();
+        a.samples = [...new Set(a.samples)];
         a.sampleObjects = a.samples.map(s => {
           const [sample] = data.filter(d => d.sampleName === s);
           return sample;

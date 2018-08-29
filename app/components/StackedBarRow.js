@@ -26,19 +26,26 @@ export default class StackedBarRow extends Component {
     }
   }
 
+  _showAttribute = (event) => {
+    if (this.props.hoverRow) {
+      this.props.hoverRow(this.props.data, {x: event.clientX, y: event.clientY});
+    }
+  }
+
+  _showEditable = (event) => {
+    if (!this.state.hovered) {
+      this.hoverHandle = setTimeout(() => {
+        this.setState({hovered: true});
+      }, 500);
+    }
+  }
+
   _hideEditable = () => {
     if (this.hoverHandle) {
       clearTimeout(this.hoverHandle);
     }
     if (this.state.hovered) {
       this.setState({ hovered: false, showTags: false });
-    }
-  }
-  _showEditable = () => {
-    if (!this.state.hovered) {
-      this.hoverHandle = setTimeout(() => {
-        this.setState({hovered: true});
-      }, 500);
     }
   }
 
@@ -221,6 +228,8 @@ export default class StackedBarRow extends Component {
             width: this.props.metrics.barInfoWidth,
             height: this.props.metrics.barHeight,
           }}
+          onMouseEnter={this._showAttribute}
+          onMouseLeave={this.props.clearRow}
         >
           <div className={styles.rowSection} style={{ width: this.props.metrics.idWidth }}>
             {this.props.data.biomid}
