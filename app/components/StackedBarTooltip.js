@@ -4,6 +4,11 @@ import PercentageBarGraph from './PercentageBarGraph';
 
 import styles from './StackedBarTooltip.css';
 
+const size = {
+    x: 316,
+    y: 216,
+  };
+
 const percentFormatter = (value) => {
   return `${Math.round(value * 10000) / 100}%`
 }
@@ -54,7 +59,17 @@ function Datum(props) {
   const totalPercentReads = props.datum.reads / props.totalDataReads
 
   return (
-    <div style={props.style} className={styles.StackedBarTooltip}>
+    <div
+      ref={(t) => {
+        if (t) {
+          if (size.y !== t.clientHeight) {
+            size.y = t.clientHeight;
+          }
+        }
+      }}
+      style={props.style}
+      className={styles.StackedBarTooltip}
+    >
 
       {
         props.sample.phinchName ? (
@@ -89,6 +104,8 @@ function Datum(props) {
           <PercentageBarGraph percent={totalPercentReads} color={props.color} width='284px' />
         </div>
       </div>
+
+      <div className={styles.click}>Click to show histogram</div>
     </div>
   );
 }
@@ -98,10 +115,6 @@ export default function StackedBarTooltip(props) {
     return null;
   }
 
-  const size = {
-    x: 316,
-    y: 216,
-  };
   if (props.showSamples) {
     size.y = 78 + (props.datum.sampleObjects.length * 11);
   }

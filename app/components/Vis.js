@@ -50,7 +50,6 @@ export default class Vis extends Component {
       height: window.innerHeight,
       redirect: null,
       level: 1,
-      // hoveredTag: null,
       highlightedDatum: null,
       selectedAttribute: '',
       showTooltip: false,
@@ -367,19 +366,6 @@ export default class Vis extends Component {
     const showTags = !this.state.showTags;
     this.setState({ showTags });
   }
-
-  // _hoverTag = (e) => {
-  //   const tagId = e.target.id;
-  //   if (tagId !== 'none' && tagId !== this.state.hoveredTag) {
-  //     const hoveredTag = tagId;
-  //     this.setState({ hoveredTag });
-  //   }
-  // }
-
-  // _unhoverTag = () => {
-  //   const hoveredTag = null;
-  //   this.setState({ hoveredTag });
-  // }
 
   _hoverDatum = (datum, sample, position) => {
     if (datum == null) {
