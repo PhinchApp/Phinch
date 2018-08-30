@@ -819,34 +819,6 @@ export default class Vis extends Component {
     this.setState({ tags, data });
   }
 
-  _clearAttribute = () => {
-    clearTimeout(this.tooltip.handle);
-    this.setState({
-      highlightedDatum: null,
-      showTooltip: false,
-    });
-  }
-
-  _hoverAttribute = (attribute, position) => {
-    this.tooltip.handle = setTimeout(() => {
-      this.setState({ showTooltip: true });
-    }, 500);
-    this.setState({
-      highlightedDatum: {
-        showSamples: true,
-        datum: attribute,
-        sample: null,
-        styles: {
-          cell: styles.cell,
-          circle: gstyle.circle,
-          name: styles.name,
-          reads: styles.reads,
-        },
-        position,
-      }
-    });
-  }
-
   renderAttributeBars() {
     const attribute = this.attributes[this.state.selectedAttribute];
     this.scales.x
@@ -854,7 +826,8 @@ export default class Vis extends Component {
       .range([0, this.metrics.chartWidth])
       .clamp();
     const attrMetrics = _cloneDeep(this.metrics);
-    attrMetrics.barHeight /= 2;
+    // attrMetrics.barHeight /= 2;
+    attrMetrics.barHeight = 28;
     attrMetrics.barContainerHeight = attrMetrics.barHeight + 12;
     const rows = attribute.values
       .sort((a, b) => {
@@ -882,13 +855,19 @@ export default class Vis extends Component {
             metrics={attrMetrics}
             scales={this.scales}
             filters={this.state.filters}
-            hoverRow={this._hoverAttribute}
-            clearRow={this._clearAttribute}
             highlightedDatum={this.state.highlightedDatum}
             hoverDatum={this._hoverDatum}
             clickDatum={this._clickDatum}
             isPercent={(this.state.mode === 'percent')}
             isRemoved={null}
+            isAttribute={true}
+            unit={attribute.unit}
+            styles={{
+              cell: styles.cell,
+              circle: gstyle.circle,
+              name: styles.name,
+              reads: styles.reads,
+            }}
             tags={[]}
           />
         );
@@ -1156,7 +1135,8 @@ export default class Vis extends Component {
     const [currentLevel] = _cloneDeep(this.levels).filter(l => l.order === this.state.level);
     const levelSelector = modalLevel ? (
         <Modal
-          title={`Level: ${currentLevel.name}`}
+          buttonTitle={`Level: ${currentLevel.name}`}
+          modalTitle={`Level: ${currentLevel.name}`}
           buttonPosition={{
             position: 'relative',
             height: '24px',
@@ -1483,7 +1463,8 @@ export default class Vis extends Component {
         </div>
         {this.renderFilters()}
         <Modal
-          title={'Top Sequences'}
+          buttonTitle={'Top Sequences'}
+          modalTitle={'Top Sequences'}
           buttonPosition={{
             position: 'absolute',
             bottom: 0,
@@ -1500,7 +1481,8 @@ export default class Vis extends Component {
           badge={false}
         />
         <Modal
-          title={'Archived Samples'}
+          buttonTitle={'Archived Samples'}
+          modalTitle={'Archived Samples'}
           buttonPosition={{
             position: 'absolute',
             bottom: 0,

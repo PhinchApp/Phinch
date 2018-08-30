@@ -13,47 +13,6 @@ const percentFormatter = (value) => {
   return `${Math.round(value * 10000) / 100}%`
 }
 
-function Samples(props) {
-  return (
-    <div className={styles.StackedBarTooltip} style={props.style}>
-      <div className={styles.label}>Value:</div>
-      <div className={styles.value}>{props.datum.value}</div>
-      <div className={styles.label}>Samples:</div>
-      {
-        props.datum.sampleObjects.map((s, i) => {
-          return (
-            <div
-              key={s.phinchName}
-              className={styles.row}
-              style={{backgroundColor: (i%2 === 0) ? '#121212' : '#000000'}}
-            >
-              <div className={`${props.styles.cell} ${props.styles.name} ${styles.name}`}>
-                {s.phinchName}
-              </div>
-              <div className={props.styles.cell}>
-                {
-                  Object.keys(s.tags).map(t => {
-                    return (
-                      <div
-                        key={t}
-                        className={`${props.styles.circle} ${styles.circle}`}
-                        style={{background: s.tags[t].color}}
-                      />
-                    )
-                  })
-                }
-              </div>
-              <div className={`${props.styles.cell} ${props.styles.reads} ${styles.reads}`}>
-                {s.reads.toLocaleString()}
-              </div>
-            </div>
-          )
-        })
-      }
-    </div>
-  );
-}
-
 function Datum(props) {
   const samplePercent = props.datum.reads / props.sample.reads
   const totalPercentReads = props.datum.reads / props.totalDataReads
@@ -115,10 +74,6 @@ export default function StackedBarTooltip(props) {
     return null;
   }
 
-  if (props.showSamples) {
-    size.y = 78 + (props.datum.sampleObjects.length * 11);
-  }
-
   const position = props.position;
   if (position.x + size.x > window.innerWidth) {
     position.x = Math.max(position.x -= size.x, 8);
@@ -130,10 +85,5 @@ export default function StackedBarTooltip(props) {
     transform: `translate(${position.x}px, ${position.y}px)`
   };
 
-  if (props.showSamples) {
-    style.height = size.y;
-    return <Samples {...props} style={style} />
-  } else {
-    return <Datum {...props} style={style} />
-  }
+  return <Datum {...props} style={style} />
 }

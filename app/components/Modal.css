@@ -55,6 +55,6 @@
 
 .dataContainer {
   margin: 0 6px;
-  height: 320px;
+  height: calc(100% - 26px);
   overflow-y: scroll;
 }

@@ -27,7 +27,7 @@ export default class Modal extends Component {
           }}
           onClick={this.toggleHidden}
         >
-          {this.props.title}
+          {this.props.buttonTitle}
         </div>
       ) : '';
     const badge = (this.props.badge && this.props.data.length) ? (
@@ -46,7 +46,7 @@ export default class Modal extends Component {
           }}
         >
           <div className={styles.title}>
-            {this.props.title}
+            {this.props.modalTitle}
             <div
               className={gstyle.close}
               onClick={() => { this.toggleHidden() }}

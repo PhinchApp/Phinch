@@ -4,6 +4,7 @@ import _sortBy from 'lodash.sortby';
 import _cloneDeep from 'lodash.clonedeep';
 
 import StackedBar from './StackedBar';
+import Modal from './Modal';
 
 import styles from './StackedBarRow.css';
 import gstyle from './general.css';
@@ -23,12 +24,6 @@ export default class StackedBarRow extends Component {
   componentWillUnmount() {
     if (this.hoverHandle) {
       clearTimeout(this.hoverHandle);
-    }
-  }
-
-  _showAttribute = (event) => {
-    if (this.props.hoverRow) {
-      this.props.hoverRow(this.props.data, {x: event.clientX, y: event.clientY});
     }
   }
 
@@ -101,7 +96,6 @@ export default class StackedBarRow extends Component {
           style={{
             width: this.props.metrics.nameWidth,
             fontWeight: 400,
-            // color: '#1a1a1a',
           }}
         >
           <input
@@ -120,12 +114,67 @@ export default class StackedBarRow extends Component {
           style={{
             width: this.props.metrics.nameWidth,
             fontWeight: 400,
-            // color: '#1a1a1a',
           }}
         >
           {this.props.data[this.props.labelKey]}
         </div>
       );
+    const samples = (this.state.hovered && this.props.isAttribute) ? (
+        <Modal
+          buttonTitle={'Samples'}
+          modalTitle={`${this.props.data[this.props.labelKey]} ${this.props.unit}`}
+          buttonPosition={{
+            position: 'relative',
+            height: '12px',
+            lineHeight: '9px',
+            fontSize: '9px',
+            padding: '1px 8px',
+            marginTop: '1px',
+            width: 'auto',
+            borderRadius: '6px',
+            backgroundColor: '#b2b2b2',
+          }}
+          modalPosition={{
+            position: 'absolute',
+            marginLeft: '50px',
+            width: '316px',
+            height: '216px',
+            color: 'white',
+          }}
+          data={
+            this.props.data.sampleObjects.map((s, i) => {
+              return (
+                <div
+                  key={s.phinchName}
+                  className={styles.sampleRow}
+                  style={{backgroundColor: (i%2 === 0) ? '#121212' : '#000000'}}
+                >
+                  <div className={`${this.props.styles.cell} ${this.props.styles.name} ${styles.name}`}>
+                    {s.phinchName}
+                  </div>
+                  <div className={this.props.styles.cell}>
+                    {
+                      Object.keys(s.tags).map(t => {
+                        return (
+                          <div
+                            key={t}
+                            className={`${this.props.styles.circle} ${styles.circle}`}
+                            style={{background: s.tags[t].color}}
+                          />
+                        )
+                      })
+                    }
+                  </div>
+                  <div className={`${this.props.styles.cell} ${this.props.styles.reads} ${styles.reads}`}>
+                    {s.reads.toLocaleString()}
+                  </div>
+                </div>
+              )
+            })
+          }
+          badge={false}
+        />
+      ) : '';
     const ellipsis = (
         <div
           style={{
@@ -134,7 +183,7 @@ export default class StackedBarRow extends Component {
           }}
         >
           {
-            (this.state.hovered && (this.props.isRemoved !== null)) ? (
+            (this.state.hovered && (this.props.isAttribute !== true)) ? (
               <div
                 className={styles.button}
                 style={{
@@ -181,7 +230,7 @@ export default class StackedBarRow extends Component {
       <div
         style={{
           display: 'inline-block',
-          marginLeft: '6px',
+          marginLeft: '2px',
           verticalAlign: 'middle',
         }}
       >
@@ -198,7 +247,7 @@ export default class StackedBarRow extends Component {
         }
       </div>
       );
-    const action = (this.state.hovered && (this.props.isRemoved !== null)) ? (
+    const action = (this.state.hovered && (this.props.isAttribute !== true)) ? (
         <div
           className={styles.button}
           style={{
@@ -228,8 +277,6 @@ export default class StackedBarRow extends Component {
             width: this.props.metrics.barInfoWidth,
             height: this.props.metrics.barHeight,
           }}
-          onMouseEnter={this._showAttribute}
-          onMouseLeave={this.props.clearRow}
         >
           <div className={styles.rowSection} style={{ width: this.props.metrics.idWidth }}>
             {this.props.data.biomid}
@@ -242,6 +289,7 @@ export default class StackedBarRow extends Component {
             <div className={styles.rowSection}>
               {this.props.data.date ? this.props.data.date : ''}
             </div>
+            {samples}
           </div>
           <div>
             {ellipsis}
