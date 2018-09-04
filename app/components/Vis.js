@@ -137,7 +137,8 @@ export default class Vis extends Component {
       miniBarHeight: 6,
       height: 600,
       hideWidth: 20,
-      idWidth: 28,
+      // idWidth: 28,
+      idWidth: 32,
       nameWidth: 140,
       barInfoWidth: 188,
       heightOffset: 158,
@@ -164,6 +165,9 @@ export default class Vis extends Component {
       this.state.redirect = '/';
     } else {
 
+      // move to config / metadata
+      const ignoreLevels = ['unclassified', 'unassigned'];
+
       // Autogenerate levels from data
       // TODO: Test w/ addtional data formats
       const uniq_taxa = [...new Set(
@@ -185,7 +189,7 @@ export default class Vis extends Component {
           )
         )].map(l => {
           return JSON.parse(l);
-        }).filter(l => l.name.trim().toLowerCase() !== 'unclassified');
+        }).filter(l => !ignoreLevels.includes(l.name.trim().toLowerCase()));
 
       const default_taxa = {
         'k': 'kingdom',
@@ -531,8 +535,13 @@ export default class Vis extends Component {
           const [tag] = this.state.tags.filter(t => t.id === k);
           tags[k] = tag;
         });
-        const collectionDate = c.metadata.collection_date ? (
-            new Date(c.metadata.collection_date).toLocaleString().split(', ')[0]
+        const [dateAttribute] = Object.keys(this.attributes).map(k => {
+          return this.attributes[k];
+        }).filter(a => {
+          return a.type === 'date';
+        });
+        const collectionDate = c.metadata[dateAttribute.key] ? (
+            new Date(c.metadata[dateAttribute.key]).toLocaleString().split(', ')[0]
           ) : '';
         return {
           id: c.id,

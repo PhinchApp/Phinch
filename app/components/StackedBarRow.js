@@ -230,7 +230,7 @@ export default class StackedBarRow extends Component {
       <div
         style={{
           display: 'inline-block',
-          marginLeft: '2px',
+          marginLeft: '6px',
           verticalAlign: 'middle',
         }}
       >
@@ -252,7 +252,7 @@ export default class StackedBarRow extends Component {
           className={styles.button}
           style={{
             position: 'absolute',
-            right: '16px',
+            right: '12px',
           }}
           onClick={
             this.props.isRemoved ? this.props.restoreDatum : this.props.removeDatum
@@ -279,7 +279,7 @@ export default class StackedBarRow extends Component {
           }}
         >
           <div className={styles.rowSection} style={{ width: this.props.metrics.idWidth }}>
-            {this.props.data.biomid}
+            {(this.props.data.biomid !== undefined) ? this.props.data.biomid.toLocaleString() : ''}
           </div>
           {name}
           <div>

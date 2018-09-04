@@ -346,6 +346,7 @@ export default class Filter extends Component {
     this.dragStart = this.dragStart.bind(this);
     this.setResult = this.setResult.bind(this);
     this.clearResult = this.clearResult.bind(this);
+    this.toggleChecks = this.toggleChecks.bind(this);
     this.updateChecks = this.updateChecks.bind(this);
     this.applyFilters = this.applyFilters.bind(this);
     this.resetFilters = this.resetFilters.bind(this);
@@ -488,6 +489,14 @@ export default class Filter extends Component {
     this.setState({filters, data});
   }
 
+  toggleChecks(attribute, value) {
+    const filters = this.state.filters;
+    Object.keys(filters[attribute].range).forEach(k => {
+      filters[attribute].range[k] = value;
+    });
+    this.applyFilters(filters);
+  }
+
   updateChecks(attribute, type, value) {
     const filters = this.state.filters;
     filters[attribute].range[type] = value;
@@ -511,6 +520,7 @@ export default class Filter extends Component {
               data={this.filters[k][g]}
               filter={this.state.filters[g]}
               update={this.updateChecks}
+              setAll={this.toggleChecks}
             />
           ) : (
             <FilterChart
