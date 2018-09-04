@@ -59,6 +59,7 @@ export default class Vis extends Component {
       showSequences: false,
       showRightSidebar: false,
       showLeftSidebar: false,
+      showEmptyAttrs: true,
       result: null,
     };
 
@@ -283,6 +284,7 @@ export default class Vis extends Component {
     this.onValueCleared = this.onValueCleared.bind(this);
     this.updateDimensions = this.updateDimensions.bind(this);
     this.updatePhinchName = this.updatePhinchName.bind(this);
+    this.toggleEmptyAttrs = this.toggleEmptyAttrs.bind(this);
     this.applyFilters = this.applyFilters.bind(this);
     this.removeFilter = this.removeFilter.bind(this);
     this.toggleMenu = this.toggleMenu.bind(this);
@@ -828,6 +830,11 @@ export default class Vis extends Component {
     this.setState({ tags, data });
   }
 
+  toggleEmptyAttrs() {
+    const showEmptyAttrs = !this.state.showEmptyAttrs;
+    this.setState({ showEmptyAttrs });
+  }
+
   renderAttributeBars() {
     const attribute = this.attributes[this.state.selectedAttribute];
     this.scales.x
@@ -839,6 +846,10 @@ export default class Vis extends Component {
     attrMetrics.barHeight = 28;
     attrMetrics.barContainerHeight = attrMetrics.barHeight + 12;
     const rows = attribute.values
+      .filter(v => {
+        if (this.state.showEmptyAttrs) return true;
+        return v.reads > 0;
+      })
       .sort((a, b) => {
         if (this.sort.reverse) {
           if (a.value === 'no_data') return -Infinity;
@@ -886,6 +897,11 @@ export default class Vis extends Component {
       <div>
         <div className={styles.attrLabel}>
           {attribute.key} {unit}
+        </div>
+        <div>
+          <div className={styles.attrToggle} onClick={this.toggleEmptyAttrs}>
+            {`${this.state.showEmptyAttrs ? 'Hide' : 'Show'} Empty`}
+          </div>
         </div>
         {rows}
       </div>
