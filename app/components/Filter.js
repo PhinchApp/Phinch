@@ -118,24 +118,31 @@ export default class Filter extends Component {
         this.state.data
           .map(d => Object.keys(d.metadata))
           .reduce((a, v) => a.concat(v), [])
-        )].filter(k => k !== 'phinchID');
+        )]
+        .filter(k => k !== 'phinchID')
+        .sort();
       this.metadataKeys.forEach((k) => {
         const units = [];
         const values = nest()
           .key(d => d.value)
-          .entries(this.state.data.slice().map((d, i) => {
-            const [value,unit] = d.metadata[k].split(' ');
-            if (unit !== undefined && !units.includes(unit)) {
-              units.push(unit);
-            }
-            return {
-              sampleName: d.sampleName,
-              value,
-            }
-          }).filter(d => d !== 'no_data')).map((d, i) => {
+          .entries(
+            this.state.data.slice().map((d, i) => {
+              const [value, unit] = d.metadata[k].split(' ');
+              if (unit !== undefined && !units.includes(unit)) {
+                units.push(unit);
+              }
+              return {
+                sampleName: d.sampleName,
+                value: d.metadata[k].slice(),
+                splitValue: value,
+                unit,
+              }
+            }).filter(d => d.value !== 'no_data')
+          ).map((d, i) => {
             return {
               index: i,
               value: d.key,
+              splitValue: d.values.map(v => v.splitValue)[0],
               count: d.values.length,
               samples: d.values.map(v => v.sampleName),
             };
@@ -149,32 +156,34 @@ export default class Filter extends Component {
         if (k.toLowerCase().trim().includes('date') || k.toLowerCase().trim().includes('year')) {
           groupKey = 'date';
           filterValues = values.slice().map((d, i) => {
-            if (k.toLowerCase().trim().includes('date')) {
-              d.value = new Date(d.value);
-            } if (this.filterFloat(d.value) !== null) {
-              d.value = this.filterFloat(d.value);
-            }
-            return d;
-          }).sort((a, b) => {
-            return a.value.valueOf() - b.value.valueOf();
-          }).map((d, i) => {
-            d.index = i;
-            return d;
-          });
-        } else if (this.filterFloat(values.filter(v => v.value !== 'no_data')[0].value) !== null) {
+              if (k.toLowerCase().trim().includes('date')) {
+                d.value = new Date(d.value);
+              }
+              return d;
+            })
+            .filter(v => {
+              return !v.value.toString().toLowerCase().trim().includes('invalid date');
+            });
+        } else if (this.filterFloat(values.filter(v => v.splitValue !== 'no_data')[0].splitValue) !== null) {
           groupKey = 'number';
           filterValues = values.slice().map((v) => {
-            if (this.filterFloat(v.value) !== null) {
-              v.value = this.filterFloat(v.value);
-            }
-            return v;
-          }).sort((a, b) => {
-            return a.value - b.value;
-          }).map((d, i) => {
+              v.value = this.filterFloat(v.splitValue);
+              return v;
+            })
+            .filter(v => {
+              return v.value !== null;
+            });
+        }
+
+        filterValues = filterValues
+          .sort((a, b) => {
+            return a.value.valueOf() - b.value.valueOf();
+          })
+          .map((d, i) => {
             d.index = i;
             return d;
           });
-        }
+        
         let range = {
           min: filterValues[0],
           max: filterValues[filterValues.length - 1],
@@ -185,6 +194,7 @@ export default class Filter extends Component {
             range[v.value] = true;
           });
         }
+
         this.state.filters[k] = {
           key: k,
           unit: unit,
@@ -198,6 +208,7 @@ export default class Filter extends Component {
           unit: unit,
           log: true,
         };
+
         if (!this.init.filters) {
           this.init.filters = {};
         }
@@ -209,6 +220,7 @@ export default class Filter extends Component {
           }
           this.state.filters[k] = this.init.filters[k];
         }
+
       });
       this.state.deleted = this.init.deleted ? this.init.deleted : [];
       this.state.names = this.init.names;
@@ -463,13 +475,22 @@ export default class Filter extends Component {
         include = false;
       }
       Object.keys(filters).forEach((k) => {
-        let value = d.metadata[k].split(' ')[0];
+        let value = d.metadata[k].slice();
         if (k.toLowerCase().trim().includes('date')) {
           value = new Date(value);
-          if (value.valueOf() < filters[k].range.min.value.valueOf() || value.valueOf() > filters[k].range.max.value.valueOf()) {
+          if (
+            !value.toString().toLowerCase().trim().includes('invalid date')
+              &&
+            (
+              value.valueOf() < filters[k].range.min.value.valueOf()
+                ||
+              value.valueOf() > filters[k].range.max.value.valueOf()
+            )
+          ) {
             include = false;
           }
         } else if (filters[k].type === 'number' || filters[k].type === 'date') {
+          value = value.split(' ')[0];
           if (this.filterFloat(value) !== null) {
             value = this.filterFloat(value);
             if (value < filters[k].range.min.value || value > filters[k].range.max.value) {

@@ -137,7 +137,6 @@ export default class Vis extends Component {
       miniBarHeight: 6,
       height: 600,
       hideWidth: 20,
-      // idWidth: 28,
       idWidth: 32,
       nameWidth: 140,
       barInfoWidth: 188,
@@ -297,6 +296,7 @@ export default class Vis extends Component {
 
   componentWillUnmount() {
     clearTimeout(this.tooltip.handle);
+    clearTimeout(this.timeout);
     window.removeEventListener('resize', this.updateDimensions);
   }
 
