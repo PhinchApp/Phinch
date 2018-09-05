@@ -11,6 +11,11 @@ h1.heading {
   margin: 1rem 0;
 }
 
+.section {
+  display: inline-block;
+  vertical-align: top;
+}
+
 input.wide, textarea.textarea {
   width: 50vw;
   margin: 1rem;
