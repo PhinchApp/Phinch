@@ -1,19 +1,26 @@
-.check {
-  display: inline-block;
-  width: auto;
-  margin: 0.5rem;
-  margin-left: 0;
-  margin-right: 1rem;
-  padding: 0;
+.group {
+  color: #000000;
+  font-weight: 300;
 }
 
-.toggleText {
+.row {
+  padding: 4px 0;
+}
+
+.toggle {
   display: inline-block;
   text-decoration: underline;
   cursor: pointer;
   padding-right: 0.5rem;
+  color: #808080;
 }
 
-.toggleText:hover {
-  color: #2b2b2b;
+.toggle:hover {
+  color: #000000;
+}
+
+.name {
+  font-size: 14px;
+  font-weight: 400;
+  vertical-align: top;
 }

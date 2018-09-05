@@ -215,7 +215,7 @@
   margin-left: -72px;
 }
 
-.checkbox {
+/*.checkbox {
   position: relative;
   display: inline-block;
   top: 0;
@@ -265,7 +265,7 @@
   -webkit-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
-}
+}*/
 
 .tagName {
   font-size: 13px;

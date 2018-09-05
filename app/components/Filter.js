@@ -548,9 +548,10 @@ export default class Filter extends Component {
               name={g}
               showScale={false}
               showCircle={false}
-              fill={'#2b2b2b'}
+              fill={'#4c4c4c'}
               stroke={'#ffffff'}
-              handle={'#ffffff'}
+              handle={'#00bbda'}
+              color={'#000000'}
               data={this.filters[k][g]}
               width={this.metrics.filterWidth}
               height={height}
@@ -574,10 +575,10 @@ export default class Filter extends Component {
         <div key={k} className={styles.bottom} style={{
           width: this.metrics.filterWidth + this.metrics.padding * 3,
         }}>
-          <div className={gstyle.heading}>
+          <div className={styles.filterHeading}>
             {SectionNames[k]}
           </div>
-          <div className={styles.outline}>
+          <div className={styles.group}>
             {group}
           </div>
         </div>

@@ -7,22 +7,22 @@ import arrow from 'images/arrow.png';
 const linkList = [
   {
     name: 'New to Phinch?',
-    slug: 'counter',
+    slug: '/',
     info: 'Get started with these tutorials',
   },
   {
     name: 'View our Gallery',
-    slug: 'counter',
+    slug: '/',
     info: 'See what other researchers have created with Phinch.',
   },
   {
     name: 'Join the Community',
-    slug: 'counter',
+    slug: '/',
     info: 'Discuss features and get the latest update feeds.',
   },
   {
     name: 'About Phinch',
-    slug: 'counter',
+    slug: '/',
     info: 'What is this all about anyway?',
   },
 ];

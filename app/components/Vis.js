@@ -1273,13 +1273,14 @@ export default class Vis extends Component {
                   }}
                   className={tagClass}
                 >
-                  <label className={styles.checkbox}>
+                  <label className={gstyle.checkbox}>
                     <input
                       type='checkbox'
                       checked={t.selected}
                       onChange={(e) => this.filterByTag(e, t)}
+                      style={{ top: 0, left: '-3px' }}
                     />
-                    <span className={styles.checkmark}></span>
+                    <span className={gstyle.checkmark}></span>
                   </label>
                   {
                     hasColor ? (

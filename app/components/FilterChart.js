@@ -105,9 +105,17 @@ export default class FilterChart extends Component {
             `${Math.floor(filter.range.max.percent * 10000)/100} %`
           )
         );
-      range = min !== undefined ? (<div className={styles.range}>min: {min.toLocaleString()} — max: {max.toLocaleString()}</div>) : '';
-      marks[this.xscale(filter.range.min.index)] = { label: <div className={styles.mark}>{min.toLocaleString()}</div> };
-      marks[this.xscale(filter.range.max.index + 1)] = { label: <div className={styles.mark}>{max.toLocaleString()}</div> };
+      range = (min !== undefined) ? (
+          <div className={styles.range} style={{ color: this.props.color }}>
+            min: {min.toLocaleString()} — max: {max.toLocaleString()}
+          </div>
+        ) : '';
+      marks[this.xscale(filter.range.min.index)] = { 
+        label: <div className={styles.mark} style={{ color: this.props.color }}>{min.toLocaleString()}</div> 
+      };
+      marks[this.xscale(filter.range.max.index + 1)] = { 
+        label: <div className={styles.mark} style={{ color: this.props.color }}>{max.toLocaleString()}</div> 
+      };
     }
     const remove = (this.props.remove !== undefined) ? (
         <div
@@ -130,7 +138,7 @@ export default class FilterChart extends Component {
             marks={marks}
             step={barWidth}
             allowCross={false}
-            trackStyle={[{background: this.props.fill}]}
+            trackStyle={[{background: this.props.handle}]}
             railStyle={{background: '#262626'}}
             handleStyle={[{background: this.props.handle}, {background: this.props.handle}]}
             value={[this.xscale(filter.range.min.index), this.xscale(filter.range.max.index + 1)]}
@@ -162,7 +170,7 @@ export default class FilterChart extends Component {
     return (
       <div className={styles.filterChart}>
         {circle}
-        <label className={styles.name}>{name}</label>
+        <label className={styles.name} style={{ color: this.props.color }}>{name}</label>
         {remove}
         {info}
         <svg
