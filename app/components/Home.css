@@ -1,5 +1,8 @@
-.container p {
+/*.container p {
   font-size: 0.7rem;
+}*/
+.container {
+  font-family: 'IBM Plex Sans';
 }
 
 .section {
@@ -12,12 +15,15 @@
 }
 
 .left {
-  width: 40vw;
+  /*width: 40vw;*/
+  width: 400px;
   vertical-align: top;
+  background: #191919;
 }
 
 .right {
-  width: 60vw;
+  /*width: 60vw;*/
+  width: calc(100vw - 400px);
   vertical-align: top;
 }
 
@@ -27,19 +33,27 @@
 }
 
 .about {
-  margin-top: 1rem;
-  height: 36vh;
+  /*margin-top: 1rem;*/
+  /*height: 36vh;*/
   text-align: center;
-  border-right: 1px solid #2b2b2b;
+  padding: 50px;
+  padding-bottom: 40px;
+  /*border-right: 1px solid #2b2b2b;*/
 }
 
 .about p {
-  margin: 0.5rem;
+  font-size: 16px;
+  margin: 38px;
+  margin-bottom: 0;
+}
+
+.logo {
+  width: 130px;
 }
 
 .links {
-  background: #2b2b2b;
-  height: 64vh;
+  /*background: #2b2b2b;*/
+  /*height: 64vh;*/
 }
 
 .projectType {

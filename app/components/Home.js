@@ -10,7 +10,7 @@ import LinkList from './LinkList.js';
 import Loader from './Loader.js';
 
 import styles from './Home.css';
-import logo from 'images/phinch.png';
+import logo from 'images/phinch-large.png';
 
 export default class Home extends Component {
   constructor(props) {
@@ -67,9 +67,8 @@ export default class Home extends Component {
           {redirect}
           <div className={`${styles.section} ${styles.left}`}>
             <div className={`${styles.area} ${styles.about}`}>
-              <img src={logo} alt='Phinch Logo' />
-              <h1>Welcome to Phinch</h1>
-              <p>version 0.01</p>
+              <img src={logo} className={styles.logo} alt='Phinch Logo' />
+              <p>Version 0.01</p>
             </div>
             <div className={`${styles.area} ${styles.links}`}>
               {links}

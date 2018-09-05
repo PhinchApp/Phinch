@@ -2,39 +2,38 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import styles from './LinkList.css';
+import arrow from 'images/arrow.png';
 
 const linkList = [
   {
     name: 'New to Phinch?',
     slug: 'counter',
     info: 'Get started with these tutorials',
-    icon: '',
   },
   {
     name: 'View our Gallery',
     slug: 'counter',
-    info: 'See what other researchers have creeated with Phinch.',
-    icon: '',
+    info: 'See what other researchers have created with Phinch.',
   },
   {
     name: 'Join the Community',
     slug: 'counter',
     info: 'Discuss features and get the latest update feeds.',
-    icon: '',
   },
   {
     name: 'About Phinch',
     slug: 'counter',
     info: 'What is this all about anyway?',
-    icon: '',
   },
 ];
+
+const icon = (<div className={styles.arrow}><img src={arrow} alt='right facing arrow' /></div>);
 
 const InfoLink = (l,i) => {
   return (
     <Link key={`${l.slug}-${i}`} to={l.slug}>
       <div className={styles.link}>
-        <img src={l.icon} alt='' />
+        {icon}
         <div className={styles.info}>
           <h2>{l.name}</h2>
           <p>{l.info}</p>

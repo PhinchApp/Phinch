@@ -1,22 +1,46 @@
 .link {
   color: white;
-  padding: 1rem 0;
+  margin: 24px 26px;
+  vertical-align: top;
 }
 
-.link img {
-  width: 2rem;
-  height: 2rem;
-  margin: 0 1rem;
-  background: white;
+.arrow {
+  width: 14px;
+  height: 14px;
+  border-radius: 7px;
+  margin: 8px 0;
+  margin-right: 8px;
+  padding: 0;
+  background: #00bbda;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.arrow img {
+  display: inline-block;
+  width: 10px;
+  margin-bottom: 5px;
+  margin-left: 2px;
+}
+
+.link h2 {
+  font-size: 22px;
+  font-weight: 300;
+  color: #00bbda;
 }
 
 .link p {
+  font-size: 16px;
+  font-weight: 200;
   margin: 0;
+  margin-top: 4px;
   padding: 0;
 }
 
 .info {
   display: inline-block;
+  vertical-align: top;
+  width: 288px;
   margin: 0;
   padding: 0;
 }
