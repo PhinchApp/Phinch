@@ -19,7 +19,8 @@
 
 .table {
   color: #808080;
-  font-family: 'IBM Plex Mono';
+  /*overflow: hidden;*/
+  /*font-family: 'IBM Plex Mono';*/
 }
 
 .table thead {
@@ -36,10 +37,14 @@
 }
 
 .table .filterCell {
+  font-family: 'IBM Plex Sans Condensed';
+  font-weight: 300;
+  color: black;
   padding: 0.25rem 0.5rem;
   width: 100%;
   line-height: 1rem;
-  font-size: 0.75rem;
+  /*font-size: 0.75rem;*/
+  font-size: 12px;
   box-sizing: border-box;
   display: inline-block;
   vertical-align: middle;

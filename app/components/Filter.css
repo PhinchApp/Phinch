@@ -41,11 +41,14 @@
 .section {
   display: inline-block;
   vertical-align: top;
-  overflow: hidden;
+  /*overflow-x: hidden;*/
+  /*overflow-y: visible;*/
+  /*overflow: hidden;*/
 }
 
 .left {
   padding-right: 1rem;
+  overflow: hidden;
 }
 .right {
 }
@@ -54,32 +57,31 @@
   background: #f4f4f4;
 }
 
-.order {
-  background: none;
-  width: calc(((100vw - 370px) / 100) * 5.085);
-  min-width: 30px;
-  margin-right: 0.25rem;
+.headingRow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 22px;
+  background: #4c4c4c;
+  margin-top: -22px;
+  z-index: 1;
 }
-.phinchName {
-  width: calc(((100vw - 370px) / 100) * 20.85);
-  min-width: 123px;
-  margin-right: 0.25rem;
-}
-.biomid {
-  width: calc(((100vw - 370px) / 100) * 15.085);
-  min-width: 89px;
-  margin-right: 0.25rem;
-}
-.sampleName {
-  width: calc(((100vw - 370px) / 100) * 21.865);
-  min-width: 129px;
-  margin-right: 0.25rem;
-}
-.reads {
-  width: calc(((100vw - 370px) / 100) * 35);
-  min-width: 150px;
-  max-width: 210px;
-  margin-right: 0.25rem;
+
+.columnHeading {
+  position: relative;
+  display: block;
+  height: 22px;
+  color: #b2b2b2;
+  margin-bottom: 10px;
+  vertical-align: middle;
+  font-family: 'IBM Plex Sans Condensed';
+  font-size: 14px;
+  padding: 4px 8px;
+  font-weight: 400;
+  margin-top: -22px;
+  z-index: 10;
 }
 
 .delete {

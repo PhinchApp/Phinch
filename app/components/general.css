@@ -39,6 +39,8 @@
   padding: 2rem 1rem;
   display: inline-block;
   vertical-align: top;
+  position: relative;
+  z-index: 2;
 }
 
 .arrow {

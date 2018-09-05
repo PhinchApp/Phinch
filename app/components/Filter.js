@@ -46,6 +46,7 @@ export default class Filter extends Component {
       deleted: [],
       names: {},
       height: window.innerHeight,
+      width: window.innerWidth,
       filters: {},
       result: null,
       loading: false,
@@ -66,6 +67,14 @@ export default class Filter extends Component {
         min: 27,
         max: 121,
       },
+    };
+
+    this.columnWidths = {
+      order: 0.08,
+      phinchName: 0.20,
+      biomid: 0.12,
+      sampleName: 0.20,
+      reads: 0.25,
     };
 
     this.menuItems = [
@@ -99,8 +108,9 @@ export default class Filter extends Component {
       ) : this.state.showLeftSidebar;
     this.metrics.leftSidebar = this.state.showLeftSidebar ?
       this.metrics.left.max : this.metrics.left.min;
-    this.metrics.filterWidth = this.state.showLeftSidebar ?
-      this.metrics.filter.min : this.metrics.filter.max;
+    this.metrics.tableWidth = this.state.width - (this.metrics.leftSidebar + this.metrics.filterWidth + this.metrics.padding * 4);
+    // this.metrics.filterWidth = this.state.showLeftSidebar ?
+    //   this.metrics.filter.min : this.metrics.filter.max;
     //
 
     this.filters = {
@@ -238,10 +248,14 @@ export default class Filter extends Component {
         dataIndex: 'order',
         key: 'order',
         render: (t) => (
-          <div className={styles.order}>
-            <div className={tstyle.filterCell}>
-              {(t !== undefined) ? t.toLocaleString() : ''}
-            </div>
+          <div
+            className={tstyle.filterCell}
+            style={{
+              width: this.metrics.tableWidth * this.columnWidths['order'],
+              // marginRight: '0.25rem',
+            }}
+          >
+            {(t !== undefined) ? t.toLocaleString() : ''}
           </div>
         ),
       },
@@ -250,15 +264,19 @@ export default class Filter extends Component {
         dataIndex: 'phinchName',
         key: 'phinchName',
         render: (t, r) => (
-          <div className={styles.phinchName}>
-            <div className={tstyle.filterCell}>
-              <input
-                className={gstyle.input}
-                type="text"
-                value={t}
-                onChange={(e) => this.updatePhinchName(e, r)}
-              />
-            </div>
+          <div
+            className={tstyle.filterCell}
+            style={{
+              width: this.metrics.tableWidth * this.columnWidths['phinchName'],
+              // marginRight: '0.25rem',
+            }}
+          >
+            <input
+              className={gstyle.input}
+              type="text"
+              value={t}
+              onChange={(e) => this.updatePhinchName(e, r)}
+            />
           </div>
         ),
       },
@@ -267,10 +285,14 @@ export default class Filter extends Component {
         dataIndex: 'biomid',
         key: 'biomid',
         render: (t) => (
-          <div className={styles.biomid}>
-            <div className={tstyle.filterCell}>
-              {t}
-            </div>
+          <div
+            className={tstyle.filterCell}
+            style={{
+              width: this.metrics.tableWidth * this.columnWidths['biomid'],
+              // marginRight: '0.25rem',
+            }}
+          >
+            {t}
           </div>
         ),
       },
@@ -279,10 +301,14 @@ export default class Filter extends Component {
         dataIndex: 'sampleName',
         key: 'sampleName',
         render: (t) => (
-          <div className={styles.sampleName}>
-            <div className={tstyle.filterCell}>
-              {t}
-            </div>
+          <div
+            className={tstyle.filterCell}
+            style={{
+              width: this.metrics.tableWidth * this.columnWidths['sampleName'],
+              // marginRight: '0.25rem',
+            }}
+          >
+            {t}
           </div>
         ),
       },
@@ -395,7 +421,13 @@ export default class Filter extends Component {
   }
 
   updateDimensions() {
-    this.setState({height:window.innerHeight});
+    this.metrics.leftSidebar = this.state.showLeftSidebar ?
+      this.metrics.left.max : this.metrics.left.min;
+    this.metrics.tableWidth = window.innerWidth - (this.metrics.leftSidebar + this.metrics.filterWidth + this.metrics.padding * 4);
+    this.setState({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
   }
 
   filterFloat(value) {
@@ -423,7 +455,12 @@ export default class Filter extends Component {
     const arrow = click ? (getSortArrow(this, key)) : '';
     return (
       <div
-        className={`${gstyle.heading} ${styles[key]}`}
+        // className={`${gstyle.heading} ${styles[key]}`}
+        className={styles.columnHeading}
+        style={{
+          width: this.metrics.tableWidth * this.columnWidths[key],
+          // marginRight: '0.25rem',
+        }}
         onClick={onClick}
       >
         {names[key]} {arrow}
@@ -637,9 +674,10 @@ export default class Filter extends Component {
     const showLeftSidebar = !this.state.showLeftSidebar;
     this.metrics.leftSidebar = showLeftSidebar ?
       this.metrics.left.max : this.metrics.left.min;
-    this.metrics.filterWidth = showLeftSidebar ?
-      this.metrics.filter.min : this.metrics.filter.max;
-    this.setState({showLeftSidebar});
+    this.metrics.tableWidth = this.state.width - (this.metrics.leftSidebar + this.metrics.filterWidth + this.metrics.padding * 4);
+    // this.metrics.filterWidth = showLeftSidebar ?
+    //   this.metrics.filter.min : this.metrics.filter.max;
+    this.setState({ showLeftSidebar });
   }
 
   redirectToVis(result) {
@@ -704,18 +742,19 @@ export default class Filter extends Component {
             {result}
           </div>
         </div>
-        <div style={{backgroundColor: '#ffffff', color: '#808080'}}>
+        <div style={{ position: 'relative', backgroundColor: '#ffffff', color: '#808080'}}>
+          <div className={styles.headingRow} />
           <SideMenu
             showLeftSidebar={this.state.showLeftSidebar}
             leftSidebar={this.metrics.leftSidebar}
             leftMin={this.metrics.left.min}
-            chartHeight={(this.state.height - 125)}
+            chartHeight={(this.state.height - 130)}
             items={this.menuItems}
             toggleMenu={this.toggleMenu}
           />
           <div className={`${styles.section} ${styles.left}`} style={{
             display: 'inline-block',
-            height: (this.state.height - 125),
+            height: (this.state.height - 130),
             overflowY: 'overlay', // 'scroll',
           }}>
             {this.displayFilters()}
@@ -727,10 +766,13 @@ export default class Filter extends Component {
               Reset Filters
             </div>
           </div>
-          <div className={`${styles.section} ${styles.right}`}>
+          <div
+            className={`${styles.section} ${styles.right}`}
+            style={{ width: this.metrics.tableWidth }}
+          >
             <Table
               className={tstyle.table}
-              scroll={{ y: (this.state.height - 194) }}
+              scroll={{ y: (this.state.height - 130) }}
               columns={this.columns}
               data={this.state.data}
               rowKey={row => row.id}

@@ -49,6 +49,7 @@ export default class SideMenu extends Component {
         className={`${gstyle.panel} ${gstyle.noscrollbar}`}
         style={{
           overflowY: 'hidden',
+          // zIndex: 3,
         }}
       >
         {menuItems}
