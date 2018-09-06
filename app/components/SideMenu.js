@@ -63,12 +63,18 @@ export default class SideMenu extends Component {
             overflowY: 'hidden',
           }}
         >
-          <div className={styles.toggleSquare}></div>
-          <div
-            className={`${styles.menuToggle} ${rotation}`}
-            onClick={this.props.toggleMenu}
+          <div 
+            style={{
+              display: this.props.hideToggle ? 'none' : 'inline-block',
+            }}
           >
-            <img src={arrow} alt='arrow-toggle-menu' />
+            <div className={styles.toggleSquare}></div>
+            <div
+              className={`${styles.menuToggle} ${rotation}`}
+              onClick={this.props.toggleMenu}
+            >
+              <img src={arrow} alt='arrow-toggle-menu' />
+            </div>
           </div>
         </div>
       </div>

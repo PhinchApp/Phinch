@@ -68,7 +68,7 @@ export default class Home extends Component {
           <div className={`${styles.section} ${styles.left}`}>
             <div className={`${styles.area} ${styles.about}`}>
               <img src={logo} className={styles.logo} alt='Phinch Logo' />
-              <p>Version 0.01</p>
+              <p>Version 2.0.1</p>
             </div>
             <div className={`${styles.area} ${styles.links}`}>
               {links}
@@ -78,13 +78,13 @@ export default class Home extends Component {
             <div className={styles.scroll}>
               <div className={styles.area}>
                 <div className={styles.projectType}>
-                  <h2>Projects</h2>
+                  <h2 className={styles.sectionTitle}>Projects</h2>
                 </div>
                 {projects}
               </div>
               <div className={styles.area}>
                 <div className={styles.projectType}>
-                  <h2>Samples</h2>
+                  <h2 className={styles.sectionTitle}>Samples</h2>
                 </div>
                 {samples}
               </div>

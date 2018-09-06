@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { remote } from 'electron';
 
 import { createProject } from '../projects.js';
@@ -31,6 +31,7 @@ export default class NewProject extends Component {
       valid: null,
       observations: null,
       error: null,
+      redirect: null,
       loading: false,
       dragging: false,
       width: window.innerWidth,
@@ -40,11 +41,6 @@ export default class NewProject extends Component {
 
     this.metrics = {
       padding: 16,
-      // filterWidth: 175,
-      // filter: {
-      //   min: 75,
-      //   max: 175,
-      // },
       leftSidebar: 121,
       left: {
         min: 27,
@@ -57,9 +53,7 @@ export default class NewProject extends Component {
         id: 'back',
         name: 'Back',
         action: () => { 
-          this.save(() => {
-            this.setState({ redirect: '/Home' });
-          });
+          this.setState({ redirect: '/Home' });
         },
         icon: <img src={back} />,
       },
@@ -74,6 +68,7 @@ export default class NewProject extends Component {
     this.onChosenFileToOpen = this.onChosenFileToOpen.bind(this);
     this.handleOpenButton = this.handleOpenButton.bind(this);
     this.toggleMenu = this.toggleMenu.bind(this);
+    this.updateDimensions = this.updateDimensions.bind(this);
   }
 
   componentDidMount() {
@@ -187,6 +182,7 @@ export default class NewProject extends Component {
   }
 
   render() {
+    const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
     let result = '';
     if (this.state.valid === 'Yes') {
       result = <Link to="/filter"><button id='filter'>Filter Data</button></Link>;
@@ -197,6 +193,7 @@ export default class NewProject extends Component {
     const indicateDrag = this.state.dragging ? styles.drag : '';
     return (
       <div className={gstyle.container}>
+        {redirect}
         <div className={styles.header}>
           <div className={gstyle.logo}>
             <Link to="/">
@@ -214,6 +211,7 @@ export default class NewProject extends Component {
             chartHeight={(this.state.height - 130)}
             items={this.menuItems}
             toggleMenu={this.toggleMenu}
+            hideToggle={true}
           />
 
           <div

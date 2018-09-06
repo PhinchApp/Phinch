@@ -9,13 +9,16 @@
 }
 
 .project img {
-  width: 7rem;
-  height: 7rem;
+  width: 6rem;
+  height: 6rem;
   box-shadow: 0 0 3px #808080;
-  background: white;
+  background: black;
+  border-radius: 8px;
 }
 
 .project p {
-  color: #808080;
+  color: white;
   word-wrap: break-word;
+  font-size: 14px;
+  font-weight: 400;
 }

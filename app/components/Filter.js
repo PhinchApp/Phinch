@@ -792,7 +792,7 @@ export default class Filter extends Component {
               }}
             />
             <RemovedRows
-              width={750}
+              width={this.metrics.tableWidth}
               deleted={this.state.deleted}
               deletedColumns={this.deletedColumns}
             />

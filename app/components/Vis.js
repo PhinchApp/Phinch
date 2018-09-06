@@ -542,9 +542,12 @@ export default class Vis extends Component {
         }).filter(a => {
           return a.type === 'date';
         });
-        const collectionDate = c.metadata[dateAttribute.key] ? (
+        let collectionDate = '';
+        if (dateAttribute) {
+          collectionDate = c.metadata[dateAttribute.key] ? (
             new Date(c.metadata[dateAttribute.key]).toLocaleString().split(', ')[0]
           ) : '';
+        }
         return {
           id: c.id,
           biomid: c.biomid,
@@ -1134,7 +1137,7 @@ export default class Vis extends Component {
   }
 
   renderLevelSelector(levels) {
-    const modalLevel = (this.state.width - 570) < ((755 / 12) * this.levels.length);
+    const modalLevel = (this.state.width - 580) < ((800 / 12) * this.levels.length);
 
     const levelButtons = levels.map((l, i) => {
         const selected = (l.order <= this.state.level) ? styles.selected : '';
