@@ -4,11 +4,12 @@ import { JSONStorage } from 'node-localstorage';
 
 // ref: https://kilianvalkhof.com/2018/apps/using-google-analytics-to-gather-usage-statistics-in-electron/
 
-const nodeStorage = new JSONStorage('phinch');
-const visitorId = nodeStorage.getItem('visitorid') || uuid();
-nodeStorage.setItem('visitorid', visitorId);
+// const nodeStorage = new JSONStorage('./phinch');
+// const visitorId = nodeStorage.getItem('visitorid') || uuid();
+// nodeStorage.setItem('visitorid', visitorId);
 
-const visitor = ua('UA-50346302-2', visitorId);
+// const visitor = ua('UA-50346302-2', visitorId);
+const visitor = ua('UA-50346302-2');
 
 export function trackEvent(category, action, label, value) {
   visitor.event({
