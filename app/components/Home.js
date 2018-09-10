@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router';
+import { remote } from 'electron';
 
 import { pageView } from '../analytics.js'
 import loadFile from '../DataLoader.js';
@@ -17,6 +18,8 @@ export default class Home extends Component {
     super(props);
 
     pageView('/');
+
+    this.version = remote.app.getVersion();
 
     this.state = {
       loading: false,
@@ -68,7 +71,7 @@ export default class Home extends Component {
           <div className={`${styles.section} ${styles.left}`}>
             <div className={`${styles.area} ${styles.about}`}>
               <img src={logo} className={styles.logo} alt='Phinch Logo' />
-              <p>Version 2.0.1</p>
+              <p>Version {this.version}</p>
             </div>
             <div className={`${styles.area} ${styles.links}`}>
               {links}
