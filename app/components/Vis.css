@@ -59,11 +59,12 @@
 }
 
 .axis {
+  position: absolute;
   display: inline-block;
   text-align: center;
-  vertical-align: top;
   background-color: white;
-  color: #808080;
+  vertical-align: top;
+  z-index: 10;
 }
 
 .controlRow {

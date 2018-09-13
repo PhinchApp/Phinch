@@ -25,8 +25,8 @@ function loadFile(filepath, success, failure) {
     }
   });
   python.on('error', (error) => {
-    failure();
     console.warn(error);
+    failure();
   });
 }
 

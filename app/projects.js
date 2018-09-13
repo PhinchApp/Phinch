@@ -122,7 +122,7 @@ export function createProject(project) {
   const phinchdir = join(homedirectory, 'Documents', 'Phinch2.0');
   const phinch = fs.readdirSync(phinchdir);
   //
-  const basename = project.name.split('.')[0];
+  const basename = project.name.split('.').slice(0, -1).join('.');
   let foldername = basename;
   let version = 0;
   while (phinch.includes(foldername)) {
@@ -133,7 +133,13 @@ export function createProject(project) {
   fs.mkdirSync(join(phinchdir, foldername));
   const filepath = join(phinchdir, foldername, `${foldername}.biom`);
   fs.writeFileSync(filepath, JSON.stringify(project.data));
-  fs.writeFileSync(join(phinchdir, foldername, `${foldername}.json`), JSON.stringify({name:foldername}));
+  const projectSettings = {
+    phinch: {
+      name: foldername,
+      path: join(phinchdir, foldername),
+    },
+  };
+  fs.writeFileSync(join(phinchdir, foldername, `${foldername}.json`), JSON.stringify(projectSettings));
   fs.writeFileSync(join(phinchdir, foldername, `${foldername}.png`), sampleicon.replace(/^data:image\/png;base64,/, ''), 'base64');
   //
   return filepath;

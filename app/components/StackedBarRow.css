@@ -4,8 +4,9 @@
   margin: 0;
   font-size: 12px;
   line-height: 14px;
-  padding: 0.25rem;
-  padding-top: 0;
+  /*padding: 0.25rem;*/
+  /*padding-top: 0;*/
+  padding: 0;
   color: #1a1a1a;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -13,15 +14,16 @@
   vertical-align: top;
 }
 
-.rowSection {
+/*.rowSection {
   position: relative;
   display: inline-block;
   margin: 0;
   padding: 0;
 }
-
+*/
 .rowLabel input {
   font-family: 'IBM Plex Sans Condensed';
+  font-weight: 400;
   font-size: 12px;
   line-height: 14px;
   height: 14px;
@@ -35,6 +37,13 @@
   vertical-align: top;
 }
 
+
+.row:hover {
+  cursor: pointer;
+  stroke: #e9e9e9;
+}
+
+/*
 .row {
   margin: 0;
   margin-right: 0.5rem;
@@ -52,6 +61,8 @@
 .row.white {
   background-color: white;
 }
+*/
+
 
 .button {
   cursor: pointer;
@@ -88,7 +99,8 @@
   border: 2px solid #e9e9e9;
   z-index: 10;
   margin-top: -32px;
-  margin-left: 28px;
+  /*margin-left: 28px;*/
+  margin-left: 36px;
 }
 
 .tag {

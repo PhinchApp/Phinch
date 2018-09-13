@@ -79,27 +79,56 @@ export default class StackedBar extends Component {
   }
 
   render() {
-    return (
-      <canvas
-        ref={(c) => (this._canvas = c)}
-        width={this.props.width * this.scale}
-        height={this.props.height * this.scale}
-        style={{
-          width: `${this.props.width}px`,
-          height: `${this.props.height}px`,
-          margin: 0,
-          padding: 0,
-          outline: 'none',
-          border: 'none',
-          overflow: 'hidden',
-          verticalAlign: 'top',
-          cursor: 'pointer',
-        }}
-        onMouseOver={this.props.onHoverDatum ? this._mouseMove : null}
-        onMouseMove={this.props.onHoverDatum ? this._mouseMove : null}
-        onMouseOut={this.props.onHoverDatum ? this._mouseOut : null}
-        onClick={this.props.onClickDatum ? this._mouseClick : null}
-      />
-    );
+    if (this.props.renderSVG) {
+      if (this.props.isPercent) {
+        this.props.xscale
+          .domain([0, this.props.data.map(d => d.reads).reduce((a, v) => a + v, 0)])
+          .range([0, this.props.width])
+          .clamp();
+      }
+      let offset = 0;
+      const bars = this.props.data.map(d => {
+          d.width = this.props.xscale(d.reads);
+          offset += d.width;
+          return (
+            <rect
+              key={d.name}
+              x={offset - d.width}
+              y={0}
+              width={d.width}
+              height={this.props.height}
+              fill={this.props.cscale(d.name)}
+            />
+          );
+        });
+      return bars;
+    } else {
+      return (
+        <foreignObject>
+          <canvas
+            ref={(c) => (this._canvas = c)}
+            width={this.props.width * this.scale}
+            height={this.props.height * this.scale}
+            style={{
+              width: `${this.props.width}px`,
+              height: `${this.props.height}px`,
+              margin: 0,
+              padding: 0,
+              outline: 'none',
+              border: 'none',
+              overflow: 'hidden',
+              verticalAlign: 'top',
+              cursor: 'pointer',
+              position: 'fixed',
+              zIndex: 1,
+            }}
+            onMouseOver={this.props.onHoverDatum ? this._mouseMove : null}
+            onMouseMove={this.props.onHoverDatum ? this._mouseMove : null}
+            onMouseOut={this.props.onHoverDatum ? this._mouseOut : null}
+            onClick={this.props.onClickDatum ? this._mouseClick : null}
+          />
+        </foreignObject>
+      );
+    }
   }
 };

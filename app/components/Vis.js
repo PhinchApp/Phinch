@@ -10,6 +10,7 @@ import { scaleLinear, scaleOrdinal } from 'd3-scale';
 import { pageView } from '../analytics.js'
 import { updateFilters, removeRows, restoreRows, visSortBy, getSortArrow } from '../FilterFunctions';
 import { setProjectFilters, getProjectFilters } from '../projects.js';
+import { handleExportButton } from '../export.js';
 import DataContainer from '../DataContainer';
 import palette from '../palette';
 
@@ -61,6 +62,7 @@ export default class Vis extends Component {
       showLeftSidebar: false,
       showEmptyAttrs: true,
       result: null,
+      renderSVG: false,
     };
 
     this._inputs = {};
@@ -85,6 +87,14 @@ export default class Vis extends Component {
         },
         icon: <img src={back} />,
       },
+      {
+        id: 'export',
+        name: 'Export SVG',
+        action: () => {
+          this.setState({ renderSVG: true });
+        },
+        icon: <img src={save} />,
+      }
     ];
 
     this.filters = {};
@@ -141,7 +151,7 @@ export default class Vis extends Component {
       idWidth: 32,
       nameWidth: 140,
       barInfoWidth: 188,
-      heightOffset: 158,
+      heightOffset: 130, // 158,
       leftSidebar: 27,
       left: {
         min: 27,
@@ -294,6 +304,14 @@ export default class Vis extends Component {
   componentDidMount() {
     window.addEventListener('resize', this.updateDimensions);
     this.setLevel(this.state.level);
+  }
+
+  componentDidUpdate() {
+    if (this.state.renderSVG) {
+      handleExportButton(this.state.summary.path.slice(), this._svg, () => {
+        this.setState({ renderSVG: false });
+      });
+    }
   }
 
   componentWillUnmount() {
@@ -593,7 +611,7 @@ export default class Vis extends Component {
     });
   }
 
-  renderTicks() {
+  renderTicks(svgWidth, svgHeight) {
     const tickCount = Math.floor(this.metrics.chartWidth / 64);
     const ticks = this.scales.x.ticks(tickCount);
     if (!ticks.length) {
@@ -607,40 +625,58 @@ export default class Vis extends Component {
         tickArray.push((xMax / 10) * i);
       }
     }
-    return tickArray.map(t => {
-      const label = (this.state.mode === 'value') ? (
-          t.toLocaleString()
-        ) : (
-          `${Math.round((t / xMax) * 100).toLocaleString()}%`
-        );
-      return (
-        <g
-          key={`g-${t}`}
-          transform={`
-            translate(${this.scales.x(t)}, ${(this.metrics.lineHeight)})
-          `}
+    return (
+      <g
+        pointerEvents='none'
+        textAnchor='middle'
+        fill='#808080'
+      >
+        <text
+          transform={`translate(
+            ${svgWidth / 2},
+            ${this.metrics.lineHeight * 0.825}
+          )`}
         >
-          <text
-            fontSize={10}
-            fontFamily='IBM Plex Sans Condensed'
-            textAnchor='middle'
-            dy={-4}
-            dx={-1}
-            fill='#808080'
-          >
-            {label}
-          </text>
-          <line
-            x1={-1}
-            y1={0}
-            x2={-1}
-            y2={this.metrics.chartHeight}
-            stroke='#808080'
-            strokeWidth={0.5}
-          />
+          Sequence Reads
+        </text>
+        <g
+          transform={`translate(
+            ${this.metrics.barInfoWidth + 3},
+            ${this.metrics.lineHeight}
+          )`}
+          width={(this.state.width - (this.metrics.padding * 2))}
+          height={(this.metrics.chartHeight + (this.metrics.lineHeight * 2))}
+        >
+          {
+            tickArray.map(t => {
+              const label = (this.state.mode === 'value') ? (
+                  t.toLocaleString()
+                ) : (
+                  `${Math.round((t / xMax) * 100).toLocaleString()}%`
+                );
+              return (
+                <g
+                  key={`g-${t}`}
+                  transform={`translate(${this.scales.x(t)}, ${(this.metrics.lineHeight)})`}
+                >
+                  <text fontSize={10} dy={-4} dx={-1}>
+                    {label}
+                  </text>
+                  <line
+                    x1={-1}
+                    y1={0}
+                    x2={-1}
+                    y2={svgHeight}
+                    stroke='#808080'
+                    strokeWidth={0.5}
+                  />
+                </g>
+              )
+            })
+          }
         </g>
-      );
-    });
+      </g>
+    );
   }
 
   filterData(filters, tags, preData, deleted) {
@@ -892,6 +928,7 @@ export default class Vis extends Component {
               reads: styles.reads,
             }}
             tags={[]}
+            renderSVG={this.state.renderSVG}
           />
         );
       });
@@ -912,7 +949,8 @@ export default class Vis extends Component {
   }
 
   renderBars(data, isRemoved) {
-    return data
+    // return data
+    const rows = data
       .map((d, i) => {
         return (
           <StackedBarRow
@@ -933,9 +971,12 @@ export default class Vis extends Component {
             hoverDatum={this._hoverDatum}
             clickDatum={this._clickDatum}
             updatePhinchName={this.updatePhinchName}
+            renderSVG={this.state.renderSVG}
           />
         );
       });
+
+    return rows;
   }
 
   updateAttributeValues(attribute, data) {
@@ -1345,6 +1386,53 @@ export default class Vis extends Component {
     );
   }
 
+  renderVisual() {
+    const isAttribute = !(this.state.selectedAttribute === '');
+    const dataLength = isAttribute ? (
+      this.attributes[this.state.selectedAttribute].values
+        .filter(v => {
+          if (this.state.showEmptyAttrs) return true;
+          return v.reads > 0;
+        }).length
+      ) : this.state.data.length;
+    const svgHeight = (this.metrics.lineHeight * 4) + (
+        this.metrics.barContainerHeight + (
+          this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
+        )) * dataLength;
+    const svgWidth = this.metrics.chartWidth + this.metrics.nonbarWidth;
+    return (
+      <svg
+        ref={s => this._svg = s}
+        version="1.1"
+        baseProfile="full"
+        width={svgWidth}
+        height={svgHeight}
+        xmlns="http://www.w3.org/2000/svg"
+        fontFamily='IBM Plex Sans Condensed'
+        fontWeight='200'
+        fontSize='12px'
+      >
+        <g
+          fill='#000000'
+          transform={`translate(3, ${this.metrics.lineHeight * 2})`}
+        >
+          {
+            isAttribute ? (
+              this.renderAttributeBars()
+            ) : (
+              this.renderBars(this.state.data, false)
+            )
+          }
+        </g>
+        {
+          this.state.renderSVG ? (
+            this.renderTicks(svgWidth, svgHeight)
+          ) : ''
+        }
+      </svg>
+    );
+  }
+
   render() {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
 
@@ -1441,56 +1529,46 @@ export default class Vis extends Component {
         />
         <div
           className={`${gstyle.panel} ${gstyle.noscrollbar}`}
-          style={{width: this.metrics.chartWidth + this.metrics.nonbarWidth}}
+          style={{
+            width: this.metrics.chartWidth + this.metrics.nonbarWidth,
+          }}
         >
           <div
             className={styles.axis}
             style={{
-              width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
+              width: (this.metrics.chartWidth + this.metrics.nonbarWidth - this.metrics.padding),
               height: this.metrics.lineHeight * 2,
-              fontSize: 12,
             }}
           >
-            Sequence Reads
-            <svg style={{
-              position: 'absolute',
-              left: this.metrics.leftSidebar + 3,
-              pointerEvents: 'none',
-              paddingLeft: this.metrics.padding * 0.5,
-              width: (this.state.width - (this.metrics.padding * 2)),
-              height: (this.metrics.chartHeight + (this.metrics.lineHeight * 2)),
-            }}>
-              <g transform={`
-                translate(
-                  ${this.metrics.barInfoWidth},
-                  ${this.metrics.lineHeight}
-                )
-              `}>
-                {this.renderTicks()}
-              </g>
+            <svg
+              fontFamily='IBM Plex Sans Condensed'
+              fontWeight='200'
+              fontSize='12px'
+              style={{
+                position: 'absolute',
+                left: 0,
+                pointerEvents: 'none',
+                paddingLeft: this.metrics.padding * 0.5,
+                width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
+                height: this.metrics.chartHeight,
+              }}
+            >
+              {this.renderTicks((this.metrics.chartWidth + this.metrics.nonbarWidth), this.metrics.chartHeight)}
             </svg>
           </div>
           <div
             className={`${gstyle.panel} ${styles.leftGutter}`}
             style={{
               backgroundColor: '#ffffff',
-              display: 'inline-block',
-              color: '#808080',
               width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
               height: this.metrics.chartHeight,
             }}
           >
-            {
-              this.state.selectedAttribute === '' ? (
-                this.renderBars(this.state.data, false)
-              ) : (
-                this.renderAttributeBars()
-              )
-            }
-            {tooltip}
+            {this.renderVisual()}
           </div>
         </div>
         {this.renderFilters()}
+        {tooltip}
         <Modal
           buttonTitle={'Top Sequences'}
           modalTitle={'Top Sequences'}
