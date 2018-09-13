@@ -19,12 +19,10 @@ import SideMenu from './SideMenu';
 import StackedBarRow from './StackedBarRow';
 import StackedBarTooltip from './StackedBarTooltip';
 import FilterChart from './FilterChart';
-import RemovedRows from './RemovedRows';
 import Summary from './Summary';
 import Modal from './Modal';
 
 import styles from './Vis.css';
-import tstyle from './tables.css';
 import gstyle from './general.css';
 
 import logo from 'images/phinch-logo.png';
@@ -144,6 +142,8 @@ export default class Vis extends Component {
       lineHeight: 14,
       barContainerHeight: 56,
       barHeight: 44,
+      attrBarContainerHeight: 40,
+      attrBarHeight: 28,
       miniBarContainerHeight: 8,
       miniBarHeight: 6,
       height: 600,
@@ -874,21 +874,12 @@ export default class Vis extends Component {
     this.setState({ showEmptyAttrs });
   }
 
-  renderAttributeBars() {
-    const attribute = this.attributes[this.state.selectedAttribute];
-    this.scales.x
-      .domain([0, Math.max(...attribute.values.map(d  => d.reads))])
-      .range([0, this.metrics.chartWidth])
-      .clamp();
-    const attrMetrics = _cloneDeep(this.metrics);
-    // attrMetrics.barHeight /= 2;
-    attrMetrics.barHeight = 28;
-    attrMetrics.barContainerHeight = attrMetrics.barHeight + 12;
+  renderAttributeBars(attribute, unit, metrics) {
     const rows = attribute.values
       .filter(v => {
-        if (this.state.showEmptyAttrs) return true;
-        return v.reads > 0;
-      })
+          if (this.state.showEmptyAttrs) return true;
+          return v.reads > 0;
+        })
       .sort((a, b) => {
         if (this.sort.reverse) {
           if (a.value === 'no_data') return -Infinity;
@@ -911,7 +902,7 @@ export default class Vis extends Component {
             data={d}
             index={i}
             labelKey={'name'}
-            metrics={attrMetrics}
+            metrics={metrics}
             scales={this.scales}
             filters={this.state.filters}
             highlightedDatum={this.state.highlightedDatum}
@@ -932,51 +923,50 @@ export default class Vis extends Component {
           />
         );
       });
-    const unit = attribute.unit ? `(${attribute.unit})` : '';
+    // const unit = attribute.unit ? `(${attribute.unit})` : '';
     return (
-      <div>
-        <div className={styles.attrLabel}>
+      <g>
+        <text
+          transform={`translate(${this.metrics.padding / 2 - 3}, ${(-this.metrics.padding / 2) - 3})`}
+          fontFamily='IBM Plex Sans Condensed'
+          fontWeight='400'
+          fontSize='15'
+          fill='#2b2b2b'
+        >
           {attribute.key} {unit}
-        </div>
-        <div>
-          <div className={styles.attrToggle} onClick={this.toggleEmptyAttrs}>
-            {`${this.state.showEmptyAttrs ? 'Hide' : 'Show'} Empty`}
-          </div>
-        </div>
-        {rows}
-      </div>
+        </text>
+        <g transform={`translate(0, ${this.metrics.padding / 2})`}>
+          {rows}
+        </g>
+      </g>
     );
   }
 
   renderBars(data, isRemoved) {
-    // return data
-    const rows = data
-      .map((d, i) => {
-        return (
-          <StackedBarRow
-            key={d.id}
-            data={d}
-            index={i}
-            labelKey={this.state.labelKey}
-            filters={this.state.filters}
-            metrics={this.metrics}
-            scales={this.scales}
-            tags={this.state.tags.filter(t => t.id !== 'none')}
-            toggleTag={this._toggleTag}
-            isPercent={(this.state.mode === 'percent')}
-            isRemoved={isRemoved}
-            highlightedDatum={this.state.highlightedDatum}
-            removeDatum={() => { removeRows(this, [d]) }}
-            restoreDatum={() => { restoreRows(this, [d]) }}
-            hoverDatum={this._hoverDatum}
-            clickDatum={this._clickDatum}
-            updatePhinchName={this.updatePhinchName}
-            renderSVG={this.state.renderSVG}
-          />
-        );
-      });
-
-    return rows;
+    return data.map((d, i) => {
+      return (
+        <StackedBarRow
+          key={d.id}
+          data={d}
+          index={i}
+          labelKey={this.state.labelKey}
+          filters={this.state.filters}
+          metrics={this.metrics}
+          scales={this.scales}
+          tags={this.state.tags.filter(t => t.id !== 'none')}
+          toggleTag={this._toggleTag}
+          isPercent={(this.state.mode === 'percent')}
+          isRemoved={isRemoved}
+          highlightedDatum={this.state.highlightedDatum}
+          removeDatum={() => { removeRows(this, [d]) }}
+          restoreDatum={() => { restoreRows(this, [d]) }}
+          hoverDatum={this._hoverDatum}
+          clickDatum={this._clickDatum}
+          updatePhinchName={this.updatePhinchName}
+          renderSVG={this.state.renderSVG}
+        />
+      );
+    });
   }
 
   updateAttributeValues(attribute, data) {
@@ -1179,7 +1169,6 @@ export default class Vis extends Component {
 
   renderLevelSelector(levels) {
     const modalLevel = (this.state.width - 580) < ((800 / 12) * this.levels.length);
-
     const levelButtons = levels.map((l, i) => {
         const selected = (l.order <= this.state.level) ? styles.selected : '';
         return (
@@ -1200,7 +1189,6 @@ export default class Vis extends Component {
           </div>
         );
       });
-
     const [currentLevel] = _cloneDeep(this.levels).filter(l => l.order === this.state.level);
     const levelSelector = modalLevel ? (
         <Modal
@@ -1228,7 +1216,6 @@ export default class Vis extends Component {
           {levelButtons}
         </div>
       );
-
     return levelSelector;
   }
 
@@ -1386,49 +1373,52 @@ export default class Vis extends Component {
     );
   }
 
-  renderVisual() {
-    const isAttribute = !(this.state.selectedAttribute === '');
+  renderVisual(isAttribute, attribute, unit) {
+    const metrics = _cloneDeep(this.metrics);
     const dataLength = isAttribute ? (
-      this.attributes[this.state.selectedAttribute].values
-        .filter(v => {
-          if (this.state.showEmptyAttrs) return true;
-          return v.reads > 0;
-        }).length
+        attribute.values
+          .filter(v => {
+            if (this.state.showEmptyAttrs) return true;
+            return v.reads > 0;
+          }).length
       ) : this.state.data.length;
-    const svgHeight = (this.metrics.lineHeight * 4) + (
-        this.metrics.barContainerHeight + (
-          this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
-        )) * dataLength;
+    if (isAttribute) {
+      metrics.barContainerHeight = metrics.attrBarContainerHeight;
+      metrics.barHeight = metrics.attrBarHeight;
+      this.scales.x
+        .domain([0, Math.max(...attribute.values.map(d  => d.reads))])
+        .range([0, this.metrics.chartWidth])
+        .clamp();
+    }
     const svgWidth = this.metrics.chartWidth + this.metrics.nonbarWidth;
+    const svgHeight = (this.metrics.lineHeight * 4) + (
+      metrics.barContainerHeight + (
+        this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
+      )) * dataLength;
     return (
       <svg
         ref={s => this._svg = s}
         version="1.1"
         baseProfile="full"
+        xmlns="http://www.w3.org/2000/svg"
         width={svgWidth}
         height={svgHeight}
-        xmlns="http://www.w3.org/2000/svg"
         fontFamily='IBM Plex Sans Condensed'
         fontWeight='200'
         fontSize='12px'
       >
-        <g
-          fill='#000000'
-          transform={`translate(3, ${this.metrics.lineHeight * 2})`}
-        >
-          {
-            isAttribute ? (
-              this.renderAttributeBars()
-            ) : (
-              this.renderBars(this.state.data, false)
-            )
-          }
+        <g transform={`translate(${(this.metrics.padding / 2)}, ${0})`}>
+          <g transform={`translate(${3}, ${this.metrics.lineHeight * 2})`}>
+            {
+              isAttribute ? (
+                this.renderAttributeBars(attribute, unit, metrics)
+              ) : (
+                this.renderBars(this.state.data, false)
+              )
+            }
+          </g>
+          {this.state.renderSVG ? (this.renderTicks(svgWidth, svgHeight)) : ''}
         </g>
-        {
-          this.state.renderSVG ? (
-            this.renderTicks(svgWidth, svgHeight)
-          ) : ''
-        }
       </svg>
     );
   }
@@ -1484,6 +1474,10 @@ export default class Vis extends Component {
 
     const spacer = <div className={styles.spacer} />;
 
+    const isAttribute = !(this.state.selectedAttribute === '');
+    const attribute = isAttribute ? this.attributes[this.state.selectedAttribute] : null;
+    const unit = isAttribute ? (attribute.unit ? `(${attribute.unit})` : '') : null;
+
     return (
       <div className={gstyle.container}>
         {redirect}
@@ -1537,7 +1531,7 @@ export default class Vis extends Component {
             className={styles.axis}
             style={{
               width: (this.metrics.chartWidth + this.metrics.nonbarWidth - this.metrics.padding),
-              height: this.metrics.lineHeight * 2,
+              height: this.metrics.lineHeight * 2.5,
             }}
           >
             <svg
@@ -1555,16 +1549,28 @@ export default class Vis extends Component {
             >
               {this.renderTicks((this.metrics.chartWidth + this.metrics.nonbarWidth), this.metrics.chartHeight)}
             </svg>
+            {
+              isAttribute ? (
+                <div className={styles.attrInfo}>
+                  <div className={styles.attrLabel}>
+                    {attribute.key} {unit}
+                  </div>
+                  <div className={styles.attrToggle} onClick={this.toggleEmptyAttrs}>
+                    {`${this.state.showEmptyAttrs ? 'Hide' : 'Show'} Empty`}
+                  </div>
+                </div>
+              ) : ''
+            }
           </div>
           <div
-            className={`${gstyle.panel} ${styles.leftGutter}`}
+            className={gstyle.panel}
             style={{
               backgroundColor: '#ffffff',
               width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
               height: this.metrics.chartHeight,
             }}
           >
-            {this.renderVisual()}
+            {this.renderVisual(isAttribute, attribute, unit)}
           </div>
         </div>
         {this.renderFilters()}
@@ -1599,10 +1605,15 @@ export default class Vis extends Component {
           modalPosition={{
             position: 'absolute',
             bottom: this.metrics.padding * 2,
-            left: this.metrics.leftSidebar,
+            left: this.metrics.leftSidebar + 3,
             width: this.metrics.chartWidth + this.metrics.nonbarWidth - 4,
           }}
           data={this.renderBars(this.state.deleted, true)}
+          svgContainer={true}
+          svgHeight={((this.metrics.barContainerHeight +
+              (this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length)
+            ) * this.state.deleted.length
+          )}
           badge={true}
         />
       </div>

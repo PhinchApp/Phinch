@@ -54,6 +54,7 @@ export default class StackedBarRow extends Component {
     const className = (this.props.index%2 === 0) ? styles.white : gstyle.grey;
     const miniBars = [];
     let miniBarIndex = 0;
+    const miniBarCount = Object.keys(this.props.filters).length;
     Object.keys(this.props.filters).forEach(k => {
       const [miniSequence] = _cloneDeep(sequence).filter(s => (s.name === k));
       if (miniSequence) {
@@ -249,12 +250,12 @@ export default class StackedBarRow extends Component {
           {this.props.isRemoved ? 'Restore' : 'Archive'}
         </div>
       ) : '';
-    const yOffset = 6 + (this.props.metrics.barContainerHeight + (this.props.metrics.miniBarContainerHeight * miniBars.length)) * this.props.index;
+    const yOffset = 6 + (this.props.metrics.barContainerHeight + (this.props.metrics.miniBarContainerHeight * miniBarCount)) * this.props.index;
     const rowColor = (this.props.index%2 === 0) ? '#ffffff' : '#f4f4f4';
     return (
       <g
         key={this.props.data.sampleName}
-        height={this.props.metrics.barContainerHeight + (this.props.metrics.miniBarContainerHeight * miniBars.length)}
+        height={this.props.metrics.barContainerHeight + (this.props.metrics.miniBarContainerHeight * miniBarCount)}
         transform={`translate(1, ${yOffset})`}
         onMouseEnter={this._showEditable}
         onMouseLeave={this._hideEditable}
@@ -267,8 +268,8 @@ export default class StackedBarRow extends Component {
           transform={`translate(0, -4)`}
           rx={this.props.metrics.padding / 2}
           ry={this.props.metrics.padding / 2}
-          width={this.props.metrics.nonbarWidth + this.props.metrics.chartWidth - ((this.props.metrics.padding * 1.5) + 4)}
-          height={this.props.metrics.barContainerHeight + (this.props.metrics.miniBarContainerHeight * miniBars.length) - 4}
+          width={this.props.metrics.nonbarWidth + this.props.metrics.chartWidth - ((this.props.metrics.padding * 2) + 4)}
+          height={this.props.metrics.barContainerHeight + (this.props.metrics.miniBarContainerHeight * miniBarCount) - 4}
         />
         <g
           width={this.props.metrics.barInfoWidth}

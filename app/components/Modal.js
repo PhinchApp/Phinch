@@ -53,7 +53,19 @@ export default class Modal extends Component {
             >x</div>
           </div>
           <div className={`${styles.dataContainer} ${gstyle.darkbgscrollbar}`}>
-            {this.props.data}
+            {
+              this.props.svgContainer ? (
+                <svg
+                  className={styles.svgContainer}
+                  height={this.props.svgHeight}
+                  fontFamily='IBM Plex Sans Condensed'
+                  fontWeight='200'
+                  fontSize='12px'
+                >
+                  {this.props.data}
+                </svg>
+              ) : this.props.data
+            }
           </div>
         </div>
       ) : '';

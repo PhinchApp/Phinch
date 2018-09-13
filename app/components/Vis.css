@@ -64,7 +64,7 @@
   text-align: center;
   background-color: white;
   vertical-align: top;
-  z-index: 10;
+  z-index: 2;
 }
 
 .controlRow {
@@ -216,58 +216,6 @@
   margin-left: -72px;
 }
 
-/*.checkbox {
-  position: relative;
-  display: inline-block;
-  top: 0;
-  left: 0;
-  width: 16px;
-  height: 11px;
-  margin: 0;
-  padding: 0;
-  cursor: pointer;
-}
-.checkbox input {
-  position: absolute;
-  top: 0;
-  left: -3px;
-  width: 16px;
-  height: 16px;
-  opacity: 1;
-}
-.checkmark {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 16px;
-  height: 16px;
-  border-radius: 2px;
-  background-color: #666666;
-}
-.checkmark:hover {
-  background-color: #4d4d4d;
-}
-.checkmark:after {
-  content: "";
-  position: absolute;
-  display: none;
-}
-.checkbox input:checked ~ .checkmark:after {
-  display: block;
-}
-.checkbox .checkmark:after {
-  cursor: pointer;
-  left: 4px;
-  top: 1px;
-  width: 4px;
-  height: 8px;
-  border: solid #1fbbd8;
-  border-width: 0 3px 3px 0;
-  -webkit-transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
-  transform: rotate(45deg);
-}*/
-
 .tagName {
   font-size: 13px;
   color: #999999;
@@ -277,25 +225,28 @@
   color: white;
 }
 
-.attrLabel {
-  position: absolute;
-  margin-top: -24px;
-  padding: 0 0.5rem;
+.attrInfo {
+  position: fixed;
+  display: block;
   width: 144px;
+  padding: 0 1rem;
+  z-index: 3;
   font-family: 'IBM Plex Sans Condensed';
-  font-weight: 400;
-  font-size: 15px;
+  text-align: left;
   color: #2b2b2b;
 }
 
+.attrLabel {
+  margin-top: 4px;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 15px;
+}
+
 .attrToggle {
-  display: inline-block;
-  padding: 0 0.5rem;
-  margin-bottom: 0.25rem;
-  font-family: 'IBM Plex Sans Condensed';
   font-weight: 300;
   font-size: 12px;
-  color: #2b2b2b;
+  line-height: 12px;
   cursor: pointer;
 }
 

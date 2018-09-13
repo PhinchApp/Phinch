@@ -56,5 +56,11 @@
 .dataContainer {
   margin: 0 6px;
   height: calc(100% - 26px);
+  overflow-x: hidden;
   overflow-y: scroll;
+}
+
+.svgContainer {
+  width: 100%;
+  /*height: 100%;*/
 }
