@@ -61,6 +61,7 @@ export default class Vis extends Component {
       showEmptyAttrs: true,
       result: null,
       renderSVG: false,
+      dialogVisible: false,
     };
 
     this._inputs = {};
@@ -140,6 +141,7 @@ export default class Vis extends Component {
     this.metrics = {
       padding: 16,
       lineHeight: 14,
+      sequenceRowHeight: 24,
       barContainerHeight: 56,
       barHeight: 44,
       attrBarContainerHeight: 40,
@@ -307,9 +309,10 @@ export default class Vis extends Component {
   }
 
   componentDidUpdate() {
-    if (this.state.renderSVG) {
+    if (this.state.renderSVG && !this.state.dialogVisible) {
+      this.setState({ dialogVisible: true });
       handleExportButton(this.state.summary.path.slice(), this._svg, () => {
-        this.setState({ renderSVG: false });
+        this.setState({ renderSVG: false, dialogVisible: false });
       });
     }
   }
@@ -923,7 +926,6 @@ export default class Vis extends Component {
           />
         );
       });
-    // const unit = attribute.unit ? `(${attribute.unit})` : '';
     return (
       <g>
         <text
@@ -1221,27 +1223,35 @@ export default class Vis extends Component {
 
   renderTopSequences(sequences) {
     const metrics = {
-      width: (this.metrics.chartWidth + this.metrics.nonbarWidth) - (4 + 30 + 20),
-      rank: 48,
-      circle: 24,
-      reads: 108,
+      width: (this.metrics.chartWidth + this.metrics.nonbarWidth) - (3 + this.metrics.padding * 2),
+      rank: 50,
+      circle: {
+        offset: 75,
+        radius: this.metrics.sequenceRowHeight / 3,
+      },
+      name: 100,
     };
-    metrics.name = metrics.width - (metrics.rank + metrics.circle + metrics.reads);
+    metrics.reads = metrics.width - this.metrics.padding / 2;
     return sequences.map((s, i) => {
       const color = this.scales.c(s.name);
       const seqs = s.name.replace(/[a-zA-Z]__/g,'').trim().split(',').filter(q => q);
       const name = seqs[seqs.length - 1];
-      const highlighted = this.state.filters.hasOwnProperty(s.name) ? (
-          styles.seqRowHighlighted
-        ) : '';
+      const highlighted = this.state.filters.hasOwnProperty(s.name) && !this.state.renderSVG;
       return (
-        <div
+        <g
           key={`${s.name}-${i}`}
-          style={{
-            backgroundColor: (i%2 === 0) ? '#121212' : '#000000',
-            color: highlighted ? color : '#ffffff',
-          }}
-          className={`${styles.seqRow} ${highlighted}`}
+          className={styles.seqRow}
+          transform={`translate(${0}, ${this.metrics.sequenceRowHeight * i})`}
+          fill={
+            this.state.renderSVG ? (
+                '#121212'
+              ) : (
+                highlighted ? color : '#ffffff'
+              )
+          }
+          fontFamily='IBM Plex Sans Condensed'
+          fontWeight={highlighted ? '400' : '300'}
+          fontSize='12px'
           onClick={() => {
             if (highlighted) {
               this.removeFilter(s.name);
@@ -1250,34 +1260,42 @@ export default class Vis extends Component {
             }
           }}
         >
-          <div
-            className={`${styles.cell} ${styles.rank}`}
-            style={{width: metrics.rank}}
-          >
-            {s.rank.toLocaleString()}
-          </div>
-          <div
-            className={`${styles.cell} ${styles.circle}`}
-            style={{width: metrics.circle}}
-          >
-            <div
-              className={gstyle.circle}
-              style={{background: color}}
-            />
-          </div>
-          <div
-            className={`${styles.cell} ${styles.name}`}
-            style={{width: metrics.name}}
-          >
-            {name}
-          </div>
-          <div
-            className={`${styles.cell} ${styles.reads}`}
-            style={{width: metrics.reads}}
-          >
-            {s.reads.toLocaleString()}
-          </div>
-        </div>
+          <rect
+            width={metrics.width}
+            height={this.metrics.sequenceRowHeight}
+            fill={
+              this.state.renderSVG ? (
+                  (i%2 === 0) ? '#f4f4f4' : '#ffffff'
+                ) : (
+                  (i%2 === 0) ? '#121212' : '#000000'
+                )
+            }
+          />
+          <circle
+            fill={color}
+            r={metrics.circle.radius}
+            transform={
+              `translate(${metrics.circle.offset}, ${this.metrics.sequenceRowHeight / 2})`
+            }
+          />
+          <g transform={`translate(0, ${this.metrics.sequenceRowHeight / 3 * 2})`}>
+            <text
+              textAnchor='end'
+              transform={`translate(${metrics.rank}, 0)`}
+            >
+              {s.rank.toLocaleString()}
+            </text>
+            <text transform={`translate(${metrics.name}, 0)`}>
+              {name}
+            </text>
+            <text
+              textAnchor='end'
+              transform={`translate(${metrics.reads}, 0)`}
+            >
+              {s.reads.toLocaleString()}
+            </text>
+          </g>
+        </g>
       );
     });
   }
@@ -1373,7 +1391,7 @@ export default class Vis extends Component {
     );
   }
 
-  renderVisual(isAttribute, attribute, unit) {
+  renderVisual(isAttribute, attribute, unit, sequences) {
     const metrics = _cloneDeep(this.metrics);
     const dataLength = isAttribute ? (
         attribute.values
@@ -1395,6 +1413,8 @@ export default class Vis extends Component {
       metrics.barContainerHeight + (
         this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
       )) * dataLength;
+    const seqHeight = this.state.renderSVG ? this.metrics.sequenceRowHeight * sequences.length : 0;
+    const padding = this.state.renderSVG ? this.metrics.lineHeight * 9 : 0;
     return (
       <svg
         ref={s => this._svg = s}
@@ -1402,7 +1422,7 @@ export default class Vis extends Component {
         baseProfile="full"
         xmlns="http://www.w3.org/2000/svg"
         width={svgWidth}
-        height={svgHeight}
+        height={svgHeight + seqHeight + padding}
         fontFamily='IBM Plex Sans Condensed'
         fontWeight='200'
         fontSize='12px'
@@ -1417,7 +1437,39 @@ export default class Vis extends Component {
               )
             }
           </g>
-          {this.state.renderSVG ? (this.renderTicks(svgWidth, svgHeight)) : ''}
+          {
+            this.state.renderSVG ? (
+              <g>
+                {this.renderTicks(svgWidth, svgHeight - this.metrics.lineHeight * 2)}
+                <g transform={`translate(3, ${svgHeight})`}>
+                  <text
+                    textAnchor='middle'
+                    fill='#808080'
+                    transform={`translate(${svgWidth / 2}, ${this.metrics.lineHeight * 1.5})`}
+                  >
+                    Top Sequences
+                  </text>
+                  <g transform={`translate(0, ${this.metrics.lineHeight * 2})`}>
+                    {this.renderTopSequences(sequences)}
+                  </g>
+                  <g transform={`translate(0, ${seqHeight + this.metrics.lineHeight * 3})`}>
+                    <text transform={`translate(0, ${this.metrics.lineHeight * 1})`}>
+                      Please cite Phinch as:
+                    </text>
+                    <text transform={`translate(0, ${this.metrics.lineHeight * 2})`}>
+                      Bik HM, Pitch Interactive (2014)
+                    </text>
+                    <text transform={`translate(0, ${this.metrics.lineHeight * 3})`}>
+                      Phinch: An interactive, exploratory data visualization framework for –Omic datasets
+                    </text>
+                    <text transform={`translate(0, ${this.metrics.lineHeight * 4})`}>
+                      bioRxiv 009944; https://doi.org/10.1101/009944
+                    </text>
+                  </g>
+                </g>
+              </g>
+            ) : ''
+          }
         </g>
       </svg>
     );
@@ -1570,7 +1622,7 @@ export default class Vis extends Component {
               height: this.metrics.chartHeight,
             }}
           >
-            {this.renderVisual(isAttribute, attribute, unit)}
+            {this.renderVisual(isAttribute, attribute, unit, sequences)}
           </div>
         </div>
         {this.renderFilters()}
@@ -1591,6 +1643,8 @@ export default class Vis extends Component {
             width: this.metrics.chartWidth + this.metrics.nonbarWidth - 4,
           }}
           data={this.renderTopSequences(sequences)}
+          svgContainer={true}
+          svgHeight={this.metrics.sequenceRowHeight * sequences.length}
           badge={false}
         />
         <Modal

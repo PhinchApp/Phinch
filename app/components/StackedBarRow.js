@@ -250,7 +250,7 @@ export default class StackedBarRow extends Component {
           {this.props.isRemoved ? 'Restore' : 'Archive'}
         </div>
       ) : '';
-    const yOffset = 6 + (this.props.metrics.barContainerHeight + (this.props.metrics.miniBarContainerHeight * miniBarCount)) * this.props.index;
+    const yOffset = this.props.metrics.padding + (this.props.metrics.barContainerHeight + (this.props.metrics.miniBarContainerHeight * miniBarCount)) * this.props.index;
     const rowColor = (this.props.index%2 === 0) ? '#ffffff' : '#f4f4f4';
     return (
       <g

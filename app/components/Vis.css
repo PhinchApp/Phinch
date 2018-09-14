@@ -260,41 +260,10 @@
 }
 
 .seqRow {
-  display: inline-block;
-  vertical-align: middle;
-  padding: 2px;
-  height: 24px;
-  line-height: 20px;
   cursor: pointer;
 }
-.seqRow:hover {
-  background-color: #333 !important;
-}
-.seqRowHighlighted {
-  font-weight: 400;
-}
-.cell {
-  display: inline-block;
-  vertical-align: top;
-  margin-right: 0.25rem;
-  font-size: 12px;
-}
-.rank {
-  text-align: right;
-}
-.circle {
-  margin-left: 0.25rem;
-  text-align: center;
-  line-height: 18px;
-}
-.name {
-  text-align: left;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.reads {
-  text-align: right;
+.seqRow:hover rect {
+  fill: #333 !important;
 }
 
 .modalbottom {
