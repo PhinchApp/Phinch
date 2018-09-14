@@ -308,18 +308,21 @@ export default class Vis extends Component {
     this.setLevel(this.state.level);
   }
 
+  exportComplete = () => {
+    this.setState({ renderSVG: false, dialogVisible: false });
+  }
+
   componentDidUpdate() {
     if (this.state.renderSVG && !this.state.dialogVisible) {
       this.setState({ dialogVisible: true });
-      handleExportButton(this.state.summary.path.slice(), this._svg, () => {
-        this.setState({ renderSVG: false, dialogVisible: false });
-      });
+      handleExportButton(this.state.summary.path.slice(), this._svg, this.exportComplete);
     }
   }
 
   componentWillUnmount() {
     clearTimeout(this.tooltip.handle);
     clearTimeout(this.timeout);
+    this.exportComplete();
     window.removeEventListener('resize', this.updateDimensions);
   }
 
@@ -630,11 +633,13 @@ export default class Vis extends Component {
     }
     return (
       <g
+        id='x axis'
         pointerEvents='none'
         textAnchor='middle'
         fill='#808080'
       >
         <text
+          id='axis title'
           transform={`translate(
             ${svgWidth / 2},
             ${this.metrics.lineHeight * 0.825}
@@ -643,6 +648,7 @@ export default class Vis extends Component {
           Sequence Reads
         </text>
         <g
+          id='axis labels'
           transform={`translate(
             ${this.metrics.barInfoWidth + 3},
             ${this.metrics.lineHeight}
@@ -660,12 +666,14 @@ export default class Vis extends Component {
               return (
                 <g
                   key={`g-${t}`}
+                  id={`Marker ${t}`}
                   transform={`translate(${this.scales.x(t)}, ${(this.metrics.lineHeight)})`}
                 >
-                  <text fontSize={10} dy={-4} dx={-1}>
+                  <text id={label} fontSize={10} dy={-4} dx={-1}>
                     {label}
                   </text>
                   <line
+                    id={`Line ${label}`}
                     x1={-1}
                     y1={0}
                     x2={-1}
@@ -927,8 +935,9 @@ export default class Vis extends Component {
         );
       });
     return (
-      <g>
+      <g id='Stacked Bars'>
         <text
+          id={`${attribute.key} ${unit}`}
           transform={`translate(${this.metrics.padding / 2 - 3}, ${(-this.metrics.padding / 2) - 3})`}
           fontFamily='IBM Plex Sans Condensed'
           fontWeight='400'
@@ -937,7 +946,7 @@ export default class Vis extends Component {
         >
           {attribute.key} {unit}
         </text>
-        <g transform={`translate(0, ${this.metrics.padding / 2})`}>
+        <g id='rows' transform={`translate(0, ${this.metrics.padding / 2})`}>
           {rows}
         </g>
       </g>
@@ -1240,6 +1249,7 @@ export default class Vis extends Component {
       return (
         <g
           key={`${s.name}-${i}`}
+          id={s.name}
           className={styles.seqRow}
           transform={`translate(${0}, ${this.metrics.sequenceRowHeight * i})`}
           fill={
@@ -1272,23 +1282,26 @@ export default class Vis extends Component {
             }
           />
           <circle
+            id={color}
             fill={color}
             r={metrics.circle.radius}
             transform={
               `translate(${metrics.circle.offset}, ${this.metrics.sequenceRowHeight / 2})`
             }
           />
-          <g transform={`translate(0, ${this.metrics.sequenceRowHeight / 3 * 2})`}>
+          <g id='info' transform={`translate(0, ${this.metrics.sequenceRowHeight / 3 * 2})`}>
             <text
+              id='rank'
               textAnchor='end'
               transform={`translate(${metrics.rank}, 0)`}
             >
               {s.rank.toLocaleString()}
             </text>
-            <text transform={`translate(${metrics.name}, 0)`}>
+            <text id='name' transform={`translate(${metrics.name}, 0)`}>
               {name}
             </text>
             <text
+              id='reads'
               textAnchor='end'
               transform={`translate(${metrics.reads}, 0)`}
             >
@@ -1418,6 +1431,7 @@ export default class Vis extends Component {
     return (
       <svg
         ref={s => this._svg = s}
+        id={this.state.summary.path.slice(-1)}
         version="1.1"
         baseProfile="full"
         xmlns="http://www.w3.org/2000/svg"
@@ -1426,9 +1440,10 @@ export default class Vis extends Component {
         fontFamily='IBM Plex Sans Condensed'
         fontWeight='200'
         fontSize='12px'
+        overflow='visible'
       >
-        <g transform={`translate(${(this.metrics.padding / 2)}, ${0})`}>
-          <g transform={`translate(${3}, ${this.metrics.lineHeight * 2})`}>
+        <g id='Visual' transform={`translate(${(this.metrics.padding / 2)}, ${0})`}>
+          <g id='Sequence Reads' transform={`translate(${3}, ${this.metrics.lineHeight * 2})`}>
             {
               isAttribute ? (
                 this.renderAttributeBars(attribute, unit, metrics)
@@ -1439,20 +1454,29 @@ export default class Vis extends Component {
           </g>
           {
             this.state.renderSVG ? (
-              <g>
+              <g id='Info'>
                 {this.renderTicks(svgWidth, svgHeight - this.metrics.lineHeight * 2)}
-                <g transform={`translate(3, ${svgHeight})`}>
-                  <text
-                    textAnchor='middle'
-                    fill='#808080'
-                    transform={`translate(${svgWidth / 2}, ${this.metrics.lineHeight * 1.5})`}
-                  >
-                    Top Sequences
-                  </text>
-                  <g transform={`translate(0, ${this.metrics.lineHeight * 2})`}>
-                    {this.renderTopSequences(sequences)}
+                <g id='Metadata' transform={`translate(3, ${svgHeight})`}>
+                  <g id='Top Sequences'>
+                    <text
+                      id='Title'
+                      textAnchor='middle'
+                      fill='#808080'
+                      transform={`translate(${svgWidth / 2}, ${this.metrics.lineHeight * 1.5})`}
+                    >
+                      Top Sequences
+                    </text>
+                    <g
+                      id='Ranked Sequences'
+                      transform={`translate(0, ${this.metrics.lineHeight * 2})`}
+                    >
+                      {this.renderTopSequences(sequences)}
+                    </g>
                   </g>
-                  <g transform={`translate(0, ${seqHeight + this.metrics.lineHeight * 3})`}>
+                  <g
+                    id='Citation'
+                    transform={`translate(0, ${seqHeight + this.metrics.lineHeight * 3})`}
+                  >
                     <text transform={`translate(0, ${this.metrics.lineHeight * 1})`}>
                       Please cite Phinch as:
                     </text>
@@ -1460,7 +1484,7 @@ export default class Vis extends Component {
                       Bik HM, Pitch Interactive (2014)
                     </text>
                     <text transform={`translate(0, ${this.metrics.lineHeight * 3})`}>
-                      Phinch: An interactive, exploratory data visualization framework for –Omic datasets
+                      Phinch: An interactive, exploratory data visualization framework for -Omic datasets
                     </text>
                     <text transform={`translate(0, ${this.metrics.lineHeight * 4})`}>
                       bioRxiv 009944; https://doi.org/10.1101/009944

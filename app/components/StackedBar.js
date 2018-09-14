@@ -93,6 +93,7 @@ export default class StackedBar extends Component {
           return (
             <rect
               key={d.name}
+              id={d.name}
               x={offset - d.width}
               y={0}
               width={d.width}

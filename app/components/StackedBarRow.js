@@ -61,6 +61,7 @@ export default class StackedBarRow extends Component {
         miniBars.push(
           <g
             key={k}
+            id={k}
             height={this.props.metrics.miniBarContainerHeight}
             transform={`translate(0, ${
               (this.props.metrics.barHeight + 2) + 
@@ -119,18 +120,20 @@ export default class StackedBarRow extends Component {
           modalTitle={`${this.props.data[this.props.labelKey]} ${this.props.unit}`}
           buttonPosition={{
             position: 'relative',
+            marginTop: this.props.metrics.padding,
+            marginLeft: this.props.metrics.idWidth + (this.props.metrics.padding / 2),
             height: '12px',
             lineHeight: '9px',
             fontSize: '9px',
             padding: '1px 8px',
-            marginTop: '1px',
             width: 'auto',
             borderRadius: '6px',
             backgroundColor: '#b2b2b2',
           }}
           modalPosition={{
             position: 'absolute',
-            marginLeft: '50px',
+            marginTop: this.props.metrics.padding,
+            marginLeft: this.props.metrics.idWidth + (this.props.metrics.nameWidth / 2),
             width: '316px',
             height: '216px',
             color: 'white',
@@ -213,7 +216,7 @@ export default class StackedBarRow extends Component {
       ) : '';
     let xOffset = 0;
     const tagList = (
-      <g transform={`translate(
+      <g id='tags' transform={`translate(
         ${this.props.metrics.idWidth + this.props.metrics.padding - 1},
         ${this.props.metrics.lineHeight * 2.5 + 1}
       )`}>
@@ -222,6 +225,7 @@ export default class StackedBarRow extends Component {
             const circle = this.props.data.tags[t.id] ? (
               <circle
                 key={`c-${t.id}`}
+                id={t.name}
                 transform={`translate(${xOffset}, 0)`}
                 fill={t.color}
                 stroke='none'
@@ -255,6 +259,7 @@ export default class StackedBarRow extends Component {
     return (
       <g
         key={this.props.data.sampleName}
+        id={this.props.data.sampleName}
         height={this.props.metrics.barContainerHeight + (this.props.metrics.miniBarContainerHeight * miniBarCount)}
         transform={`translate(1, ${yOffset})`}
         onMouseEnter={this._showEditable}
@@ -272,16 +277,18 @@ export default class StackedBarRow extends Component {
           height={this.props.metrics.barContainerHeight + (this.props.metrics.miniBarContainerHeight * miniBarCount) - 4}
         />
         <g
+          id='Row Info'
           width={this.props.metrics.barInfoWidth}
           height={this.props.metrics.barHeight}
         >
-          <text transform={`translate(
+          <text id='biomid' transform={`translate(
             ${(this.props.metrics.padding / 2) - 4},
             ${(this.props.metrics.lineHeight * 1) - 3}
           )`}>
             {(this.props.data.biomid !== undefined) ? this.props.data.biomid.toLocaleString() : ''}
           </text>
           <text
+            id='name'
             fontWeight={400}
             transform={`translate(
               ${this.props.metrics.idWidth + this.props.metrics.padding / 2},
@@ -294,25 +301,26 @@ export default class StackedBarRow extends Component {
             ${this.props.metrics.idWidth + this.props.metrics.padding / 2},
             ${(this.props.metrics.lineHeight * 2) - 3}
           )`}>
-            <text>
+            <text id='date'>
               {this.props.data.date ? this.props.data.date : ''}
             </text>
-            {samples}
           </g>
           {tagList}
           <foreignObject>
             <div style={{
               position: 'fixed',
               width: this.props.metrics.barInfoWidth - (this.props.metrics.padding / 2),
+              zIndex: 3,
             }}>
               {name}
+              {samples}
               {ellipsis}
               {tagMenu}
               {action}
             </div>
           </foreignObject>
         </g>
-        <g transform={`translate(${this.props.metrics.barInfoWidth - 2}, 0)`}>
+        <g id='Bars' transform={`translate(${this.props.metrics.barInfoWidth - 2}, 0)`}>
           <StackedBar
             onHoverDatum={this.props.hoverDatum}
             onClickDatum={this.props.clickDatum}
