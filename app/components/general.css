@@ -113,6 +113,10 @@
   border: 2px solid #333333;
 }
 
+.exdarkbgscrollbar::-webkit-scrollbar-thumb {
+  border: 2px solid #191919;
+}
+
 .checkbox {
   position: relative;
   display: inline-block;

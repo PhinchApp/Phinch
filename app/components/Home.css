@@ -15,6 +15,10 @@
   padding: 1rem;
 }
 
+.rightSpace {
+  padding-right: 0.5rem;
+}
+
 .left {
   width: 400px;
   vertical-align: top;
@@ -35,6 +39,8 @@
   text-align: center;
   padding: 50px;
   padding-bottom: 40px;
+  /**/
+  height: 238px;
 }
 
 .about p {
@@ -47,7 +53,10 @@
   width: 130px;
 }
 
-.links {}
+.links {
+  height: calc(100vh - 238px);
+  overflow-y: scroll;
+}
 
 .projectType {
   padding: 0 2rem;

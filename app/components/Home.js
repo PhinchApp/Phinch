@@ -11,6 +11,7 @@ import LinkList from './LinkList.js';
 import Loader from './Loader.js';
 
 import styles from './Home.css';
+import gstyle from './general.css';
 import logo from 'images/phinch-large.png';
 
 export default class Home extends Component {
@@ -73,19 +74,21 @@ export default class Home extends Component {
               <img src={logo} className={styles.logo} alt='Phinch Logo' />
               <p>Version {this.version}</p>
             </div>
-            <div className={`${styles.area} ${styles.links}`}>
-              {links}
+            <div className={`${styles.links} ${gstyle.exdarkbgscrollbar}`}>
+              <div className={`${styles.area} ${styles.rightSpace}`}>
+                {links}
+              </div>
             </div>
           </div>
           <div className={`${styles.section} ${styles.right}`}>
-            <div className={styles.scroll}>
-              <div className={styles.area}>
+            <div className={`${styles.scroll} ${gstyle.darkbgscrollbar}`}>
+              <div className={`${styles.area} ${styles.rightSpace}`}>
                 <div className={styles.projectType}>
                   <h2 className={styles.sectionTitle}>Projects</h2>
                 </div>
                 {projects}
               </div>
-              <div className={styles.area}>
+              <div className={`${styles.area} ${styles.rightSpace}`}>
                 <div className={styles.projectType}>
                   <h2 className={styles.sectionTitle}>Samples</h2>
                 </div>
