@@ -81,7 +81,7 @@ export default class Filter extends Component {
       {
         id: 'save',
         name: 'Save',
-        action: () => { 
+        action: () => {
           this.save(this.setResult);
         },
         icon: <img src={save} />,
@@ -416,7 +416,7 @@ export default class Filter extends Component {
       this.state.summary.name,
       this.state.names,
       viewMetadata,
-      callback,
+      callback ? callback : () => {},
       );
   }
 
@@ -451,7 +451,9 @@ export default class Filter extends Component {
       sampleName: 'Sample Name',
       reads: 'Sequence Reads',
     };
-    const onClick = click ? (() => { sortBy(this, key, this.state.data, true, true) }) : (() => {});
+    const onClick = click ? (
+        () => { sortBy(this, key, this.state.data, true, true) }
+      ) : (() => {});
     const arrow = click ? (getSortArrow(this, key)) : '';
     return (
       <div
@@ -544,7 +546,9 @@ export default class Filter extends Component {
     });
     this.sort.reverse = !this.sort.reverse;
     data = sortBy(this, this.sort.key, data, false, true);
-    this.setState({filters, data});
+    this.setState({filters, data}, () => {
+      this.save(this.setResult);
+    });
   }
 
   toggleChecks(attribute, value) {
@@ -602,7 +606,9 @@ export default class Filter extends Component {
             <div className={styles.expand} onClick={() => {
               const filters = this.state.filters;
               filters[g].expanded = !filters[g].expanded;
-              this.setState({filters});
+              this.setState({filters}, () => {
+                this.save(this.setResult);
+              });
             }}>{icon}</div>
             {filter}
           </div>
@@ -632,7 +638,9 @@ export default class Filter extends Component {
       names[d.sampleName] = d.phinchName;
       return d;
     });
-    this.setState({data, names});
+    this.setState({data, names}, () => {
+      this.save(this.setResult);
+    });
   }
 
   dragEnd(e) {
@@ -677,7 +685,9 @@ export default class Filter extends Component {
     this.metrics.tableWidth = this.state.width - (this.metrics.leftSidebar + this.metrics.filterWidth + this.metrics.padding * 4);
     // this.metrics.filterWidth = showLeftSidebar ?
     //   this.metrics.filter.min : this.metrics.filter.max;
-    this.setState({ showLeftSidebar });
+    this.setState({ showLeftSidebar }, () => {
+      this.save(this.setResult);
+    });
   }
 
   redirectToVis(result) {

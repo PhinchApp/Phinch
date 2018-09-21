@@ -33,7 +33,9 @@ export function removeRows(context, rows) {
     return !rows.includes(d);
   });
   const deleted = context.state.deleted.concat(rows);
-  context.setState({data, deleted});
+  context.setState({data, deleted}, () => { 
+      context.save(context.setResult);
+    });
 }
 
 export function restoreRows(context, rows) {
@@ -42,16 +44,18 @@ export function restoreRows(context, rows) {
   });
   const data = context.state.data.concat(rows).sort((a, b) => {
     if (context.sort.reverse) {
-      if (a[context.sort.key] < b[context.sort.key]) return -1;
-      if (a[context.sort.key] > b[context.sort.key]) return 1;
-      return 0;
-    } else {
       if (b[context.sort.key] < a[context.sort.key]) return -1;
       if (b[context.sort.key] > a[context.sort.key]) return 1;
       return 0;
+    } else {
+      if (a[context.sort.key] < b[context.sort.key]) return -1;
+      if (a[context.sort.key] > b[context.sort.key]) return 1;
+      return 0;
     }
   });
-  context.setState({data, deleted});
+  context.setState({data, deleted}, () => { 
+      context.save(context.setResult);
+    });
 }
 
 export function visSortBy(context, indata, setState) {
@@ -70,7 +74,9 @@ export function visSortBy(context, indata, setState) {
     return d;
   });
   if (setState) {
-    context.setState({data});
+    context.setState({data}, () => { 
+        context.save(context.setResult);
+      });
   } else {
     return data;
   }
@@ -100,7 +106,9 @@ export function sortBy(context, key, indata, setState, updateTitles) {
     });
   }
   if (setState) {
-    context.setState({data});
+    context.setState({data}, () => { 
+        context.save(context.setResult);
+      });
   } else {
     return data;
   }

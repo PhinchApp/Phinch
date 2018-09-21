@@ -182,15 +182,18 @@ export default class Vis extends Component {
 
       // Autogenerate levels from data
       // TODO: Test w/ addtional data formats
+      console.log(this.state.initdata.rows);
       const uniq_taxa = [...new Set(
           [].concat(...
             [...new Set(
               this.state.initdata.rows.map(r => {
+                // return r.metadata.taxonomy.join('|');
                 return r.metadata.taxonomy.map((t, i) => {
                   return t.split('__')[0];
                 }).join('|');
               })
             )].map(r => {
+              // return r.split('|').map((l, i) => {
               return r.split('|').map((l, i) => {
                 return JSON.stringify({
                   name: l,
@@ -380,7 +383,9 @@ export default class Vis extends Component {
         }
         return d;
       });
-      this.setState({ deleted });
+      this.setState({ deleted }, () => { 
+          this.save(this.setResult);
+        });
     } else {
       const data = this.state.data.map((d) => {
         if (d.sampleName === datum.sampleName) {
@@ -388,7 +393,9 @@ export default class Vis extends Component {
         }
         return d;
       });
-      this.setState({ data });
+      this.setState({ data }, () => { 
+          this.save(this.setResult);
+        });
     }
   }
 
@@ -454,14 +461,18 @@ export default class Vis extends Component {
     const showRightSidebar = Object.keys(filters).length > 0 ? true : false;
 
     this.updateChartWidth(showRightSidebar);
-    this.setState({ filters, showRightSidebar });
+    this.setState({ filters, showRightSidebar }, () => { 
+        this.save(this.setResult);
+      });
   }
 
   toggleLog(name) {
     const filters = this.state.filters;
     filters[name].log = !filters[name].log;
     this.filters[this.state.level] = filters;
-    this.setState({ filters });
+    this.setState({ filters }, () => { 
+        this.save(this.setResult);
+      });
   }
 
   removeFilter(name) {
@@ -472,7 +483,9 @@ export default class Vis extends Component {
     this.updateChartWidth(showRightSidebar);
     const data = this.filterData(filters, this.state.tags, this.state.preData, this.state.deleted);
     this.updateAttributeValues(this.state.selectedAttribute, data);
-    this.setState({ data, filters, showRightSidebar });
+    this.setState({ data, filters, showRightSidebar }, () => { 
+        this.save(this.setResult);
+      });
   }
 
   updateChartWidth(showRightSidebar) {
@@ -531,7 +544,9 @@ export default class Vis extends Component {
     this.updateChartWidth(showRightSidebar);
     const data = this.filterData(filters, this.state.tags, preData, deleted);
     this.updateAttributeValues(this.state.selectedAttribute, data);
-    this.setState({level, data, preData, deleted, filters, showRightSidebar});
+    this.setState({level, data, preData, deleted, filters, showRightSidebar}, () => { 
+        this.save(this.setResult);
+      });
   }
 
   // data.data schema: [row(observations), column(samples), count]
@@ -725,7 +740,9 @@ export default class Vis extends Component {
   applyFilters(filters) {
     const data = this.filterData(filters, this.state.tags, this.state.preData, this.state.deleted);
     this.updateAttributeValues(this.state.selectedAttribute, data);
-    this.setState({filters, data});
+    this.setState({filters, data}, () => { 
+        this.save(this.setResult);
+      });
   }
 
   renderFilters() {
@@ -744,7 +761,7 @@ export default class Vis extends Component {
               showScale={true}
               showCircle={true}
               fill={this.scales.c(k)}
-              stroke={'#333333'}
+              // stroke={'#333333'}
               handle={this.scales.c(k)}
               data={this.state.filters[k]}
               width={this.metrics.rightSidebar - this.metrics.padding * 3.25}
@@ -781,26 +798,37 @@ export default class Vis extends Component {
     this.metrics.leftSidebar = showLeftSidebar ?
       this.metrics.left.max : this.metrics.left.min;
     this.updateChartWidth(this.state.showRightSidebar);
-    this.setState({showLeftSidebar});
+    this.setState({showLeftSidebar}, () => { 
+        this.save(this.setResult);
+      });
   }
 
   onSuggestionSelected(e, { suggestion }) {
-    const data = this.filterData(
-      this.state.filters,
-      this.state.tags,
-      this.state.preData,
-      this.state.deleted,
-    ).filter(d => {
-      return d.sequences.map(d => d.name).includes(suggestion.name);
-    });
-    this.updateAttributeValues(this.state.selectedAttribute, data);
-    const highlightedDatum = {
-      datum: suggestion,
-      sample: null,
-      position: null,
-    };
+    // const data = this.filterData(
+    //   this.state.filters,
+    //   this.state.tags,
+    //   this.state.preData,
+    //   this.state.deleted,
+    // ).filter(d => {
+    //   return d.sequences.map(d => d.name).includes(suggestion.name);
+    // });
+    // this.updateAttributeValues(this.state.selectedAttribute, data);
+    // const highlightedDatum = {
+    //   datum: suggestion,
+    //   sample: null,
+    //   position: null,
+    // };
+    // const showTooltip = false;
+    // this.setState({ data, highlightedDatum, showTooltip }, () => { 
+    //     this.save(this.setResult);
+    //   });
+    //
+    const highlightedDatum = null;
     const showTooltip = false;
-    this.setState({ data, highlightedDatum, showTooltip });
+    this.setState({ highlightedDatum, showTooltip }, () => {
+        this._clickDatum(suggestion)
+      });
+    //
   }
 
   onSuggestionHighlighted({ suggestion }) {
@@ -817,16 +845,19 @@ export default class Vis extends Component {
   }
 
   onValueCleared() {
-    const data = this.filterData(
-      this.state.filters,
-      this.state.tags,
-      this.state.preData,
-      this.state.deleted,
-      );
-    this.updateAttributeValues(this.state.selectedAttribute, data);
+    // const data = this.filterData(
+    //   this.state.filters,
+    //   this.state.tags,
+    //   this.state.preData,
+    //   this.state.deleted,
+    //   );
+    // this.updateAttributeValues(this.state.selectedAttribute, data);
     const highlightedDatum = null;
     const showTooltip = false;
-    this.setState({ data, highlightedDatum, showTooltip });
+    // this.setState({ data, highlightedDatum, showTooltip }, () => { 
+    this.setState({ highlightedDatum, showTooltip }, () => { 
+        this.save(this.setResult);
+      });
   }
 
   updatePhinchName(e, r, isRemoved) {
@@ -840,7 +871,9 @@ export default class Vis extends Component {
         names[d.sampleName] = d.phinchName;
         return d;
       });
-      this.setState({ deleted });
+      this.setState({ deleted }, () => { 
+          this.save(this.setResult);
+        });
     } else {
       const data = this.state.data.map((d) => {
         if (d.sampleName === r.sampleName) {
@@ -849,7 +882,9 @@ export default class Vis extends Component {
         names[d.sampleName] = d.phinchName;
         return d;
       });
-      this.setState({ data, names });
+      this.setState({ data, names }, () => { 
+          this.save(this.setResult);
+        });
     }
   }
 
@@ -860,7 +895,9 @@ export default class Vis extends Component {
       }
       return t;
     });
-    this.setState({ tags });
+    this.setState({ tags }, () => { 
+        this.save(this.setResult);
+      });
   }
 
   filterByTag(event, tag) {
@@ -877,12 +914,16 @@ export default class Vis extends Component {
       this.state.deleted,
       );
     this.updateAttributeValues(this.state.selectedAttribute, data);
-    this.setState({ tags, data });
+    this.setState({ tags, data }, () => { 
+        this.save(this.setResult);
+      });
   }
 
   toggleEmptyAttrs() {
     const showEmptyAttrs = !this.state.showEmptyAttrs;
-    this.setState({ showEmptyAttrs });
+    this.setState({ showEmptyAttrs }, () => { 
+        this.save(this.setResult);
+      });
   }
 
   renderAttributeBars(attribute, unit, metrics) {
@@ -1015,7 +1056,9 @@ export default class Vis extends Component {
     const onSelectChange = (event) => {
       const selectedAttribute = event.target.value;
       this.updateAttributeValues(selectedAttribute, this.state.data);
-      this.setState({ selectedAttribute });
+      this.setState({ selectedAttribute }, () => { 
+          this.save(this.setResult);
+        });
     };
     const active = (this.state.selectedAttribute !== '') ? styles.selected : '';
     return (
@@ -1051,7 +1094,9 @@ export default class Vis extends Component {
     const onSelectChange = (event) => {
       const labelKey = event.target.value;
       this.sort.show = labelKey;
-      this.setState({ labelKey });
+      this.setState({ labelKey }, () => { 
+          this.save(this.setResult);
+        });
     };
     return (
       <div className={styles.inlineControl}>
@@ -1155,7 +1200,9 @@ export default class Vis extends Component {
     const toggle = buttons.map(b => {
       const onRadioChange = (event) => {
         this.sort.type = event.target.id;
-        this.setState({mode: event.target.id});
+        this.setState({mode: event.target.id}, () => { 
+            this.save(this.setResult);
+          });
       }
       const checked = this.state.mode === b.id ? 'checked' : '';
       return (
@@ -1536,8 +1583,8 @@ export default class Vis extends Component {
         className={gstyle.button}
         style={{
           position: 'absolute',
-          top: '148px',
-          left: '90px',
+          top: '90px', // top: '148px',
+          left: '16px', // left: '90px',
           zIndex: 10,
           fontWeight: 400,
           background: (this.state.result === 'error') ? '#FF0000' : '#00FF00',
