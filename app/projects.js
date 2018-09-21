@@ -71,9 +71,9 @@ export function exportProjectData(path, name, data, callback) {
   const exportPath = join('/', ...path, exportname);
   try {
     fs.writeFileSync(exportPath, JSON.stringify(data));
-    callback('Exported!');
+    callback('Exported');
   } catch (e) {
-    callback('error');
+    callback('Error');
   }
 }
 
@@ -94,9 +94,9 @@ export function setProjectFilters(path, name, names, view, callback) {
   //
   try {
     fs.writeFileSync(metadataPath, JSON.stringify(metadata));
-    callback('Saved!');
+    callback('Saved');
   } catch (e) {
-    callback('error');
+    callback('Error');
   }
 }
 

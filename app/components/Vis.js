@@ -3,6 +3,7 @@ import { Link, Redirect } from 'react-router-dom';
 
 import Table from 'rc-table';
 import _sortBy from 'lodash.sortby';
+import _debounce from 'lodash.debounce';
 import _cloneDeep from 'lodash.clonedeep';
 import { nest } from 'd3-collection';
 import { scaleLinear, scaleOrdinal } from 'd3-scale';
@@ -160,6 +161,7 @@ export default class Vis extends Component {
         max: 121,
       },
       rightSidebar: 216,
+      debounce: 350,
     };
 
     this.metrics.nonbarWidth = (this.metrics.padding * 3) + (this.metrics.barInfoWidth);
@@ -182,18 +184,15 @@ export default class Vis extends Component {
 
       // Autogenerate levels from data
       // TODO: Test w/ addtional data formats
-      console.log(this.state.initdata.rows);
       const uniq_taxa = [...new Set(
           [].concat(...
             [...new Set(
               this.state.initdata.rows.map(r => {
-                // return r.metadata.taxonomy.join('|');
                 return r.metadata.taxonomy.map((t, i) => {
                   return t.split('__')[0];
                 }).join('|');
               })
             )].map(r => {
-              // return r.split('|').map((l, i) => {
               return r.split('|').map((l, i) => {
                 return JSON.stringify({
                   name: l,
@@ -350,16 +349,14 @@ export default class Vis extends Component {
         callback(value);
       },
       );
-  }
+  };
 
   setResult = (value) => {
     const result = value;
     this.timeout = setTimeout(() => {
       this.clearResult();
     }, 3000);
-    // const loading = false;
-    // this.setState({result, loading});
-    this.setState({result});
+    this.setState({ result });
   }
 
   clearResult = () => {
@@ -740,9 +737,9 @@ export default class Vis extends Component {
   applyFilters(filters) {
     const data = this.filterData(filters, this.state.tags, this.state.preData, this.state.deleted);
     this.updateAttributeValues(this.state.selectedAttribute, data);
-    this.setState({filters, data}, () => { 
+    this.setState({filters, data}, _debounce(() => { 
         this.save(this.setResult);
-      });
+      }), this.metrics.debounce, { leading: false, trailing: true });
   }
 
   renderFilters() {
@@ -871,9 +868,9 @@ export default class Vis extends Component {
         names[d.sampleName] = d.phinchName;
         return d;
       });
-      this.setState({ deleted }, () => { 
+      this.setState({ deleted }, _debounce(() => { 
           this.save(this.setResult);
-        });
+        }), this.metrics.debounce, { leading: false, trailing: true });
     } else {
       const data = this.state.data.map((d) => {
         if (d.sampleName === r.sampleName) {
@@ -882,9 +879,9 @@ export default class Vis extends Component {
         names[d.sampleName] = d.phinchName;
         return d;
       });
-      this.setState({ data, names }, () => { 
+      this.setState({ data, names }, _debounce(() => { 
           this.save(this.setResult);
-        });
+        }), this.metrics.debounce, { leading: false, trailing: true });
     }
   }
 
@@ -895,9 +892,9 @@ export default class Vis extends Component {
       }
       return t;
     });
-    this.setState({ tags }, () => { 
+    this.setState({ tags }, _debounce(() => { 
         this.save(this.setResult);
-      });
+      }), this.metrics.debounce, { leading: false, trailing: true });
   }
 
   filterByTag(event, tag) {
@@ -1583,11 +1580,16 @@ export default class Vis extends Component {
         className={gstyle.button}
         style={{
           position: 'absolute',
-          top: '90px', // top: '148px',
+          top: '96px', // top: '148px',
           left: '16px', // left: '90px',
+          width: '68px',
+          textAlign: 'center',
           zIndex: 10,
           fontWeight: 400,
-          background: (this.state.result === 'error') ? '#FF0000' : '#00FF00',
+          color: '#191919',
+          borderRadius: '8px',
+          padding: 0,
+          background: (this.state.result === 'error') ? '#ff2514' : '#00da3e',
         }}
         onClick={this.clearResult}
       >

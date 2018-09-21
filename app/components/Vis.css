@@ -179,6 +179,7 @@
   height: 24px;
   padding: 0.25rem;
   margin-right: 0.5rem;
+  cursor: pointer;
 }
 .inlineControl select[disabled] {
   opacity: 0.5;

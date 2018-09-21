@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 
+import _debounce from 'lodash.debounce';
 import { nest } from 'd3-collection';
 import Table from 'rc-table';
 
@@ -67,6 +68,7 @@ export default class Filter extends Component {
         min: 27,
         max: 121,
       },
+      debounce: 350,
     };
 
     this.columnWidths = {
@@ -546,9 +548,9 @@ export default class Filter extends Component {
     });
     this.sort.reverse = !this.sort.reverse;
     data = sortBy(this, this.sort.key, data, false, true);
-    this.setState({filters, data}, () => {
-      this.save(this.setResult);
-    });
+    this.setState({filters, data}, _debounce(() => {
+        this.save(this.setResult);
+      }), this.metrics.debounce, { leading: false, trailing: true });
   }
 
   toggleChecks(attribute, value) {
@@ -607,8 +609,8 @@ export default class Filter extends Component {
               const filters = this.state.filters;
               filters[g].expanded = !filters[g].expanded;
               this.setState({filters}, () => {
-                this.save(this.setResult);
-              });
+                  this.save(this.setResult);
+                });
             }}>{icon}</div>
             {filter}
           </div>
@@ -638,9 +640,9 @@ export default class Filter extends Component {
       names[d.sampleName] = d.phinchName;
       return d;
     });
-    this.setState({data, names}, () => {
-      this.save(this.setResult);
-    });
+    this.setState({data, names}, _debounce(() => {
+        this.save(this.setResult);
+      }), this.metrics.debounce, { leading: false, trailing: true });
   }
 
   dragEnd(e) {
@@ -686,8 +688,8 @@ export default class Filter extends Component {
     // this.metrics.filterWidth = showLeftSidebar ?
     //   this.metrics.filter.min : this.metrics.filter.max;
     this.setState({ showLeftSidebar }, () => {
-      this.save(this.setResult);
-    });
+        this.save(this.setResult);
+      });
   }
 
   redirectToVis(result) {
@@ -700,14 +702,37 @@ export default class Filter extends Component {
 
   render() {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
-    const resultStyle = this.state.result === 'error' ? styles.error : styles.success;
-    const result = (
-      <div className={gstyle.button}>
-        <div className={resultStyle} onClick={this.clearResult}>
+    // const resultStyle = this.state.result === 'error' ? styles.error : styles.success;
+    // const result = (
+    //   <div className={gstyle.button}>
+    //     <div className={resultStyle} onClick={this.clearResult}>
+    //       {this.state.result}
+    //     </div>
+    //   </div>
+    //   );
+
+    const result = this.state.result ? (
+      <div 
+        className={gstyle.button}
+        style={{
+          position: 'absolute',
+          top: '96px', // top: '148px',
+          left: '16px', // left: '90px',
+          width: '68px',
+          textAlign: 'center',
+          zIndex: 10,
+          fontWeight: 400,
+          color: '#191919',
+          borderRadius: '8px',
+          padding: 0,
+          background: (this.state.result === 'error') ? '#ff2514' : '#00da3e',
+        }}
+        onClick={this.clearResult}
+      >
           {this.state.result}
-        </div>
       </div>
-      );
+    ) : '';
+
     return (
       <div className={gstyle.container}>
         <Loader loading={this.state.loading} />

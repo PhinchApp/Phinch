@@ -295,7 +295,11 @@ export default class StackedBarRow extends Component {
               ${(this.props.metrics.lineHeight * 1) - 3}
             )`}
           >
-            {this.props.data[this.props.labelKey]}
+            {
+              (this.state.hovered && (this.props.labelKey === 'phinchName')) ? (
+                ''
+              ) : this.props.data[this.props.labelKey]
+            }
           </text>
           <g transform={`translate(
             ${this.props.metrics.idWidth + this.props.metrics.padding / 2},
