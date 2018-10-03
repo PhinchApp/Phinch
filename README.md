@@ -43,6 +43,10 @@ pyinstaller biomhandler.spec
 $ npm run dev
 ```
 
+## Good to Know
+
+Phinch's performance will depend on your system, but in general large biom files may take time to load. Files with a large number of selected samples (more than `500`) may be sluggish in the filter and visualization views. Please be patient when working with large files, or consider pre-filtering your data for visualization.
+
 ## Packaging
 
 Package apps for the local platform with:

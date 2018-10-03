@@ -75,7 +75,7 @@
 }
 
 .about .center {
-  width: calc(100vw - 800px);
+  width: calc(100vw - 700px);
   padding: 3rem;
 }
 
@@ -98,15 +98,15 @@ p.first::first-letter {
 }
 
 .about .logos {
-  width: 400px;
+  width: 300px;
   vertical-align: top;
-  padding: 3rem;
+  padding: 3rem 1rem;
 }
 
 .alogo {
   width: 100%;
   vertical-align: top;
-  padding: 1.5rem 3rem;
+  padding: 1rem 2rem;
 }
 
 .about .close {

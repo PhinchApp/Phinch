@@ -422,6 +422,10 @@ export default class Filter extends Component {
     this.metrics.leftSidebar = this.state.showLeftSidebar ?
       this.metrics.left.max : this.metrics.left.min;
     this.metrics.tableWidth = window.innerWidth - (this.metrics.leftSidebar + this.metrics.filterWidth + this.metrics.padding * 4);
+    this.columns = this.columns.map((c) => {
+      c.title = this.generateTableTitle(c.key, true);
+      return c;
+    });
     this.setState({
       width: window.innerWidth,
       height: window.innerHeight,
@@ -455,12 +459,8 @@ export default class Filter extends Component {
     const arrow = click ? (getSortArrow(this, key)) : '';
     return (
       <div
-        // className={`${gstyle.heading} ${styles[key]}`}
         className={styles.columnHeading}
-        style={{
-          width: this.metrics.tableWidth * this.columnWidths[key],
-          // marginRight: '0.25rem',
-        }}
+        style={{ width: this.metrics.tableWidth * this.columnWidths[key] }}
         onClick={onClick}
       >
         {names[key]} {arrow}
@@ -681,6 +681,10 @@ export default class Filter extends Component {
     this.metrics.leftSidebar = showLeftSidebar ?
       this.metrics.left.max : this.metrics.left.min;
     this.metrics.tableWidth = this.state.width - (this.metrics.leftSidebar + this.metrics.filterWidth + this.metrics.padding * 4);
+    this.columns = this.columns.map((c) => {
+      c.title = this.generateTableTitle(c.key, true);
+      return c;
+    });
     // this.metrics.filterWidth = showLeftSidebar ?
     //   this.metrics.filter.min : this.metrics.filter.max;
     this.setState({ showLeftSidebar }, () => {

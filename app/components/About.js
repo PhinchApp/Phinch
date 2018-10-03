@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { remote } from 'electron';
 
 import { pageView } from '../analytics.js'
@@ -9,9 +9,9 @@ import styles from './Home.css';
 import gstyle from './general.css';
 import logo from 'images/phinch-large.png';
 //
-import pitch from 'images/pitch.png';
-import ucr from 'images/ucr.png';
 import aps from 'images/aps.png';
+import ucr from 'images/ucr.png';
+import pitch from 'images/pitch.png';
 
 export default class About extends Component {
     constructor(props) {
@@ -22,14 +22,18 @@ export default class About extends Component {
       this.version = remote.app.getVersion();
       // break this out into sidebar component and import?
 
-      this.state = {};
+      this.state = {
+        redirect: null,
+      };
     }
 
     render() {
-      const links = LinkList();
+      const redirect = (this.state.redirect === null) ? '' : <Redirect push to={this.state.redirect} />;
+      const links = LinkList(this);
       return (
         <div>
           <div className={styles.container} data-tid='container'>
+            {redirect}
             <div className={`${styles.section} ${styles.left}`}>
               <div className={`${styles.area} ${styles.info}`}>
                 <Link to='/'>
@@ -44,7 +48,7 @@ export default class About extends Component {
               </div>
             </div>
             <div className={`${styles.section} ${styles.right} ${styles.about}`}>
-              <div className={`${styles.section} ${styles.center}`}>
+              <div className={`${styles.section} ${styles.center} ${styles.scroll}`}>
                 <h2>About Phinch</h2>
                 <p className={styles.first}>
                   PHINCH is an open-source framework for visualizing biological data, funded by a grant from the Alfred P. Sloan foundation. This project represents an interdisciplinary collaboration between Pitch Interactive, a data visualization studio in Oakland, CA, and biological researchers at UC Davis.
@@ -62,8 +66,8 @@ export default class About extends Component {
               <div className={`${styles.section} ${styles.logos}`}>
                 <Link to='/'><div className={styles.close}>x</div></Link>
                 <img src={aps} className={styles.alogo} alt='Alfred P. Sloan Logo' />
-                <img src={pitch} className={styles.alogo} alt='Pitch Interactive Logo' />
                 <img src={ucr} className={styles.alogo} alt='University of California Riverside Logo' />
+                <img src={pitch} className={styles.alogo} alt='Pitch Interactive Logo' />
               </div>
             </div>
           </div>

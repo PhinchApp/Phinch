@@ -182,8 +182,6 @@ export default class Vis extends Component {
       // move to config / metadata
       // const ignoreLevels = ['unclassified', 'unassigned', 'unassignable', 'ambiguous taxa'];
 
-      console.log(this.state.initdata.rows);
-
       // Autogenerate levels from data
       // TODO: Test w/ addtional data formats
       const uniq_taxa = [...new Set(

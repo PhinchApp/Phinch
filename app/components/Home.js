@@ -61,7 +61,7 @@ export default class Home extends Component {
 
   render() {
     const redirect = (this.state.redirect === null) ? '' : <Redirect push to={this.state.redirect} />;
-    const links = LinkList();
+    const links = LinkList(this);
     const projects = ProjectList({projectList: this.state.projects, click: this.click});
     const samples = ProjectList({projectList: this.state.samples, click: this.click});
     return (
