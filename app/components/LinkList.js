@@ -22,7 +22,7 @@ const linkList = [
   },
   {
     name: 'About Phinch',
-    slug: '/',
+    slug: '/about',
     info: 'What is this all about anyway?',
   },
 ];

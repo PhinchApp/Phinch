@@ -35,7 +35,7 @@
   overflow-y: scroll;
 }
 
-.about {
+.info {
   text-align: center;
   padding: 50px;
   padding-bottom: 40px;
@@ -43,7 +43,7 @@
   height: 238px;
 }
 
-.about p {
+.info p {
   font-size: 16px;
   margin: 38px;
   margin-bottom: 0;
@@ -60,4 +60,65 @@
 
 .projectType {
   padding: 0 2rem;
+}
+
+.about {
+  background: white;
+  color: #191919;
+}
+
+.about h2 {
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 4px;
+  margin-bottom: 2rem;
+}
+
+.about .center {
+  width: calc(100vw - 800px);
+  padding: 3rem;
+}
+
+.about .center p {
+  font-weight: 300;
+}
+
+p.first::first-letter {
+  vertical-align: top;
+  color: #00bbda;
+  font-size: 800%;
+  font-weight: 100;
+  float: left;
+  margin: 0;
+  margin-top: -2.5rem;
+  margin-bottom: -2.5rem;
+  margin-right: 0.5rem;
+  margin-left: -0.5rem;
+  padding: 0;
+}
+
+.about .logos {
+  width: 400px;
+  vertical-align: top;
+  padding: 3rem;
+}
+
+.alogo {
+  width: 100%;
+  vertical-align: top;
+  padding: 1.5rem 3rem;
+}
+
+.about .close {
+  float: right;
+  width: 2rem;
+  height: 2rem;
+  background: #00bbda;
+  border-radius: 1rem;
+  color: white;
+  font-weight: 400;
+  vertical-align: middle;
+  text-align: center;
+  font-size: 1.5rem;
+  line-height: 1.75rem;
 }

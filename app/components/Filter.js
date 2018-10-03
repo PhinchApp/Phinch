@@ -254,7 +254,6 @@ export default class Filter extends Component {
             className={tstyle.filterCell}
             style={{
               width: this.metrics.tableWidth * this.columnWidths['order'],
-              // marginRight: '0.25rem',
             }}
           >
             {(t !== undefined) ? t.toLocaleString() : ''}
@@ -270,7 +269,6 @@ export default class Filter extends Component {
             className={tstyle.filterCell}
             style={{
               width: this.metrics.tableWidth * this.columnWidths['phinchName'],
-              // marginRight: '0.25rem',
             }}
           >
             <input
@@ -291,7 +289,6 @@ export default class Filter extends Component {
             className={tstyle.filterCell}
             style={{
               width: this.metrics.tableWidth * this.columnWidths['biomid'],
-              // marginRight: '0.25rem',
             }}
           >
             {t}
@@ -307,7 +304,6 @@ export default class Filter extends Component {
             className={tstyle.filterCell}
             style={{
               width: this.metrics.tableWidth * this.columnWidths['sampleName'],
-              // marginRight: '0.25rem',
             }}
           >
             {t}
@@ -320,7 +316,7 @@ export default class Filter extends Component {
         key: 'reads',
         render: (t) => (
           <div className={tstyle.filterCell}>
-            {t.toLocaleString()}
+            {(t !== undefined) ? t.toLocaleString() : ''}
           </div>
         ),
       },

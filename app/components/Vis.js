@@ -180,7 +180,9 @@ export default class Vis extends Component {
     } else {
 
       // move to config / metadata
-      const ignoreLevels = ['unclassified', 'unassigned'];
+      // const ignoreLevels = ['unclassified', 'unassigned', 'unassignable', 'ambiguous taxa'];
+
+      console.log(this.state.initdata.rows);
 
       // Autogenerate levels from data
       // TODO: Test w/ addtional data formats
@@ -188,7 +190,9 @@ export default class Vis extends Component {
           [].concat(...
             [...new Set(
               this.state.initdata.rows.map(r => {
-                return r.metadata.taxonomy.map((t, i) => {
+                return r.metadata.taxonomy.filter(t => {
+                  return t.includes('__');
+                }).map((t, i) => {
                   return t.split('__')[0];
                 }).join('|');
               })
@@ -203,7 +207,8 @@ export default class Vis extends Component {
           )
         )].map(l => {
           return JSON.parse(l);
-        }).filter(l => !ignoreLevels.includes(l.name.trim().toLowerCase()));
+        });
+        // }).filter(l => !ignoreLevels.includes(l.name.trim().toLowerCase()));
 
       const default_taxa = {
         'k': 'kingdom',

@@ -52,15 +52,18 @@ class DataContainer {
     /*
       SIDE EFFECTS
     */
-    const seqeuncereads = {};
+    const sequenceReads = {};
     this.data.data.forEach((d) => {
-      if (seqeuncereads[d[1]]) {
-        seqeuncereads[d[1]] += d[2];
+      if (sequenceReads[d[1]]) {
+        sequenceReads[d[1]] += d[2];
       } else {
-        seqeuncereads[d[1]] = d[2];
+        if (sequenceReads[d[1]] !== undefined) {
+          console.log(sequenceReads[d[1]])
+        }
+        sequenceReads[d[1]] = d[2];
       }
     });
-    // const seqids = Object.keys(seqeuncereads).map(k => parseInt(k))
+    // const seqids = Object.keys(sequenceReads).map(k => parseInt(k))
     // console.log(seqids);
     // const colids = this.data.columns.slice().map(c => c.metadata.phinchID)
     // console.log(colids);
@@ -73,13 +76,14 @@ class DataContainer {
     this.data.columns = this.data.columns.map((c, i) => {
       // c.metadata['phinchID'] = c.metadata['phinchID'] ? c.metadata['phinchID'] : i;
       c.metadata['phinchID'] = i;
+      const reads = (sequenceReads[i] === undefined) ? 0 : sequenceReads[i];
       return {
         biomid: i + 1,
         id: c.id,
         sampleName: c.id,
         phinchName: c.phinchName ? c.phinchName : ( c.metadata.phinchName ? c.metadata.phinchName : c.id),
         metadata: c.metadata,
-        reads: seqeuncereads[i],
+        reads,
       };
     });
     // console.log(this.data.columns.slice()[2]);

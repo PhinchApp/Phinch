@@ -8,7 +8,10 @@ export default class FrequencyChart extends Component {
     // this.padding = this.props.width * 0.05;
     this.padding = 2;
     this.scale = scaleLog()
-      .domain([Math.min(...this.props.data.map(d => d.reads)), Math.max(...this.props.data.map(d => d.reads))])
+      .domain([
+        Math.min(...this.props.data.map(d => d.reads).filter(d => d > 0)),
+        Math.max(...this.props.data.map(d => d.reads))
+      ])
       .range([this.padding, this.props.width - (this.padding * 2)]);
   }
 
@@ -20,6 +23,7 @@ export default class FrequencyChart extends Component {
     ctx.fillStyle = 'black';
     ctx.fillRect(this.padding, (this.props.height / 2) - 0.125 + this.padding, this.props.width - (this.padding * 2), 0.25);
     this.props.data.forEach((d) => {
+      // console.log(d.reads);
       ctx.fillRect(this.scale(d.reads), this.props.height / 3 + this.padding, 0.5, this.props.height / 3);
     });
     ctx.fillStyle = 'red';

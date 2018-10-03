@@ -70,7 +70,7 @@ export default class Home extends Component {
           <Loader loading={this.state.loading} />
           {redirect}
           <div className={`${styles.section} ${styles.left}`}>
-            <div className={`${styles.area} ${styles.about}`}>
+            <div className={`${styles.area} ${styles.info}`}>
               <img src={logo} className={styles.logo} alt='Phinch Logo' />
               <p>Version {this.version}</p>
             </div>
