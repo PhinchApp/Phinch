@@ -180,7 +180,7 @@ export default class Vis extends Component {
     } else {
 
       // move to config / metadata
-      // const ignoreLevels = ['unclassified', 'unassigned', 'unassignable', 'ambiguous taxa'];
+      const ignoreLevels = ['', 'unclassified', 'unassigned', 'unassignable', 'ambiguous taxa', 'ambiguous_taxa'];
 
       // Autogenerate levels from data
       // TODO: Test w/ addtional data formats
@@ -205,8 +205,7 @@ export default class Vis extends Component {
           )
         )].map(l => {
           return JSON.parse(l);
-        });
-        // }).filter(l => !ignoreLevels.includes(l.name.trim().toLowerCase()));
+        }).filter(l => !ignoreLevels.includes(l.name.trim().toLowerCase()));
 
       const default_taxa = {
         'k': 'kingdom',
@@ -633,7 +632,8 @@ export default class Vis extends Component {
   }
 
   renderTicks(svgWidth, svgHeight) {
-    const tickCount = Math.floor(this.metrics.chartWidth / 64);
+    // const tickCount = Math.floor(this.metrics.chartWidth / 64);
+    const tickCount = Math.floor(this.metrics.chartWidth / 96);
     const ticks = this.scales.x.ticks(tickCount);
     if (!ticks.length) {
       return '';

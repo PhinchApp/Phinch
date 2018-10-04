@@ -51,8 +51,16 @@ export default class StackedBar extends Component {
     if (!this._canvas) {
       return
     }
-    const ctx = this._canvas.getContext('2d')
+
+    const ctx = this._canvas.getContext('2d', { alpha: this.props.highlightedDatum });
     ctx.clearRect(0, 0, this.props.width, this.props.height);
+
+    // const yOffset = ReactDOM.findDOMNode(this._canvas).getBoundingClientRect();
+    // if (yOffset.top < 130) {
+    //   console.log(yOffset.top);
+    //   return
+    // }
+
     if (this.props.isPercent) {
       this.props.xscale
         .domain([0, this.props.data.map(d => d.reads).reduce((a, v) => a + v, 0)])
@@ -69,9 +77,9 @@ export default class StackedBar extends Component {
         d.x = offset * this.scale;
         d.width = this.props.xscale(d.reads);
         ctx.fillRect(
-          d.x,
+          Math.max(i > 0 ? 1 : 0, Math.floor(d.x)),
           0 * this.scale,
-          d.width * this.scale,
+          Math.max(1, Math.floor(d.width * this.scale)),
           this.props.height * this.scale,
           );
         offset += this.props.xscale(d.reads);

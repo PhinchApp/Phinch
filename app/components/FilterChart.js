@@ -79,10 +79,6 @@ export default class FilterChart extends Component {
           height={height}
           fill={this.props.fill}
           fillOpacity={fillOpacity}
-          // stroke={this.props.stroke}
-          // stroke='white'
-          // stroke-opacity={0}
-          // strokeWidth={0.25}
         />
       );
     });

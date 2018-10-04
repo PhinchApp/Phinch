@@ -5,7 +5,6 @@ import { scaleLog } from 'd3-scale';
 export default class FrequencyChart extends Component {
   constructor(props) {
     super(props);
-    // this.padding = this.props.width * 0.05;
     this.padding = 2;
     this.scale = scaleLog()
       .domain([
@@ -23,7 +22,6 @@ export default class FrequencyChart extends Component {
     ctx.fillStyle = 'black';
     ctx.fillRect(this.padding, (this.props.height / 2) - 0.125 + this.padding, this.props.width - (this.padding * 2), 0.25);
     this.props.data.forEach((d) => {
-      // console.log(d.reads);
       ctx.fillRect(this.scale(d.reads), this.props.height / 3 + this.padding, 0.5, this.props.height / 3);
     });
     ctx.fillStyle = 'red';

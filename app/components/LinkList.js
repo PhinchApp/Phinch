@@ -18,7 +18,7 @@ const linkList = [
   },
   {
     name: 'Join the Community',
-    action: (context) => { shell.openExternal('https://github.com/PhinchApp/Phinch') },
+    action: () => { shell.openExternal('https://github.com/PhinchApp/Phinch') },
     info: 'Discuss features and get the latest update feeds.',
   },
   {
@@ -32,15 +32,13 @@ const icon = (<div className={styles.arrow}><img src={arrow} alt='right facing a
 
 const InfoLink = (l, i, context) => {
   return (
-    // <Link key={`${l.slug}-${i}`} to={l.slug}>
-      <div key={`${l.action}-${i}`} className={styles.link} onClick={() => { l.action(context) }}>
-        {icon}
-        <div className={styles.info}>
-          <h2>{l.name}</h2>
-          <p>{l.info}</p>
-        </div>
+    <div key={`${l.action}-${i}`} className={styles.link} onClick={() => { l.action(context) }}>
+      {icon}
+      <div className={styles.info}>
+        <h2>{l.name}</h2>
+        <p>{l.info}</p>
       </div>
-    // </Link>
+    </div>
   );
 }
 

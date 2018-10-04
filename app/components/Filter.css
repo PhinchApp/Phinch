@@ -99,6 +99,7 @@
 }
 .drag {
   cursor: move;
+  pointer-events: none;
 }
 
 .modal {
