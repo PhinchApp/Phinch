@@ -57,9 +57,6 @@ class DataContainer {
       if (sequenceReads[d[1]]) {
         sequenceReads[d[1]] += d[2];
       } else {
-        if (sequenceReads[d[1]] !== undefined) {
-          console.log(sequenceReads[d[1]])
-        }
         sequenceReads[d[1]] = d[2];
       }
     });
