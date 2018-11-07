@@ -8,17 +8,52 @@
   cursor: pointer;
 }
 
-.project img {
+.info {
+  display: inline-block;
   width: 6rem;
   height: 6rem;
-  box-shadow: 0 0 3px #808080;
   background: black;
   border-radius: 8px;
+  /**/
+  text-align: right;
+  padding: 0.5rem 0.75rem;
+  font-size: 12px;
+  line-height: 12px;
 }
 
-.project p {
+img.new {
+  background: #00bbda;
+}
+
+.edit img.new {
+  background: #4c4c4c;
+}
+
+p {
+  margin: 0;
+  padding: 0;
+}
+
+.summary {
+  vertical-align: top;
+  height: 28px;
+}
+
+p.number {
+  font-weight: 400;
+  color: #00bbda;
+}
+
+p.label {
+  font-weight: 400;
+  font-size: 10px;
+  color: #b2b2b2;
+}
+
+p.name {
+  font-weight: 400;
   color: white;
   word-wrap: break-word;
   font-size: 14px;
-  font-weight: 400;
+  margin: 1rem 0;
 }

@@ -1,20 +1,19 @@
-import { homedir, platform } from 'os';
+import { homedir } from 'os';
 import fs from 'fs';
 import { join } from 'path';
 
-import newicon from 'images/newicon.png';
-import sampleicon from 'images/sampleicon.png';
+import DataContainer from './DataContainer.js';
+
+import newicon from 'images/new.svg';
 
 const sampleProjects = [
   {
     name: 'Sample Project One',
     slug: 'sampleprojectone',
-    thumb: sampleicon
   },
   {
     name: 'Sample Project Two',
     slug: 'sampleprojecttwo',
-    thumb: sampleicon
   },
 ];
 
@@ -23,7 +22,6 @@ const homedirectory = homedir();
 function checkFolders() {
   // maybe check platform? console.log(platform());
   // check settings file - look somewhere other than home folder
-
   const home = fs.readdirSync(join(homedirectory));
   if (!home.includes('Documents')) { // weird but ok
     fs.mkdirSync(join(homedirectory, 'Documents'));
@@ -35,27 +33,28 @@ function checkFolders() {
 }
 
 function getProjectInfo(path, project) {
-  let name = project;
-  if (fs.existsSync(join(path, `${project}.json`))) {
-    const tmpname = JSON.parse(fs.readFileSync(join(path, `${project}.json`), 'utf8')).name;
-    if (tmpname) {
-      name = tmpname;
+  let summary = {
+    name: project,
+    path,
+    size: null,
+    samples: null,
+    observations: null,
+  };
+  const metadataPath = join(path, `${project}.json`);
+  if (fs.existsSync(metadataPath)) {
+    const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
+    if (metadata.summary) {
+      summary = Object.assign(summary, metadata.summary);
     }
-  }
-  let thumb = '';
-  if (fs.existsSync(join(path, `${project}.png`))) {
-    thumb = `data:image/png;base64, ${fs.readFileSync(join(path, `${project}.png`), 'base64')}`;
   }
   let data = '';
   if (fs.existsSync(join(path, `${project}.biom`))) {
     data = join(path, `${project}.biom`);
   }
   return {
-    name: name,
     slug: 'filter',
-    thumb: thumb,
-    path: path,
-    data: data,
+    data,
+    summary,
   }
 }
 
@@ -82,7 +81,18 @@ export function setProjectFilters(path, name, names, view, callback) {
   const metadataPath = join('/', ...path, name);
   const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
   metadata.names = names;
-  // 
+  
+  if (!metadata.summary) {
+    metadata.summary = {
+      name,
+      path,
+      size: null,
+      samples: null,
+      observations: null,
+    };
+  }
+  metadata.summary = Object.assign(metadata.summary, DataContainer.getSummary());
+
   if (!metadata[view.type]) {
     metadata[view.type] = {};
   }
@@ -91,7 +101,6 @@ export function setProjectFilters(path, name, names, view, callback) {
       metadata[view.type][k] = view[k];
     }
   });
-  //
   try {
     fs.writeFileSync(metadataPath, JSON.stringify(metadata));
     callback('Saved');
@@ -105,7 +114,6 @@ export function getProjectFilters(path, name, viewType) {
   const metadataPath = join('/', ...path, name);
   const metadata = path.length ? JSON.parse(fs.readFileSync(metadataPath, 'utf8')) : {};
   const names = metadata['names'] ? metadata['names'] : {};
-  //
   const filters = { names };
   if (metadata[viewType]) {
     Object.keys(metadata[viewType]).forEach(k => {
@@ -117,11 +125,14 @@ export function getProjectFilters(path, name, viewType) {
   return filters;
 }
 
+// export function setProjectSummary(path, name) {
+
+// }
+
 export function createProject(project) {
   checkFolders();
   const phinchdir = join(homedirectory, 'Documents', 'Phinch2.0');
   const phinch = fs.readdirSync(phinchdir);
-  //
   const basename = project.name.split('.').slice(0, -1).join('.');
   let foldername = basename;
   let version = 0;
@@ -129,19 +140,19 @@ export function createProject(project) {
     foldername = `${basename}-${version}`;
     version++;
   }
-  //
   fs.mkdirSync(join(phinchdir, foldername));
   const filepath = join(phinchdir, foldername, `${foldername}.biom`);
   fs.writeFileSync(filepath, JSON.stringify(project.data));
   const projectSettings = {
-    phinch: {
+    summary: {
       name: foldername,
       path: join(phinchdir, foldername),
+      size: null,
+      samples: null,
+      observations: null,
     },
   };
   fs.writeFileSync(join(phinchdir, foldername, `${foldername}.json`), JSON.stringify(projectSettings));
-  fs.writeFileSync(join(phinchdir, foldername, `${foldername}.png`), sampleicon.replace(/^data:image\/png;base64,/, ''), 'base64');
-  //
   return filepath;
 }
 
@@ -155,9 +166,14 @@ export function getProjects() {
       const path = join(homedirectory, 'Documents', 'Phinch2.0', p);
       return getProjectInfo(path, p);
     });
-  //
   const newproject = {
-    name: 'New Project',
+    summary: {
+      name: 'New Project',
+      path: '',
+      size: null,
+      samples: null,
+      observations: null,
+    },
     slug: 'newproject',
     thumb: newicon
   };
@@ -174,9 +190,18 @@ export function getSamples() {
     // Make our 2 default samples now
     sampleProjects.forEach((s) => {
       fs.mkdirSync(join(phinchdir, 'Samples', s.slug));
-      fs.writeFileSync(join(phinchdir, 'Samples', s.slug, `${s.slug}.json`), JSON.stringify({name:s.name}));
-      fs.writeFileSync(join(phinchdir, 'Samples', s.slug, `${s.slug}.png`), s.thumb.replace(/^data:image\/png;base64,/, ''), 'base64');
-      // add some data lol idk
+      const projectSettings = {
+        summary: {
+          name: foldername,
+          path: join(phinchdir, foldername),
+          size: null, // fill these in for given data
+          samples: null, // fill these in for given data
+          observations: null, // fill these in for given data
+        },
+      };
+      fs.writeFileSync(join(phinchdir, 'Samples', s.slug, `${s.slug}.json`), JSON.stringify(projectSettings));
+      // fs.writeFileSync(join(phinchdir, 'Samples', s.slug, `${s.slug}.png`), s.thumb.replace(/^data:image\/png;base64,/, ''), 'base64');
+      // add some data
     });
   }
   const samples = fs.readdirSync(join(phinchdir, 'Samples'))

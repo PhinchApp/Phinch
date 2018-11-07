@@ -61,7 +61,6 @@ export default class NewProject extends Component {
 
     this.success = this.success.bind(this);
     this.failure = this.failure.bind(this);
-
     this.showDrop = this.showDrop.bind(this);
     this.hideDrop = this.hideDrop.bind(this);
     this.handleDrop = this.handleDrop.bind(this);
@@ -201,9 +200,7 @@ export default class NewProject extends Component {
             </Link>
           </div>
         </div>
-
         <div style={{ position: 'relative', backgroundColor: '#ffffff', color: '#808080'}}>
-
           <SideMenu
             showLeftSidebar={this.state.showLeftSidebar}
             leftSidebar={this.metrics.leftSidebar}
@@ -213,12 +210,10 @@ export default class NewProject extends Component {
             toggleMenu={this.toggleMenu}
             hideToggle={true}
           />
-
           <div
             className={styles.section}
             style={{ width: this.state.width - this.metrics.leftSidebar }}
           >
-
             <h1 className={styles.heading}>New Project</h1>
             <p>To start a new project, you can browse for a file on your local hard drive or drag the file to the box below.</p>
             <input className={styles.wide} type="text" value={this.state.name} disabled />
@@ -256,7 +251,6 @@ export default class NewProject extends Component {
             </table>
             {loader}
             {result}
-
           </div>
         </div>
       </div>

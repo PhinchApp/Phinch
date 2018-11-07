@@ -111,9 +111,6 @@ export default class Filter extends Component {
     this.metrics.leftSidebar = this.state.showLeftSidebar ?
       this.metrics.left.max : this.metrics.left.min;
     this.metrics.tableWidth = this.state.width - (this.metrics.leftSidebar + this.metrics.filterWidth + this.metrics.padding * 4);
-    // this.metrics.filterWidth = this.state.showLeftSidebar ?
-    //   this.metrics.filter.min : this.metrics.filter.max;
-    //
 
     this.filters = {
       date: {},
@@ -162,9 +159,7 @@ export default class Filter extends Component {
         const unit = units.length ? units[0] : '';
         let groupKey = 'string';
         let filterValues = values.slice();
-        /*
-          TODO: Test w/ Additional Date / Metadata Types
-        */
+
         if (k.toLowerCase().trim().includes('date') || k.toLowerCase().trim().includes('year')) {
           groupKey = 'date';
           filterValues = values.slice().map((d, i) => {
@@ -234,14 +229,14 @@ export default class Filter extends Component {
         }
 
       });
+
       this.state.deleted = this.init.deleted ? this.init.deleted : [];
       this.state.names = this.init.names;
       if (this.init.sort) {
         this.sort = this.init.sort;
       }
-      //
+
       DataContainer.setMetadata(this.state.filters);
-      //
     }
 
     this.columns = [
@@ -685,8 +680,6 @@ export default class Filter extends Component {
       c.title = this.generateTableTitle(c.key, true);
       return c;
     });
-    // this.metrics.filterWidth = showLeftSidebar ?
-    //   this.metrics.filter.min : this.metrics.filter.max;
     this.setState({ showLeftSidebar }, () => {
         this.save(this.setResult);
       });
@@ -702,22 +695,14 @@ export default class Filter extends Component {
 
   render() {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
-    // const resultStyle = this.state.result === 'error' ? styles.error : styles.success;
-    // const result = (
-    //   <div className={gstyle.button}>
-    //     <div className={resultStyle} onClick={this.clearResult}>
-    //       {this.state.result}
-    //     </div>
-    //   </div>
-    //   );
 
     const result = this.state.result ? (
       <div 
         className={gstyle.button}
         style={{
           position: 'absolute',
-          top: '96px', // top: '148px',
-          left: '16px', // left: '90px',
+          top: '96px',
+          left: '16px',
           width: '68px',
           textAlign: 'center',
           zIndex: 10,
@@ -790,7 +775,7 @@ export default class Filter extends Component {
           <div className={`${styles.section} ${styles.left}`} style={{
             display: 'inline-block',
             height: (this.state.height - 130),
-            overflowY: 'overlay', // 'scroll',
+            overflowY: 'overlay',
           }}>
             {this.displayFilters()}
             <div
