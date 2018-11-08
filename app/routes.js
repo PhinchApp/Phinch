@@ -7,12 +7,10 @@ import NewProject from './components/NewProject.js';
 import Filter from './components/Filter.js';
 import About from './components/About.js';
 import Vis from './components/Vis.js';
-import CounterPage from './containers/CounterPage';
 
 export default () => (
   <App>
     <Switch>
-      <Route path="/counter" component={CounterPage} />
       <Route path="/newproject" component={NewProject} />
       <Route path="/filter" component={Filter} />
       <Route path="/about" component={About} />

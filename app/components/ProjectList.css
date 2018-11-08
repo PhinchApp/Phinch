@@ -1,7 +1,13 @@
+.projects {
+  margin-left: 6rem;
+  margin-right: 2rem;
+}
+
 .project {
-  width: 10.75rem;
-  height: 12.5rem;
+  width: 10rem;
   padding: 1rem;
+  padding-bottom: 0;
+  margin: 0;
   vertical-align: top;
   text-align: center;
   display: inline-block;
@@ -14,7 +20,6 @@
   height: 6rem;
   background: black;
   border-radius: 8px;
-  /**/
   text-align: right;
   padding: 0.5rem 0.75rem;
   font-size: 12px;
@@ -27,6 +32,10 @@ img.new {
 
 .edit img.new {
   background: #4c4c4c;
+}
+
+.edit p.name {
+  color: #666666;
 }
 
 p {
@@ -50,10 +59,19 @@ p.label {
   color: #b2b2b2;
 }
 
-p.name {
+.name {
   font-weight: 400;
-  color: white;
   word-wrap: break-word;
   font-size: 14px;
-  margin: 1rem 0;
+  margin: 0.5rem 0;
+  max-width: 100%;
+  height: auto;
+}
+
+p.name {
+  color: white;
+}
+
+textarea.name {
+  color: black;
 }

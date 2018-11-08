@@ -4,11 +4,26 @@
 }
 
 .sectionTitle {
+  display: inline-block;
+  vertical-align: top;
   color: #666666;
   font-size: 20px;
+  height: 26px;
+  line-height: 26px;
   font-weight: 400;
   letter-spacing: 4px;
   text-transform: uppercase;
+}
+
+.sectionRule {
+  display: inline-block;
+  vertical-align: top;
+  margin: 12px 6px;
+  padding: 0;
+  /*width: calc(100vw - 640px);*/
+  width: calc(100vw - 660px);
+  height: 2px;
+  background: #191919;
 }
 
 .area {
@@ -35,11 +50,17 @@
   overflow-y: scroll;
 }
 
+.edit {
+  position: absolute;
+  top: 3rem;
+  right: 2rem;
+  cursor: pointer;
+}
+
 .info {
   text-align: center;
   padding: 50px;
   padding-bottom: 40px;
-  /**/
   height: 238px;
 }
 
@@ -60,6 +81,9 @@
 
 .projectType {
   padding: 0 2rem;
+}
+.projectType.top {
+  padding-top: 2rem;
 }
 
 .about {

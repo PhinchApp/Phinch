@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+
 import loading from 'images/loading.gif';
 
 import styles from './Loader.css';

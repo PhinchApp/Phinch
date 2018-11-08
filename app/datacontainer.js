@@ -1,18 +1,19 @@
 import { statSync } from 'fs';
+import { join } from 'path';
 
 class DataContainer {
   constructor() {
     this.summary = {
       name: '',
-      size: 0,
       path: '',
-      samples: 0,
-      observations: 0,
+      dataKey: '',
+      // size: null,
+      // samples: null,
+      // observations: null,
     };
     this.data = {};
     this.filteredData = {};
-    this.metadata = {};
-    // this.filters = {};
+    this.attributes = {};
     this.samples = [];
     this.observations = [];
   }
@@ -25,14 +26,24 @@ class DataContainer {
     return `${(bytes / Math.pow(interval, i)).toFixed(1)} ${units[i]}`;
   }
 
-  setSummary(filepath) {
-    const filename = filepath.toString().split('/');
-    this.summary.name = filename[filename.length-1];
-    //
-    filename.pop();
-    this.summary.path = filename;
-    //
-    this.summary.size = this.formatFileSize(statSync(filepath).size);
+  setSummary(project) {
+    if (project.summary) {
+      this.summary = Object.assign(this.summary, project.summary);
+    } else {
+      const filename = project.data.toString().split('/');
+      this.summary.name = filename[filename.length-1];
+      this.summary.dataKey = filename[filename.length-1];
+      filename.pop();
+      this.summary.path = project.data;
+    }
+    /* if summary was saved in other format previously */
+    if (Array.isArray(this.summary.path)) {
+      this.summary.path = join(...this.summary.path);
+    }
+    console.log(this.summary.path);
+    if (!this.summary.size) {
+      this.summary.size = this.formatFileSize(statSync(project.data).size);
+    }
   }
   getSummary() {
     return this.summary;
@@ -129,11 +140,11 @@ class DataContainer {
     return this.filteredData;
   }
 
-  setMetadata(metadata) {
-    this.metadata = metadata;
+  setAttributes(attributes) {
+    this.attributes = attributes;
   }
-  getMetadata() {
-    return this.metadata;
+  getAttributes() {
+    return this.attributes;
   }
 }
 

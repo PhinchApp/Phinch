@@ -25,7 +25,6 @@ import gstyle from './general.css';
 import logo from 'images/phinch-logo.png';
 import back from 'images/back.png';
 import save from 'images/save.png';
-
 import vis from 'images/vis-placeholder-sm.png';
 
 export default class Filter extends Component {
@@ -100,9 +99,9 @@ export default class Filter extends Component {
       },
     ];
 
-    this.state.redirect = (this.state.summary.name && this.state.summary.size) ? null : '/';
+    this.state.redirect = (this.state.summary.path !== '' && this.state.summary.dataKey !== '') ? null : '/';
 
-    this.init = getProjectFilters(this.state.summary.path, this.state.summary.name, 'filter');
+    this.init = getProjectFilters(this.state.summary.path, this.state.summary.dataKey, 'filter');
 
     // Ugly... 
     this.state.showLeftSidebar = (this.init.showLeftSidebar !== undefined) ? (
@@ -236,7 +235,7 @@ export default class Filter extends Component {
         this.sort = this.init.sort;
       }
 
-      DataContainer.setMetadata(this.state.filters);
+      DataContainer.setAttributes(this.state.filters);
     }
 
     this.columns = [
@@ -406,7 +405,7 @@ export default class Filter extends Component {
     };
     setProjectFilters(
       this.state.summary.path,
-      this.state.summary.name,
+      this.state.summary.dataKey,
       this.state.names,
       viewMetadata,
       callback ? callback : () => {},
@@ -696,6 +695,10 @@ export default class Filter extends Component {
   render() {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
 
+    if (redirect) {
+      return redirect;
+    }
+
     const result = this.state.result ? (
       <div 
         className={gstyle.button}
@@ -739,7 +742,7 @@ export default class Filter extends Component {
                 // this is more consistent than the setState callback
                 setTimeout(() => {
                   const biom = DataContainer.applyFiltersToData(this.state.data);
-                  exportProjectData(this.state.summary.path, this.state.summary.name, biom, this.setResult);
+                  exportProjectData(this.state.summary.path, this.state.summary.dataKey, biom, this.setResult);
                 }, 1);
               }}>
                 Export Filtered BIOM File

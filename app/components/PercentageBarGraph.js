@@ -2,7 +2,6 @@ import React from 'react'
 
 export default function PercentageBarGraph(props) {
   const height = 5;
-
   return (
     <div style={{
       width: props.width,

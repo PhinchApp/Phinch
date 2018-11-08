@@ -67,7 +67,7 @@ export default class Vis extends Component {
 
     this._inputs = {};
 
-    this.attributes = DataContainer.getMetadata();
+    this.attributes = DataContainer.getAttributes();
 
     // move to config or own file
     this.menuItems = [
@@ -249,7 +249,7 @@ export default class Vis extends Component {
 
       // Break this whole chunk into a function or something
       // 
-      this.init = getProjectFilters(this.state.summary.path, this.state.summary.name, 'vis');
+      this.init = getProjectFilters(this.state.summary.path, this.state.summary.dataKey, 'vis');
       //
       this.state.names = this.init.names;
       this.state.level = (this.init.level !== undefined) ? this.init.level : this.state.level;
@@ -344,7 +344,7 @@ export default class Vis extends Component {
     };
     setProjectFilters(
       this.state.summary.path,
-      this.state.summary.name,
+      this.state.summary.dataKey,
       this.state.names,
       viewMetadata,
       (value) => {

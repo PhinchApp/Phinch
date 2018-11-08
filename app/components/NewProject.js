@@ -92,8 +92,8 @@ export default class NewProject extends Component {
     this.setState({ showLeftSidebar });
   }
 
-  updateSummary(filepath) {
-    DataContainer.setSummary(filepath);
+  updateSummary(project) {
+    DataContainer.setSummary(project);
     const summary = DataContainer.getSummary();
     this.setState({
       name: summary.name,
@@ -123,12 +123,12 @@ export default class NewProject extends Component {
   }
 
   success(data) {
-    DataContainer.setData(data);
     this.updateValid(true);
     this.updateObservations(Number.parseFloat(data.rows.length).toLocaleString());
     this.updateLoading(false);
-    const filepath = createProject({name: this.state.name, data});
-    DataContainer.setSummary(filepath);
+    const project = createProject({name: this.state.name, data});
+    DataContainer.setSummary(project);
+    DataContainer.setData(data);
   }
 
   failure() {
@@ -138,7 +138,7 @@ export default class NewProject extends Component {
 
   onChosenFileToOpen(filepath) {
     this.updateLoading(true);
-    this.updateSummary(filepath);
+    this.updateSummary({data: filepath});
     loadFile(filepath, this.success, this.failure);
   }
 

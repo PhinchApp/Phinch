@@ -32,15 +32,16 @@ function checkFolders() {
   }
 }
 
-function getProjectInfo(path, project) {
+function getProjectInfo(path, dataKey) {
   let summary = {
-    name: project,
+    name: dataKey,
     path,
-    size: null,
-    samples: null,
-    observations: null,
+    dataKey: dataKey,
+    // size: null,
+    // samples: null,
+    // observations: null,
   };
-  const metadataPath = join(path, `${project}.json`);
+  const metadataPath = join(path, `${dataKey}.json`);
   if (fs.existsSync(metadataPath)) {
     const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
     if (metadata.summary) {
@@ -48,8 +49,8 @@ function getProjectInfo(path, project) {
     }
   }
   let data = '';
-  if (fs.existsSync(join(path, `${project}.biom`))) {
-    data = join(path, `${project}.biom`);
+  if (fs.existsSync(join(path, `${dataKey}.biom`))) {
+    data = join(path, `${dataKey}.biom`);
   }
   return {
     slug: 'filter',
@@ -58,16 +59,16 @@ function getProjectInfo(path, project) {
   }
 }
 
-export function exportProjectData(path, name, data, callback) {
-  const projectdir = join('/', ...path);
+export function exportProjectData(path, dataKey, data, callback) {
+  const projectdir = join('/', path);
   const project = fs.readdirSync(projectdir);
   let version = 0;
-  let exportname = `export-${version}-${name}`;
+  let exportname = `export-${dataKey}-${version}`;
   while (project.includes(exportname)) {
     version++;
-    exportname = `export-${version}-${name}`;
+    exportname = `export-${dataKey}-${version}`;
   }
-  const exportPath = join('/', ...path, exportname);
+  const exportPath = join('/', path, exportname);
   try {
     fs.writeFileSync(exportPath, JSON.stringify(data));
     callback('Exported');
@@ -76,31 +77,35 @@ export function exportProjectData(path, name, data, callback) {
   }
 }
 
-export function setProjectFilters(path, name, names, view, callback) {
-  name = name.replace('.biom', '.json');
-  const metadataPath = join('/', ...path, name);
+export function setProjectFilters(path, dataKey, names, view, callback) {
+  const metadataPath = join('/', path, `${dataKey}.json`);
   const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
-  metadata.names = names;
-  
+  if (names) {
+    metadata.names = names;
+  }
   if (!metadata.summary) {
     metadata.summary = {
-      name,
+      name: dataKey,
       path,
-      size: null,
-      samples: null,
-      observations: null,
+      dataKey,
+      // size: null,
+      // samples: null,
+      // observations: null,
     };
   }
   metadata.summary = Object.assign(metadata.summary, DataContainer.getSummary());
 
-  if (!metadata[view.type]) {
-    metadata[view.type] = {};
-  }
-  Object.keys(view).forEach(k => {
-    if (k !== 'type') {
-      metadata[view.type][k] = view[k];
+  if (view) {
+    if (!metadata[view.type]) {
+      metadata[view.type] = {};
     }
-  });
+    Object.keys(view).forEach(k => {
+      if (k !== 'type') {
+        metadata[view.type][k] = view[k];
+      }
+    });
+  }
+
   try {
     fs.writeFileSync(metadataPath, JSON.stringify(metadata));
     callback('Saved');
@@ -109,25 +114,24 @@ export function setProjectFilters(path, name, names, view, callback) {
   }
 }
 
-export function getProjectFilters(path, name, viewType) {
-  name = name.replace('.biom', '.json');
-  const metadataPath = join('/', ...path, name);
-  const metadata = path.length ? JSON.parse(fs.readFileSync(metadataPath, 'utf8')) : {};
-  const names = metadata['names'] ? metadata['names'] : {};
-  const filters = { names };
-  if (metadata[viewType]) {
-    Object.keys(metadata[viewType]).forEach(k => {
-      if (metadata[viewType][k]) {
-        filters[k] = metadata[viewType][k];
-      }
-    });
+export function getProjectFilters(path, dataKey, viewType) {
+  const filters = {};
+  if (path.length) {
+    const metadataPath = join('/', path, `${dataKey}.json`);
+    const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
+    const names = metadata['names'] ? metadata['names'] : {};
+    // const filters = { names };
+    filters.names = names;
+    if (metadata[viewType]) {
+      Object.keys(metadata[viewType]).forEach(k => {
+        if (metadata[viewType][k]) {
+          filters[k] = metadata[viewType][k];
+        }
+      });
+    }
   }
   return filters;
 }
-
-// export function setProjectSummary(path, name) {
-
-// }
 
 export function createProject(project) {
   checkFolders();
@@ -143,17 +147,18 @@ export function createProject(project) {
   fs.mkdirSync(join(phinchdir, foldername));
   const filepath = join(phinchdir, foldername, `${foldername}.biom`);
   fs.writeFileSync(filepath, JSON.stringify(project.data));
-  const projectSettings = {
+  const metadata = {
     summary: {
       name: foldername,
       path: join(phinchdir, foldername),
-      size: null,
-      samples: null,
-      observations: null,
+      dataKey: foldername,
+      // size: null,
+      // samples: null,
+      // observations: null,
     },
   };
-  fs.writeFileSync(join(phinchdir, foldername, `${foldername}.json`), JSON.stringify(projectSettings));
-  return filepath;
+  fs.writeFileSync(join(phinchdir, foldername, `${foldername}.json`), JSON.stringify(metadata));
+  return { summary: metadata.summary, data: filepath };
 }
 
 export function getProjects() {
@@ -170,9 +175,10 @@ export function getProjects() {
     summary: {
       name: 'New Project',
       path: '',
-      size: null,
-      samples: null,
-      observations: null,
+      dataKey: 'New Project',
+      // size: null,
+      // samples: null,
+      // observations: null,
     },
     slug: 'newproject',
     thumb: newicon
@@ -192,11 +198,12 @@ export function getSamples() {
       fs.mkdirSync(join(phinchdir, 'Samples', s.slug));
       const projectSettings = {
         summary: {
-          name: foldername,
-          path: join(phinchdir, foldername),
-          size: null, // fill these in for given data
-          samples: null, // fill these in for given data
-          observations: null, // fill these in for given data
+          name: s.name,
+          path: join(phinchdir, s.slug),
+          dataKey: s.slug,
+          // size: null, // fill these in for given data
+          // samples: null, // fill these in for given data
+          // observations: null, // fill these in for given data
         },
       };
       fs.writeFileSync(join(phinchdir, 'Samples', s.slug, `${s.slug}.json`), JSON.stringify(projectSettings));
