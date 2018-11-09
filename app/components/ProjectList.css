@@ -4,6 +4,7 @@
 }
 
 .project {
+  position: relative;
   width: 10rem;
   padding: 1rem;
   padding-bottom: 0;
@@ -11,6 +12,14 @@
   vertical-align: top;
   text-align: center;
   display: inline-block;
+  cursor: pointer;
+}
+
+.remove {
+  position: absolute;
+  background: #666666;
+  border-radius: 2px;
+  margin-left: 0.5rem;
   cursor: pointer;
 }
 
@@ -27,6 +36,7 @@
 }
 
 img.new {
+  transition: background 0.5s ease-in-out;
   background: #00bbda;
 }
 
@@ -69,6 +79,7 @@ p.label {
 }
 
 p.name {
+  transition: color 0.5s ease-in-out;
   color: white;
 }
 

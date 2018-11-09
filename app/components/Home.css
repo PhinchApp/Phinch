@@ -20,7 +20,6 @@
   vertical-align: top;
   margin: 12px 6px;
   padding: 0;
-  /*width: calc(100vw - 640px);*/
   width: calc(100vw - 660px);
   height: 2px;
   background: #191919;
@@ -56,6 +55,50 @@
   right: 2rem;
   cursor: pointer;
 }
+
+.modal {
+  display: block;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0.5rem 2rem;
+}
+
+.modal p {
+  font-size: 16px;
+  font-weight: 300;
+  margin: 1rem 0;
+}
+
+.modal .modalTitle {
+  font-weight: 600;
+  font-style: italic;
+}
+
+.modal .button {
+  position: absolute;
+  bottom: 0.75rem;
+  right: 6.25rem;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid #00bbda;
+  border-radius: 4px;
+  background: white;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.modal .button.cancel {
+  right: 0;
+  background: #00bbda;
+  color: white;
+}
+
+.modal .button:hover {
+  opacity: 0.65;
+}
+
 
 .info {
   text-align: center;

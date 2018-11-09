@@ -6,15 +6,14 @@ import gstyle from './general.css';
 export default class Modal extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      showHidden: false,
-    };
+    const showHidden = props.show ? props.show : false;
+    this.state = { showHidden };
     this.toggleHidden = this.toggleHidden.bind(this);
   }
 
   toggleHidden() {
     const showHidden = !this.state.showHidden;
-    this.setState({showHidden});
+    this.setState({showHidden}, this.props.onHide);
   }
 
   render() {
@@ -49,6 +48,9 @@ export default class Modal extends Component {
             {this.props.modalTitle}
             <div
               className={gstyle.close}
+              style={{
+                ...this.props.closePosition,
+              }}
               onClick={() => { this.toggleHidden() }}
             >x</div>
           </div>

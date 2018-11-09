@@ -37,9 +37,6 @@ function getProjectInfo(path, dataKey) {
     name: dataKey,
     path,
     dataKey: dataKey,
-    // size: null,
-    // samples: null,
-    // observations: null,
   };
   const metadataPath = join(path, `${dataKey}.json`);
   if (fs.existsSync(metadataPath)) {
@@ -88,9 +85,6 @@ export function setProjectFilters(path, dataKey, names, view, callback) {
       name: dataKey,
       path,
       dataKey,
-      // size: null,
-      // samples: null,
-      // observations: null,
     };
   }
   metadata.summary = Object.assign(metadata.summary, DataContainer.getSummary());
@@ -120,7 +114,6 @@ export function getProjectFilters(path, dataKey, viewType) {
     const metadataPath = join('/', path, `${dataKey}.json`);
     const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
     const names = metadata['names'] ? metadata['names'] : {};
-    // const filters = { names };
     filters.names = names;
     if (metadata[viewType]) {
       Object.keys(metadata[viewType]).forEach(k => {
@@ -152,13 +145,33 @@ export function createProject(project) {
       name: foldername,
       path: join(phinchdir, foldername),
       dataKey: foldername,
-      // size: null,
-      // samples: null,
-      // observations: null,
     },
   };
   fs.writeFileSync(join(phinchdir, foldername, `${foldername}.json`), JSON.stringify(metadata));
   return { summary: metadata.summary, data: filepath };
+}
+
+function deleteProjectFiles(path) {
+  const phinchdir = join(homedirectory, 'Documents', 'Phinch2.0');
+  if (path.includes(phinchdir)) {
+    if (fs.existsSync(path)) {
+      fs.readdirSync(path).forEach((f, i) => {
+        const currentPath = join(path, f);
+        if (fs.lstatSync(currentPath).isDirectory()) {
+          deleteProjectFiles(currentPath);
+        } else {
+          fs.unlinkSync(currentPath);
+        }
+      });
+      fs.rmdirSync(path);
+    }
+  } else {
+    console.warn(`Passed bad path to delete! ${path}`);
+  }
+}
+
+export function deleteProject(project) {
+  deleteProjectFiles(project.summary.path);
 }
 
 export function getProjects() {
@@ -176,9 +189,6 @@ export function getProjects() {
       name: 'New Project',
       path: '',
       dataKey: 'New Project',
-      // size: null,
-      // samples: null,
-      // observations: null,
     },
     slug: 'newproject',
     thumb: newicon
@@ -201,13 +211,9 @@ export function getSamples() {
           name: s.name,
           path: join(phinchdir, s.slug),
           dataKey: s.slug,
-          // size: null, // fill these in for given data
-          // samples: null, // fill these in for given data
-          // observations: null, // fill these in for given data
         },
       };
       fs.writeFileSync(join(phinchdir, 'Samples', s.slug, `${s.slug}.json`), JSON.stringify(projectSettings));
-      // fs.writeFileSync(join(phinchdir, 'Samples', s.slug, `${s.slug}.png`), s.thumb.replace(/^data:image\/png;base64,/, ''), 'base64');
       // add some data
     });
   }

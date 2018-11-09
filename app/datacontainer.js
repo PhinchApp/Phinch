@@ -40,7 +40,6 @@ class DataContainer {
     if (Array.isArray(this.summary.path)) {
       this.summary.path = join(...this.summary.path);
     }
-    console.log(this.summary.path);
     if (!this.summary.size) {
       this.summary.size = this.formatFileSize(statSync(project.data).size);
     }

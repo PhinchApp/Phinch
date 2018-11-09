@@ -6,10 +6,12 @@ import _clonedeep from 'lodash.clonedeep';
 import { pageView } from '../analytics.js'
 import loadFile from '../DataLoader.js';
 import DataContainer from '../DataContainer.js';
-import { getProjects, getSamples, setProjectFilters } from '../projects.js';
+import { getProjects, getSamples, setProjectFilters, deleteProject } from '../projects.js';
+
 import ProjectList from './ProjectList.js';
 import LinkList from './LinkList.js';
 import Loader from './Loader.js';
+import Modal from './Modal';
 
 import styles from './Home.css';
 import gstyle from './general.css';
@@ -31,6 +33,7 @@ export default class Home extends Component {
     this.state = {
       loading: false,
       editing: false,
+      deleting: false,
       redirect: null,
       projects: getProjects(),
       samples: getSamples(),
@@ -41,14 +44,10 @@ export default class Home extends Component {
     this.view = this.view.bind(this);
     this.edit = this.edit.bind(this);
     this.updateName = this.updateName.bind(this);
+    this.remove = this.remove.bind(this);
+    this.cancelRemove = this.cancelRemove.bind(this);
+    this.completeRemove = this.completeRemove.bind(this);
   }
-
-  // nameSaved(data) {
-  //   DataContainer.setData(data);
-  //   setProjectFilters(p.path, p.dataKey, null, {}, () => {});
-  //   this.shouldUpdate = {};
-  //   this.setState({editing});
-  // }
 
   success(data) {
     DataContainer.setData(data);
@@ -84,7 +83,8 @@ export default class Home extends Component {
       // setup error handling in callback here
     });
     this.shouldUpdate = {};
-    this.setState({editing});
+    const deleting = editing ? this.state.deleting : false;
+    this.setState({editing, deleting});
   }
 
   updateName(project, name) {
@@ -98,20 +98,84 @@ export default class Home extends Component {
     this.setState({projects});
   }
 
+  cancelRemove() {
+    this.deleting = null;
+    this.setState({deleting: false});
+  }
+
+  completeRemove() {
+    // remove from filesystem 
+    deleteProject(this.deleting);
+    // remove from state
+    const projects = _clonedeep(this.state.projects).filter(p => {
+      return p.summary.dataKey !== this.deleting.summary.dataKey;
+    });
+    this.deleting = null;
+    this.setState({projects, deleting: false});
+  }
+
+  remove(project) {
+    this.deleting = project;
+    this.setState({deleting: true});
+  }
+
   render() {
-    const redirect = (this.state.redirect === null) ? '' : <Redirect push to={this.state.redirect} />;
+    const redirect = (this.state.redirect === null) ? '' : (
+        <Redirect push to={this.state.redirect} />
+      );
     const links = LinkList(this);
+    const modalContent = this.state.deleting ? (
+        <div key='modal' className={styles.modal}>
+          <p>
+            Are you sure you want to permanently erase
+            <span className={styles.modalTitle}>
+              {this.deleting ? ` ${this.deleting.summary.name}` : ''}
+            </span>
+            ?
+          </p>
+          <p>You can't undo this action.</p>
+          <div
+            className={`${styles.button} ${styles.cancel}`}
+            onClick={this.cancelRemove}
+          >
+            Cancel
+          </div>
+          <div
+            className={styles.button}
+            onClick={this.completeRemove}
+          >
+            Delete
+          </div>
+        </div>
+      ) : null;
+    const modal = this.state.deleting ? (
+        <Modal
+          show={true}
+          buttonPosition={{display: 'none'}}
+          closePosition={{display: 'none'}}
+          modalPosition={{
+            position: 'absolute',
+            top: '33%',
+            left: '50%',
+            width: '410px',
+            height: '192px',
+            background: 'white',
+            color: 'black',
+          }}
+          data={[modalContent]}
+        />
+      ) : null;
     const projects = ProjectList({
       projectList: this.state.projects,
       view: this.view,
       updateName: this.updateName,
+      remove: this.remove,
       editing: this.state.editing,
       type: 'projects',
     });
     const samples = ProjectList({
       projectList: this.state.samples,
       view: this.state.editing ? () => {} : this.view,
-      updateName: this.updateName,
       editing: false,
     });
     return (
@@ -150,6 +214,7 @@ export default class Home extends Component {
                 {samples}
               </div>
             </div>
+            {modal}
           </div>
         </div>
       </div>
