@@ -75,18 +75,13 @@
 .modal .modalTitle {
   font-weight: 600;
   font-style: italic;
+  word-wrap: break-word;
 }
 
 .modal .button {
   position: absolute;
   bottom: 0.75rem;
   right: 6.25rem;
-  padding: 0.25rem 0.75rem;
-  border: 1px solid #00bbda;
-  border-radius: 4px;
-  background: white;
-  font-weight: 400;
-  cursor: pointer;
 }
 
 .modal .button.cancel {
@@ -94,11 +89,6 @@
   background: #00bbda;
   color: white;
 }
-
-.modal .button:hover {
-  opacity: 0.65;
-}
-
 
 .info {
   text-align: center;

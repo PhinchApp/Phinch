@@ -135,13 +135,13 @@ export default class Home extends Component {
           </p>
           <p>You can't undo this action.</p>
           <div
-            className={`${styles.button} ${styles.cancel}`}
+            className={`${gstyle.button} ${styles.button} ${styles.cancel}`}
             onClick={this.cancelRemove}
           >
             Cancel
           </div>
           <div
-            className={styles.button}
+            className={`${gstyle.button} ${styles.button}`}
             onClick={this.completeRemove}
           >
             Delete

@@ -7,35 +7,80 @@
 }
 
 h1.heading {
-  color: #2b2b2b;
-  margin: 1rem 0;
+  color: #666666;
+  margin: 0;
+  margin-bottom: 4rem;
+  line-height: 1rem;
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+.left {
+  display: inline-block;
+  position: relative;
+  vertical-align: top;
+  width: 100px;
+  background: #333333;
+  /*z-index: 10;*/
 }
 
 .section {
   display: inline-block;
+  position: relative;
   vertical-align: top;
+  width: calc(100vw - 100px);
+  height: 100vh;
+  margin: 0;
+  padding: 2rem 6rem;
+  /*background-color: #f8f8f8;*/
+  background: transparent;
+  color: #808080;
+  overflow-y: scroll;
+}
+
+.column {
+  width: 640px;
+}
+
+.column p {
+  width: 540px;
+  font-weight: 300;
+  color: black;
+  margin: 0.5rem 0;
+  font-size: 1rem;
 }
 
 input.wide, textarea.textarea {
-  width: 50vw;
+  width: 540px;
   margin: 1rem;
   margin-left: 0;
+  padding: 0.25rem 0.5rem;
   resize: none;
-  border: 1px solid #2b2b2b;
-  background: #f8f8f8;
-  padding: 0.25rem;
+  border: 1px solid #dcdcdc;
+  background: white;
+  color: #666666;
   font-size: 1rem;
   font-weight: 200;
+  font-family: 'IBM Plex Mono';
 }
 
-button {
-  margin: 1rem 0;
+textarea.textarea {
+  height: 132px;
+}
+
+.button {
   color: white;
-  background: #2b2b2b;
-  border: 1px solid #808080;
-  padding: 0.25rem 0.75rem;
-  font-size: 1rem;
-  font-weight: 200;
+  background: #00bbda;
+}
+
+.filter {
+  float: right;
+}
+
+.loader {
+  display: block;
 }
 
 .table {
@@ -46,8 +91,33 @@ button {
 td {
   margin: 0;
   padding: 0.25rem 0;
+  color: black;
+  font-weight: 300;
+}
+
+td.label {
+  font-weight: 400;
+  text-align: right;
+  width: 120px;
+  padding-right: 1rem;
+}
+
+.indicator {
+  border: none;
+  margin-bottom: 2px;
 }
 
 .error {
-  color: red;
+  margin-left: 7.5rem;
+  color: black;
+  font-weight: 300;
+}
+
+.link {
+  cursor: pointer;
+  border-bottom: #f8f8f8 1px solid;
+  transition: border 0.5s ease-in-out;
+}
+.link:hover {
+  border-bottom: black 1px solid;
 }

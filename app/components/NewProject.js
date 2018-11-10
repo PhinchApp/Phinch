@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { remote } from 'electron';
+import { remote, shell } from 'electron';
 
 import { createProject } from '../projects.js';
 import loadFile from '../DataLoader';
 import DataContainer from '../DataContainer';
+
 import SideMenu from './SideMenu';
+import Microbes from './Microbes';
+import Loader from './Loader';
 
 import styles from './NewProject.css';
 import gstyle from './general.css';
@@ -22,7 +25,23 @@ export default class NewProject extends Component {
 
     this.errors = {
       missing: 'Please select a BIOM file.',
-      validation: 'The file you loaded does not validate for Phinch. There may be a problem with the file formatting.',
+      validation: (
+        <div>
+          <p>
+            The file you loaded does not validate for Phinch. There may be a problem with the file formatting.
+          </p>
+          <p>
+            If you’re having trouble, visit our Help page or 
+            <span
+              className={styles.link}
+              onClick={() => shell.openExternal('https://github.com/PhinchApp/Phinch')}
+            >
+              {` Community page `}
+            </span>
+            to see if you can resolve this. Once you have a correct data file, try loading it again.
+          </p>
+        </div>
+      ),
     }
 
     this.state = {
@@ -75,6 +94,7 @@ export default class NewProject extends Component {
   }
 
   componentWillUnmount() {
+    clearTimeout(this.timeout);
     window.removeEventListener('resize', this.updateDimensions);
   }
 
@@ -99,6 +119,7 @@ export default class NewProject extends Component {
       name: summary.name,
       size: summary.size,
       valid: null,
+      error: null,
       observations: null,
     });
   }
@@ -123,12 +144,16 @@ export default class NewProject extends Component {
   }
 
   success(data) {
-    this.updateValid(true);
-    this.updateObservations(Number.parseFloat(data.rows.length).toLocaleString());
-    this.updateLoading(false);
-    const project = createProject({name: this.state.name, data});
-    DataContainer.setSummary(project);
-    DataContainer.setData(data);
+    if (data.data) {
+      this.updateValid(true);
+      this.updateObservations(Number.parseFloat(data.rows.length).toLocaleString());
+      this.updateLoading(false);
+      const project = createProject({name: this.state.name, data});
+      DataContainer.setSummary(project);
+      DataContainer.setData(data);
+    } else {
+      this.failure();
+    }
   }
 
   failure() {
@@ -182,25 +207,79 @@ export default class NewProject extends Component {
 
   render() {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
-    let result = '';
-    if (this.state.valid === 'Yes') {
-      result = <Link to="/filter"><button id='filter'>Filter Data</button></Link>;
-    } else if (this.state.valid === 'No') {
-      result = <div className={styles.error}>{this.state.error}</div>
-    }
-    const loader = this.state.loading ? <img src={loading} alt='loading' /> : '';
+    const result = (this.state.valid === 'Yes') ? (
+        <button
+          id='filter'
+          className={`${gstyle.button} ${styles.button} ${styles.filter}`}
+          onClick={() => {
+            this.setState({loading: true}, () => {
+              this.timeout = setTimeout(() => {
+                this.setState({redirect: '/filter'})
+              }, 1);
+            });
+          }}
+        >
+          Filter Data
+        </button>
+      ) : (
+        <div className={styles.error}>{this.state.error}</div>
+      );
+    const indicator = (this.state.valid === 'Yes') ? (
+        <div className={`${gstyle.circle} ${styles.indicator}`} style={{background: '#00da3e'}} />
+      ) : (
+        <div className={`${gstyle.circle} ${styles.indicator}`} style={{background: '#ff2514'}} />
+      );
+    const table = (this.state.valid === null) ? null : (
+        <table className={styles.table}>
+          <tbody>
+            <tr>
+              <td className={styles.label}>File Name:</td>
+              <td>{this.state.name}</td>
+            </tr>
+            <tr>
+              <td className={styles.label}>Size:</td>
+              <td>{this.state.size}</td>
+            </tr>
+            <tr>
+              <td className={styles.label}>Observations:</td>
+              <td>{this.state.observations}</td>
+            </tr>
+            <tr>
+              <td className={styles.label}>File Validates:</td>
+              <td>{indicator} {this.state.valid}</td>
+            </tr>
+          </tbody>
+        </table>
+      );
     const indicateDrag = this.state.dragging ? styles.drag : '';
+    let microbeColor = {r: 0, g: 0, b: 0, a: 0};
+    if (this.state.loading) {
+       microbeColor = {r: 0, g: 0, b: 0, a: 0.25};
+    } else if (this.state.valid !== null) {
+      if (this.state.valid === 'Yes') {
+        microbeColor = {r: 0, g: 255, b: 0, a: 0.5}
+      } else {
+        microbeColor = {r: 255, g: 0, b: 0, a: 0.25}
+      }
+    }
     return (
       <div className={gstyle.container}>
+        <Loader loading={this.state.loading} />
+        <Microbes
+          show={this.state.loading || this.state.valid !== null}
+          width={window.innerWidth}
+          height={window.innerHeight}
+          count={100}
+          fill={'#f8f8f8'}
+          stroke={microbeColor}
+        />
         {redirect}
-        <div className={styles.header}>
+        <div className={styles.left}>
           <div className={gstyle.logo}>
             <Link to="/">
               <img src={logo} alt='Phinch' />
             </Link>
           </div>
-        </div>
-        <div style={{ position: 'relative', backgroundColor: '#ffffff', color: '#808080'}}>
           <SideMenu
             showLeftSidebar={this.state.showLeftSidebar}
             leftSidebar={this.metrics.leftSidebar}
@@ -210,18 +289,17 @@ export default class NewProject extends Component {
             toggleMenu={this.toggleMenu}
             hideToggle={true}
           />
-          <div
-            className={styles.section}
-            style={{ width: this.state.width - this.metrics.leftSidebar }}
-          >
+        </div>
+        <div className={styles.section}>
+          <div className={styles.column}>
             <h1 className={styles.heading}>New Project</h1>
             <p>To start a new project, you can browse for a file on your local hard drive or drag the file to the box below.</p>
-            <input className={styles.wide} type="text" value={this.state.name} disabled />
-            <button id='open' onClick={this.handleOpenButton}>Browse</button>
+            <input className={styles.wide} type="text" value={this.state.name} placeholder='File Name' disabled />
+            <button className={`${gstyle.button} ${styles.button}`} id='open' onClick={this.handleOpenButton}>Browse</button>
             <textarea
               rows="3"
               className={`${styles.textarea} ${indicateDrag}`}
-              value='Drag and Drop or Browse for file.'
+              value='Drag/Drop file here'
               disabled
               onDrop={this.handleDrop}
               onDragOver={this.allowDrop}
@@ -229,27 +307,7 @@ export default class NewProject extends Component {
               onDragEnter={this.showDrop}
               onDragLeave={this.hideDrop}
             />
-            <table className={styles.table}>
-              <tbody>
-                <tr>
-                  <td className={styles.label}>File Name:</td>
-                  <td>{this.state.name}</td>
-                </tr>
-                <tr>
-                  <td className={styles.label}>Size:</td>
-                  <td>{this.state.size}</td>
-                </tr>
-                <tr>
-                  <td className={styles.label}>File Validates:</td>
-                  <td>{this.state.valid}</td>
-                </tr>
-                <tr>
-                  <td className={styles.label}>Observations:</td>
-                  <td>{this.state.observations}</td>
-                </tr>
-              </tbody>
-            </table>
-            {loader}
+            {table}
             {result}
           </div>
         </div>

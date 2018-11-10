@@ -79,10 +79,20 @@
 }
 
 .button {
-  cursor: pointer;
   margin: 0;
-  padding: 0.5rem 0.25rem;
   display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid #00bbda;
+  border-radius: 4px;
+  background: white;
+  color: black;
+  font-weight: 400;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: opacity 0.5s ease-in-out;
+}
+.button:hover {
+  opacity: 0.65;
 }
 
 .close {
