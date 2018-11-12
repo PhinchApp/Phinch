@@ -8,6 +8,7 @@ import LinkList from './LinkList.js';
 import styles from './Home.css';
 import gstyle from './general.css';
 import logo from 'images/phinch-large.png';
+import close from 'images/close.svg';
 //
 import aps from 'images/aps.png';
 import ucr from 'images/ucr.png';
@@ -64,7 +65,7 @@ export default class About extends Component {
                 </p>
               </div>
               <div className={`${styles.section} ${styles.logos}`}>
-                <Link to='/'><div className={styles.close}>x</div></Link>
+                <Link to='/'><img className={styles.close} src={close} alt='Home' /></Link>
                 <img src={aps} className={styles.alogo} alt='Alfred P. Sloan Logo' />
                 <img src={ucr} className={styles.alogo} alt='University of California Riverside Logo' />
                 <img src={pitch} className={styles.alogo} alt='Pitch Interactive Logo' />
