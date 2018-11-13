@@ -18,6 +18,36 @@
   color: #00bbda;
 }
 
+.visRowLabel {
+  display: inline-block;
+  vertical-align: top;
+  margin: 1.5rem 2rem;
+  line-height: 20px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #999999;
+}
+
+.visOption {
+  display: inline-block;
+  width: 140px;
+  margin: 0.5rem 0;
+  margin-right: 1rem;
+  text-align: center;
+  cursor: pointer;
+}
+
+.visOptionLabel {
+  display: inline-block;
+  width: auto;
+  color: white;
+  background: #191919;
+  padding: 0.25rem 0.5rem;
+  border-radius: 1rem;
+  font-weight: 400;
+  font-size: 12px;
+}
+
 .bottom {
   margin-bottom: 0.5rem;
 }
@@ -41,9 +71,6 @@
 .section {
   display: inline-block;
   vertical-align: top;
-  /*overflow-x: hidden;*/
-  /*overflow-y: visible;*/
-  /*overflow: hidden;*/
 }
 
 .left {
@@ -115,6 +142,20 @@
   margin: 0;
   margin-bottom: 0.5rem;
   padding: 0 0.5rem;
+}
+
+.button {
+  float: right;
+  background: #00bbda;
+  color: white;
+  border: unset;
+  margin: 1.25rem 2rem;
+  right: 0;
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+}
+.button:hover {
+  opacity: 0.5;
 }
 
 .previewButton {

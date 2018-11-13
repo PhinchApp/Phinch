@@ -25,7 +25,7 @@ import gstyle from './general.css';
 import logo from 'images/phinch-logo.png';
 import back from 'images/back.png';
 import save from 'images/save.png';
-import vis from 'images/vis-placeholder-sm.png';
+import stackedbar from 'images/stackedbar.svg';
 
 export default class Filter extends Component {
   constructor(props) {
@@ -735,34 +735,63 @@ export default class Filter extends Component {
           <div className={gstyle.header}>
             <Summary summary={this.state.summary} datalength={this.state.data.length} />
 
-            {/*
-            <div className={gstyle.button}>
-              <div className={gstyle.heading} onClick={() => {
-                // show picker to allow custom name?
-                this.setState({ loading: true});
-                // this is more consistent than the setState callback
-                setTimeout(() => {
-                  const biom = DataContainer.applyFiltersToData(this.state.data);
-                  exportProjectData(this.state.summary.path, this.state.summary.dataKey, biom, this.setResult);
-                }, 1);
-              }}>
-                Export Filtered BIOM File
-              </div>
+            {
+              /*
+                <div className={gstyle.button}>
+                  <div className={gstyle.heading} onClick={() => {
+                    // show picker to allow custom name?
+                    this.setState({ loading: true});
+                    // this is more consistent than the setState callback
+                    setTimeout(() => {
+                      const biom = DataContainer.applyFiltersToData(this.state.data);
+                      exportProjectData(this.state.summary.path, this.state.summary.dataKey, biom, this.setResult);
+                    }, 1);
+                  }}>
+                    Export Filtered BIOM File
+                  </div>
+                </div>
+              */
+            }
+
+            {
+              /*
+                <div className={gstyle.button}>
+                  <div className={`${gstyle.heading} ${styles.previewButton}`} onClick={() => {
+                    this.setState({ loading: true }, () => {
+                      setTimeout(() => {
+                        DataContainer.applyFiltersToData(this.state.data);
+                        this.save(this.redirectToVis);
+                      }, 1);
+                    });
+                  }}>
+                    Save & View <div className={gstyle.arrow} style={{transform: `rotate(${90}deg)`}}>⌃</div><br />
+                    <img src={vis} alt='' style={{width: '112px', height: '24px', margin: '2px 0'}}/>
+                  </div>
+                </div>
+              */
+            }
+
+            <div className={styles.visRowLabel}>Visualization Type</div>
+
+            <div className={styles.visOption}>
+              <img src={stackedbar} alt='Stacked bargraph' />
+              <div className={styles.visOptionLabel}>Stacked bargraph</div>
             </div>
-            */}
-            <div className={gstyle.button}>
-              <div className={`${gstyle.heading} ${styles.previewButton}`} onClick={() => {
+
+            <div
+              className={`${gstyle.button} ${styles.button}`}
+              onClick={() => {  
                 this.setState({ loading: true }, () => {
                   setTimeout(() => {
                     DataContainer.applyFiltersToData(this.state.data);
                     this.save(this.redirectToVis);
                   }, 1);
                 });
-              }}>
-                Save & View <div className={gstyle.arrow} style={{transform: `rotate(${90}deg)`}}>⌃</div><br />
-                <img src={vis} alt='' style={{width: '112px', height: '24px', margin: '2px 0'}}/>
-              </div>
+              }}
+            >
+              View Visualization
             </div>
+
             {result}
           </div>
         </div>
