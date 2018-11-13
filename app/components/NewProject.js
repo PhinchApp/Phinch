@@ -31,14 +31,14 @@ export default class NewProject extends Component {
             The file you loaded does not validate for Phinch. There may be a problem with the file formatting.
           </p>
           <p>
-            If you’re having trouble, visit our Help page or 
+            {`If you’re having trouble, visit our Help page or `}
             <span
               className={styles.link}
               onClick={() => shell.openExternal('https://github.com/PhinchApp/Phinch')}
             >
-              {` Community page `}
+              Community page
             </span>
-            to see if you can resolve this. Once you have a correct data file, try loading it again.
+            {` to see if you can resolve this. Once you have a correct data file, try loading it again.`}
           </p>
         </div>
       ),
@@ -91,11 +91,15 @@ export default class NewProject extends Component {
 
   componentDidMount() {
     window.addEventListener('resize', this.updateDimensions);
+    window.addEventListener("dragover", this.preventDrop, false);
+    window.addEventListener("drop", this.preventDrop, false);
   }
 
   componentWillUnmount() {
     clearTimeout(this.timeout);
     window.removeEventListener('resize', this.updateDimensions);
+    window.removeEventListener("dragover", this.preventDrop);
+    window.removeEventListener("drop", this.preventDrop);
   }
 
   updateDimensions() {
@@ -103,6 +107,13 @@ export default class NewProject extends Component {
       width: window.innerWidth,
       height: window.innerHeight,
     });
+  }
+
+  preventDrop() {
+    return (e) => {
+      e = e || event;
+      e.preventDefault();
+    };
   }
 
   toggleMenu() {

@@ -7,7 +7,6 @@
   padding: 0;
   margin: 0;
   user-select: none;
-  /*overflow: scroll;*/
 }
 
 .panel {
@@ -15,7 +14,6 @@
   display: inline-block;
   overflow-y: scroll;
   overflow-x: hidden;
-  /*transition: width 0.25s linear;*/
 }
 
 .input {

@@ -1,11 +1,3 @@
-.drag {
-  background: #bffbbf;
-}
-
-.drag * {
-  pointer-events: none;
-}
-
 h1.heading {
   color: #666666;
   margin: 0;
@@ -68,6 +60,15 @@ input.wide, textarea.textarea {
 
 textarea.textarea {
   height: 132px;
+}
+
+textarea.textarea.drag {
+  background: #00bbda;
+  color: white;
+}
+
+textarea.textarea.drag * {
+  pointer-events: none;
 }
 
 .button {

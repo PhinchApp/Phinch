@@ -9,7 +9,7 @@ import styles from './Home.css';
 import gstyle from './general.css';
 import logo from 'images/phinch-large.png';
 import close from 'images/close.svg';
-//
+
 import aps from 'images/aps.png';
 import ucr from 'images/ucr.png';
 import pitch from 'images/pitch.png';

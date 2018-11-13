@@ -711,6 +711,7 @@ export default class Filter extends Component {
           zIndex: 10,
           fontWeight: 400,
           color: '#191919',
+          border: 'none',
           borderRadius: '8px',
           padding: 0,
           background: (this.state.result === 'error') ? '#ff2514' : '#00da3e',

@@ -6,6 +6,7 @@
   width: 100%;
   height: 40px;
   padding: 0 0.25rem;
+  padding-right: 1.25rem;
 }
 
 .segment {
@@ -14,6 +15,10 @@
   height: 100%;
   padding: 0.5rem;
   font-size: 12px;
+}
+
+.right {
+  float: right;
 }
 
 .file {

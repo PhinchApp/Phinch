@@ -6,11 +6,12 @@ export default class StackedBar extends Component {
   render() {
     return (
       <div className={styles.info}>
-          <div className={styles.segment}>
-            <div className={`${styles.file} ${styles.summary}`}>
-              {this.props.summary.name} ({this.props.summary.size})
-            </div>
+        <div className={styles.segment}>
+          <div className={`${styles.file} ${styles.summary}`}>
+            {this.props.summary.name} ({this.props.summary.size})
           </div>
+        </div>
+        <div className={styles.right}>
           <div className={styles.segment}>
             <div className={`${styles.label} ${styles.summary}`}>Observations</div>
             <div className={`${styles.number} ${styles.summary}`}>
@@ -31,6 +32,7 @@ export default class StackedBar extends Component {
               {`${this.props.summary.samples.toLocaleString()}`}
             </div>
           </div>
+        </div>
       </div>
     );
   }
