@@ -127,6 +127,7 @@
 .about h2 {
   text-transform: uppercase;
   font-size: 13px;
+  font-weight: 300;
   letter-spacing: 4px;
   margin-bottom: 2rem;
 }
@@ -150,7 +151,7 @@ p.first::first-letter {
   margin-top: -2.5rem;
   margin-bottom: -2.5rem;
   margin-right: 0.5rem;
-  margin-left: -0.5rem;
+  margin-left: -0.75rem;
   padding: 0;
 }
 

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import styles from './SideMenu.css';
 import gstyle from './general.css';
 
-import arrow from 'images/arrow.png';
+import arrow from 'images/arrow.svg';
 
 export default class SideMenu extends Component {
   constructor(props) {

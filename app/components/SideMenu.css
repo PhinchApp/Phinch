@@ -14,13 +14,11 @@
   text-align: center;
   cursor: pointer;
   border: 3px solid #333333;
-  transition: transform 0.25s linear;
+  transition: transform 0.5s ease-in-out;
 }
 
 .menuToggle img {
-  width: 18px;
-  padding: 3px 1px;
-  margin: auto;
+
 }
 
 .menuToggle.rotated {
@@ -69,4 +67,11 @@
   font-size: 24px;
   text-align: center;
   border-radius: 8px;
+}
+
+.menuBox img {
+  width: 30px;
+  height: 30px;
+  margin: 0;
+  padding: 0;
 }

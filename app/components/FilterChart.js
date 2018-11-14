@@ -9,6 +9,8 @@ import { scaleLinear, scaleLog } from 'd3-scale';
 import styles from './FilterChart.css';
 import gstyle from './general.css';
 
+import close from 'images/close.svg';
+
 export default class FilterChart extends Component {
   constructor(props) {
     super(props);
@@ -49,6 +51,7 @@ export default class FilterChart extends Component {
     this.updateScales();
     const isDate = (this.props.name.toLowerCase().includes('date'));
     const barWidth = (this.xscale(1) - this.xscale(0));
+    const strokeWidth = barWidth > 2 ? 0.5 : 0;
     const filter = this.props.filters[this.props.name];
     const bars = this.props.data.values.map((d, i) => {
       const valueInRange = (isDate) ? (          
@@ -79,6 +82,8 @@ export default class FilterChart extends Component {
           height={height}
           fill={this.props.fill}
           fillOpacity={fillOpacity}
+          stroke={this.props.stroke}
+          strokeWidth={strokeWidth}
         />
       );
     });
@@ -119,7 +124,7 @@ export default class FilterChart extends Component {
         <div
           className={gstyle.close}
           onClick={() => { this.props.remove(this.props.name) }}
-        >x</div>
+        ><img src={close} alt='close' /></div>
       ) : '';
     const info = filter.expanded ? (
         <div>

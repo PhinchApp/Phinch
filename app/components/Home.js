@@ -16,7 +16,7 @@ import Modal from './Modal';
 import styles from './Home.css';
 import gstyle from './general.css';
 
-import logo from 'images/phinch-large.png';
+import logo from 'images/phinch.svg';
 import editOff from 'images/edit-off.svg';
 import editOn from 'images/edit-on.svg';
 

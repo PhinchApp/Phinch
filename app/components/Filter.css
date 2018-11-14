@@ -62,10 +62,13 @@
   color: white;
   width: 14px;
   height: 14px;
-  font-size: 12px;
-  line-height: 14px;
   border-radius: 7px;
   cursor: pointer;
+}
+
+.expand img {
+  width: 14px;
+  height: 14px;
 }
 
 .section {
@@ -118,15 +121,27 @@
   line-height: 1.25rem;
   padding: 0;
   margin: 0;
-  background: #2b2b2b;
+  background: #b2b2b2;
   color: white;
   text-align: center;
   vertical-align: middle;
   border-radius: 10px;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+.delete img {
+  width: 100%;
+  height: 100%;
 }
 .drag {
   cursor: move;
   pointer-events: none;
+}
+.row {
+  cursor: move;
+}
+.row:hover .delete {
+  opacity: 1;
 }
 
 .modal {

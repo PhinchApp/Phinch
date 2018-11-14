@@ -26,9 +26,9 @@ import Modal from './Modal';
 import styles from './Vis.css';
 import gstyle from './general.css';
 
-import logo from 'images/phinch-logo.png';
-import back from 'images/back.png';
-import save from 'images/save.png';
+import logo from 'images/phinch.svg';
+import back from 'images/back.svg';
+import save from 'images/save.svg';
 
 export default class Vis extends Component {
   constructor(props) {

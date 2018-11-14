@@ -7,7 +7,7 @@ import LinkList from './LinkList.js';
 
 import styles from './Home.css';
 import gstyle from './general.css';
-import logo from 'images/phinch-large.png';
+import logo from 'images/phinch.svg';
 import close from 'images/close.svg';
 
 import aps from 'images/aps.png';

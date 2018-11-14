@@ -22,9 +22,13 @@ import styles from './Filter.css';
 import tstyle from './tables.css';
 import gstyle from './general.css';
 
-import logo from 'images/phinch-logo.png';
-import back from 'images/back.png';
-import save from 'images/save.png';
+import logo from 'images/phinch.svg';
+import back from 'images/back.svg';
+import save from 'images/save.svg';
+import minus from 'images/minus.svg';
+import plus from 'images/plus.svg';
+import menu from 'images/menu.svg';
+import close from 'images/close.svg';
 import stackedbar from 'images/stackedbar.svg';
 
 export default class Filter extends Component {
@@ -331,7 +335,9 @@ export default class Filter extends Component {
         render: (r) => (
           <div className={tstyle.filterCell}>
             <div>
-              <div className={`${styles.delete} ${styles.drag}`} style={{'transform': 'rotate(90deg)'}}>||</div>
+              <div className={`${styles.delete} ${styles.drag}`}>
+                <img src={menu} alt='drag' />
+              </div>
             </div>
           </div>
         ),
@@ -343,7 +349,9 @@ export default class Filter extends Component {
         render: (r) => (
           <div className={`${tstyle.filterCell} ${styles.noLeft}`}>
             <div onClick={() => { removeRows(this, [r]) }}>
-              <div className={styles.delete}>x</div>
+              <div className={styles.delete}>
+                <img src={close} alt='delete' />
+              </div>
             </div>
           </div>
         ),
@@ -566,7 +574,7 @@ export default class Filter extends Component {
     return Object.keys(this.filters).map((k, i) => {
       const group = Object.keys(this.filters[k]).map((g) => {
         const expanded = this.state.filters[g].expanded;
-        const icon = expanded ? '-' : '+';
+        const icon = expanded ? minus : plus;
         const height = expanded ? 60 : 20;
         const filter = (this.state.filters[g].type === 'string') ? (
             <CheckBoxes
@@ -601,7 +609,9 @@ export default class Filter extends Component {
               this.setState({filters}, () => {
                   this.save(this.setResult);
                 });
-            }}>{icon}</div>
+            }}>
+              <img src={icon} alt={expanded ? 'minus' : 'plus'} />
+            </div>
             {filter}
           </div>
         );
@@ -831,8 +841,8 @@ export default class Filter extends Component {
               rowKey={row => row.id}
               onRow={(r, i) => {
                 const className = (i%2 === 0) ? (
-                  styles.grey
-                ) : '';
+                  `${styles.row} ${styles.grey}`
+                ) : styles.row;
                 return {
                   'data-id': r.order,
                   'className': className,

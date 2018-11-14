@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import styles from './LinkList.css';
-import arrow from 'images/arrow.png';
+import arrow from 'images/arrow.svg';
 
 const linkList = [
   {

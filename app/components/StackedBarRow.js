@@ -9,6 +9,9 @@ import Modal from './Modal';
 import styles from './StackedBarRow.css';
 import gstyle from './general.css';
 
+import minus from 'images/minus.svg';
+import plus from 'images/plus.svg';
+
 export default class StackedBarRow extends Component {
   constructor(props) {
     super(props);
@@ -193,6 +196,7 @@ export default class StackedBarRow extends Component {
           {
             this.props.tags.map(t => {
               const selected = this.props.data.tags[t.id] ? true : false;
+              const tagIcon = selected ? minus : plus;
               return (
                 <div
                   key={`t-${t.color}`}
@@ -204,6 +208,7 @@ export default class StackedBarRow extends Component {
                     style={{ background: t.color }}
                   >
                     {selected ? '-' : '+'}
+                    <img src={tagIcon} alt={selected ? 'minus' : 'plus'} />
                   </div>
                   <span className={styles.tagLabel}>
                     {t.name}

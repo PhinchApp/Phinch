@@ -13,8 +13,9 @@ import Loader from './Loader';
 import styles from './NewProject.css';
 import gstyle from './general.css';
 
-import logo from 'images/phinch-logo.png';
-import back from 'images/back.png';
+import logo from 'images/phinch.svg';
+import back from 'images/back.svg';
+
 import loading from 'images/loading.gif';
 
 const { dialog } = remote;

@@ -15,7 +15,6 @@ h1.heading {
   vertical-align: top;
   width: 100px;
   background: #333333;
-  /*z-index: 10;*/
 }
 
 .section {
@@ -26,7 +25,6 @@ h1.heading {
   height: 100vh;
   margin: 0;
   padding: 2rem 6rem;
-  /*background-color: #f8f8f8;*/
   background: transparent;
   color: #808080;
   overflow-y: scroll;

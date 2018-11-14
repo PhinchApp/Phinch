@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="11.3" height="11.3" viewBox="0 0 11.3 11.3">
+    <title>Asset 4</title>
+    <g id="Layer_2" data-name="Layer 2">
+        <g id="visualization">
+            <circle cx="5.65" cy="5.65" r="5.65" style="fill:none" />
+            <line x1="5.62" y1="3.22" x2="5.62" y2="8.08" style="fill:#fafafa;stroke:#fafafa;stroke-linecap:round;stroke-width:1.41732283464567px" />
+            <line x1="3.22" y1="5.68" x2="8.08" y2="5.68" style="fill:#fafafa;stroke:#fafafa;stroke-linecap:round;stroke-width:1.41732283464567px" />
+        </g>
+    </g>
+</svg>
