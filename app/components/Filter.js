@@ -355,9 +355,9 @@ export default class Filter extends Component {
           isRemoved={isRemoved}
           columnWidths={this.columnWidths}
           tableWidth={this.metrics.tableWidth}
-          dragEnd={this.dragEnd}
-          dragOver={this.dragOver}
-          dragStart={this.dragStart}
+          dragEnd={isRemoved ? null : this.dragEnd}
+          dragOver={isRemoved ? null : this.dragOver}
+          dragStart={isRemoved ? null : this.dragStart}
           updatePhinchName={this.updatePhinchName}
           removeDatum={() => { removeRows(this, [d]) }}
           restoreDatum={() => { restoreRows(this, [d]) }}
