@@ -3,33 +3,29 @@ import { Link, Redirect } from 'react-router-dom';
 
 import _debounce from 'lodash.debounce';
 import { nest } from 'd3-collection';
-import Table from 'rc-table';
 
-import { pageView } from '../analytics.js'
+import { updateFilters, removeRows, restoreRows, visSortBy, getSortArrow } from '../FilterFunctions';
+import { setProjectFilters, getProjectFilters } from '../projects.js';
 import DataContainer from '../DataContainer';
-import { updateFilters, removeRows, restoreRows, sortBy, getSortArrow } from '../FilterFunctions';
-import { setProjectFilters, getProjectFilters, exportProjectData } from '../projects.js';
+import { pageView } from '../analytics.js'
 
-import SideMenu from './SideMenu';
-import FrequencyChart from './FrequencyChart';
 import FilterChart from './FilterChart';
-import RemovedRows from './RemovedRows';
 import CheckBoxes from './CheckBoxes';
+import FilterRow from './FilterRow';
+import SideMenu from './SideMenu';
 import Summary from './Summary';
 import Loader from './Loader';
+import Modal from './Modal';
 
-import styles from './Filter.css';
-import tstyle from './tables.css';
 import gstyle from './general.css';
+import styles from './Filter.css';
 
+import stackedbar from 'images/stackedbar.svg';
 import logo from 'images/phinch.svg';
-import back from 'images/back.svg';
-import save from 'images/save.svg';
 import minus from 'images/minus.svg';
 import plus from 'images/plus.svg';
-import menu from 'images/menu.svg';
-import close from 'images/close.svg';
-import stackedbar from 'images/stackedbar.svg';
+import back from 'images/back.svg';
+import save from 'images/save.svg';
 
 export default class Filter extends Component {
   constructor(props) {
@@ -79,7 +75,7 @@ export default class Filter extends Component {
       phinchName: 0.20,
       biomid: 0.12,
       sampleName: 0.20,
-      reads: 0.25,
+      reads: 0.24,
     };
 
     this.menuItems = [
@@ -242,155 +238,19 @@ export default class Filter extends Component {
       DataContainer.setAttributes(this.state.filters);
     }
 
-    this.columns = [
-      {
-        title: this.generateTableTitle('order', false),
-        dataIndex: 'order',
-        key: 'order',
-        render: (t) => (
-          <div
-            className={tstyle.filterCell}
-            style={{
-              width: this.metrics.tableWidth * this.columnWidths['order'],
-            }}
-          >
-            {(t !== undefined) ? t.toLocaleString() : ''}
-          </div>
-        ),
-      },
-      {
-        title: this.generateTableTitle('phinchName', true),
-        dataIndex: 'phinchName',
-        key: 'phinchName',
-        render: (t, r) => (
-          <div
-            className={tstyle.filterCell}
-            style={{
-              width: this.metrics.tableWidth * this.columnWidths['phinchName'],
-            }}
-          >
-            <input
-              className={gstyle.input}
-              type="text"
-              value={t}
-              onChange={(e) => this.updatePhinchName(e, r)}
-            />
-          </div>
-        ),
-      },
-      {
-        title: this.generateTableTitle('biomid', true),
-        dataIndex: 'biomid',
-        key: 'biomid',
-        render: (t) => (
-          <div
-            className={tstyle.filterCell}
-            style={{
-              width: this.metrics.tableWidth * this.columnWidths['biomid'],
-            }}
-          >
-            {t}
-          </div>
-        ),
-      },
-      {
-        title: this.generateTableTitle('sampleName', true),
-        dataIndex: 'sampleName',
-        key: 'sampleName',
-        render: (t) => (
-          <div
-            className={tstyle.filterCell}
-            style={{
-              width: this.metrics.tableWidth * this.columnWidths['sampleName'],
-            }}
-          >
-            {t}
-          </div>
-        ),
-      },
-      {
-        title: this.generateTableTitle('reads', true),
-        dataIndex: 'reads',
-        key: 'reads',
-        render: (t) => (
-          <div className={tstyle.filterCell}>
-            {(t !== undefined) ? t.toLocaleString() : ''}
-          </div>
-        ),
-      },
-      {
-        title: '',
-        dataIndex: '',
-        key: 'chart',
-        render: (d) => (
-          <div className={tstyle.filterCell}>
-            <FrequencyChart data={this.state.data.concat(this.state.deleted)} value={d.reads} width={120 * 2} height={18 * 2} />
-          </div>
-        ),
-      },
-      {
-        title: '',
-        dataIndex: '',
-        key: 'drag',
-        render: (r) => (
-          <div className={tstyle.filterCell}>
-            <div>
-              <div className={`${styles.delete} ${styles.drag}`}>
-                <img src={menu} alt='drag' />
-              </div>
-            </div>
-          </div>
-        ),
-      },
-      {
-        title: '',
-        dataIndex: '',
-        key: 'remove',
-        render: (r) => (
-          <div className={`${tstyle.filterCell} ${styles.noLeft}`}>
-            <div onClick={() => { removeRows(this, [r]) }}>
-              <div className={styles.delete}>
-                <img src={close} alt='delete' />
-              </div>
-            </div>
-          </div>
-        ),
-      }
-    ];
-
-    this.deletedColumns = this.columns.map((c) => {
-      return Object.assign({}, c);
-    }).filter((c) => {
-      return !(c.key === 'remove' || c.key === 'drag' || c.key === 'order');
-    }).map((c) => {
-      c.title = this.generateTableTitle(c.key, false);
-      return c;
-    });
-    this.deletedColumns.push({
-      title: '',
-      dataIndex: '',
-      key: 'remove',
-      render: (r) => (
-        <div className={tstyle.filterCell}>
-          <div onClick={() => { restoreRows(this, [r]) }}>
-            <div className={styles.delete}>⤴</div>
-          </div>
-        </div>
-      ),
-    });
-
     this.dragEnd = this.dragEnd.bind(this);
     this.dragOver = this.dragOver.bind(this);
     this.dragStart = this.dragStart.bind(this);
     this.setResult = this.setResult.bind(this);
+    this.toggleMenu = this.toggleMenu.bind(this);
     this.clearResult = this.clearResult.bind(this);
     this.toggleChecks = this.toggleChecks.bind(this);
     this.updateChecks = this.updateChecks.bind(this);
     this.applyFilters = this.applyFilters.bind(this);
     this.resetFilters = this.resetFilters.bind(this);
     this.redirectToVis = this.redirectToVis.bind(this);
+    this.updatePhinchName = this.updatePhinchName.bind(this);
     this.updateDimensions = this.updateDimensions.bind(this);
-    this.toggleMenu = this.toggleMenu.bind(this);
   }
 
   componentDidMount() {
@@ -424,10 +284,6 @@ export default class Filter extends Component {
     this.metrics.leftSidebar = this.state.showLeftSidebar ?
       this.metrics.left.max : this.metrics.left.min;
     this.metrics.tableWidth = window.innerWidth - (this.metrics.leftSidebar + this.metrics.filterWidth + this.metrics.padding * 4);
-    this.columns = this.columns.map((c) => {
-      c.title = this.generateTableTitle(c.key, true);
-      return c;
-    });
     this.setState({
       width: window.innerWidth,
       height: window.innerHeight,
@@ -441,33 +297,73 @@ export default class Filter extends Component {
     return null;
   }
 
-  generateTableTitle(key, click) {
-    if (key === 'remove' || key === 'chart' || key === 'drag') {
-      return '';
-    }
-    if (key === 'order') {
-      click = false;
-    }
-    const names = {
-      order: '',
-      phinchName: 'Phinch Name',
-      biomid: 'BIOM ID',
-      sampleName: 'Sample Name',
-      reads: 'Sequence Reads',
-    };
-    const onClick = click ? (
-        () => { sortBy(this, key, this.state.data, true, true) }
-      ) : (() => {});
-    const arrow = click ? (getSortArrow(this, key)) : '';
-    return (
-      <div
-        className={styles.columnHeading}
-        style={{ width: this.metrics.tableWidth * this.columnWidths[key] }}
-        onClick={onClick}
-      >
-        {names[key]} {arrow}
-      </div>
-    );
+  renderHeader() {
+    const columns = [
+      {
+        id: 'order',
+        name: '',
+      },
+      {
+        id: 'phinchName',
+        name: 'Phinch Name',
+      },
+      {
+        id: 'biomid',
+        name: 'BIOM ID',
+      },
+      {
+        id: 'sampleName',
+        name: 'Sample Name',
+      },
+      {
+        id: 'reads',
+        name: 'Sequence Reads',
+      },
+    ];
+    return columns.map(c => {
+      const onClick = (c.id === 'order') ? (() => {}) : (
+          () => { 
+            this.sort.key = c.id;
+            this.sort.reverse = !this.sort.reverse;
+            visSortBy(this, this.state.data, true);
+          }
+        );
+      const arrow = (c.id !== 'order') ? (getSortArrow(this, c.id)) : '';
+      return (
+        <div
+          key={c.id}
+          className={styles.columnHeading}
+          style={{ width: this.metrics.tableWidth * this.columnWidths[c.id] }}
+          onClick={onClick}
+        >
+          {`${c.name} `}
+          {arrow}
+        </div>
+      );
+    });
+  }
+
+  renderRows(data, isRemoved) {
+    const allData = this.state.data.concat(this.state.deleted);
+    return data.map((d, i) => {
+      return (
+        <FilterRow
+          key={d.sampleName}
+          index={i}
+          data={d}
+          allData={allData}
+          isRemoved={isRemoved}
+          columnWidths={this.columnWidths}
+          tableWidth={this.metrics.tableWidth}
+          dragEnd={this.dragEnd}
+          dragOver={this.dragOver}
+          dragStart={this.dragStart}
+          updatePhinchName={this.updatePhinchName}
+          removeDatum={() => { removeRows(this, [d]) }}
+          restoreDatum={() => { restoreRows(this, [d]) }}
+        />
+      );
+    });
   }
 
   setResult(value) {
@@ -544,8 +440,7 @@ export default class Filter extends Component {
       });
       return include;
     });
-    this.sort.reverse = !this.sort.reverse;
-    data = sortBy(this, this.sort.key, data, false, true);
+    data = visSortBy(this, data, false);
     this.setState({filters, data}, _debounce(() => {
         this.save(this.setResult);
       }), this.metrics.debounce, { leading: false, trailing: true });
@@ -663,7 +558,8 @@ export default class Filter extends Component {
     this.over = null;
     this.dragged = null;
     this.sort.reverse = true;
-    sortBy(this, 'order', data, true, true);
+    this.sort.key = 'order';
+    visSortBy(this, data, true);
   }
   dragOver(e) {
     e.preventDefault();
@@ -685,10 +581,6 @@ export default class Filter extends Component {
     this.metrics.leftSidebar = showLeftSidebar ?
       this.metrics.left.max : this.metrics.left.min;
     this.metrics.tableWidth = this.state.width - (this.metrics.leftSidebar + this.metrics.filterWidth + this.metrics.padding * 4);
-    this.columns = this.columns.map((c) => {
-      c.title = this.generateTableTitle(c.key, true);
-      return c;
-    });
     this.setState({ showLeftSidebar }, () => {
         this.save(this.setResult);
       });
@@ -744,50 +636,11 @@ export default class Filter extends Component {
           </div>
           <div className={gstyle.header}>
             <Summary summary={this.state.summary} datalength={this.state.data.length} />
-
-            {
-              /*
-                <div className={gstyle.button}>
-                  <div className={gstyle.heading} onClick={() => {
-                    // show picker to allow custom name?
-                    this.setState({ loading: true});
-                    // this is more consistent than the setState callback
-                    setTimeout(() => {
-                      const biom = DataContainer.applyFiltersToData(this.state.data);
-                      exportProjectData(this.state.summary.path, this.state.summary.dataKey, biom, this.setResult);
-                    }, 1);
-                  }}>
-                    Export Filtered BIOM File
-                  </div>
-                </div>
-              */
-            }
-
-            {
-              /*
-                <div className={gstyle.button}>
-                  <div className={`${gstyle.heading} ${styles.previewButton}`} onClick={() => {
-                    this.setState({ loading: true }, () => {
-                      setTimeout(() => {
-                        DataContainer.applyFiltersToData(this.state.data);
-                        this.save(this.redirectToVis);
-                      }, 1);
-                    });
-                  }}>
-                    Save & View <div className={gstyle.arrow} style={{transform: `rotate(${90}deg)`}}>⌃</div><br />
-                    <img src={vis} alt='' style={{width: '112px', height: '24px', margin: '2px 0'}}/>
-                  </div>
-                </div>
-              */
-            }
-
             <div className={styles.visRowLabel}>Visualization Type</div>
-
             <div className={styles.visOption}>
               <img src={stackedbar} alt='Stacked bargraph' />
               <div className={styles.visOptionLabel}>Stacked bargraph</div>
             </div>
-
             <div
               className={`${gstyle.button} ${styles.button}`}
               onClick={() => {  
@@ -801,12 +654,20 @@ export default class Filter extends Component {
             >
               View Visualization
             </div>
-
+            <div className={styles.headingRow}>
+              <div
+                className={styles.spacer}
+                style={{
+                  width: (
+                    this.metrics.leftSidebar + this.metrics.filterWidth + this.metrics.padding * 4
+                  ) - 100,
+                }} />
+              {this.renderHeader()}
+            </div>
             {result}
           </div>
         </div>
         <div style={{ position: 'relative', backgroundColor: '#ffffff', color: '#808080'}}>
-          <div className={styles.headingRow} />
           <SideMenu
             showLeftSidebar={this.state.showLeftSidebar}
             leftSidebar={this.metrics.leftSidebar}
@@ -822,8 +683,7 @@ export default class Filter extends Component {
           }}>
             {this.displayFilters()}
             <div
-              className={gstyle.heading}
-              style={{ cursor: 'pointer' }}
+              className={`${gstyle.button} ${styles.reset}`}
               onClick={this.resetFilters}
             >
               Reset Filters
@@ -831,33 +691,30 @@ export default class Filter extends Component {
           </div>
           <div
             className={`${styles.section} ${styles.right}`}
-            style={{ width: this.metrics.tableWidth }}
+            style={{
+              width: this.metrics.tableWidth,
+              height: this.state.height - 130,
+              overflowY: 'scroll',
+            }}
           >
-            <Table
-              className={tstyle.table}
-              scroll={{ y: (this.state.height - 130) }}
-              columns={this.columns}
-              data={this.state.data}
-              rowKey={row => row.id}
-              onRow={(r, i) => {
-                const className = (i%2 === 0) ? (
-                  `${styles.row} ${styles.grey}`
-                ) : styles.row;
-                return {
-                  'data-id': r.order,
-                  'className': className,
-                  'key': r.sampleName,
-                  'draggable': 'true',
-                  'onDragEnd': this.dragEnd,
-                  'onDragOver': this.dragOver,
-                  'onDragStart': this.dragStart,
-                }
+            {this.renderRows(this.state.data, false)}
+            <Modal
+              buttonTitle={'Archived Samples'}
+              modalTitle={'Archived Samples'}
+              buttonPosition={{
+                position: 'absolute',
+                bottom: 0,
+                marginBottom: '-8px',
+                left: this.state.width - (this.metrics.tableWidth + this.metrics.padding / 2),
               }}
-            />
-            <RemovedRows
-              width={this.metrics.tableWidth}
-              deleted={this.state.deleted}
-              deletedColumns={this.deletedColumns}
+              modalPosition={{
+                position: 'absolute',
+                bottom: this.metrics.padding * 2,
+                left: this.state.width - (this.metrics.tableWidth + this.metrics.padding / 2),
+                width: this.metrics.tableWidth,
+              }}
+              data={this.renderRows(this.state.deleted, true)}
+              badge={true}
             />
           </div>
         </div>

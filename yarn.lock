@@ -2416,7 +2416,7 @@ compare-versions@^3.1.0:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/compare-versions/-/compare-versions-3.3.1.tgz#1ede3172b713c15f7c7beb98cb74d2d82576dad3"
 
-component-classes@^1.2.5, component-classes@^1.2.6:
+component-classes@^1.2.5:
   version "1.2.6"
   resolved "https://registry.yarnpkg.com/component-classes/-/component-classes-1.2.6.tgz#c642394c3618a4d8b0b8919efccbbd930e5cd691"
   dependencies:
@@ -5170,7 +5170,7 @@ hoek@4.x.x:
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/hoek/-/hoek-4.2.1.tgz#9634502aa12c445dd5a7c5734b572bb8738aacbb"
 
-hoist-non-react-statics@^2.3.1, hoist-non-react-statics@^2.5.0:
+hoist-non-react-statics@^2.5.0:
   version "2.5.5"
   resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-2.5.5.tgz#c5903cf409c0dfd908f388e619d86b9c1174cb47"
 
@@ -7039,15 +7039,6 @@ min-document@^2.19.0:
   resolved "https://registry.yarnpkg.com/min-document/-/min-document-2.19.0.tgz#7bd282e3f5842ed295bb748cdd9f1ffa2c824685"
   dependencies:
     dom-walk "^0.1.0"
-
-mini-store@^1.0.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/mini-store/-/mini-store-1.1.2.tgz#cc150e0878e080ca58219d47fccefefe2c9aea3e"
-  dependencies:
-    hoist-non-react-statics "^2.3.1"
-    prop-types "^15.6.0"
-    react-lifecycles-compat "^3.0.4"
-    shallowequal "^1.0.2"
 
 minimalistic-assert@^1.0.0, minimalistic-assert@^1.0.1:
   version "1.0.1"
@@ -8925,20 +8916,6 @@ rc-slider@^8.6.1:
     shallowequal "^1.0.1"
     warning "^3.0.0"
 
-rc-table@6.1.10:
-  version "6.1.10"
-  resolved "https://registry.yarnpkg.com/rc-table/-/rc-table-6.1.10.tgz#b2749f127cfb76d7f331fd2e80cfe48c30b6edef"
-  dependencies:
-    babel-runtime "6.x"
-    component-classes "^1.2.6"
-    lodash "^4.17.5"
-    mini-store "^1.0.2"
-    prop-types "^15.5.8"
-    rc-util "^4.0.4"
-    react-lifecycles-compat "^3.0.2"
-    shallowequal "^1.0.2"
-    warning "^3.0.0"
-
 rc-tooltip@^3.7.0:
   version "3.7.2"
   resolved "https://registry.yarnpkg.com/rc-tooltip/-/rc-tooltip-3.7.2.tgz#3698656d4bacd51b72d9e327bed15d1d5a9f1b27"
@@ -9020,7 +8997,7 @@ react-is@^16.4.2:
   version "16.4.2"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.4.2.tgz#84891b56c2b6d9efdee577cc83501dfc5ecead88"
 
-react-lifecycles-compat@^3.0.2, react-lifecycles-compat@^3.0.4:
+react-lifecycles-compat@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
 

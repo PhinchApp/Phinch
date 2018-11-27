@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 
-import Table from 'rc-table';
 import _sortBy from 'lodash.sortby';
 import _debounce from 'lodash.debounce';
 import _cloneDeep from 'lodash.clonedeep';

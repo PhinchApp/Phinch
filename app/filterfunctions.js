@@ -82,38 +82,6 @@ export function visSortBy(context, indata, setState) {
   }
 }
 
-export function sortBy(context, key, indata, setState, updateTitles) {
-  context.sort.key = key;
-  const data = indata.sort((a, b) => {
-    if (context.sort.reverse) {
-      if (a[key] < b[key]) return -1;
-      if (a[key] > b[key]) return 1;
-      return 0;
-    } else {
-      if (b[key] < a[key]) return -1;
-      if (b[key] > a[key]) return 1;
-      return 0;
-    }
-  }).map((d, i) => {
-    d.order = i;
-    return d;
-  });
-  context.sort.reverse = !context.sort.reverse;
-  if (updateTitles) {
-    context.columns = context.columns.map((c) => {
-      c.title = context.generateTableTitle(c.key, true);
-      return c;
-    });
-  }
-  if (setState) {
-    context.setState({data}, () => { 
-        context.save(context.setResult);
-      });
-  } else {
-    return data;
-  }
-}
-
 export function getSortArrow(context, key) {
   if (key === context.sort.key) {
     const angle = context.sort.reverse ? 180 : 0;
