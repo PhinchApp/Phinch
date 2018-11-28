@@ -1744,7 +1744,7 @@ export default class Vis extends Component {
               (this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length)
             ) * this.state.deleted.length
           )}
-          badge={true}
+          badge
         />
       </div>
     );

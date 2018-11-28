@@ -1,4 +1,5 @@
 {
+  "root": true,
   "parser": "babel-eslint",
   "parserOptions": {
     "sourceType": "module",
@@ -42,7 +43,7 @@
   "settings": {
     "import/resolver": {
       "webpack": {
-        "config": "webpack.config.eslint.js"
+        "config": "../webpack.config.eslint.js"
       }
     }
   }
