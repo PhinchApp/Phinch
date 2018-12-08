@@ -2,12 +2,20 @@ import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 
 import _debounce from 'lodash.debounce';
+import _cloneDeep from 'lodash.clonedeep';
 import { nest } from 'd3-collection';
 
-import { updateFilters, removeRows, restoreRows, visSortBy, getSortArrow } from '../FilterFunctions';
-import { setProjectFilters, getProjectFilters } from '../projects.js';
-import DataContainer from '../DataContainer';
-import { pageView } from '../analytics.js'
+import stackedbar from 'images/stackedbar.svg';
+import logo from 'images/phinch.svg';
+import minus from 'images/minus.svg';
+import plus from 'images/plus.svg';
+import back from 'images/back.svg';
+import save from 'images/save.svg';
+
+import { updateFilters, removeRows, restoreRows, visSortBy, getSortArrow } from '../filterfunctions';
+import { setProjectFilters, getProjectFilters } from '../projects';
+import DataContainer from '../datacontainer';
+import { pageView } from '../analytics';
 
 import FilterChart from './FilterChart';
 import CheckBoxes from './CheckBoxes';
@@ -20,12 +28,12 @@ import Modal from './Modal';
 import gstyle from './general.css';
 import styles from './Filter.css';
 
-import stackedbar from 'images/stackedbar.svg';
-import logo from 'images/phinch.svg';
-import minus from 'images/minus.svg';
-import plus from 'images/plus.svg';
-import back from 'images/back.svg';
-import save from 'images/save.svg';
+function filterFloat(value) {
+  if (/^(-|\+)?([0-9]+(\.[0-9]+)?|Infinity)$/.test(value)) {
+    return Number(value);
+  }
+  return null;
+}
 
 export default class Filter extends Component {
   constructor(props) {
@@ -51,7 +59,6 @@ export default class Filter extends Component {
       result: null,
       loading: false,
       redirect: null,
-      showRightSidebar: false,
       showLeftSidebar: false,
     };
 
@@ -72,9 +79,9 @@ export default class Filter extends Component {
 
     this.columnWidths = {
       order: 0.08,
-      phinchName: 0.20,
+      phinchName: 0.18,
       biomid: 0.12,
-      sampleName: 0.20,
+      sampleName: 0.18,
       reads: 0.24,
     };
 
@@ -85,17 +92,17 @@ export default class Filter extends Component {
         action: () => {
           this.save(this.setResult);
         },
-        icon: <img src={save} />,
+        icon: <img src={save} alt="save" />,
       },
       {
         id: 'back',
         name: 'Back',
-        action: () => { 
+        action: () => {
           this.save(() => {
             this.setState({ redirect: '/Home' });
           });
         },
-        icon: <img src={back} />,
+        icon: <img src={back} alt="back" />,
       },
     ];
 
@@ -103,13 +110,14 @@ export default class Filter extends Component {
 
     this.init = getProjectFilters(this.state.summary.path, this.state.summary.dataKey, 'filter');
 
-    // Ugly... 
+    // Ugly...
     this.state.showLeftSidebar = (this.init.showLeftSidebar !== undefined) ? (
-        this.init.showLeftSidebar
-      ) : this.state.showLeftSidebar;
+      this.init.showLeftSidebar
+    ) : this.state.showLeftSidebar;
     this.metrics.leftSidebar = this.state.showLeftSidebar ?
       this.metrics.left.max : this.metrics.left.min;
-    this.metrics.tableWidth = this.state.width - (this.metrics.leftSidebar + this.metrics.filterWidth + this.metrics.padding * 4);
+    this.metrics.tableWidth = this.state.width
+      - (this.metrics.leftSidebar + this.metrics.filterWidth + (this.metrics.padding * 4));
 
     this.filters = {
       date: {},
@@ -122,96 +130,84 @@ export default class Filter extends Component {
     */
     // TODO: Move this to data container or similar
     if (this.state.data.length) {
-      this.metadataKeys = [...new Set(
-        this.state.data
-          .map(d => Object.keys(d.metadata))
-          .reduce((a, v) => a.concat(v), [])
-        )]
+      this.metadataKeys = [...new Set(this.state.data
+        .map(d => Object.keys(d.metadata))
+        .reduce((a, v) => a.concat(v), []))]
         .filter(k => k !== 'phinchID')
         .sort();
       this.metadataKeys.forEach((k) => {
         const units = [];
         const values = nest()
           .key(d => d.value)
-          .entries(
-            this.state.data.slice().map((d, i) => {
-              const [value, unit] = d.metadata[k].split(' ');
-              if (unit !== undefined && !units.includes(unit)) {
-                units.push(unit);
-              }
-              return {
-                sampleName: d.sampleName,
-                value: d.metadata[k].slice(),
-                splitValue: value,
-                unit,
-              }
-            }).filter(d => d.value !== 'no_data')
-          ).map((d, i) => {
+          .entries(_cloneDeep(this.state.data).map(d => {
+            const [value, unit] = d.metadata[k].split(' ');
+            if (unit !== undefined && !units.includes(unit)) {
+              units.push(unit);
+            }
             return {
-              index: i,
-              value: d.key,
-              splitValue: d.values.map(v => v.splitValue)[0],
-              count: d.values.length,
-              samples: d.values.map(v => v.sampleName),
+              sampleName: d.sampleName,
+              value: _cloneDeep(d.metadata[k]),
+              splitValue: value,
+              unit,
             };
-          });
+          })
+            .filter(d => d.value !== 'no_data'))
+          .map((d, i) => ({
+            index: i,
+            value: d.key,
+            splitValue: d.values.map(v => v.splitValue)[0],
+            count: d.values.length,
+            samples: d.values.map(v => v.sampleName),
+          }));
         const unit = units.length ? units[0] : '';
         let groupKey = 'string';
-        let filterValues = values.slice();
+        let filterValues = _cloneDeep(values);
 
         if (k.toLowerCase().trim().includes('date') || k.toLowerCase().trim().includes('year')) {
           groupKey = 'date';
-          filterValues = values.slice().map((d, i) => {
-              if (k.toLowerCase().trim().includes('date')) {
-                d.value = new Date(d.value);
-              }
-              return d;
-            })
-            .filter(v => {
-              return !v.value.toString().toLowerCase().trim().includes('invalid date');
-            });
-        } else if (this.filterFloat(values.filter(v => v.splitValue !== 'no_data')[0].splitValue) !== null) {
+          filterValues = _cloneDeep(values).map(d => {
+            if (k.toLowerCase().trim().includes('date')) {
+              d.value = new Date(d.value);
+            }
+            return d;
+          }).filter(v => !v.value.toString().toLowerCase().trim().includes('invalid date'));
+        } else if (filterFloat(values.filter(v => v.splitValue !== 'no_data')[0].splitValue) !== null) {
           groupKey = 'number';
-          filterValues = values.slice().map((v) => {
-              v.value = this.filterFloat(v.splitValue);
-              return v;
-            })
-            .filter(v => {
-              return v.value !== null;
-            });
+          filterValues = _cloneDeep(values).map((v) => {
+            v.value = filterFloat(v.splitValue);
+            return v;
+          }).filter(v => v.value !== null);
         }
 
         filterValues = filterValues
-          .sort((a, b) => {
-            return a.value.valueOf() - b.value.valueOf();
-          })
+          .sort((a, b) => a.value.valueOf() - b.value.valueOf())
           .map((d, i) => {
             d.index = i;
             return d;
           });
-        
+
         let range = {
           min: filterValues[0],
           max: filterValues[filterValues.length - 1],
         };
         if (groupKey === 'string') {
           range = {};
-          filterValues.map((v) => {
+          filterValues.forEach(v => {
             range[v.value] = true;
           });
         }
 
         this.state.filters[k] = {
           key: k,
-          unit: unit,
-          range: range,
+          unit,
+          range,
           type: groupKey,
           values: filterValues,
           expanded: false,
         };
         this.filters[groupKey][k] = {
           values: filterValues,
-          unit: unit,
+          unit,
           log: true,
         };
 
@@ -226,7 +222,6 @@ export default class Filter extends Component {
           }
           this.state.filters[k] = this.init.filters[k];
         }
-
       });
 
       this.state.deleted = this.init.deleted ? this.init.deleted : [];
@@ -276,25 +271,19 @@ export default class Filter extends Component {
       this.state.summary.dataKey,
       this.state.names,
       viewMetadata,
-      callback ? callback : () => {},
-      );
+      callback || (() => {}),
+    );
   }
 
   updateDimensions() {
     this.metrics.leftSidebar = this.state.showLeftSidebar ?
       this.metrics.left.max : this.metrics.left.min;
-    this.metrics.tableWidth = window.innerWidth - (this.metrics.leftSidebar + this.metrics.filterWidth + this.metrics.padding * 4);
+    this.metrics.tableWidth = window.innerWidth
+    - (this.metrics.leftSidebar + this.metrics.filterWidth + (this.metrics.padding * 4));
     this.setState({
       width: window.innerWidth,
       height: window.innerHeight,
     });
-  }
-
-  filterFloat(value) {
-    if (/^(\-|\+)?([0-9]+(\.[0-9]+)?|Infinity)$/.test(value)) {
-      return Number(value);
-    }
-    return null;
   }
 
   renderHeader() {
@@ -322,19 +311,22 @@ export default class Filter extends Component {
     ];
     return columns.map(c => {
       const onClick = (c.id === 'order') ? (() => {}) : (
-          () => { 
-            this.sort.key = c.id;
-            this.sort.reverse = !this.sort.reverse;
-            visSortBy(this, this.state.data, true);
-          }
-        );
+        () => {
+          this.sort.key = c.id;
+          this.sort.reverse = !this.sort.reverse;
+          visSortBy(this, this.state.data, true);
+        }
+      );
       const arrow = (c.id !== 'order') ? (getSortArrow(this, c.id)) : '';
       return (
         <div
           key={c.id}
+          role="button"
+          tabIndex={0}
           className={styles.columnHeading}
           style={{ width: this.metrics.tableWidth * this.columnWidths[c.id] }}
           onClick={onClick}
+          onKeyDown={onClick}
         >
           {`${c.name} `}
           {arrow}
@@ -345,25 +337,23 @@ export default class Filter extends Component {
 
   renderRows(data, isRemoved) {
     const allData = this.state.data.concat(this.state.deleted);
-    return data.map((d, i) => {
-      return (
-        <FilterRow
-          key={d.sampleName}
-          index={i}
-          data={d}
-          allData={allData}
-          isRemoved={isRemoved}
-          columnWidths={this.columnWidths}
-          tableWidth={this.metrics.tableWidth}
-          dragEnd={isRemoved ? null : this.dragEnd}
-          dragOver={isRemoved ? null : this.dragOver}
-          dragStart={isRemoved ? null : this.dragStart}
-          updatePhinchName={this.updatePhinchName}
-          removeDatum={() => { removeRows(this, [d]) }}
-          restoreDatum={() => { restoreRows(this, [d]) }}
-        />
-      );
-    });
+    return data.map((d, i) => (
+      <FilterRow
+        key={d.sampleName}
+        index={i}
+        data={d}
+        allData={allData}
+        isRemoved={isRemoved}
+        columnWidths={this.columnWidths}
+        tableWidth={this.metrics.tableWidth}
+        dragEnd={isRemoved ? null : this.dragEnd}
+        dragOver={isRemoved ? null : this.dragOver}
+        dragStart={isRemoved ? null : this.dragStart}
+        updatePhinchName={this.updatePhinchName}
+        removeDatum={() => { removeRows(this, [d]); }}
+        restoreDatum={() => { restoreRows(this, [d]); }}
+      />
+    ));
   }
 
   setResult(value) {
@@ -372,12 +362,12 @@ export default class Filter extends Component {
       this.clearResult();
     }, 3000);
     const loading = false;
-    this.setState({result, loading});
+    this.setState({ result, loading });
   }
 
   clearResult() {
     const result = null;
-    this.setState({result});
+    this.setState({ result });
   }
 
   resetFilters() {
@@ -399,18 +389,18 @@ export default class Filter extends Component {
 
   applyFilters(filters) {
     const deletedSamples = this.state.deleted.map(d => d.sampleName);
-    let data = DataContainer.getSamples().map((d, i) => {
+    let data = DataContainer.getSamples().map(d => {
       if (this.state.names[d.sampleName]) {
         d.phinchName = this.state.names[d.sampleName];
       }
       return d;
-    }).filter((d, i) => {
+    }).filter(d => {
       let include = true;
       if (deletedSamples.includes(d.sampleName)) {
         include = false;
       }
       Object.keys(filters).forEach((k) => {
-        let value = d.metadata[k].slice();
+        let value = _cloneDeep(d.metadata[k]);
         if (k.toLowerCase().trim().includes('date')) {
           value = new Date(value);
           if (
@@ -425,29 +415,27 @@ export default class Filter extends Component {
             include = false;
           }
         } else if (filters[k].type === 'number' || filters[k].type === 'date') {
-          value = value.split(' ')[0];
-          if (this.filterFloat(value) !== null) {
-            value = this.filterFloat(value);
+          [value] = value.split(' ');
+          if (filterFloat(value) !== null) {
+            value = filterFloat(value);
             if (value < filters[k].range.min.value || value > filters[k].range.max.value) {
               include = false;
             }
           }
-        } else {
-          if (value !== 'no_data' && !filters[k].range[value]) {
-            include = false;
-          }
+        } else if (value !== 'no_data' && !filters[k].range[value]) {
+          include = false;
         }
       });
       return include;
     });
     data = visSortBy(this, data, false);
-    this.setState({filters, data}, _debounce(() => {
-        this.save(this.setResult);
-      }), this.metrics.debounce, { leading: false, trailing: true });
+    this.setState({ filters, data }, _debounce(() => {
+      this.save(this.setResult);
+    }), this.metrics.debounce, { leading: false, trailing: true });
   }
 
   toggleChecks(attribute, value) {
-    const filters = this.state.filters;
+    const filters = _cloneDeep(this.state.filters);
     Object.keys(filters[attribute].range).forEach(k => {
       filters[attribute].range[k] = value;
     });
@@ -455,7 +443,7 @@ export default class Filter extends Component {
   }
 
   updateChecks(attribute, type, value) {
-    const filters = this.state.filters;
+    const filters = _cloneDeep(this.state.filters);
     filters[attribute].range[type] = value;
     this.applyFilters(filters);
   }
@@ -466,45 +454,52 @@ export default class Filter extends Component {
       number: 'Numeric Range',
       string: 'Categories',
     };
-    return Object.keys(this.filters).map((k, i) => {
-      const group = Object.keys(this.filters[k]).map((g) => {
-        const expanded = this.state.filters[g].expanded;
+    return Object.keys(this.filters).map(k => {
+      const group = Object.keys(this.filters[k]).map(g => {
+        const { expanded } = this.state.filters[g];
         const icon = expanded ? minus : plus;
         const height = expanded ? 60 : 20;
         const filter = (this.state.filters[g].type === 'string') ? (
-            <CheckBoxes
-              name={g}
-              data={this.filters[k][g]}
-              filter={this.state.filters[g]}
-              update={this.updateChecks}
-              setAll={this.toggleChecks}
-            />
-          ) : (
-            <FilterChart
-              name={g}
-              showScale={false}
-              showCircle={false}
-              fill={'#4c4c4c'}
-              stroke={'#ffffff'}
-              handle={'#00bbda'}
-              color={'#000000'}
-              data={this.filters[k][g]}
-              width={this.metrics.filterWidth}
-              height={height}
-              filters={this.state.filters}
-              update={updateFilters}
-              callback={this.applyFilters}
-            />
-          );
+          <CheckBoxes
+            name={g}
+            data={this.filters[k][g]}
+            filter={this.state.filters[g]}
+            update={this.updateChecks}
+            setAll={this.toggleChecks}
+          />
+        ) : (
+          <FilterChart
+            name={g}
+            showScale={false}
+            showCircle={false}
+            fill="#4c4c4c"
+            stroke="#ffffff"
+            handle="#00bbda"
+            color="#000000"
+            data={this.filters[k][g]}
+            width={this.metrics.filterWidth}
+            height={height}
+            filters={this.state.filters}
+            update={updateFilters}
+            callback={this.applyFilters}
+          />
+        );
+        const toggleExpand = () => {
+          const filters = Object.assign({}, this.state.filters);
+          filters[g].expanded = !filters[g].expanded;
+          this.setState({ filters }, () => {
+            this.save(this.setResult);
+          });
+        };
         return (
           <div key={g} className={styles.filter}>
-            <div className={styles.expand} onClick={() => {
-              const filters = this.state.filters;
-              filters[g].expanded = !filters[g].expanded;
-              this.setState({filters}, () => {
-                  this.save(this.setResult);
-                });
-            }}>
+            <div
+              role="button"
+              tabIndex={0}
+              className={styles.expand}
+              onClick={toggleExpand}
+              onKeyDown={toggleExpand}
+            >
               <img src={icon} alt={expanded ? 'minus' : 'plus'} />
             </div>
             {filter}
@@ -512,9 +507,13 @@ export default class Filter extends Component {
         );
       });
       return (
-        <div key={k} className={styles.bottom} style={{
-          width: this.metrics.filterWidth + this.metrics.padding * 3,
-        }}>
+        <div
+          key={k}
+          className={styles.bottom}
+          style={{
+            width: this.metrics.filterWidth + (this.metrics.padding * 3),
+          }}
+        >
           <div className={styles.filterHeading}>
             {SectionNames[k]}
           </div>
@@ -527,7 +526,7 @@ export default class Filter extends Component {
   }
 
   updatePhinchName(e, r) {
-    const names = this.state.names;
+    const names = _cloneDeep(this.state.names);
     const data = this.state.data.map((d) => {
       if (d.sampleName === r.sampleName) {
         d.phinchName = e.target.value;
@@ -535,25 +534,25 @@ export default class Filter extends Component {
       names[d.sampleName] = d.phinchName;
       return d;
     });
-    this.setState({data, names}, _debounce(() => {
-        this.save(this.setResult);
-      }), this.metrics.debounce, { leading: false, trailing: true });
+    this.setState({ data, names }, _debounce(() => {
+      this.save(this.setResult);
+    }), this.metrics.debounce, { leading: false, trailing: true });
   }
 
   dragEnd(e) {
     let target = Number(this.over.dataset.id);
     if ((e.clientY - this.over.offsetTop) > (this.over.offsetHeight / 2)) {
-      target++;
+      target += 1;
     }
     if (this.dragged <= target) {
-      target--;
+      target -= 1;
     }
-    let data = this.state.data;
+    let data = _cloneDeep(this.state.data);
     data.splice(target, 0, data.splice(this.dragged, 1)[0]);
     data = data.map((d, i) => {
       d.order = i;
       return d;
-    }); 
+    });
     this.over.style = null;
     this.over = null;
     this.dragged = null;
@@ -580,17 +579,19 @@ export default class Filter extends Component {
     const showLeftSidebar = !this.state.showLeftSidebar;
     this.metrics.leftSidebar = showLeftSidebar ?
       this.metrics.left.max : this.metrics.left.min;
-    this.metrics.tableWidth = this.state.width - (this.metrics.leftSidebar + this.metrics.filterWidth + this.metrics.padding * 4);
+    this.metrics.tableWidth = this.state.width - (
+      this.metrics.leftSidebar + this.metrics.filterWidth + (this.metrics.padding * 4)
+    );
     this.setState({ showLeftSidebar }, () => {
-        this.save(this.setResult);
-      });
+      this.save(this.setResult);
+    });
   }
 
   redirectToVis(result) {
     if (result === 'error') {
       this.setResult(result);
     } else {
-      this.setState({redirect: '/vis'});
+      this.setState({ redirect: '/vis' });
     }
   }
 
@@ -602,7 +603,9 @@ export default class Filter extends Component {
     }
 
     const result = this.state.result ? (
-      <div 
+      <div
+        role="button"
+        tabIndex={0}
         className={gstyle.button}
         style={{
           position: 'absolute',
@@ -619,10 +622,20 @@ export default class Filter extends Component {
           background: (this.state.result === 'error') ? '#ff2514' : '#00da3e',
         }}
         onClick={this.clearResult}
+        onKeyDown={this.clearResult}
       >
-          {this.state.result}
+        {this.state.result}
       </div>
     ) : '';
+
+    const viewVisualization = () => {
+      this.setState({ loading: true }, () => {
+        setTimeout(() => {
+          DataContainer.applyFiltersToData(this.state.data);
+          this.save(this.redirectToVis);
+        }, 1);
+      });
+    };
 
     return (
       <div className={gstyle.container}>
@@ -631,26 +644,22 @@ export default class Filter extends Component {
         <div className={styles.header}>
           <div className={gstyle.logo}>
             <Link to="/">
-              <img src={logo} alt='Phinch' />
+              <img src={logo} alt="Phinch" />
             </Link>
           </div>
           <div className={gstyle.header}>
             <Summary summary={this.state.summary} datalength={this.state.data.length} />
             <div className={styles.visRowLabel}>Visualization Type</div>
             <div className={styles.visOption}>
-              <img src={stackedbar} alt='Stacked bargraph' />
+              <img src={stackedbar} alt="Stacked bargraph" />
               <div className={styles.visOptionLabel}>Stacked bargraph</div>
             </div>
             <div
+              role="button"
+              tabIndex={0}
               className={`${gstyle.button} ${styles.button}`}
-              onClick={() => {  
-                this.setState({ loading: true }, () => {
-                  setTimeout(() => {
-                    DataContainer.applyFiltersToData(this.state.data);
-                    this.save(this.redirectToVis);
-                  }, 1);
-                });
-              }}
+              onClick={viewVisualization}
+              onKeyDown={viewVisualization}
             >
               View Visualization
             </div>
@@ -659,15 +668,18 @@ export default class Filter extends Component {
                 className={styles.spacer}
                 style={{
                   width: (
-                    this.metrics.leftSidebar + this.metrics.filterWidth + this.metrics.padding * 4
+                    this.metrics.leftSidebar + this.metrics.filterWidth + (
+                      this.metrics.padding * 4
+                    )
                   ) - 100,
-                }} />
+                }}
+              />
               {this.renderHeader()}
             </div>
             {result}
           </div>
         </div>
-        <div style={{ position: 'relative', backgroundColor: '#ffffff', color: '#808080'}}>
+        <div style={{ position: 'relative', backgroundColor: '#ffffff', color: '#808080' }}>
           <SideMenu
             showLeftSidebar={this.state.showLeftSidebar}
             leftSidebar={this.metrics.leftSidebar}
@@ -676,15 +688,21 @@ export default class Filter extends Component {
             items={this.menuItems}
             toggleMenu={this.toggleMenu}
           />
-          <div className={`${styles.section} ${styles.left}`} style={{
-            display: 'inline-block',
-            height: (this.state.height - 130),
-            overflowY: 'overlay',
-          }}>
+          <div
+            className={`${styles.section} ${styles.left}`}
+            style={{
+              display: 'inline-block',
+              height: (this.state.height - 130),
+              overflowY: 'overlay',
+            }}
+          >
             {this.displayFilters()}
             <div
+              role="button"
+              tabIndex={0}
               className={`${gstyle.button} ${styles.reset}`}
               onClick={this.resetFilters}
+              onKeyDown={this.resetFilters}
             >
               Reset Filters
             </div>
@@ -699,22 +717,22 @@ export default class Filter extends Component {
           >
             {this.renderRows(this.state.data, false)}
             <Modal
-              buttonTitle={'Archived Samples'}
-              modalTitle={'Archived Samples'}
+              buttonTitle="Archived Samples"
+              modalTitle="Archived Samples"
               buttonPosition={{
                 position: 'absolute',
                 bottom: 0,
                 marginBottom: '-8px',
-                left: this.state.width - (this.metrics.tableWidth + this.metrics.padding / 2),
+                left: this.state.width - (this.metrics.tableWidth + (this.metrics.padding / 2)),
               }}
               modalPosition={{
                 position: 'absolute',
                 bottom: this.metrics.padding * 2,
-                left: this.state.width - (this.metrics.tableWidth + this.metrics.padding / 2),
+                left: this.state.width - (this.metrics.tableWidth + (this.metrics.padding / 2)),
                 width: this.metrics.tableWidth,
               }}
               data={this.renderRows(this.state.deleted, true)}
-              badge={true}
+              badge
             />
           </div>
         </div>

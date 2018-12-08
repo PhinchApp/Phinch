@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
+import Autosuggest from 'react-autosuggest';
 
 import styles from './Search.css';
-
-import Autosuggest from 'react-autosuggest';
 
 export default class Search extends Component {
   constructor(props) {
@@ -16,9 +15,9 @@ export default class Search extends Component {
 
   getSuggestions = value => {
     const inputValue = value.trim().toLowerCase();
-    return inputValue.length === 0 ? [] : this.props.options.filter(o => {
-      return o.name.toLowerCase().includes(inputValue);
-    });
+    return inputValue.length === 0 ? [] : (
+      this.props.options.filter(o => o.name.toLowerCase().includes(inputValue))
+    );
   };
 
   getSuggestionValue = suggestion => suggestion.name;
@@ -71,4 +70,4 @@ export default class Search extends Component {
       />
     );
   }
-};
+}

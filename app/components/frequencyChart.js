@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import { scaleLog } from 'd3-scale';
 
 export default class FrequencyChart extends Component {
@@ -15,22 +14,38 @@ export default class FrequencyChart extends Component {
   }
 
   componentDidMount() {
-    this.updateCanvas(ReactDOM.findDOMNode(this).getContext('2d'));
+    this.updateCanvas(this.canvas.getContext('2d'));
   }
 
   updateCanvas(ctx) {
     ctx.fillStyle = 'black';
-    ctx.fillRect(this.padding, (this.props.height / 2) - 0.125 + this.padding, this.props.width - (this.padding * 2), 0.25);
+    ctx.fillRect(
+      this.padding,
+      (this.props.height / 2) + (this.padding - 0.125),
+      this.props.width - (this.padding * 2),
+      0.25
+    );
     this.props.data.forEach((d) => {
-      ctx.fillRect(this.scale(d.reads), this.props.height / 3 + this.padding, 0.5, this.props.height / 3);
+      ctx.fillRect(
+        this.scale(d.reads),
+        (this.props.height / 3) + this.padding,
+        0.5,
+        this.props.height / 3,
+      );
     });
     ctx.fillStyle = 'red';
-    ctx.fillRect(this.scale(this.props.value), (this.padding * 2), 2, this.props.height + (this.padding * 2));
+    ctx.fillRect(
+      this.scale(this.props.value),
+      (this.padding * 2),
+      2,
+      this.props.height + (this.padding * 2),
+    );
   }
 
   render() {
     return (
       <canvas
+        ref={c => { this.canvas = c; }}
         width={this.props.width}
         height={this.props.height}
         style={{
@@ -46,4 +61,4 @@ export default class FrequencyChart extends Component {
       />
     );
   }
-};
+}

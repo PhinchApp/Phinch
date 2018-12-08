@@ -1,7 +1,7 @@
 {
   "name": "Phinch2",
   "productName": "Phinch2",
-  "version": "2.0.1",
+  "version": "0.0.2",
   "description": "Phinch is an open-source framework for visualizing biological data",
   "scripts": {
     "build": "concurrently \"npm run build-main\" \"npm run build-renderer\"",

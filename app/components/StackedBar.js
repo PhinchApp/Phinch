@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 
 export default class StackedBar extends Component {
   constructor(props) {
@@ -17,7 +16,7 @@ export default class StackedBar extends Component {
 
   _getDatum(event) {
     const containerOffset = this._canvas.getBoundingClientRect();
-    const pageMouse = {x: event.clientX, y: event.clientY};
+    const pageMouse = { x: event.clientX, y: event.clientY };
     const mouse = {
       x: pageMouse.x - containerOffset.left,
       y: pageMouse.y - containerOffset.top
@@ -25,7 +24,7 @@ export default class StackedBar extends Component {
     let selectedDatum = null;
     this.props.data.forEach(d => {
       if (d.x <= mouse.x && d.x + d.width >= mouse.x) {
-        selectedDatum = d
+        selectedDatum = d;
       }
     });
     return [selectedDatum, pageMouse];
@@ -49,7 +48,7 @@ export default class StackedBar extends Component {
 
   updateCanvas() {
     if (!this._canvas) {
-      return
+      return;
     }
 
     const ctx = this._canvas.getContext('2d');
@@ -65,8 +64,10 @@ export default class StackedBar extends Component {
     this.props.data
       .forEach((d, i) => {
         ctx.fillStyle = this.props.cscale(d.name);
-        const alpha = this.props.highlightedDatum == null ? 1 :
-          this.props.highlightedDatum.datum.name === d.name ? 1 : 0.25;
+        let alpha = 1;
+        if (this.props.highlightedDatum) {
+          alpha = this.props.highlightedDatum.datum.name === d.name ? 1 : 0.25;
+        }
         ctx.globalAlpha = alpha;
         d.x = offset * this.scale;
         d.width = this.props.xscale(d.reads);
@@ -75,7 +76,7 @@ export default class StackedBar extends Component {
           0 * this.scale,
           Math.max(1, Math.floor(d.width * this.scale)),
           this.props.height * this.scale,
-          );
+        );
         offset += this.props.xscale(d.reads);
       });
   }
@@ -90,48 +91,49 @@ export default class StackedBar extends Component {
       }
       let offset = 0;
       const bars = this.props.data.map(d => {
-          d.width = this.props.xscale(d.reads);
-          offset += d.width;
-          return (
-            <rect
-              key={d.name}
-              id={d.name}
-              x={offset - d.width}
-              y={0}
-              width={d.width}
-              height={this.props.height}
-              fill={this.props.cscale(d.name)}
-            />
-          );
-        });
-      return bars;
-    } else {
-      return (
-        <foreignObject>
-          <canvas
-            ref={(c) => (this._canvas = c)}
-            width={this.props.width * this.scale}
-            height={this.props.height * this.scale}
-            style={{
-              width: `${this.props.width}px`,
-              height: `${this.props.height}px`,
-              margin: 0,
-              padding: 0,
-              outline: 'none',
-              border: 'none',
-              overflow: 'hidden',
-              verticalAlign: 'top',
-              cursor: 'pointer',
-              position: 'fixed',
-              zIndex: 1,
-            }}
-            onMouseOver={this.props.onHoverDatum ? this._mouseMove : null}
-            onMouseMove={this.props.onHoverDatum ? this._mouseMove : null}
-            onMouseOut={this.props.onHoverDatum ? this._mouseOut : null}
-            onClick={this.props.onClickDatum ? this._mouseClick : null}
+        d.width = this.props.xscale(d.reads);
+        offset += d.width;
+        return (
+          <rect
+            key={d.name}
+            id={d.name}
+            x={offset - d.width}
+            y={0}
+            width={d.width}
+            height={this.props.height}
+            fill={this.props.cscale(d.name)}
           />
-        </foreignObject>
-      );
+        );
+      });
+      return bars;
     }
+    return (
+      <foreignObject>
+        <canvas
+          ref={c => { this._canvas = c; }}
+          width={this.props.width * this.scale}
+          height={this.props.height * this.scale}
+          style={{
+            width: `${this.props.width}px`,
+            height: `${this.props.height}px`,
+            margin: 0,
+            padding: 0,
+            outline: 'none',
+            border: 'none',
+            overflow: 'hidden',
+            verticalAlign: 'top',
+            cursor: 'pointer',
+            position: 'fixed',
+            zIndex: 1,
+          }}
+          onMouseOver={this.props.onHoverDatum ? this._mouseMove : null}
+          onFocus={this.props.onHoverDatum ? this._mouseMove : null}
+          onMouseMove={this.props.onHoverDatum ? this._mouseMove : null}
+          onMouseOut={this.props.onHoverDatum ? this._mouseOut : null}
+          onBlur={this.props.onHoverDatum ? this._mouseOut : null}
+          onClick={this.props.onClickDatum ? this._mouseClick : null}
+        />
+      </foreignObject>
+    );
   }
-};
+}

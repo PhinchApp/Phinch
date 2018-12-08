@@ -1,37 +1,33 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+
+import arrow from 'images/arrow.svg';
 
 import styles from './SideMenu.css';
 import gstyle from './general.css';
 
-import arrow from 'images/arrow.svg';
+function constructItem(l) {
+  return (
+    <div
+      key={l.id}
+      role="button"
+      tabIndex={0}
+      className={styles.menuItem}
+      onClick={l.action}
+      onKeyDown={l.action}
+    >
+      <div className={styles.menuBox}>
+        {l.icon}
+      </div>
+      <span className={styles.menuItemLabel}>
+        {l.name}
+      </span>
+    </div>
+  );
+}
 
 export default class SideMenu extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  constructItem(l) {
-    return (
-      <div
-        key={l.id}
-        className={styles.menuItem}
-        onClick={l.action}
-      >
-        <div className={styles.menuBox}>
-          {l.icon}
-        </div>
-        <span className={styles.menuItemLabel}>
-          {l.name}
-        </span>
-      </div>
-    );
-  }
-
   render() {
-    const items = this.props.items.map(l => {
-      return this.constructItem(l);
-    });
+    const items = this.props.items.map(l => constructItem(l));
     const menuItems = this.props.showLeftSidebar ? (
       <div
         className={`${gstyle.panel} ${styles.menu}`}
@@ -45,12 +41,9 @@ export default class SideMenu extends Component {
     ) : '';
     const rotation = this.props.showLeftSidebar ? styles.rotated : '';
     return (
-      <div 
+      <div
         className={`${gstyle.panel} ${gstyle.noscrollbar}`}
-        style={{
-          overflowY: 'hidden',
-          // zIndex: 3,
-        }}
+        style={{ overflowY: 'hidden' }}
       >
         {menuItems}
         <div
@@ -63,21 +56,20 @@ export default class SideMenu extends Component {
             overflowY: 'hidden',
           }}
         >
-          <div 
-            style={{
-              display: this.props.hideToggle ? 'none' : 'inline-block',
-            }}
-          >
-            <div className={styles.toggleSquare}></div>
+          <div style={{ display: this.props.hideToggle ? 'none' : 'inline-block' }}>
+            <div className={styles.toggleSquare} />
             <div
+              role="button"
+              tabIndex={0}
               className={`${styles.menuToggle} ${rotation}`}
               onClick={this.props.toggleMenu}
+              onKeyDown={this.props.toggleMenu}
             >
-              <img src={arrow} alt='arrow-toggle-menu' />
+              <img src={arrow} alt="arrow-toggle-menu" />
             </div>
           </div>
         </div>
       </div>
     );
   }
-};
+}

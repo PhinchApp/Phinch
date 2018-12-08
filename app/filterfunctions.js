@@ -29,33 +29,19 @@ export function updateFilters(filters, attribute, min, max, callback) {
 }
 
 export function removeRows(context, rows) {
-  const data = context.state.data.filter((d) => {
-    return !rows.includes(d);
-  });
+  const data = context.state.data.filter(d => !rows.includes(d));
   const deleted = context.state.deleted.concat(rows);
-  context.setState({data, deleted}, () => { 
-      context.save(context.setResult);
-    });
+  context.setState({ data, deleted }, () => {
+    context.save(context.setResult);
+  });
 }
 
 export function restoreRows(context, rows) {
-  const deleted = context.state.deleted.filter((d) => {
-    return !rows.includes(d);
+  const deleted = context.state.deleted.filter(d => !rows.includes(d));
+  const data = visSortBy(context, context.state.data.concat(rows), false);
+  context.setState({ data, deleted }, () => {
+    context.save(context.setResult);
   });
-  const data = context.state.data.concat(rows).sort((a, b) => {
-    if (context.sort.reverse) {
-      if (b[context.sort.key] < a[context.sort.key]) return -1;
-      if (b[context.sort.key] > a[context.sort.key]) return 1;
-      return 0;
-    } else {
-      if (a[context.sort.key] < b[context.sort.key]) return -1;
-      if (a[context.sort.key] > b[context.sort.key]) return 1;
-      return 0;
-    }
-  });
-  context.setState({data, deleted}, () => { 
-      context.save(context.setResult);
-    });
 }
 
 export function visSortBy(context, indata, setState) {
@@ -64,19 +50,18 @@ export function visSortBy(context, indata, setState) {
       if (a[context.sort.key] < b[context.sort.key]) return -1;
       if (a[context.sort.key] > b[context.sort.key]) return 1;
       return 0;
-    } else {
-      if (b[context.sort.key] < a[context.sort.key]) return -1;
-      if (b[context.sort.key] > a[context.sort.key]) return 1;
-      return 0;
     }
+    if (b[context.sort.key] < a[context.sort.key]) return -1;
+    if (b[context.sort.key] > a[context.sort.key]) return 1;
+    return 0;
   }).map((d, i) => {
     d.order = i;
     return d;
   });
   if (setState) {
-    context.setState({data}, () => { 
-        context.save(context.setResult);
-      });
+    context.setState({ data }, () => {
+      context.save(context.setResult);
+    });
   } else {
     return data;
   }
@@ -85,8 +70,7 @@ export function visSortBy(context, indata, setState) {
 export function getSortArrow(context, key) {
   if (key === context.sort.key) {
     const angle = context.sort.reverse ? 180 : 0;
-    return (<div className={gstyle.arrow} style={{transform: `rotate(${angle}deg)`}}>⌃</div>);
-  } else {
-    return '';
+    return (<div className={gstyle.arrow} style={{ transform: `rotate(${angle}deg)` }}>⌃</div>);
   }
+  return '';
 }

@@ -5,7 +5,7 @@ import { join } from 'path';
 const isDev = () => process.env.NODE_ENV === 'development';
 const appPath = isDev() ? __dirname : remote.app.getAppPath();
 
-function uint8arrayToString(data){
+function uint8arrayToString(data) {
   return String.fromCharCode.apply(null, data);
 }
 

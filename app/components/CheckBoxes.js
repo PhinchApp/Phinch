@@ -8,44 +8,51 @@ export default class CheckBoxes extends Component {
     const buttons = this.props.filter.expanded ? (
       <div>
         <div
+          role="button"
+          tabIndex={0}
           className={styles.toggle}
           onClick={() => this.props.setAll(this.props.name, true)}
+          onKeyDown={() => this.props.setAll(this.props.name, true)}
         >
           all
         </div>
         <div
+          role="button"
+          tabIndex={0}
           className={styles.toggle}
           onClick={() => this.props.setAll(this.props.name, false)}
+          onKeyDown={() => this.props.setAll(this.props.name, false)}
         >
           none
         </div>
       </div>
     ) : '';
     const boxes = this.props.filter.expanded ? (
-      this.props.data.values.map((d) => {
-        return (
-          <div key={d.value} className={styles.row}>
-            <label className={gstyle.checkbox}>
-              <input
-                type='checkbox'
-                name={d.value}
-                value={d.value}
-                checked={this.props.filter.range[d.value]}
-                onChange={(event) => this.props.update(this.props.name, d.value, event.target.checked)}
-              />
-              <span className={gstyle.checkmark}></span>
-            </label>
-            <label style={{marginLeft: '4px'}} htmlFor={d.value}>{d.value} ({d.count})</label>
+      this.props.data.values.map((d) => (
+        <div key={d.value} className={styles.row}>
+          <label htmlFor={d.value} className={gstyle.checkbox}>
+            <input
+              type="checkbox"
+              id={d.value}
+              name={d.value}
+              value={d.value}
+              checked={this.props.filter.range[d.value]}
+              onChange={event => this.props.update(this.props.name, d.value, event.target.checked)}
+            />
+            <span className={gstyle.checkmark} />
+          </label>
+          <div style={{ display: 'inline-block', marginLeft: '4px' }} htmlFor={d.value}>
+            {d.value} ({d.count})
           </div>
-        );
-      })
+        </div>
+      ))
     ) : '';
     return (
       <div className={styles.group}>
-        <label className={styles.name}>{this.props.name}</label>
+        <div className={styles.name}>{this.props.name}</div>
         {buttons}
         {boxes}
       </div>
     );
   }
-};
+}

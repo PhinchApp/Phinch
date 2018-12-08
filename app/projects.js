@@ -2,9 +2,9 @@ import { homedir } from 'os';
 import fs from 'fs';
 import { join } from 'path';
 
-import DataContainer from './DataContainer.js';
-
 import newicon from 'images/new.svg';
+
+import DataContainer from './datacontainer';
 
 const sampleProjects = [
   {
@@ -36,7 +36,7 @@ function getProjectInfo(path, dataKey) {
   let summary = {
     name: dataKey,
     path,
-    dataKey: dataKey,
+    dataKey,
   };
   const metadataPath = join(path, `${dataKey}.json`);
   if (fs.existsSync(metadataPath)) {
@@ -53,7 +53,7 @@ function getProjectInfo(path, dataKey) {
     slug: 'filter',
     data,
     summary,
-  }
+  };
 }
 
 export function exportProjectData(path, dataKey, data, callback) {
@@ -62,7 +62,7 @@ export function exportProjectData(path, dataKey, data, callback) {
   let version = 0;
   let exportname = `export-${dataKey}-${version}`;
   while (project.includes(exportname)) {
-    version++;
+    version += 1;
     exportname = `export-${dataKey}-${version}`;
   }
   const exportPath = join('/', path, exportname);
@@ -113,7 +113,7 @@ export function getProjectFilters(path, dataKey, viewType) {
   if (path.length) {
     const metadataPath = join('/', path, `${dataKey}.json`);
     const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
-    const names = metadata['names'] ? metadata['names'] : {};
+    const names = metadata.names || {};
     filters.names = names;
     if (metadata[viewType]) {
       Object.keys(metadata[viewType]).forEach(k => {
@@ -135,7 +135,7 @@ export function createProject(project) {
   let version = 0;
   while (phinch.includes(foldername)) {
     foldername = `${basename}-${version}`;
-    version++;
+    version += 1;
   }
   fs.mkdirSync(join(phinchdir, foldername));
   const filepath = join(phinchdir, foldername, `${foldername}.biom`);
@@ -155,7 +155,7 @@ function deleteProjectFiles(path) {
   const phinchdir = join(homedirectory, 'Documents', 'Phinch2.0');
   if (path.includes(phinchdir)) {
     if (fs.existsSync(path)) {
-      fs.readdirSync(path).forEach((f, i) => {
+      fs.readdirSync(path).forEach(f => {
         const currentPath = join(path, f);
         if (fs.lstatSync(currentPath).isDirectory()) {
           deleteProjectFiles(currentPath);

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 
 export default class Microbes extends Component {
   constructor(props) {
@@ -8,17 +7,8 @@ export default class Microbes extends Component {
     this.updateCanvas = this.updateCanvas.bind(this);
   }
 
-  update() {
-    this.ctx = this.ctx ? this.ctx : ReactDOM.findDOMNode(this).getContext('2d');
-    this.time = {
-      start: Date.now(),
-      current: Date.now(),
-    };
-    this.microbes = this.updateMicrobes();
-    this.scheduleUpdate();
-  }
-
   componentDidMount() {
+    this.ctx = this.canvas.getContext('2d');
     this.stroke = Object.assign({}, this.props.stroke);
     this.update();
   }
@@ -27,6 +17,15 @@ export default class Microbes extends Component {
     if (JSON.stringify(prevProps) !== JSON.stringify(this.props)) {
       this.update();
     }
+  }
+
+  update() {
+    this.time = {
+      start: Date.now(),
+      current: Date.now(),
+    };
+    this.microbes = this.updateMicrobes();
+    this.scheduleUpdate();
   }
 
   updateMicrobes() {
@@ -70,19 +69,19 @@ export default class Microbes extends Component {
         },
         w: width.min + Math.floor(Math.random() * width.max),
       });
-      index++;
+      index += 1;
     }
     return microbes;
   }
 
   scheduleUpdate() {
-    window.requestAnimationFrame(this.updateCanvas)
+    window.requestAnimationFrame(this.updateCanvas);
   }
 
   updateCanvas() {
     this.ctx.fillStyle = this.props.fill;
     this.ctx.fillRect(0, 0, this.props.width, this.props.height);
-  
+
     if (this.props.show) {
       const progress = Math.min(1, (this.time.current - this.time.start) / 1500);
 
@@ -124,6 +123,7 @@ export default class Microbes extends Component {
   render() {
     return (
       <canvas
+        ref={c => { this.canvas = c; }}
         width={this.props.width}
         height={this.props.height}
         style={{
@@ -140,4 +140,4 @@ export default class Microbes extends Component {
       />
     );
   }
-};
+}

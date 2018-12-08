@@ -105,6 +105,7 @@
 
 .logo {
   width: 130px;
+  cursor: pointer;
 }
 
 .links {
@@ -139,6 +140,7 @@
 
 .about .center p {
   font-weight: 300;
+  margin-bottom: 1rem;
 }
 
 p.first::first-letter {

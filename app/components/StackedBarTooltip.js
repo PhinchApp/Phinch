@@ -5,17 +5,15 @@ import PercentageBarGraph from './PercentageBarGraph';
 import styles from './StackedBarTooltip.css';
 
 const size = {
-    x: 316,
-    y: 216,
-  };
+  x: 316,
+  y: 216,
+};
 
-const percentFormatter = (value) => {
-  return `${Math.round(value * 10000) / 100}%`
-}
+const percentFormatter = (value) => `${Math.round(value * 10000) / 100}%`;
 
 function Datum(props) {
-  const samplePercent = props.datum.reads / props.sample.reads
-  const totalPercentReads = props.datum.reads / props.totalDataReads
+  const samplePercent = props.datum.reads / props.sample.reads;
+  const totalPercentReads = props.datum.reads / props.totalDataReads;
 
   return (
     <div
@@ -49,7 +47,7 @@ function Datum(props) {
           {` (${props.datum.reads.toLocaleString()} out of ${props.sample.reads.toLocaleString()})`}
         </span>
         <div className={styles.bar}>
-          <PercentageBarGraph percent={samplePercent} color={props.color} width='284px' />
+          <PercentageBarGraph percent={samplePercent} color={props.color} width="284px" />
         </div>
       </div>
 
@@ -60,7 +58,7 @@ function Datum(props) {
           {` (${props.datum.reads.toLocaleString()} out of ${props.totalDataReads.toLocaleString()})`}
         </span>
         <div className={styles.bar}>
-          <PercentageBarGraph percent={totalPercentReads} color={props.color} width='284px' />
+          <PercentageBarGraph percent={totalPercentReads} color={props.color} width="284px" />
         </div>
       </div>
 
@@ -85,5 +83,5 @@ export default function StackedBarTooltip(props) {
     transform: `translate(${position.x}px, ${position.y}px)`
   };
 
-  return <Datum {...props} style={style} />
+  return <Datum {...props} style={style} />;
 }

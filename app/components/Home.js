@@ -1,24 +1,22 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router';
-import { remote } from 'electron';
 import _clonedeep from 'lodash.clonedeep';
 
-import { pageView } from '../analytics.js'
-import loadFile from '../DataLoader.js';
-import DataContainer from '../DataContainer.js';
-import { getProjects, getSamples, setProjectFilters, deleteProject } from '../projects.js';
+import editOff from 'images/edit-off.svg';
+import editOn from 'images/edit-on.svg';
 
-import ProjectList from './ProjectList.js';
-import LinkList from './LinkList.js';
-import Loader from './Loader.js';
+import { pageView } from '../analytics';
+import loadFile from '../dataloader';
+import DataContainer from '../datacontainer';
+import { getProjects, getSamples, setProjectFilters, deleteProject } from '../projects';
+
+import ProjectList from './ProjectList';
+import SideBar from './SideBar';
+import Loader from './Loader';
 import Modal from './Modal';
 
 import styles from './Home.css';
 import gstyle from './general.css';
-
-import logo from 'images/phinch.svg';
-import editOff from 'images/edit-off.svg';
-import editOn from 'images/edit-on.svg';
 
 export default class Home extends Component {
   constructor(props) {
@@ -26,14 +24,13 @@ export default class Home extends Component {
 
     pageView('/');
 
-    this.version = remote.app.getVersion();
-
     this.shouldUpdate = {};
 
     this.state = {
       loading: false,
       editing: false,
       deleting: false,
+      erroring: false,
       redirect: null,
       projects: getProjects(),
       samples: getSamples(),
@@ -58,15 +55,14 @@ export default class Home extends Component {
   }
 
   failure() {
-    this.setState({loading: false});
-    alert('data not found! (data must be named `foldername.biom`)');
+    this.setState({ loading: false, erroring: true });
   }
 
   view(project) {
     if (project.slug === 'newproject') {
-      this.setState({redirect: '/newproject'});
+      this.setState({ redirect: '/newproject' });
     } else if (project.data) {
-      this.setState({loading: true});
+      this.setState({ loading: true });
       DataContainer.setSummary(project);
       loadFile(project.data, this.success, this.failure);
     } else {
@@ -84,7 +80,7 @@ export default class Home extends Component {
     });
     this.shouldUpdate = {};
     const deleting = editing ? this.state.deleting : false;
-    this.setState({editing, deleting});
+    this.setState({ editing, deleting });
   }
 
   updateName(project, name) {
@@ -95,37 +91,35 @@ export default class Home extends Component {
       }
       return p;
     });
-    this.setState({projects});
+    this.setState({ projects });
   }
 
   cancelRemove() {
     this.deleting = null;
-    this.setState({deleting: false});
+    this.setState({ deleting: false });
   }
 
   completeRemove() {
-    // remove from filesystem 
-    deleteProject(this.deleting);
-    // remove from state
-    const projects = _clonedeep(this.state.projects).filter(p => {
-      return p.summary.dataKey !== this.deleting.summary.dataKey;
-    });
+    deleteProject(this.deleting); // remove from filesystem
+    const projects = _clonedeep(this.state.projects) // remove from state
+      .filter(p => p.summary.dataKey !== this.deleting.summary.dataKey);
     this.deleting = null;
-    this.setState({projects, deleting: false});
+    this.setState({ projects, deleting: false });
   }
 
   remove(project) {
     this.deleting = project;
-    this.setState({deleting: true});
+    this.setState({ deleting: true });
   }
 
   render() {
     const redirect = (this.state.redirect === null) ? '' : (
-        <Redirect push to={this.state.redirect} />
-      );
-    const links = LinkList(this);
-    const modalContent = this.state.deleting ? (
-        <div key='modal' className={styles.modal}>
+      <Redirect push to={this.state.redirect} />
+    );
+    let modalContent = null;
+    if (this.state.deleting) {
+      modalContent = (
+        <div key="modal" className={styles.modal}>
           <p>
             Are you sure you want to permanently erase
             <span className={styles.modalTitle}>
@@ -133,38 +127,68 @@ export default class Home extends Component {
             </span>
             ?
           </p>
-          <p>You can't undo this action.</p>
+          <p>You can&#39;t undo this action.</p>
           <div
+            role="button"
+            tabIndex={0}
             className={`${gstyle.button} ${styles.button} ${styles.cancel}`}
             onClick={this.cancelRemove}
+            onKeyDown={this.cancelRemove}
           >
             Cancel
           </div>
           <div
+            role="button"
+            tabIndex={0}
             className={`${gstyle.button} ${styles.button}`}
             onClick={this.completeRemove}
+            onKeyDown={this.completeRemove}
           >
             Delete
           </div>
         </div>
-      ) : null;
-    const modal = this.state.deleting ? (
-        <Modal
-          show={true}
-          buttonPosition={{display: 'none'}}
-          closePosition={{display: 'none'}}
-          modalPosition={{
-            position: 'absolute',
-            top: '33%',
-            left: '50%',
-            width: '410px',
-            height: '192px',
-            background: 'white',
-            color: 'black',
-          }}
-          data={[modalContent]}
-        />
-      ) : null;
+      );
+    // ) : this.state.erroring ? (
+    }
+    if (this.state.erroring) {
+      modalContent = (
+        <div key="modal" className={styles.modal}>
+          <p>
+            Data not found!
+          </p>
+          <p>
+            The data file must be a JSON or HDF5 BIOM file with the same name as it&#39;s containing folder, and the `.biom` extension. {/* eslint-disable-line max-len */}
+          </p>
+          <div
+            role="button"
+            tabIndex={0}
+            className={`${gstyle.button} ${styles.button} ${styles.cancel}`}
+            onClick={() => this.setState({ erroring: false })}
+            onKeyDown={() => this.setState({ erroring: false })}
+          >
+            Ok
+          </div>
+        </div>
+      );
+    }
+    // ) : null;
+    const modal = (this.state.deleting || this.state.erroring) ? (
+      <Modal
+        show
+        buttonPosition={{ display: 'none' }}
+        closePosition={{ display: 'none' }}
+        modalPosition={{
+          position: 'absolute',
+          top: '33%',
+          left: '50%',
+          width: '410px',
+          height: '192px',
+          background: 'white',
+          color: 'black',
+        }}
+        data={[modalContent]}
+      />
+    ) : null;
     const projects = ProjectList({
       projectList: this.state.projects,
       view: this.view,
@@ -180,23 +204,19 @@ export default class Home extends Component {
     });
     return (
       <div>
-        <div className={styles.container} data-tid='container'>
+        <div className={styles.container} data-tid="container">
           <Loader loading={this.state.loading} />
           {redirect}
-          <div className={`${styles.section} ${styles.left}`}>
-            <div className={`${styles.area} ${styles.info}`}>
-              <img src={logo} className={styles.logo} alt='Phinch Logo' />
-              <p>Version {this.version}</p>
-            </div>
-            <div className={`${styles.links} ${gstyle.exdarkbgscrollbar}`}>
-              <div className={`${styles.area} ${styles.rightSpace}`}>
-                {links}
-              </div>
-            </div>
-          </div>
+          <SideBar context={this} />
           <div className={`${styles.section} ${styles.right}`}>
-            <div className={styles.edit} onClick={this.edit}>
-              <img src={this.state.editing ? editOn : editOff} alt='edit' />
+            <div
+              role="button"
+              tabIndex={0}
+              className={styles.edit}
+              onClick={this.edit}
+              onKeyDown={this.edit}
+            >
+              <img src={this.state.editing ? editOn : editOff} alt="edit" />
             </div>
             <div className={`${styles.scroll} ${gstyle.darkbgscrollbar}`}>
               <div className={`${styles.area} ${styles.rightSpace}`}>

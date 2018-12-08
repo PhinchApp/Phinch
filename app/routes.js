@@ -3,10 +3,10 @@ import React from 'react';
 import { Switch, Route } from 'react-router';
 import App from './containers/App';
 import HomePage from './containers/HomePage';
-import NewProject from './components/NewProject.js';
-import Filter from './components/Filter.js';
-import About from './components/About.js';
-import Vis from './components/Vis.js';
+import NewProject from './components/NewProject';
+import Filter from './components/Filter';
+import About from './components/About';
+import Vis from './components/Vis';
 
 export default () => (
   <App>

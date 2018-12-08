@@ -1,6 +1,14 @@
 import { statSync } from 'fs';
 import { join } from 'path';
 
+// Maybe externalize this to utils or something
+function formatFileSize(bytes) {
+  const interval = 1000;
+  const units = ['B', 'kB', 'MB', 'GB', 'TB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(interval));
+  return `${(bytes / (interval ** i)).toFixed(1)} ${units[i]}`;
+}
+
 class DataContainer {
   constructor() {
     this.summary = {
@@ -18,21 +26,13 @@ class DataContainer {
     this.observations = [];
   }
 
-  // Maybe externalize this to utils or something
-  formatFileSize(bytes) {
-    const interval = 1000;
-    const units = ['B', 'kB', 'MB', 'GB', 'TB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(interval));
-    return `${(bytes / Math.pow(interval, i)).toFixed(1)} ${units[i]}`;
-  }
-
   setSummary(project) {
     if (project.summary) {
       this.summary = Object.assign(this.summary, project.summary);
     } else {
       const filename = project.data.toString().split('/');
-      this.summary.name = filename[filename.length-1];
-      this.summary.dataKey = filename[filename.length-1];
+      this.summary.name = filename[filename.length - 1];
+      this.summary.dataKey = filename[filename.length - 1];
       filename.pop();
       this.summary.path = project.data;
     }
@@ -40,9 +40,7 @@ class DataContainer {
     if (Array.isArray(this.summary.path)) {
       this.summary.path = join(...this.summary.path);
     }
-    if (!this.summary.size) {
-      this.summary.size = this.formatFileSize(statSync(project.data).size);
-    }
+    this.summary.size = formatFileSize(statSync(project.data).size);
   }
   getSummary() {
     return this.summary;
@@ -82,13 +80,13 @@ class DataContainer {
 
     this.data.columns = this.data.columns.map((c, i) => {
       // c.metadata['phinchID'] = c.metadata['phinchID'] ? c.metadata['phinchID'] : i;
-      c.metadata['phinchID'] = i;
+      c.metadata.phinchID = i;
       const reads = (sequenceReads[i] === undefined) ? 0 : sequenceReads[i];
       return {
         biomid: i + 1,
         id: c.id,
         sampleName: c.id,
-        phinchName: c.phinchName ? c.phinchName : ( c.metadata.phinchName ? c.metadata.phinchName : c.id),
+        phinchName: c.phinchName || (c.metadata.phinchName ? c.metadata.phinchName : c.id),
         metadata: c.metadata,
         reads,
       };
@@ -97,7 +95,7 @@ class DataContainer {
     this.samples = this.data.columns;
 
     this.data.rows = this.data.rows.map((r, i) => {
-      r.metadata['phinchID'] = i;
+      r.metadata.phinchID = i;
       // r.metadata['phinchID'] = r.metadata['phinchID'] ? r.metadata['phinchID'] : i;
       return r;
     });
@@ -117,9 +115,7 @@ class DataContainer {
     filteredData.columns = columns;
     // 2. data - filter by column id
     const columnIDs = columns.map(c => c.metadata.phinchID);
-    filteredData.data = filteredData.data.filter((d) => {
-      return (columnIDs.indexOf(d[1]) !== -1);
-    });
+    filteredData.data = filteredData.data.filter(d => columnIDs.indexOf(d[1]) !== -1);
     // Don't do this so that the rows match
     // 3. rows - filter by row ids in data
     // const rowIDs = [... new Set(filteredData.data.map(d => d[0]))];
@@ -128,7 +124,7 @@ class DataContainer {
     // });
     //
     // Modify Metadata
-    filteredData.generated_by = 'Phinch 2.0'
+    filteredData.generated_by = 'Phinch 2.0';
     filteredData.date = new Date().toISOString();
     filteredData.shape = [filteredData.rows.length, filteredData.columns.length];
     //

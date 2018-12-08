@@ -7,11 +7,15 @@ import _cloneDeep from 'lodash.clonedeep';
 import { nest } from 'd3-collection';
 import { scaleLinear, scaleOrdinal } from 'd3-scale';
 
-import { pageView } from '../analytics.js'
-import { updateFilters, removeRows, restoreRows, visSortBy, getSortArrow } from '../FilterFunctions';
-import { setProjectFilters, getProjectFilters } from '../projects.js';
-import { handleExportButton } from '../export.js';
-import DataContainer from '../DataContainer';
+import logo from 'images/phinch.svg';
+import back from 'images/back.svg';
+import save from 'images/save.svg';
+
+import { updateFilters, removeRows, restoreRows, visSortBy } from '../filterfunctions';
+import { setProjectFilters, getProjectFilters } from '../projects';
+import handleExportButton from '../export';
+import DataContainer from '../datacontainer';
+import { pageView } from '../analytics';
 import palette from '../palette';
 
 import Search from './Search';
@@ -24,10 +28,6 @@ import Modal from './Modal';
 
 import styles from './Vis.css';
 import gstyle from './general.css';
-
-import logo from 'images/phinch.svg';
-import back from 'images/back.svg';
-import save from 'images/save.svg';
 
 export default class Vis extends Component {
   constructor(props) {
@@ -55,7 +55,6 @@ export default class Vis extends Component {
       showTags: false,
       mode: 'percent',
       labelKey: 'phinchName',
-      showSequences: false,
       showRightSidebar: false,
       showLeftSidebar: false,
       showEmptyAttrs: true,
@@ -73,18 +72,18 @@ export default class Vis extends Component {
       {
         id: 'save',
         name: 'Save',
-        action: () => { 
+        action: () => {
           this.save(this.setResult);
         },
-        icon: <img src={save} />,
+        icon: <img src={save} alt="save" />,
       },
       {
         id: 'filter',
         name: 'Back',
-        action: () => { 
+        action: () => {
           this.save(() => (this.setState({ redirect: '/Filter' })));
         },
-        icon: <img src={back} />,
+        icon: <img src={back} alt="back" />,
       },
       {
         id: 'export',
@@ -92,7 +91,7 @@ export default class Vis extends Component {
         action: () => {
           this.setState({ renderSVG: true });
         },
-        icon: <img src={save} />,
+        icon: <img src={save} alt="save" />,
       }
     ];
 
@@ -125,14 +124,12 @@ export default class Vis extends Component {
         color: null,
         name: 'No Tags',
         selected: true
-      }, ...tagColors.map((c, i) => {
-        return {
-          id: `tag-${i}`,
-          name: `Tag ${i}`,
-          color: c,
-          selected: true,
-        };
-      })
+      }, ...tagColors.map((c, i) => ({
+        id: `tag-${i}`,
+        name: `Tag ${i}`,
+        color: c,
+        selected: true,
+      }))
     ];
 
     this.levels = [];
@@ -164,7 +161,8 @@ export default class Vis extends Component {
     };
 
     this.metrics.nonbarWidth = (this.metrics.padding * 3) + (this.metrics.barInfoWidth);
-    this.metrics.chartWidth = this.state.width - (this.metrics.leftSidebar + this.metrics.nonbarWidth);
+    this.metrics.chartWidth = this.state.width
+      - (this.metrics.leftSidebar + this.metrics.nonbarWidth);
     this.metrics.chartHeight = this.state.height - this.metrics.heightOffset;
 
     this.scales = {
@@ -177,48 +175,40 @@ export default class Vis extends Component {
     if (Object.keys(this.state.initdata).length === 0) {
       this.state.redirect = '/';
     } else {
-
       // move to config / metadata
       const ignoreLevels = ['', 'unclassified', 'unassigned', 'unassignable', 'ambiguous taxa', 'ambiguous_taxa'];
 
       // Autogenerate levels from data
       // TODO: Test w/ addtional data formats
-      const uniq_taxa = [...new Set(
-          [].concat(...
-            [...new Set(
-              this.state.initdata.rows.map(r => {
-                return r.metadata.taxonomy.filter(t => {
-                  return t.includes('__');
-                }).map((t, i) => {
-                  return t.split('__')[0];
-                }).join('|');
-              })
-            )].map(r => {
-              return r.split('|').map((l, i) => {
-                return JSON.stringify({
-                  name: l,
-                  order: i,
-                });
-              });
-            })
-          )
-        )].map(l => {
-          return JSON.parse(l);
-        }).filter(l => !ignoreLevels.includes(l.name.trim().toLowerCase()));
+      const uniqTaxa = [
+        ...new Set([]
+          .concat(...[
+            ...new Set(this.state.initdata.rows
+              .map(r => r.metadata.taxonomy.filter(t => t.includes('__'))
+                .map(t => t.split('__')[0])
+                .join('|')))
+          ]
+            .map(r => r.split('|').map((l, i) => JSON.stringify({
+              name: l,
+              order: i,
+            })))))
+      ]
+        .map(l => JSON.parse(l))
+        .filter(l => !ignoreLevels.includes(l.name.trim().toLowerCase()));
 
-      const default_taxa = {
-        'k': 'kingdom',
-        'p': 'phylum',
-        'c': 'class',
-        'o': 'order',
-        'f': 'family',
-        'g': 'genus',
-        's': 'species',
+      const defaultTaxa = {
+        k: 'kingdom',
+        p: 'phylum',
+        c: 'class',
+        o: 'order',
+        f: 'family',
+        g: 'genus',
+        s: 'species',
       };
 
       this.levels = nest()
         .key(t => t.name)
-        .entries(uniq_taxa)
+        .entries(uniqTaxa)
         .map(l => {
           let number = null;
           const numbers = l.key.match(/\d+/g);
@@ -227,33 +217,32 @@ export default class Vis extends Component {
           }
           return {
             name: l.key,
-            number: number,
+            number,
             order: Math.min(...l.values.map(t => t.order)),
           };
         })
         .sort((a, b) => {
           if (a.number && b.number) {
             return a.number - b.number;
-          } else {
-            return a.order - b.order;
           }
+          return a.order - b.order;
         })
         .map((l, i) => {
-          if (l.name in default_taxa) {
-            l.name = default_taxa[l.name];
+          if (l.name in defaultTaxa) {
+            l.name = defaultTaxa[l.name];
           }
           l.order = i;
           return l;
         });
 
       // Break this whole chunk into a function or something
-      // 
+      //
       this.init = getProjectFilters(this.state.summary.path, this.state.summary.dataKey, 'vis');
       //
       this.state.names = this.init.names;
       this.state.level = (this.init.level !== undefined) ? this.init.level : this.state.level;
       this.filters = this.init.filters ? this.init.filters : {};
-      this.state.deleted = this.init.deleted ? this.init.deleted : []; 
+      this.state.deleted = this.init.deleted ? this.init.deleted : [];
       this.state.tags = this.init.tags ? this.init.tags : this.state.tags;
       //
       // Can lose this after next version
@@ -266,13 +255,13 @@ export default class Vis extends Component {
       //
       this.state.rowTags = this.init.rowTags ? this.init.rowTags : this.state.rowTags;
       this.state.selectedAttribute = this.init.selectedAttribute ? (
-          this.init.selectedAttribute
-        ) : this.state.selectedAttribute;
-      // 
-      // Ugly... 
+        this.init.selectedAttribute
+      ) : this.state.selectedAttribute;
+      //
+      // Ugly...
       this.state.showLeftSidebar = (this.init.showLeftSidebar !== undefined) ? (
-          this.init.showLeftSidebar
-        ) : this.state.showLeftSidebar;
+        this.init.showLeftSidebar
+      ) : this.state.showLeftSidebar;
       this.metrics.leftSidebar = this.state.showLeftSidebar ?
         this.metrics.left.max : this.metrics.left.min;
       //
@@ -281,12 +270,11 @@ export default class Vis extends Component {
       this.state.labelKey = this.sort.show;
       this.state.mode = this.sort.type;
       //
-
       this.state.data = visSortBy(
         this,
         this.formatTaxonomyData(this.state.initdata, this.state.level),
         false,
-        );
+      );
       //
       this.updateAttributeValues(this.state.selectedAttribute, this.state.data);
       //
@@ -311,14 +299,10 @@ export default class Vis extends Component {
     this.setLevel(this.state.level);
   }
 
-  exportComplete = () => {
-    this.setState({ renderSVG: false, dialogVisible: false });
-  }
-
   componentDidUpdate() {
     if (this.state.renderSVG && !this.state.dialogVisible) {
-      this.setState({ dialogVisible: true });
-      handleExportButton(this.state.summary.path.slice(), this._svg, this.exportComplete);
+      this.setDialogVisible();
+      handleExportButton(_cloneDeep(this.state.summary.path), this._svg, this.exportComplete);
     }
   }
 
@@ -327,6 +311,14 @@ export default class Vis extends Component {
     clearTimeout(this.timeout);
     this.exportComplete();
     window.removeEventListener('resize', this.updateDimensions);
+  }
+
+  exportComplete = () => {
+    this.setState({ renderSVG: false, dialogVisible: false });
+  }
+
+  setDialogVisible = () => {
+    this.setState({ dialogVisible: true });
   }
 
   save = (callback) => {
@@ -349,7 +341,7 @@ export default class Vis extends Component {
       (value) => {
         callback(value);
       },
-      );
+    );
   };
 
   setResult = (value) => {
@@ -362,7 +354,7 @@ export default class Vis extends Component {
 
   clearResult = () => {
     const result = null;
-    this.setState({result});
+    this.setState({ result });
   }
 
   _toggleTag = (datum, tag, isRemoved) => {
@@ -371,9 +363,9 @@ export default class Vis extends Component {
     } else {
       datum.tags[tag.id] = tag;
     }
-    const rowTags = this.state.rowTags;
+    const rowTags = _cloneDeep(this.state.rowTags);
     rowTags[datum.sampleName] = datum.tags;
-    // ugly 
+    // ugly
     if (isRemoved) {
       const deleted = this.state.deleted.map((d) => {
         if (d.sampleName === datum.sampleName) {
@@ -381,9 +373,9 @@ export default class Vis extends Component {
         }
         return d;
       });
-      this.setState({ deleted }, () => { 
-          this.save(this.setResult);
-        });
+      this.setState({ deleted }, () => {
+        this.save(this.setResult);
+      });
     } else {
       const data = this.state.data.map((d) => {
         if (d.sampleName === datum.sampleName) {
@@ -391,9 +383,9 @@ export default class Vis extends Component {
         }
         return d;
       });
-      this.setState({ data }, () => { 
-          this.save(this.setResult);
-        });
+      this.setState({ data }, () => {
+        this.save(this.setResult);
+      });
     }
   }
 
@@ -415,16 +407,16 @@ export default class Vis extends Component {
           this.setState({ showTooltip: true });
         }, this.tooltip.duration);
       }
-      this.setState({ highlightedDatum: { datum, sample, position }});
+      this.setState({ highlightedDatum: { datum, sample, position } });
     }
   }
 
   _clickDatum = (datum) => {
-    if (!this.filters.hasOwnProperty(this.state.level)) {
+    if (!Object.prototype.hasOwnProperty.call(this.filters, this.state.level)) {
       this.filters[this.state.level] = {};
     }
-    const filters = this.state.filters;
-    if (!this.filters[this.state.level].hasOwnProperty(datum.name)) {
+    const filters = _cloneDeep(this.state.filters);
+    if (!Object.prototype.hasOwnProperty.call(this.filters[this.state.level], datum.name)) {
       // const sequences = [{reads: 0}];
       const sequences = [];
       this.state.preData.forEach(d => {
@@ -435,17 +427,15 @@ export default class Vis extends Component {
         });
       });
       const totalReads = sequences.map(s => s.reads).reduce((s, v) => s + v);
-      const values = _sortBy(sequences, (s) => s.reads).map((s, i) => {
-        return {
-          index: i,
-          value: s.reads,
-          count: (s.reads === 0) ? 1 : s.reads,
-          percent: s.reads / totalReads,
-        };
-      });
+      const values = _sortBy(sequences, (s) => s.reads).map((s, i) => ({
+        index: i,
+        value: s.reads,
+        count: (s.reads === 0) ? 1 : s.reads,
+        percent: s.reads / totalReads,
+      }));
       this.filters[this.state.level][datum.name] = {
         key: datum.name,
-        values: values,
+        values,
         unit: '',
         range: {
           min: values[0],
@@ -456,41 +446,42 @@ export default class Vis extends Component {
       };
       filters[datum.name] = this.filters[this.state.level][datum.name];
     }
-    const showRightSidebar = Object.keys(filters).length > 0 ? true : false;
-
+    const showRightSidebar = Object.keys(filters).length > 0;
     this.updateChartWidth(showRightSidebar);
-    this.setState({ filters, showRightSidebar }, () => { 
-        this.save(this.setResult);
-      });
+    this.setState({ filters, showRightSidebar }, () => {
+      this.save(this.setResult);
+    });
   }
 
   toggleLog(name) {
-    const filters = this.state.filters;
+    const filters = _cloneDeep(this.state.filters);
     filters[name].log = !filters[name].log;
     this.filters[this.state.level] = filters;
-    this.setState({ filters }, () => { 
-        this.save(this.setResult);
-      });
+    this.setState({ filters }, () => {
+      this.save(this.setResult);
+    });
   }
 
   removeFilter(name) {
-    const filters = this.state.filters;
+    const filters = _cloneDeep(this.state.filters);
     delete filters[name];
     this.filters[this.state.level] = filters;
-    const showRightSidebar = Object.keys(filters).length > 0 ? true : false;
+    const showRightSidebar = Object.keys(filters).length > 0;
     this.updateChartWidth(showRightSidebar);
     const data = this.filterData(filters, this.state.tags, this.state.preData, this.state.deleted);
     this.updateAttributeValues(this.state.selectedAttribute, data);
-    this.setState({ data, filters, showRightSidebar }, () => { 
-        this.save(this.setResult);
-      });
+    this.setState({ data, filters, showRightSidebar }, () => {
+      this.save(this.setResult);
+    });
   }
 
   updateChartWidth(showRightSidebar) {
     if (showRightSidebar) {
-      this.metrics.chartWidth = window.innerWidth - (this.metrics.leftSidebar + this.metrics.rightSidebar + this.metrics.nonbarWidth);
+      this.metrics.chartWidth = window.innerWidth
+        - (this.metrics.leftSidebar + this.metrics.rightSidebar + this.metrics.nonbarWidth);
     } else {
-      this.metrics.chartWidth = window.innerWidth - (this.metrics.leftSidebar + this.metrics.nonbarWidth);
+      this.metrics.chartWidth = window.innerWidth
+        - (this.metrics.leftSidebar + this.metrics.nonbarWidth);
     }
   }
 
@@ -504,27 +495,18 @@ export default class Vis extends Component {
   }
 
   setColorScale(data) {
-    const uniqSequences = _sortBy([...new Set(
-      [].concat(
-        ...data.map(d => {
-          return [].concat(
-            ...d.matches.map((s, i) => {
-              return [].concat(
-                ...s.taxonomy.map((t,i) => {
-                  const taxa = [];
-                  let j =0;
-                  while (j <= i) {
-                    taxa.push(s.taxonomy[j]);
-                    j++;
-                  }
-                  return taxa.join();
-                })
-              );
-            })
-          );
-        })
-      )
-    )]);
+    const uniqSequences = _sortBy([...new Set([]
+      .concat(...data.map(d => []
+        .concat(...d.matches.map(s => []
+          .concat(...s.taxonomy.map((t, k) => {
+            const taxa = [];
+            let j = 0;
+            while (j <= k) {
+              taxa.push(s.taxonomy[j]);
+              j += 1;
+            }
+            return taxa.join();
+          })))))))]);
     // .sort((a, b) => { // sort to make adjacent less likely to be equal
     //   return this.readsBySequence[b] - this.readsBySequence[a];
     // });
@@ -532,73 +514,71 @@ export default class Vis extends Component {
   }
 
   setLevel(level) {
-    if (!this.filters.hasOwnProperty(level)) {
+    if (!Object.prototype.hasOwnProperty.call(this.filters, level)) {
       this.filters[level] = {};
     }
     const preData = this.updateTaxonomyData(this.state.preData, level, true);
     const deleted = this.updateTaxonomyData(this.state.deleted, level, false);
     const filters = this.filters[level];
-    const showRightSidebar = Object.keys(filters).length > 0 ? true : false;
+    const showRightSidebar = Object.keys(filters).length > 0;
     this.updateChartWidth(showRightSidebar);
     const data = this.filterData(filters, this.state.tags, preData, deleted);
     this.updateAttributeValues(this.state.selectedAttribute, data);
-    this.setState({level, data, preData, deleted, filters, showRightSidebar}, () => { 
-        this.save(this.setResult);
-      });
+    this.setState({
+      level, data, preData, deleted, filters, showRightSidebar
+    }, () => {
+      this.save(this.setResult);
+    });
   }
 
   // data.data schema: [row(observations), column(samples), count]
-
   // Move to data container?
   formatTaxonomyData(data, level) {
     let totalDataReads = 0;
-    const formatedData = this.updateTaxonomyData(
-      data.columns.map((c, i) => {
-        const matches = data.data
-          .filter(d => d[1] === c.metadata.phinchID)
-          .map(d => {
-            const row = data.rows[d[0]];
-            return {
-              id: row.id,
-              taxonomy: row.metadata.taxonomy,
-              count: d[2]
-            };
-          });
-        totalDataReads += c.reads;
-        let phinchName = c.phinchName
-        if (this.state.names[c.sampleName]) {
-          phinchName = this.state.names[c.sampleName];
-        }
-        const tags = this.state.rowTags[c.sampleName] ? this.state.rowTags[c.sampleName] : {};
-        Object.keys(tags).forEach(k => {
-          const [tag] = this.state.tags.filter(t => t.id === k);
-          tags[k] = tag;
+    const formatedData = this.updateTaxonomyData(data.columns.map(c => {
+      const matches = data.data
+        .filter(d => d[1] === c.metadata.phinchID)
+        .map(d => {
+          const row = data.rows[d[0]];
+          return {
+            id: row.id,
+            taxonomy: row.metadata.taxonomy,
+            count: d[2]
+          };
         });
-        const [dateAttribute] = Object.keys(this.attributes).map(k => {
-          return this.attributes[k];
-        }).filter(a => {
-          return a.type === 'date';
-        });
-        let collectionDate = '';
-        if (dateAttribute) {
-          collectionDate = c.metadata[dateAttribute.key] ? (
-            new Date(c.metadata[dateAttribute.key]).toLocaleString().split(', ')[0]
-          ) : '';
-        }
-        return {
-          id: c.id,
-          biomid: c.biomid,
-          phinchID: c.metadata.phinchID,
-          order: c.order,
-          sampleName: c.sampleName,
-          phinchName: phinchName,
-          reads: c.reads,
-          sequences: [],
-          date: collectionDate,
-          tags: tags,
-          matches: matches,
-        };
-      }), level, true);
+      totalDataReads += c.reads;
+      let phinchName = c.phinchName.toString();
+      if (this.state.names[c.sampleName]) {
+        phinchName = this.state.names[c.sampleName];
+      }
+      const tags = this.state.rowTags[c.sampleName] ? this.state.rowTags[c.sampleName] : {};
+      Object.keys(tags).forEach(k => {
+        const [tag] = this.state.tags.filter(t => t.id === k);
+        tags[k] = tag;
+      });
+      const [dateAttribute] = Object.keys(this.attributes)
+        .map(k => this.attributes[k])
+        .filter(a => a.type === 'date');
+      let collectionDate = '';
+      if (dateAttribute) {
+        collectionDate = c.metadata[dateAttribute.key] ? (
+          new Date(c.metadata[dateAttribute.key]).toLocaleString().split(', ')[0]
+        ) : '';
+      }
+      return {
+        id: c.id,
+        biomid: c.biomid,
+        phinchID: c.metadata.phinchID,
+        order: c.order,
+        sampleName: c.sampleName,
+        phinchName,
+        reads: c.reads,
+        sequences: [],
+        date: collectionDate,
+        tags,
+        matches,
+      };
+    }), level, true);
     this.totalDataReads = totalDataReads;
     return formatedData;
   }
@@ -609,10 +589,10 @@ export default class Vis extends Component {
     }
     return data.map(d => {
       d.sequences = nest()
-        .key(d => d.taxonomy.slice(0, level + 1))
+        .key(s => s.taxonomy.slice(0, level + 1))
         .entries(d.matches)
         .map(s => {
-          const reads = s.values.map(v => v.count).reduce((a, v) => a + v)
+          const reads = s.values.map(v => v.count).reduce((a, v) => a + v);
           if (updateSequences) {
             if (s.key in this.readsBySequence) {
               this.readsBySequence[s.key] += reads;
@@ -623,7 +603,7 @@ export default class Vis extends Component {
           return {
             name: s.key,
             taxonomy: s.values[0].taxonomy,
-            reads: reads,
+            reads,
           };
         });
       return d;
@@ -631,7 +611,6 @@ export default class Vis extends Component {
   }
 
   renderTicks(svgWidth, svgHeight) {
-    // const tickCount = Math.floor(this.metrics.chartWidth / 64);
     const tickCount = Math.floor(this.metrics.chartWidth / 96);
     const ticks = this.scales.x.ticks(tickCount);
     if (!ticks.length) {
@@ -641,19 +620,19 @@ export default class Vis extends Component {
     const xMax = this.scales.x.domain()[1];
     if (this.state.mode !== 'value') {
       tickArray = [];
-      for (let i=0; i<11; i++) {
+      for (let i = 0; i < 11; i += 1) {
         tickArray.push((xMax / 10) * i);
       }
     }
     return (
       <g
-        id='x axis'
-        pointerEvents='none'
-        textAnchor='middle'
-        fill='#808080'
+        id="x-axis"
+        pointerEvents="none"
+        textAnchor="middle"
+        fill="#808080"
       >
         <text
-          id='axis title'
+          id="axis-title"
           transform={`translate(
             ${svgWidth / 2},
             ${this.metrics.lineHeight * 0.825}
@@ -662,7 +641,7 @@ export default class Vis extends Component {
           Sequence Reads
         </text>
         <g
-          id='axis labels'
+          id="axis-labels"
           transform={`translate(
             ${this.metrics.barInfoWidth + 3},
             ${this.metrics.lineHeight}
@@ -692,11 +671,11 @@ export default class Vis extends Component {
                     y1={0}
                     x2={-1}
                     y2={svgHeight}
-                    stroke='#808080'
+                    stroke="#808080"
                     strokeWidth={0.5}
                   />
                 </g>
-              )
+              );
             })
           }
         </g>
@@ -706,7 +685,7 @@ export default class Vis extends Component {
 
   filterData(filters, tags, preData, deleted) {
     const deletedSamples = deleted.map(d => d.sampleName);
-    const samples = preData.filter((s, i) => {
+    const samples = preData.filter(s => {
       let include = true;
       if (deletedSamples.includes(s.sampleName)) {
         include = false;
@@ -717,7 +696,7 @@ export default class Vis extends Component {
           const value = sequence.reads;
           if (value < filters[k].range.min.value || value > filters[k].range.max.value) {
             include = false;
-          }          
+          }
         }
       });
       const showNoneTags = (tags.filter(t => t.selected && t.id === 'none').length > 0);
@@ -732,48 +711,46 @@ export default class Vis extends Component {
       }
       return include;
     });
-    const data = visSortBy(this, samples, false);    
+    const data = visSortBy(this, samples, false);
     return data;
   }
 
   applyFilters(filters) {
     const data = this.filterData(filters, this.state.tags, this.state.preData, this.state.deleted);
     this.updateAttributeValues(this.state.selectedAttribute, data);
-    this.setState({filters, data}, _debounce(() => { 
-        this.save(this.setResult);
-      }), this.metrics.debounce, { leading: false, trailing: true });
+    this.setState({ filters, data }, _debounce(() => {
+      this.save(this.setResult);
+    }), this.metrics.debounce, { leading: false, trailing: true });
   }
 
   renderFilters() {
     if (Object.keys(this.state.filters).length) {
-      const segments = Object.keys(this.state.filters).map(k => {
-        return (
-          <div
-            key={k}
-            style={{
-              display: 'inline-block',
-              borderBottom: '1px solid #262626',
-              margin: '0.5rem',
-            }}>
-            <FilterChart
-              name={k}
-              showScale={true}
-              showCircle={true}
-              fill={this.scales.c(k)}
-              // stroke={'#333333'}
-              handle={this.scales.c(k)}
-              data={this.state.filters[k]}
-              width={this.metrics.rightSidebar - this.metrics.padding * 3.25}
-              height={this.metrics.rightSidebar / 4}
-              filters={this.state.filters}
-              update={updateFilters}
-              remove={this.removeFilter}
-              toggleLog={this.toggleLog}
-              callback={this.applyFilters}
-            />
-          </div>
-        );
-      });
+      const segments = Object.keys(this.state.filters).map(k => (
+        <div
+          key={k}
+          style={{
+            display: 'inline-block',
+            borderBottom: '1px solid #262626',
+            margin: '0.5rem',
+          }}
+        >
+          <FilterChart
+            name={k}
+            showScale
+            showCircle
+            fill={this.scales.c(k)}
+            handle={this.scales.c(k)}
+            data={this.state.filters[k]}
+            width={this.metrics.rightSidebar - (this.metrics.padding * 3.25)}
+            height={this.metrics.rightSidebar / 4}
+            filters={this.state.filters}
+            update={updateFilters}
+            remove={this.removeFilter}
+            toggleLog={this.toggleLog}
+            callback={this.applyFilters}
+          />
+        </div>
+      ));
       return (
         <div
           className={`${gstyle.panel} ${gstyle.darkbgscrollbar}`}
@@ -781,15 +758,14 @@ export default class Vis extends Component {
             borderTop: '1px solid #262626',
             position: 'fixed',
             width: this.state.showRightSidebar ? this.metrics.rightSidebar : 0,
-            height: this.metrics.chartHeight + this.metrics.lineHeight * 2,
+            height: this.metrics.chartHeight + (this.metrics.lineHeight * 2),
           }}
         >
           {segments}
         </div>
       );
-    } else {
-      return null;
     }
+    return null;
   }
 
   toggleMenu() {
@@ -797,37 +773,17 @@ export default class Vis extends Component {
     this.metrics.leftSidebar = showLeftSidebar ?
       this.metrics.left.max : this.metrics.left.min;
     this.updateChartWidth(this.state.showRightSidebar);
-    this.setState({showLeftSidebar}, () => { 
-        this.save(this.setResult);
-      });
+    this.setState({ showLeftSidebar }, () => {
+      this.save(this.setResult);
+    });
   }
 
   onSuggestionSelected(e, { suggestion }) {
-    // const data = this.filterData(
-    //   this.state.filters,
-    //   this.state.tags,
-    //   this.state.preData,
-    //   this.state.deleted,
-    // ).filter(d => {
-    //   return d.sequences.map(d => d.name).includes(suggestion.name);
-    // });
-    // this.updateAttributeValues(this.state.selectedAttribute, data);
-    // const highlightedDatum = {
-    //   datum: suggestion,
-    //   sample: null,
-    //   position: null,
-    // };
-    // const showTooltip = false;
-    // this.setState({ data, highlightedDatum, showTooltip }, () => { 
-    //     this.save(this.setResult);
-    //   });
-    //
     const highlightedDatum = null;
     const showTooltip = false;
     this.setState({ highlightedDatum, showTooltip }, () => {
-        this._clickDatum(suggestion)
-      });
-    //
+      this._clickDatum(suggestion);
+    });
   }
 
   onSuggestionHighlighted({ suggestion }) {
@@ -844,24 +800,16 @@ export default class Vis extends Component {
   }
 
   onValueCleared() {
-    // const data = this.filterData(
-    //   this.state.filters,
-    //   this.state.tags,
-    //   this.state.preData,
-    //   this.state.deleted,
-    //   );
-    // this.updateAttributeValues(this.state.selectedAttribute, data);
     const highlightedDatum = null;
     const showTooltip = false;
-    // this.setState({ data, highlightedDatum, showTooltip }, () => { 
-    this.setState({ highlightedDatum, showTooltip }, () => { 
-        this.save(this.setResult);
-      });
+    this.setState({ highlightedDatum, showTooltip }, () => {
+      this.save(this.setResult);
+    });
   }
 
   updatePhinchName(e, r, isRemoved) {
     // ugly - similar to function in Filter.js
-    const names = this.state.names;
+    const names = _cloneDeep(this.state.names);
     if (isRemoved) {
       const deleted = this.state.deleted.map((d) => {
         if (d.sampleName === r.sampleName) {
@@ -870,9 +818,9 @@ export default class Vis extends Component {
         names[d.sampleName] = d.phinchName;
         return d;
       });
-      this.setState({ deleted }, _debounce(() => { 
-          this.save(this.setResult);
-        }), this.metrics.debounce, { leading: false, trailing: true });
+      this.setState({ deleted }, _debounce(() => {
+        this.save(this.setResult);
+      }), this.metrics.debounce, { leading: false, trailing: true });
     } else {
       const data = this.state.data.map((d) => {
         if (d.sampleName === r.sampleName) {
@@ -881,9 +829,9 @@ export default class Vis extends Component {
         names[d.sampleName] = d.phinchName;
         return d;
       });
-      this.setState({ data, names }, _debounce(() => { 
-          this.save(this.setResult);
-        }), this.metrics.debounce, { leading: false, trailing: true });
+      this.setState({ data, names }, _debounce(() => {
+        this.save(this.setResult);
+      }), this.metrics.debounce, { leading: false, trailing: true });
     }
   }
 
@@ -894,13 +842,13 @@ export default class Vis extends Component {
       }
       return t;
     });
-    this.setState({ tags }, _debounce(() => { 
-        this.save(this.setResult);
-      }), this.metrics.debounce, { leading: false, trailing: true });
+    this.setState({ tags }, _debounce(() => {
+      this.save(this.setResult);
+    }), this.metrics.debounce, { leading: false, trailing: true });
   }
 
   filterByTag(event, tag) {
-    let tags = this.state.tags.map(t => {
+    const tags = this.state.tags.map(t => {
       if (tag.id === t.id) {
         t.selected = event.target.checked;
       }
@@ -911,82 +859,81 @@ export default class Vis extends Component {
       tags,
       this.state.preData,
       this.state.deleted,
-      );
+    );
     this.updateAttributeValues(this.state.selectedAttribute, data);
-    this.setState({ tags, data }, () => { 
-        this.save(this.setResult);
-      });
+    this.setState({ tags, data }, () => {
+      this.save(this.setResult);
+    });
   }
 
   toggleEmptyAttrs() {
     const showEmptyAttrs = !this.state.showEmptyAttrs;
-    this.setState({ showEmptyAttrs }, () => { 
-        this.save(this.setResult);
-      });
+    this.setState({ showEmptyAttrs }, () => {
+      this.save(this.setResult);
+    });
   }
 
   renderAttributeBars(attribute, unit, metrics) {
     const rows = attribute.values
       .filter(v => {
-          if (this.state.showEmptyAttrs) return true;
-          return v.reads > 0;
-        })
+        if (this.state.showEmptyAttrs) return true;
+        return v.reads > 0;
+      })
       .sort((a, b) => {
         if (this.sort.reverse) {
           if (a.value === 'no_data') return -Infinity;
           if (b.value === 'no_data') return +Infinity;
           if (a.value < b.value) return -1;
           if (a.value > b.value) return 1;
-          return 0;
         } else {
           if (b.value === 'no_data') return -Infinity;
           if (a.value === 'no_data') return +Infinity;
           if (b.value < a.value) return -1;
           if (b.value > a.value) return 1;
-          return 0;
         }
+        return 0;
       })
-      .map((d, i) => {
-        return (
-          <StackedBarRow
-            key={`${this.state.selectedAttribute}-${d.value}`}
-            data={d}
-            index={i}
-            labelKey={'name'}
-            metrics={metrics}
-            scales={this.scales}
-            filters={this.state.filters}
-            highlightedDatum={this.state.highlightedDatum}
-            hoverDatum={this._hoverDatum}
-            clickDatum={this._clickDatum}
-            isPercent={(this.state.mode === 'percent')}
-            isRemoved={null}
-            isAttribute={true}
-            unit={attribute.unit}
-            styles={{
-              cell: styles.cell,
-              circle: gstyle.circle,
-              name: styles.name,
-              reads: styles.reads,
-            }}
-            tags={[]}
-            renderSVG={this.state.renderSVG}
-          />
-        );
-      });
+      .map((d, i) => (
+        <StackedBarRow
+          key={`${this.state.selectedAttribute}-${d.value}`}
+          data={d}
+          index={i}
+          labelKey="name"
+          metrics={metrics}
+          scales={this.scales}
+          filters={this.state.filters}
+          highlightedDatum={this.state.highlightedDatum}
+          hoverDatum={this._hoverDatum}
+          clickDatum={this._clickDatum}
+          isPercent={(this.state.mode === 'percent')}
+          isRemoved={null}
+          isAttribute
+          unit={attribute.unit}
+          styles={{
+            cell: styles.cell,
+            circle: gstyle.circle,
+            name: styles.name,
+            reads: styles.reads,
+          }}
+          tags={[]}
+          renderSVG={this.state.renderSVG}
+        />
+      ));
     return (
-      <g id='Stacked Bars'>
+      <g id="Stacked Bars">
         <text
           id={`${attribute.key} ${unit}`}
-          transform={`translate(${this.metrics.padding / 2 - 3}, ${(-this.metrics.padding / 2) - 3})`}
-          fontFamily='IBM Plex Sans Condensed'
-          fontWeight='400'
-          fontSize='15'
-          fill='#2b2b2b'
+          transform={`
+            translate(${(this.metrics.padding / 2) - 3}, ${(-this.metrics.padding / 2) - 3})
+          `}
+          fontFamily="IBM Plex Sans Condensed"
+          fontWeight="400"
+          fontSize="15"
+          fill="#2b2b2b"
         >
           {attribute.key} {unit}
         </text>
-        <g id='rows' transform={`translate(0, ${this.metrics.padding / 2})`}>
+        <g id="rows" transform={`translate(0, ${this.metrics.padding / 2})`}>
           {rows}
         </g>
       </g>
@@ -994,30 +941,28 @@ export default class Vis extends Component {
   }
 
   renderBars(data, isRemoved) {
-    return data.map((d, i) => {
-      return (
-        <StackedBarRow
-          key={d.id}
-          data={d}
-          index={i}
-          labelKey={this.state.labelKey}
-          filters={this.state.filters}
-          metrics={this.metrics}
-          scales={this.scales}
-          tags={this.state.tags.filter(t => t.id !== 'none')}
-          toggleTag={this._toggleTag}
-          isPercent={(this.state.mode === 'percent')}
-          isRemoved={isRemoved}
-          highlightedDatum={this.state.highlightedDatum}
-          removeDatum={() => { removeRows(this, [d]) }}
-          restoreDatum={() => { restoreRows(this, [d]) }}
-          hoverDatum={this._hoverDatum}
-          clickDatum={this._clickDatum}
-          updatePhinchName={this.updatePhinchName}
-          renderSVG={this.state.renderSVG}
-        />
-      );
-    });
+    return data.map((d, i) => (
+      <StackedBarRow
+        key={d.id}
+        data={d}
+        index={i}
+        labelKey={this.state.labelKey}
+        filters={this.state.filters}
+        metrics={this.metrics}
+        scales={this.scales}
+        tags={this.state.tags.filter(t => t.id !== 'none')}
+        toggleTag={this._toggleTag}
+        isPercent={(this.state.mode === 'percent')}
+        isRemoved={isRemoved}
+        highlightedDatum={this.state.highlightedDatum}
+        removeDatum={() => { removeRows(this, [d]); }}
+        restoreDatum={() => { restoreRows(this, [d]); }}
+        hoverDatum={this._hoverDatum}
+        clickDatum={this._clickDatum}
+        updatePhinchName={this.updatePhinchName}
+        renderSVG={this.state.renderSVG}
+      />
+    ));
   }
 
   updateAttributeValues(attribute, data) {
@@ -1029,49 +974,47 @@ export default class Vis extends Component {
           const [sample] = data.filter(d => d.sampleName === s);
           return sample;
         }).filter(s => s !== undefined);
-        a.reads = a.sampleObjects.map(s => s.reads).reduce((a, v) => a + v, 0);
+        a.reads = a.sampleObjects.map(s => s.reads).reduce((ac, v) => ac + v, 0);
         a.sequences = nest()
-          .key(a => a.name)
+          .key(s => s.name)
           .entries(a.sampleObjects
             .map(s => s.sequences)
-            .reduce((a, v) => a.concat(v), [])
-          ).map(s => {
-            return {
-              name: s.key,
-              reads: s.values.map(v => v.reads).reduce((a, v) => a + v, 0),
-              taxonomy: s.values[0].taxonomy,
-            };
-          });
+            .reduce((ac, v) => ac.concat(v), []))
+          .map(s => ({
+            name: s.key,
+            reads: s.values.map(v => v.reads).reduce((ac, v) => ac + v, 0),
+            taxonomy: s.values[0].taxonomy,
+          }));
         return a;
       });
     }
   }
 
   renderAttributesSelect() {
-    const options = [<option key={'none'} value={''}>{'None'}</option>]
-      .concat(Object.keys(this.attributes).map(a => {
-        return <option key={a} value={a}>{a}</option>;
-      }));
+    const options = [<option key="none" value="">None</option>]
+      .concat(Object.keys(this.attributes).map(a => <option key={a} value={a}>{a}</option>));
     const onSelectChange = (event) => {
       const selectedAttribute = event.target.value;
       this.updateAttributeValues(selectedAttribute, this.state.data);
-      this.setState({ selectedAttribute }, () => { 
-          this.save(this.setResult);
-        });
+      this.setState({ selectedAttribute }, () => {
+        this.save(this.setResult);
+      });
     };
     const active = (this.state.selectedAttribute !== '') ? styles.selected : '';
     return (
       <div className={styles.inlineControl}>
-        <label htmlFor='attributesSelect'>Attributes</label>
-        <select
-          id='attributesSelect'
-          onChange={onSelectChange}
-          className={`${active}`}
-          style={{marginRight:0}}
-          value={this.state.selectedAttribute}
-        >
-          {options}
-        </select>
+        <label htmlFor="attributesSelect">
+          {'Attributes '}
+          <select
+            id="attributesSelect"
+            onChange={onSelectChange}
+            className={`${active}`}
+            style={{ marginRight: 0 }}
+            value={this.state.selectedAttribute}
+          >
+            {options}
+          </select>
+        </label>
       </div>
     );
   }
@@ -1087,36 +1030,33 @@ export default class Vis extends Component {
         name: 'Sample Name',
       },
     ];
-    const options = showOptions.map(o => {
-      return <option key={o.id} value={o.id}>{o.name}</option>;
-    });
+    const options = showOptions.map(o => <option key={o.id} value={o.id}>{o.name}</option>);
     const onSelectChange = (event) => {
       const labelKey = event.target.value;
       this.sort.show = labelKey;
-      this.setState({ labelKey }, () => { 
-          this.save(this.setResult);
-        });
+      this.setState({ labelKey }, () => {
+        this.save(this.setResult);
+      });
     };
     return (
       <div className={styles.inlineControl}>
-        <label htmlFor='showSelect'>Show:</label>
-        <select
-          id='showSelect'
-          onChange={onSelectChange}
-          className={styles.inlineControl}
-          value={this.state.labelKey}
-          disabled={this.state.selectedAttribute !== ''}
-        >
-          {options}
-        </select>
+        <label htmlFor="showSelect">
+          {'Show: '}
+          <select
+            id="showSelect"
+            onChange={onSelectChange}
+            className={styles.inlineControl}
+            value={this.state.labelKey}
+            disabled={this.state.selectedAttribute !== ''}
+          >
+            {options}
+          </select>
+        </label>
       </div>
     );
   }
 
   renderSort() {
-    /* 
-      TODO: add deselect when manually sorted
-    */
     const sortOptions = [
       {
         id: 'biomid',
@@ -1131,9 +1071,7 @@ export default class Vis extends Component {
         name: 'Sequence Reads',
       },
     ];
-    const options = sortOptions.map(o => {
-      return <option key={o.id} value={o.id}>{o.name}</option>;
-    });
+    const options = sortOptions.map(o => <option key={o.id} value={o.id}>{o.name}</option>);
     const onSelectChange = (event) => {
       this.sort.key = event.target.value;
       visSortBy(this, this.state.data, true);
@@ -1151,35 +1089,39 @@ export default class Vis extends Component {
     const onRadioChange = (event) => {
       this.sort.reverse = (event.target.name === 'Ascending');
       visSortBy(this, this.state.data, true);
-    }
+    };
     const buttons = radioOptions.map(o => {
       const checked = this.sort.reverse === o.value ? 'checked' : '';
       return (
         <div key={o.name} className={styles.inlineControl}>
-          <input
-            type='radio'
-            id={o.name}
-            key={o.name}
-            name={o.name}
-            checked={checked}
-            onChange={onRadioChange}
-          />
-          <label htmlFor={o.name}>{o.name}</label>
+          <label htmlFor={o.name}>
+            <input
+              type="radio"
+              id={o.name}
+              key={o.name}
+              name={o.name}
+              checked={checked}
+              onChange={onRadioChange}
+            />
+            {o.name}
+          </label>
         </div>
       );
     });
     return (
-      <div className={styles.inlineControl} style={{marginRight: 0}}>
-        <label htmlFor='sortSelect'>Sort by:</label>
-        <select
-          id='sortSelect'
-          onChange={onSelectChange}
-          className={styles.inlineControl}
-          value={this.sort.key}
-          disabled={this.state.selectedAttribute !== ''}
-        >
-          {options}
-        </select>
+      <div className={styles.inlineControl} style={{ marginRight: 0 }}>
+        <label htmlFor="sortSelect">
+          {'Sort by: '}
+          <select
+            id="sortSelect"
+            onChange={onSelectChange}
+            className={styles.inlineControl}
+            value={this.sort.key}
+            disabled={this.state.selectedAttribute !== ''}
+          >
+            {options}
+          </select>
+        </label>
         {buttons}
       </div>
     );
@@ -1199,21 +1141,23 @@ export default class Vis extends Component {
     const toggle = buttons.map(b => {
       const onRadioChange = (event) => {
         this.sort.type = event.target.id;
-        this.setState({mode: event.target.id}, () => { 
-            this.save(this.setResult);
-          });
-      }
+        this.setState({ mode: event.target.id }, () => {
+          this.save(this.setResult);
+        });
+      };
       const checked = this.state.mode === b.id ? 'checked' : '';
       return (
         <div key={b.id} className={styles.inlineControl}>
-          <input
-            type='radio'
-            id={b.id}
-            name={b.name}
-            checked={checked}
-            onChange={onRadioChange}
-          />
-          <label htmlFor={b.value}>{b.name}</label>
+          <label htmlFor={b.id}>
+            <input
+              type="radio"
+              id={b.id}
+              name={b.name}
+              checked={checked}
+              onChange={onRadioChange}
+            />
+            {b.name}
+          </label>
         </div>
       );
     });
@@ -1227,58 +1171,61 @@ export default class Vis extends Component {
   renderLevelSelector(levels) {
     const modalLevel = (this.state.width - 580) < ((800 / 12) * this.levels.length);
     const levelButtons = levels.map((l, i) => {
-        const selected = (l.order <= this.state.level) ? styles.selected : '';
-        return (
+      const selected = (l.order <= this.state.level) ? styles.selected : '';
+      return (
+        <div
+          key={l.name}
+          style={{
+            display: 'inline-block',
+            marginBottom: '4px',
+          }}
+        >
+          {(i === 0) ? '' : (<div className={`${selected} ${styles.dash}`}>—</div>)}
           <div
-            key={l.name}
-            style={{
-              display: 'inline-block',
-              marginBottom: '4px',
-            }}
+            role="button"
+            tabIndex={0}
+            className={`${selected} ${styles.selector}`}
+            onClick={() => this.setLevel(l.order)}
+            onKeyPress={() => this.setLevel(l.order)}
           >
-            {(i === 0) ? '' : (<div className={`${selected} ${styles.dash}`}>—</div>)}
-            <div
-              className={`${selected} ${styles.selector}`}
-              onClick={() => this.setLevel(l.order)}
-            >
-              {l.name}
-            </div>
+            {l.name}
           </div>
-        );
-      });
-    const [currentLevel] = _cloneDeep(this.levels).filter(l => l.order === this.state.level);
-    const levelSelector = modalLevel ? (
-        <Modal
-          buttonTitle={`Level: ${currentLevel.name}`}
-          modalTitle={`Level: ${currentLevel.name}`}
-          buttonPosition={{
-            position: 'relative',
-            height: '24px',
-            borderRadius: '4px',
-            backgroundColor: '#4d4d4d',
-          }}
-          modalPosition={{
-            position: 'absolute',
-            top: 136,
-            left: this.metrics.leftSidebar,
-            width: this.metrics.chartWidth + this.metrics.nonbarWidth - 4,
-            height: '90px',
-            color: 'white',
-          }}
-          data={levelButtons}
-          badge={false}
-        />
-      ) : (
-        <div className={styles.inlineControl}>
-          {levelButtons}
         </div>
       );
+    });
+    const [currentLevel] = _cloneDeep(this.levels).filter(l => l.order === this.state.level);
+    const levelSelector = modalLevel ? (
+      <Modal
+        buttonTitle={`Level: ${currentLevel.name}`}
+        modalTitle={`Level: ${currentLevel.name}`}
+        buttonPosition={{
+          position: 'relative',
+          height: '24px',
+          borderRadius: '4px',
+          backgroundColor: '#4d4d4d',
+        }}
+        modalPosition={{
+          position: 'absolute',
+          top: 136,
+          left: this.metrics.leftSidebar,
+          width: this.metrics.chartWidth + (this.metrics.nonbarWidth - 4),
+          height: '90px',
+          color: 'white',
+        }}
+        data={levelButtons}
+      />
+    ) : (
+      <div className={styles.inlineControl}>
+        {levelButtons}
+      </div>
+    );
     return levelSelector;
   }
 
   renderTopSequences(sequences) {
     const metrics = {
-      width: (this.metrics.chartWidth + this.metrics.nonbarWidth) - (3 + this.metrics.padding * 2),
+      width: (this.metrics.chartWidth + this.metrics.nonbarWidth)
+        - (3 + (this.metrics.padding * 2)),
       rank: 50,
       circle: {
         offset: 75,
@@ -1286,28 +1233,29 @@ export default class Vis extends Component {
       },
       name: 100,
     };
-    metrics.reads = metrics.width - this.metrics.padding / 2;
+    metrics.reads = metrics.width - (this.metrics.padding / 2);
     return sequences.map((s, i) => {
       const color = this.scales.c(s.name);
-      const seqs = s.name.replace(/[a-zA-Z]__/g,'').trim().split(',').filter(q => q);
+      const seqs = s.name.replace(/[a-zA-Z]__/g, '').trim().split(',').filter(q => q);
       const name = seqs[seqs.length - 1];
-      const highlighted = this.state.filters.hasOwnProperty(s.name) && !this.state.renderSVG;
+      const sequenceInFilters = Object.prototype.hasOwnProperty.call(this.state.filters, s.name);
+      const highlighted = sequenceInFilters && !this.state.renderSVG;
+      let textColor = highlighted ? color : '#ffffff';
+      let rectFill = (i % 2 === 0) ? '#121212' : '#000000';
+      if (this.state.renderSVG) {
+        textColor = '#121212';
+        rectFill = (i % 2 === 0) ? '#f4f4f4' : '#ffffff';
+      }
       return (
         <g
-          key={`${s.name}-${i}`}
+          key={s.name}
           id={s.name}
           className={styles.seqRow}
           transform={`translate(${0}, ${this.metrics.sequenceRowHeight * i})`}
-          fill={
-            this.state.renderSVG ? (
-                '#121212'
-              ) : (
-                highlighted ? color : '#ffffff'
-              )
-          }
-          fontFamily='IBM Plex Sans Condensed'
+          fill={textColor}
+          fontFamily="IBM Plex Sans Condensed"
           fontWeight={highlighted ? '400' : '300'}
-          fontSize='12px'
+          fontSize="12px"
           onClick={() => {
             if (highlighted) {
               this.removeFilter(s.name);
@@ -1319,13 +1267,7 @@ export default class Vis extends Component {
           <rect
             width={metrics.width}
             height={this.metrics.sequenceRowHeight}
-            fill={
-              this.state.renderSVG ? (
-                  (i%2 === 0) ? '#f4f4f4' : '#ffffff'
-                ) : (
-                  (i%2 === 0) ? '#121212' : '#000000'
-                )
-            }
+            fill={rectFill}
           />
           <circle
             id={color}
@@ -1335,20 +1277,20 @@ export default class Vis extends Component {
               `translate(${metrics.circle.offset}, ${this.metrics.sequenceRowHeight / 2})`
             }
           />
-          <g id='info' transform={`translate(0, ${this.metrics.sequenceRowHeight / 3 * 2})`}>
+          <g id="info" transform={`translate(0, ${(this.metrics.sequenceRowHeight / 3) * 2})`}>
             <text
-              id='rank'
-              textAnchor='end'
+              id="rank"
+              textAnchor="end"
               transform={`translate(${metrics.rank}, 0)`}
             >
               {s.rank.toLocaleString()}
             </text>
-            <text id='name' transform={`translate(${metrics.name}, 0)`}>
+            <text id="name" transform={`translate(${metrics.name}, 0)`}>
               {name}
             </text>
             <text
-              id='reads'
-              textAnchor='end'
+              id="reads"
+              textAnchor="end"
               transform={`translate(${metrics.reads}, 0)`}
             >
               {s.reads.toLocaleString()}
@@ -1361,88 +1303,99 @@ export default class Vis extends Component {
 
   renderTagFilter() {
     const tagFilter = this.state.showTags ? (
-        <div key='tagFilter' className={styles.tagFilter}>
-          <div
-            className={gstyle.close}
-            style={{
-              margin: '4px 0',
-            }}
-            onClick={() => { this._toggleTags() }}
-          >x</div>
-          {
-            this.state.tags.map(t => {
-              const hasColor = t.color ? true : false;
-              const tagClass = t.id === 'none' ? '' : styles.tag;
-              return (
-                <div
-                  key={`tf-${t.id}`}
-                  style={{
-                    padding: '2px 0',
-                  }}
-                  className={tagClass}
-                >
-                  <label className={gstyle.checkbox}>
-                    <input
-                      type='checkbox'
-                      checked={t.selected}
-                      onChange={(e) => this.filterByTag(e, t)}
-                      style={{ top: 0, left: '-3px' }}
-                    />
-                    <span className={gstyle.checkmark}></span>
-                  </label>
-                  {
-                    hasColor ? (
-                      <div className={gstyle.circle} style={{
+      <div key="tagFilter" className={styles.tagFilter}>
+        <div
+          role="button"
+          tabIndex={0}
+          className={gstyle.close}
+          style={{
+            margin: '4px 0',
+          }}
+          onClick={() => { this._toggleTags(); }}
+          onKeyPress={() => { this._toggleTags(); }}
+        >
+          x
+        </div>
+        {
+          this.state.tags.map(t => {
+            const tagClass = t.id === 'none' ? '' : styles.tag;
+            return (
+              <div
+                key={`tf-${t.id}`}
+                style={{
+                  padding: '2px 0',
+                }}
+                className={tagClass}
+              >
+                <label htmlFor={`c-${t.id}`} className={gstyle.checkbox}>
+                  <input
+                    id={`c-${t.id}`}
+                    type="checkbox"
+                    checked={t.selected}
+                    onChange={(e) => this.filterByTag(e, t)}
+                    style={{ top: 0, left: '-3px' }}
+                  />
+                  <span className={gstyle.checkmark} />
+                </label>
+                {
+                  t.color ? (
+                    <div
+                      className={gstyle.circle}
+                      style={{
                         backgroundColor: t.color,
                         borderColor: '#333333',
                         marginLeft: '4px',
                         opacity: t.selected ? 1 : 0.5,
-                      }} />
-                    ) : ''
-                  }
-                  <input
-                    className={`${gstyle.input} ${styles.tagName} ${t.selected ? styles.selected : ''}`}
-                    type="text"
-                    value={t.name}
-                    id={t.id}
-                    ref={i => this._inputs[t.id] = i}
-                    onChange={(e) => this.updateTagName(e, t)}
-                    onKeyDown={(e) => (e.key === 'Enter') ? this._inputs[t.id].blur() : null}
-                    onMouseOver={this._hoverTag}
-                    onMouseOut={this._unhoverTag}
-                    disabled={!hasColor}
-                  />
-                  <div className={styles.editTag}>edit</div>
-                </div>
-              );
-            })
-          }
-        </div>
-      ) : '';
+                      }}
+                    />
+                  ) : ''
+                }
+                <input
+                  className={`${gstyle.input} ${styles.tagName} ${t.selected ? styles.selected : ''}`}
+                  type="text"
+                  value={t.name}
+                  id={t.id}
+                  ref={i => { this._inputs[t.id] = i; }}
+                  onChange={e => this.updateTagName(e, t)}
+                  onKeyDown={e => (e.key === 'Enter' ? this._inputs[t.id].blur() : null)}
+                  onMouseOver={this._hoverTag}
+                  onFocus={this._hoverTag}
+                  onMouseOut={this._unhoverTag}
+                  onBlur={this._unhoverTag}
+                  disabled={!t.color}
+                />
+                <div className={styles.editTag}>edit</div>
+              </div>
+            );
+          })
+        }
+      </div>
+    ) : '';
     const showTags = this.state.showTags ? styles.selected : '';
     return (
       <div
         className={styles.inlineControl}
       >
         <div
+          role="button"
+          tabIndex={0}
           className={styles.inlineControl}
           onClick={this._toggleTags}
+          onKeyPress={this._toggleTags}
         >
-          <div key='tags' className={`${styles.selector} ${styles.button} ${showTags}`}>Tags</div>
+          <div key="tags" className={`${styles.selector} ${styles.button} ${showTags}`}>Tags</div>
           {
-            this.state.tags.map(t => {
-              return t.color ? (
-                <div
-                  key={`c-${t.id}`}
-                  className={gstyle.circle}
-                  style={{
-                    background: t.color,
-                    opacity: t.selected ? 1 : 0.5,
-                    verticalAlign: 'middle',
-                  }}
-                />
-              ) : '';
-            })
+            this.state.tags.map(t => (t.color ? (
+              <div
+                key={`c-${t.id}`}
+                className={gstyle.circle}
+                style={{
+                  background: t.color,
+                  opacity: t.selected ? 1 : 0.5,
+                  verticalAlign: 'middle',
+                }}
+              />
+            ) : ''))
           }
         </div>
         {tagFilter}
@@ -1453,43 +1406,43 @@ export default class Vis extends Component {
   renderVisual(isAttribute, attribute, unit, sequences) {
     const metrics = _cloneDeep(this.metrics);
     const dataLength = isAttribute ? (
-        attribute.values
-          .filter(v => {
-            if (this.state.showEmptyAttrs) return true;
-            return v.reads > 0;
-          }).length
-      ) : this.state.data.length;
+      attribute.values
+        .filter(v => {
+          if (this.state.showEmptyAttrs) return true;
+          return v.reads > 0;
+        }).length
+    ) : this.state.data.length;
     if (isAttribute) {
       metrics.barContainerHeight = metrics.attrBarContainerHeight;
       metrics.barHeight = metrics.attrBarHeight;
       this.scales.x
-        .domain([0, Math.max(...attribute.values.map(d  => d.reads))])
+        .domain([0, Math.max(...attribute.values.map(d => d.reads))])
         .range([0, this.metrics.chartWidth])
         .clamp();
     }
     const svgWidth = this.metrics.chartWidth + this.metrics.nonbarWidth;
     const svgHeight = (this.metrics.lineHeight * 4) + (
-      metrics.barContainerHeight + (
+      (metrics.barContainerHeight + (
         this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
-      )) * dataLength;
+      )) * dataLength);
     const seqHeight = this.state.renderSVG ? this.metrics.sequenceRowHeight * sequences.length : 0;
     const padding = this.state.renderSVG ? this.metrics.lineHeight * 9 : 0;
     return (
       <svg
-        ref={s => this._svg = s}
+        ref={s => { this._svg = s; }}
         id={this.state.summary.path.slice(-1)}
         version="1.1"
         baseProfile="full"
         xmlns="http://www.w3.org/2000/svg"
         width={svgWidth}
         height={svgHeight + seqHeight + padding}
-        fontFamily='IBM Plex Sans Condensed'
-        fontWeight='200'
-        fontSize='12px'
-        overflow='visible'
+        fontFamily="IBM Plex Sans Condensed"
+        fontWeight="200"
+        fontSize="12px"
+        overflow="visible"
       >
-        <g id='Visual' transform={`translate(${(this.metrics.padding / 2)}, ${0})`}>
-          <g id='Sequence Reads' transform={`translate(${3}, ${this.metrics.lineHeight * 2})`}>
+        <g id="Visual" transform={`translate(${(this.metrics.padding / 2)}, ${0})`}>
+          <g id="Sequence Reads" transform={`translate(${3}, ${this.metrics.lineHeight * 2})`}>
             {
               isAttribute ? (
                 this.renderAttributeBars(attribute, unit, metrics)
@@ -1500,28 +1453,28 @@ export default class Vis extends Component {
           </g>
           {
             this.state.renderSVG ? (
-              <g id='Info'>
-                {this.renderTicks(svgWidth, svgHeight - this.metrics.lineHeight * 2)}
-                <g id='Metadata' transform={`translate(3, ${svgHeight})`}>
-                  <g id='Top Sequences'>
+              <g id="Info">
+                {this.renderTicks(svgWidth, svgHeight - (this.metrics.lineHeight * 2))}
+                <g id="Metadata" transform={`translate(3, ${svgHeight})`}>
+                  <g id="Top Sequences">
                     <text
-                      id='Title'
-                      textAnchor='middle'
-                      fill='#808080'
+                      id="Title"
+                      textAnchor="middle"
+                      fill="#808080"
                       transform={`translate(${svgWidth / 2}, ${this.metrics.lineHeight * 1.5})`}
                     >
                       Top Sequences
                     </text>
                     <g
-                      id='Ranked Sequences'
+                      id="Ranked Sequences"
                       transform={`translate(0, ${this.metrics.lineHeight * 2})`}
                     >
                       {this.renderTopSequences(sequences)}
                     </g>
                   </g>
                   <g
-                    id='Citation'
-                    transform={`translate(0, ${seqHeight + this.metrics.lineHeight * 3})`}
+                    id="Citation"
+                    transform={`translate(0, ${seqHeight + (this.metrics.lineHeight * 3)})`}
                   >
                     <text transform={`translate(0, ${this.metrics.lineHeight * 1})`}>
                       Please cite Phinch as:
@@ -1530,7 +1483,7 @@ export default class Vis extends Component {
                       Bik HM, Pitch Interactive (2014)
                     </text>
                     <text transform={`translate(0, ${this.metrics.lineHeight * 3})`}>
-                      Phinch: An interactive, exploratory data visualization framework for -Omic datasets
+                      Phinch: An interactive, exploratory data visualization framework for -Omic datasets {/* eslint-disable-line max-len */}
                     </text>
                     <text transform={`translate(0, ${this.metrics.lineHeight * 4})`}>
                       bioRxiv 009944; https://doi.org/10.1101/009944
@@ -1554,36 +1507,33 @@ export default class Vis extends Component {
       .clamp();
 
     const color = this.state.highlightedDatum ? (
-        this.scales.c(this.state.highlightedDatum.datum.name)
-      ) : '';
+      this.scales.c(this.state.highlightedDatum.datum.name)
+    ) : '';
     const tooltip = this.state.showTooltip ? (
-        <StackedBarTooltip
-          {...this.state.highlightedDatum}
-          totalDataReads={this.totalDataReads}
-          color={color}
-        />
-      ) : null;
+      <StackedBarTooltip
+        {...this.state.highlightedDatum}
+        totalDataReads={this.totalDataReads}
+        color={color}
+      />
+    ) : null;
 
     const sequences = Object.keys(this.readsBySequence)
-      .map(k => {
-        return {
-          name: k,
-          reads: this.readsBySequence[k],
-        };
-      }).sort((a, b) => {
-        return b.reads - a.reads;
-      }).map((s, i) => {
+      .map(k => ({ name: k, reads: this.readsBySequence[k] }))
+      .sort((a, b) => b.reads - a.reads)
+      .map((s, i) => {
         s.rank = (i + 1);
         return s;
       });
 
     const result = this.state.result ? (
-      <div 
+      <div
+        role="button"
+        tabIndex={0}
         className={gstyle.button}
         style={{
           position: 'absolute',
-          top: '96px', // top: '148px',
-          left: '16px', // left: '90px',
+          top: '96px',
+          left: '16px',
           width: '68px',
           textAlign: 'center',
           zIndex: 10,
@@ -1595,16 +1545,18 @@ export default class Vis extends Component {
           background: (this.state.result === 'error') ? '#ff2514' : '#00da3e',
         }}
         onClick={this.clearResult}
+        onKeyPress={this.clearResult}
       >
-          {this.state.result}
+        {this.state.result}
       </div>
     ) : '';
 
     const spacer = <div className={styles.spacer} />;
-
     const isAttribute = !(this.state.selectedAttribute === '');
     const attribute = isAttribute ? this.attributes[this.state.selectedAttribute] : null;
-    const unit = isAttribute ? (attribute.unit ? `(${attribute.unit})` : '') : null;
+    const unit = isAttribute ? attribute.unit : null;
+    const ticksWidth = this.metrics.chartWidth + this.metrics.nonbarWidth;
+    const ticks = this.renderTicks(ticksWidth, this.metrics.chartHeight);
 
     return (
       <div className={gstyle.container}>
@@ -1612,7 +1564,7 @@ export default class Vis extends Component {
         {result}
         <div className={gstyle.logo}>
           <Link to="/">
-            <img src={logo} alt='Phinch' />
+            <img src={logo} alt="Phinch" />
           </Link>
         </div>
         <div className={gstyle.header}>
@@ -1645,7 +1597,7 @@ export default class Vis extends Component {
           showLeftSidebar={this.state.showLeftSidebar}
           leftSidebar={this.metrics.leftSidebar}
           leftMin={this.metrics.left.min}
-          chartHeight={this.metrics.chartHeight + this.metrics.lineHeight * 2}
+          chartHeight={this.metrics.chartHeight + (this.metrics.lineHeight * 2)}
           items={this.menuItems}
           toggleMenu={this.toggleMenu}
         />
@@ -1658,14 +1610,14 @@ export default class Vis extends Component {
           <div
             className={styles.axis}
             style={{
-              width: (this.metrics.chartWidth + this.metrics.nonbarWidth - this.metrics.padding),
+              width: this.metrics.chartWidth + (this.metrics.nonbarWidth - this.metrics.padding),
               height: this.metrics.lineHeight * 2.5,
             }}
           >
             <svg
-              fontFamily='IBM Plex Sans Condensed'
-              fontWeight='200'
-              fontSize='12px'
+              fontFamily="IBM Plex Sans Condensed"
+              fontWeight="200"
+              fontSize="12px"
               style={{
                 position: 'absolute',
                 left: 0,
@@ -1675,15 +1627,21 @@ export default class Vis extends Component {
                 height: this.metrics.chartHeight,
               }}
             >
-              {this.renderTicks((this.metrics.chartWidth + this.metrics.nonbarWidth), this.metrics.chartHeight)}
+              {ticks}
             </svg>
             {
               isAttribute ? (
                 <div className={styles.attrInfo}>
                   <div className={styles.attrLabel}>
-                    {attribute.key} {unit}
+                    {attribute.key} {attribute.unit ? `(${attribute.unit})` : ''}
                   </div>
-                  <div className={styles.attrToggle} onClick={this.toggleEmptyAttrs}>
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    className={styles.attrToggle}
+                    onClick={this.toggleEmptyAttrs}
+                    onKeyPress={this.toggleEmptyAttrs}
+                  >
                     {`${this.state.showEmptyAttrs ? 'Hide' : 'Show'} Empty`}
                   </div>
                 </div>
@@ -1704,42 +1662,45 @@ export default class Vis extends Component {
         {this.renderFilters()}
         {tooltip}
         <Modal
-          buttonTitle={'Top Sequences'}
-          modalTitle={'Top Sequences'}
+          buttonTitle="Top Sequences"
+          modalTitle="Top Sequences"
           buttonPosition={{
             position: 'absolute',
             bottom: 0,
             marginBottom: '-8px',
-            left: this.metrics.leftSidebar + this.metrics.barInfoWidth + (this.metrics.padding / 2) + 2,
+            left: (
+              this.metrics.leftSidebar + this.metrics.barInfoWidth + (this.metrics.padding / 2) + 2
+            ),
           }}
           modalPosition={{
             position: 'absolute',
             bottom: this.metrics.padding * 2,
             left: this.metrics.leftSidebar,
-            width: this.metrics.chartWidth + this.metrics.nonbarWidth - 4,
+            width: this.metrics.chartWidth + (this.metrics.nonbarWidth - 4),
           }}
           data={this.renderTopSequences(sequences)}
-          svgContainer={true}
+          svgContainer
           svgHeight={this.metrics.sequenceRowHeight * sequences.length}
-          badge={false}
         />
         <Modal
-          buttonTitle={'Archived Samples'}
-          modalTitle={'Archived Samples'}
+          buttonTitle="Archived Samples"
+          modalTitle="Archived Samples"
           buttonPosition={{
             position: 'absolute',
             bottom: 0,
             marginBottom: '-8px',
-            left: this.metrics.leftSidebar + this.metrics.barInfoWidth + this.metrics.padding + 2 + 130,
+            left: (
+              this.metrics.leftSidebar + this.metrics.barInfoWidth + this.metrics.padding + 2 + 130
+            ),
           }}
           modalPosition={{
             position: 'absolute',
             bottom: this.metrics.padding * 2,
             left: this.metrics.leftSidebar + 3,
-            width: this.metrics.chartWidth + this.metrics.nonbarWidth - 4,
+            width: this.metrics.chartWidth + (this.metrics.nonbarWidth - 4),
           }}
           data={this.renderBars(this.state.deleted, true)}
-          svgContainer={true}
+          svgContainer
           svgHeight={((this.metrics.barContainerHeight +
               (this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length)
             ) * this.state.deleted.length

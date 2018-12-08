@@ -25,6 +25,7 @@
 }
 
 .name {
+  display: inline-block;
   font-size: 14px;
   font-weight: 400;
   vertical-align: top;

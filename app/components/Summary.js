@@ -4,6 +4,9 @@ import styles from './Summary.css';
 
 export default class StackedBar extends Component {
   render() {
+    this.props.summary.size = this.props.summary.size || 0;
+    this.props.summary.samples = this.props.summary.samples || 0;
+    this.props.summary.observations = this.props.summary.observations || 0;
     return (
       <div className={styles.info}>
         <div className={styles.segment}>
@@ -36,4 +39,4 @@ export default class StackedBar extends Component {
       </div>
     );
   }
-};
+}

@@ -17,9 +17,12 @@
 
 .remove {
   position: absolute;
-  background: #666666;
+  top: 1rem;
+  right: 0.5rem;
+  width: 1rem;
+  height: 1rem;
   border-radius: 2px;
-  margin-left: 0.5rem;
+  background: #666666;
   cursor: pointer;
 }
 
