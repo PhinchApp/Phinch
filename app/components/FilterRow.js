@@ -11,7 +11,7 @@ import gstyle from './general.css';
 export default class FilterRow extends Component {
   render() {
     const action = this.props.isRemoved ? (
-      <div className={styles.cell}>
+      <div className={`${styles.cell} ${styles.noLeft}`}>
         <div
           role="button"
           tabIndex={0}
@@ -45,6 +45,7 @@ export default class FilterRow extends Component {
         className={className}
         key={this.props.data.sampleName}
         data-id={this.props.data.order}
+        data-group={this.props.isRemoved ? 'removed' : 'data'}
         draggable="true"
         onDragEnd={this.props.dragEnd}
         onDragOver={this.props.dragOver}

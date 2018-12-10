@@ -314,7 +314,9 @@ export default class Filter extends Component {
         () => {
           this.sort.key = c.id;
           this.sort.reverse = !this.sort.reverse;
-          visSortBy(this, this.state.data, true);
+          const data = visSortBy(this, this.state.data, false);
+          const deleted = visSortBy(this, this.state.deleted, false);
+          this.setState({ data, deleted }, () => this.save(this.setResult));
         }
       );
       const arrow = (c.id !== 'order') ? (getSortArrow(this, c.id)) : '';
@@ -346,9 +348,9 @@ export default class Filter extends Component {
         isRemoved={isRemoved}
         columnWidths={this.columnWidths}
         tableWidth={this.metrics.tableWidth}
-        dragEnd={isRemoved ? null : this.dragEnd}
-        dragOver={isRemoved ? null : this.dragOver}
-        dragStart={isRemoved ? null : this.dragStart}
+        dragEnd={this.dragEnd}
+        dragOver={this.dragOver}
+        dragStart={this.dragStart}
         updatePhinchName={this.updatePhinchName}
         removeDatum={() => { removeRows(this, [d]); }}
         restoreDatum={() => { restoreRows(this, [d]); }}
@@ -540,26 +542,60 @@ export default class Filter extends Component {
   }
 
   dragEnd(e) {
+    const source = Number(this.dragged.dataset.id);
     let target = Number(this.over.dataset.id);
     if ((e.clientY - this.over.offsetTop) > (this.over.offsetHeight / 2)) {
       target += 1;
     }
-    if (this.dragged <= target) {
+    if (source <= target) {
       target -= 1;
     }
-    let data = _cloneDeep(this.state.data);
-    data.splice(target, 0, data.splice(this.dragged, 1)[0]);
-    data = data.map((d, i) => {
-      d.order = i;
-      return d;
-    });
+
+    this.sort.reverse = true;
+    this.sort.key = 'order';
+
+    if (this.dragged.dataset.group === this.over.dataset.group) {
+      const isRemoved = this.over.dataset.group === 'removed';
+      let data = isRemoved ? _cloneDeep(this.state.deleted) : _cloneDeep(this.state.data);
+      data.splice(target, 0, data.splice(source, 1)[0]);
+      data = data.map((d, i) => {
+        d.order = i;
+        return d;
+      });
+      data = visSortBy(this, data, false);
+      if (isRemoved) {
+        this.setState({ deleted: data }, this.setResult);
+      } else {
+        this.setState({ data }, this.setResult);
+      }
+    } else {
+      let data = _cloneDeep(this.state.data);
+      let deleted = _cloneDeep(this.state.deleted);
+      if (this.dragged.dataset.group === 'data') {
+        const [datum] = data.splice(source, 1);
+        deleted.splice(target, 0, datum);
+      } else {
+        const [datum] = deleted.splice(source, 1);
+        data.splice(target, 0, datum);
+      }
+      data = data.map((d, i) => {
+        d.order = 1;
+        return d;
+      });
+      deleted = deleted.map((d, i) => {
+        d.order = 1;
+        return d;
+      });
+      data = visSortBy(this, data, false);
+      deleted = visSortBy(this, deleted, false);
+      this.setState({ data, deleted }, this.setResult);
+    }
+
     this.over.style = null;
     this.over = null;
     this.dragged = null;
-    this.sort.reverse = true;
-    this.sort.key = 'order';
-    visSortBy(this, data, true);
   }
+
   dragOver(e) {
     e.preventDefault();
     if (this.over) {
@@ -569,8 +605,9 @@ export default class Filter extends Component {
     // I know this isn't the React way, but re-rendering the whole table takes forever
     this.over.style = 'background: #e4e4e4; height: 3rem; vertical-align: top;';
   }
+
   dragStart(e) {
-    this.dragged = Number(e.currentTarget.dataset.id);
+    this.dragged = e.currentTarget;
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/html', null);
   }

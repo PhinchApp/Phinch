@@ -30,7 +30,8 @@ export function updateFilters(filters, attribute, min, max, callback) {
 
 export function removeRows(context, rows) {
   const data = context.state.data.filter(d => !rows.includes(d));
-  const deleted = context.state.deleted.concat(rows);
+  // const deleted = context.state.deleted.concat(rows);
+  const deleted = visSortBy(context, context.state.deleted.concat(rows), false);
   context.setState({ data, deleted }, () => {
     context.save(context.setResult);
   });
