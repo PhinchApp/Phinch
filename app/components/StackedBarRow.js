@@ -269,8 +269,10 @@ export default class StackedBarRow extends Component {
         {this.props.isRemoved ? 'Restore' : 'Archive'}
       </div>
     ) : '';
-    const yOffset = this.props.metrics.padding + ((this.props.metrics.barContainerHeight
-      + (this.props.metrics.miniBarContainerHeight * miniBarCount)) * this.props.index);
+    // Replaced by List component in StackedBarContainer
+    // const yOffset = this.props.metrics.padding + ((this.props.metrics.barContainerHeight
+    //   + (this.props.metrics.miniBarContainerHeight * miniBarCount)) * this.props.index);
+    //
     const rowColor = (this.props.index % 2 === 0) ? '#ffffff' : '#f4f4f4';
     return (
       <g
@@ -280,7 +282,9 @@ export default class StackedBarRow extends Component {
           this.props.metrics.barContainerHeight
           + (this.props.metrics.miniBarContainerHeight * miniBarCount)
         }
-        transform={`translate(1, ${yOffset})`}
+        // transform={`translate(1, ${yOffset})`}
+        transform={`translate(1, ${this.props.yOffset})`}
+        // transform={`translate(1, 0)`}
         onMouseEnter={this._showEditable}
         onMouseLeave={this._hideEditable}
       >
@@ -356,7 +360,10 @@ export default class StackedBarRow extends Component {
             </div>
           </foreignObject>
         </g>
-        <g id="Bars" transform={`translate(${this.props.metrics.barInfoWidth - 2}, 0)`}>
+        <g
+          id="Bars"
+          transform={`translate(${this.props.metrics.barInfoWidth + (this.props.metrics.padding / 2)}, 0)`}
+        >
           <StackedBar
             onHoverDatum={this.props.hoverDatum}
             onClickDatum={this.props.clickDatum}

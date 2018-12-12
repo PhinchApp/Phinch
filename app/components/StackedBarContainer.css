@@ -1,0 +1,11 @@
+.svglist {
+  margin-top: 42px;
+  will-change: auto !important;
+}
+
+.svglist > svg {
+  font-family: 'IBM Plex Sans Condensed';
+  font-weight: 200;
+  font-size: 12px;
+  padding-top: 6px;
+}

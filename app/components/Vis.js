@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
+import { FixedSizeList as List } from 'react-window';
 
 import _sortBy from 'lodash.sortby';
 import _debounce from 'lodash.debounce';
@@ -20,7 +21,9 @@ import palette from '../palette';
 
 import Search from './Search';
 import SideMenu from './SideMenu';
+import Sequence from './Sequence';
 import StackedBarRow from './StackedBarRow';
+import StackedBarContainer from './StackedBarContainer';
 import StackedBarTooltip from './StackedBarTooltip';
 import FilterChart from './FilterChart';
 import Summary from './Summary';
@@ -37,7 +40,6 @@ export default class Vis extends Component {
 
     this.state = {
       summary: DataContainer.getSummary(),
-      initdata: DataContainer.getFilteredData(),
       names: [],
       data: [],
       preData: [],
@@ -60,10 +62,13 @@ export default class Vis extends Component {
       showEmptyAttrs: true,
       result: null,
       renderSVG: false,
+      // renderSVG: true,
       dialogVisible: false,
     };
 
     this._inputs = {};
+
+    this.initdata = DataContainer.getFilteredData();
 
     this.attributes = DataContainer.getAttributes();
 
@@ -172,7 +177,7 @@ export default class Vis extends Component {
 
     this.totalDataReads = 0;
 
-    if (Object.keys(this.state.initdata).length === 0) {
+    if (Object.keys(this.initdata).length === 0) {
       this.state.redirect = '/';
     } else {
       // move to config / metadata
@@ -183,7 +188,7 @@ export default class Vis extends Component {
       const uniqTaxa = [
         ...new Set([]
           .concat(...[
-            ...new Set(this.state.initdata.rows
+            ...new Set(this.initdata.rows
               .map(r => r.metadata.taxonomy.filter(t => t.includes('__'))
                 .map(t => t.split('__')[0])
                 .join('|')))
@@ -272,7 +277,7 @@ export default class Vis extends Component {
       //
       this.state.data = visSortBy(
         this,
-        this.formatTaxonomyData(this.state.initdata, this.state.level),
+        this.formatTaxonomyData(this.initdata, this.state.level),
         false,
       );
       //
@@ -630,6 +635,7 @@ export default class Vis extends Component {
         pointerEvents="none"
         textAnchor="middle"
         fill="#808080"
+        transform={`translate(${this.metrics.padding / 2}, 0)`}
       >
         <text
           id="axis-title"
@@ -643,7 +649,7 @@ export default class Vis extends Component {
         <g
           id="axis-labels"
           transform={`translate(
-            ${this.metrics.barInfoWidth + 3},
+            ${this.metrics.barInfoWidth + 2},
             ${this.metrics.lineHeight}
           )`}
           width={(this.state.width - (this.metrics.padding * 2))}
@@ -941,28 +947,33 @@ export default class Vis extends Component {
   }
 
   renderBars(data, isRemoved) {
-    return data.map((d, i) => (
-      <StackedBarRow
-        key={d.id}
-        data={d}
-        index={i}
-        labelKey={this.state.labelKey}
-        filters={this.state.filters}
-        metrics={this.metrics}
-        scales={this.scales}
-        tags={this.state.tags.filter(t => t.id !== 'none')}
-        toggleTag={this._toggleTag}
-        isPercent={(this.state.mode === 'percent')}
-        isRemoved={isRemoved}
-        highlightedDatum={this.state.highlightedDatum}
-        removeDatum={() => { removeRows(this, [d]); }}
-        restoreDatum={() => { restoreRows(this, [d]); }}
-        hoverDatum={this._hoverDatum}
-        clickDatum={this._clickDatum}
-        updatePhinchName={this.updatePhinchName}
-        renderSVG={this.state.renderSVG}
-      />
-    ));
+    return data.map((d, i) => {
+      const yOffset = this.metrics.padding + ((this.metrics.barContainerHeight
+        + (this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length)) * i);
+      return (
+        <StackedBarRow
+          key={d.id}
+          data={d}
+          index={i}
+          yOffset={yOffset}
+          labelKey={this.state.labelKey}
+          filters={this.state.filters}
+          metrics={this.metrics}
+          scales={this.scales}
+          tags={this.state.tags.filter(t => t.id !== 'none')}
+          toggleTag={this._toggleTag}
+          isPercent={(this.state.mode === 'percent')}
+          isRemoved={isRemoved}
+          highlightedDatum={this.state.highlightedDatum}
+          removeDatum={() => { removeRows(this, [d]); }}
+          restoreDatum={() => { restoreRows(this, [d]); }}
+          hoverDatum={this._hoverDatum}
+          clickDatum={this._clickDatum}
+          updatePhinchName={this.updatePhinchName}
+          renderSVG={this.state.renderSVG}
+        />
+      );
+    });
   }
 
   updateAttributeValues(attribute, data) {
@@ -1223,80 +1234,19 @@ export default class Vis extends Component {
   }
 
   renderTopSequences(sequences) {
-    const metrics = {
-      width: (this.metrics.chartWidth + this.metrics.nonbarWidth)
-        - (3 + (this.metrics.padding * 2)),
-      rank: 50,
-      circle: {
-        offset: 75,
-        radius: this.metrics.sequenceRowHeight / 3,
-      },
-      name: 100,
-    };
-    metrics.reads = metrics.width - (this.metrics.padding / 2);
     return sequences.map((s, i) => {
-      const color = this.scales.c(s.name);
-      const seqs = s.name.replace(/[a-zA-Z]__/g, '').trim().split(',').filter(q => q);
-      const name = seqs[seqs.length - 1];
-      const sequenceInFilters = Object.prototype.hasOwnProperty.call(this.state.filters, s.name);
-      const highlighted = sequenceInFilters && !this.state.renderSVG;
-      let textColor = highlighted ? color : '#ffffff';
-      let rectFill = (i % 2 === 0) ? '#121212' : '#000000';
-      if (this.state.renderSVG) {
-        textColor = '#121212';
-        rectFill = (i % 2 === 0) ? '#f4f4f4' : '#ffffff';
-      }
       return (
-        <g
-          key={s.name}
-          id={s.name}
-          className={styles.seqRow}
-          transform={`translate(${0}, ${this.metrics.sequenceRowHeight * i})`}
-          fill={textColor}
-          fontFamily="IBM Plex Sans Condensed"
-          fontWeight={highlighted ? '400' : '300'}
-          fontSize="12px"
-          onClick={() => {
-            if (highlighted) {
-              this.removeFilter(s.name);
-            } else {
-              this._clickDatum(s);
-            }
-          }}
-        >
-          <rect
-            width={metrics.width}
-            height={this.metrics.sequenceRowHeight}
-            fill={rectFill}
-          />
-          <circle
-            id={color}
-            fill={color}
-            r={metrics.circle.radius}
-            transform={
-              `translate(${metrics.circle.offset}, ${this.metrics.sequenceRowHeight / 2})`
-            }
-          />
-          <g id="info" transform={`translate(0, ${(this.metrics.sequenceRowHeight / 3) * 2})`}>
-            <text
-              id="rank"
-              textAnchor="end"
-              transform={`translate(${metrics.rank}, 0)`}
-            >
-              {s.rank.toLocaleString()}
-            </text>
-            <text id="name" transform={`translate(${metrics.name}, 0)`}>
-              {name}
-            </text>
-            <text
-              id="reads"
-              textAnchor="end"
-              transform={`translate(${metrics.reads}, 0)`}
-            >
-              {s.reads.toLocaleString()}
-            </text>
-          </g>
-        </g>
+        <Sequence
+          seq={s}
+          index={i}
+          scales={this.scales}
+          metrics={this.metrics}
+          filters={this.state.filters}
+          renderSVG={this.state.renderSVG}
+          yOffset={this.metrics.sequenceRowHeight * i}
+          removeFilter={this.removeFilter}
+          clickDatum={this._clickDatum}
+        />
       );
     });
   }
@@ -1403,101 +1353,6 @@ export default class Vis extends Component {
     );
   }
 
-  renderVisual(isAttribute, attribute, unit, sequences) {
-    const metrics = _cloneDeep(this.metrics);
-    const dataLength = isAttribute ? (
-      attribute.values
-        .filter(v => {
-          if (this.state.showEmptyAttrs) return true;
-          return v.reads > 0;
-        }).length
-    ) : this.state.data.length;
-    if (isAttribute) {
-      metrics.barContainerHeight = metrics.attrBarContainerHeight;
-      metrics.barHeight = metrics.attrBarHeight;
-      this.scales.x
-        .domain([0, Math.max(...attribute.values.map(d => d.reads))])
-        .range([0, this.metrics.chartWidth])
-        .clamp();
-    }
-    const svgWidth = this.metrics.chartWidth + this.metrics.nonbarWidth;
-    const svgHeight = (this.metrics.lineHeight * 4) + (
-      (metrics.barContainerHeight + (
-        this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
-      )) * dataLength);
-    const seqHeight = this.state.renderSVG ? this.metrics.sequenceRowHeight * sequences.length : 0;
-    const padding = this.state.renderSVG ? this.metrics.lineHeight * 9 : 0;
-    return (
-      <svg
-        ref={s => { this._svg = s; }}
-        id={this.state.summary.path.slice(-1)}
-        version="1.1"
-        baseProfile="full"
-        xmlns="http://www.w3.org/2000/svg"
-        width={svgWidth}
-        height={svgHeight + seqHeight + padding}
-        fontFamily="IBM Plex Sans Condensed"
-        fontWeight="200"
-        fontSize="12px"
-        overflow="visible"
-      >
-        <g id="Visual" transform={`translate(${(this.metrics.padding / 2)}, ${0})`}>
-          <g id="Sequence Reads" transform={`translate(${3}, ${this.metrics.lineHeight * 2})`}>
-            {
-              isAttribute ? (
-                this.renderAttributeBars(attribute, unit, metrics)
-              ) : (
-                this.renderBars(this.state.data, false)
-              )
-            }
-          </g>
-          {
-            this.state.renderSVG ? (
-              <g id="Info">
-                {this.renderTicks(svgWidth, svgHeight - (this.metrics.lineHeight * 2))}
-                <g id="Metadata" transform={`translate(3, ${svgHeight})`}>
-                  <g id="Top Sequences">
-                    <text
-                      id="Title"
-                      textAnchor="middle"
-                      fill="#808080"
-                      transform={`translate(${svgWidth / 2}, ${this.metrics.lineHeight * 1.5})`}
-                    >
-                      Top Sequences
-                    </text>
-                    <g
-                      id="Ranked Sequences"
-                      transform={`translate(0, ${this.metrics.lineHeight * 2})`}
-                    >
-                      {this.renderTopSequences(sequences)}
-                    </g>
-                  </g>
-                  <g
-                    id="Citation"
-                    transform={`translate(0, ${seqHeight + (this.metrics.lineHeight * 3)})`}
-                  >
-                    <text transform={`translate(0, ${this.metrics.lineHeight * 1})`}>
-                      Please cite Phinch as:
-                    </text>
-                    <text transform={`translate(0, ${this.metrics.lineHeight * 2})`}>
-                      Bik HM, Pitch Interactive (2014)
-                    </text>
-                    <text transform={`translate(0, ${this.metrics.lineHeight * 3})`}>
-                      Phinch: An interactive, exploratory data visualization framework for -Omic datasets {/* eslint-disable-line max-len */}
-                    </text>
-                    <text transform={`translate(0, ${this.metrics.lineHeight * 4})`}>
-                      bioRxiv 009944; https://doi.org/10.1101/009944
-                    </text>
-                  </g>
-                </g>
-              </g>
-            ) : ''
-          }
-        </g>
-      </svg>
-    );
-  }
-
   render() {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
 
@@ -1553,10 +1408,45 @@ export default class Vis extends Component {
 
     const spacer = <div className={styles.spacer} />;
     const isAttribute = !(this.state.selectedAttribute === '');
-    const attribute = isAttribute ? this.attributes[this.state.selectedAttribute] : null;
+    const attribute = isAttribute ? _cloneDeep(this.attributes[this.state.selectedAttribute]) : null;
+    if (isAttribute) {
+      attribute.values = attribute.values
+        .filter(v => {
+          if (this.state.showEmptyAttrs) return true;
+          return v.reads > 0;
+        })
+        .sort((a, b) => {
+          if (this.sort.reverse) {
+            if (a.value === 'no_data') return -Infinity;
+            if (b.value === 'no_data') return +Infinity;
+            if (a.value < b.value) return -1;
+            if (a.value > b.value) return 1;
+          } else {
+            if (b.value === 'no_data') return -Infinity;
+            if (a.value === 'no_data') return +Infinity;
+            if (b.value < a.value) return -1;
+            if (b.value > a.value) return 1;
+          }
+          return 0;
+        });
+    }
     const unit = isAttribute ? attribute.unit : null;
     const ticksWidth = this.metrics.chartWidth + this.metrics.nonbarWidth;
-    const ticks = this.renderTicks(ticksWidth, this.metrics.chartHeight);
+
+    const dataLength = isAttribute ? (
+      attribute.values
+        .filter(v => {
+          if (this.state.showEmptyAttrs) return true;
+          return v.reads > 0;
+        }).length
+    ) : this.state.data.length;
+    //
+    const svgHeight = (this.metrics.lineHeight * 4) + (
+      (this.metrics.barContainerHeight + (
+        this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
+      )) * dataLength);
+    const ticks = this.renderTicks(ticksWidth, svgHeight);
+    const topSequences = this.renderTopSequences(sequences);
 
     return (
       <div className={gstyle.container}>
@@ -1611,7 +1501,8 @@ export default class Vis extends Component {
             className={styles.axis}
             style={{
               width: this.metrics.chartWidth + (this.metrics.nonbarWidth - this.metrics.padding),
-              height: this.metrics.lineHeight * 2.5,
+              // height: this.metrics.lineHeight * 2.5,
+              height: this.metrics.lineHeight * 2,
             }}
           >
             <svg
@@ -1622,7 +1513,7 @@ export default class Vis extends Component {
                 position: 'absolute',
                 left: 0,
                 pointerEvents: 'none',
-                paddingLeft: this.metrics.padding * 0.5,
+                // paddingLeft: this.metrics.padding * 0.5,
                 width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
                 height: this.metrics.chartHeight,
               }}
@@ -1649,14 +1540,46 @@ export default class Vis extends Component {
             }
           </div>
           <div
-            className={gstyle.panel}
+            className={`${gstyle.panel} ${gstyle.noscrollbar}`}
             style={{
               backgroundColor: '#ffffff',
               width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
               height: this.metrics.chartHeight,
             }}
           >
-            {this.renderVisual(isAttribute, attribute, unit, sequences)}
+            <StackedBarContainer
+              id={this.state.summary.path.slice(-1)}
+              renderSVG={this.state.renderSVG}
+              setRef={s => { this._svg = s; }}
+              isAttribute={isAttribute}
+              isRemoved={false}
+              miniBarCount={Object.keys(this.state.filters).length}
+              metrics={this.metrics}
+              scales={this.scales}
+              attribute={attribute}
+              ticks={ticks}
+              // sequences={sequences}
+              data={this.state.data}
+              filters={this.state.filters} // rm ev
+              labelKey={this.state.labelKey}
+              tags={this.state.tags}
+              mode={this.state.mode}
+              selectedAttribute={this.state.selectedAttribute}
+              showEmptyAttrs={this.state.showEmptyAttrs}
+              highlightedDatum={this.state.highlightedDatum}
+              removeDatum={() => { removeRows(this, [d]); }}
+              restoreDatum={() => { restoreRows(this, [d]); }}
+              hoverDatum={this._hoverDatum}
+              clickDatum={this._clickDatum}
+              updatePhinchName={this.updatePhinchName}
+              toggleTag={this._toggleTag}
+              attrStyles={{
+                cell: styles.cell,
+                circle: gstyle.circle,
+                name: styles.name,
+                reads: styles.reads,
+              }}
+            />
           </div>
         </div>
         {this.renderFilters()}
@@ -1678,7 +1601,7 @@ export default class Vis extends Component {
             left: this.metrics.leftSidebar,
             width: this.metrics.chartWidth + (this.metrics.nonbarWidth - 4),
           }}
-          data={this.renderTopSequences(sequences)}
+          data={topSequences}
           svgContainer
           svgHeight={this.metrics.sequenceRowHeight * sequences.length}
         />
@@ -1701,7 +1624,7 @@ export default class Vis extends Component {
           }}
           data={this.renderBars(this.state.deleted, true)}
           svgContainer
-          svgHeight={((this.metrics.barContainerHeight +
+          svgHeight={(this.metrics.padding + (this.metrics.barContainerHeight +
               (this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length)
             ) * this.state.deleted.length
           )}

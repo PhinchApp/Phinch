@@ -1,0 +1,7 @@
+.row {
+  cursor: pointer;
+}
+
+.row:hover rect {
+  fill: #333 !important;
+}
