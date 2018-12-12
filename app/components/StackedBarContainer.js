@@ -115,8 +115,6 @@ export default class StackedBarContainer extends Component {
     if (this.props.renderSVG) {
       return (
         <svg
-          // ref={s => { this.props.svgRef = s; }}
-          // ref={this.props.ref}
           ref={this.props.setRef}
           id={this.props.id}
           version="1.1"
@@ -129,7 +127,6 @@ export default class StackedBarContainer extends Component {
           fontSize="12px"
           overflow="visible"
         >
-          {this.props.ticks}
           <g id="Visual">
             <g id="Sequence Reads" transform={`translate(0, ${this.metrics.padding * 2})`}>
               {
@@ -149,6 +146,7 @@ export default class StackedBarContainer extends Component {
               }
             </g>
             <g id="Info">
+              {this.props.ticks}
               <g id="Metadata" transform={`translate(3, ${svgHeight})`}>
                 <g id="Top Sequences">
                   <text

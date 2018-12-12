@@ -23,6 +23,7 @@ import Search from './Search';
 import SideMenu from './SideMenu';
 import Sequence from './Sequence';
 import StackedBarRow from './StackedBarRow';
+import StackedBarTicks from './StackedBarTicks';
 import StackedBarContainer from './StackedBarContainer';
 import StackedBarTooltip from './StackedBarTooltip';
 import FilterChart from './FilterChart';
@@ -139,6 +140,8 @@ export default class Vis extends Component {
 
     this.levels = [];
     this.readsBySequence = {};
+    this.sequences = [];
+    this.topSequences = [];
 
     this.metrics = {
       padding: 16,
@@ -454,6 +457,7 @@ export default class Vis extends Component {
     const showRightSidebar = Object.keys(filters).length > 0;
     this.updateChartWidth(showRightSidebar);
     this.setState({ filters, showRightSidebar }, () => {
+      this.topSequences = this.renderTopSequences();
       this.save(this.setResult);
     });
   }
@@ -476,6 +480,7 @@ export default class Vis extends Component {
     const data = this.filterData(filters, this.state.tags, this.state.preData, this.state.deleted);
     this.updateAttributeValues(this.state.selectedAttribute, data);
     this.setState({ data, filters, showRightSidebar }, () => {
+      this.topSequences = this.renderTopSequences();
       this.save(this.setResult);
     });
   }
@@ -532,6 +537,7 @@ export default class Vis extends Component {
     this.setState({
       level, data, preData, deleted, filters, showRightSidebar
     }, () => {
+      this.topSequences = this.renderTopSequences();
       this.save(this.setResult);
     });
   }
@@ -592,7 +598,8 @@ export default class Vis extends Component {
     if (updateSequences) {
       this.readsBySequence = {};
     }
-    return data.map(d => {
+    // return data.map(d => {
+    const taxonomyData = data.map(d => {
       d.sequences = nest()
         .key(s => s.taxonomy.slice(0, level + 1))
         .entries(d.matches)
@@ -613,81 +620,85 @@ export default class Vis extends Component {
         });
       return d;
     });
+    if (updateSequences) {
+      this.sequences = this.updateSequences();
+    }
+    return taxonomyData;
   }
 
-  renderTicks(svgWidth, svgHeight) {
-    const tickCount = Math.floor(this.metrics.chartWidth / 96);
-    const ticks = this.scales.x.ticks(tickCount);
-    if (!ticks.length) {
-      return '';
-    }
-    let tickArray = [...new Set([0].concat(...ticks))];
-    const xMax = this.scales.x.domain()[1];
-    if (this.state.mode !== 'value') {
-      tickArray = [];
-      for (let i = 0; i < 11; i += 1) {
-        tickArray.push((xMax / 10) * i);
-      }
-    }
-    return (
-      <g
-        id="x-axis"
-        pointerEvents="none"
-        textAnchor="middle"
-        fill="#808080"
-        transform={`translate(${this.metrics.padding / 2}, 0)`}
-      >
-        <text
-          id="axis-title"
-          transform={`translate(
-            ${svgWidth / 2},
-            ${this.metrics.lineHeight * 0.825}
-          )`}
-        >
-          Sequence Reads
-        </text>
-        <g
-          id="axis-labels"
-          transform={`translate(
-            ${this.metrics.barInfoWidth + 2},
-            ${this.metrics.lineHeight}
-          )`}
-          width={(this.state.width - (this.metrics.padding * 2))}
-          height={(this.metrics.chartHeight + (this.metrics.lineHeight * 2))}
-        >
-          {
-            tickArray.map(t => {
-              const label = (this.state.mode === 'value') ? (
-                  t.toLocaleString()
-                ) : (
-                  `${Math.round((t / xMax) * 100).toLocaleString()}%`
-                );
-              return (
-                <g
-                  key={`g-${t}`}
-                  id={`Marker ${t}`}
-                  transform={`translate(${this.scales.x(t)}, ${(this.metrics.lineHeight)})`}
-                >
-                  <text id={label} fontSize={10} dy={-4} dx={-1}>
-                    {label}
-                  </text>
-                  <line
-                    id={`Line ${label}`}
-                    x1={-1}
-                    y1={0}
-                    x2={-1}
-                    y2={svgHeight}
-                    stroke="#808080"
-                    strokeWidth={0.5}
-                  />
-                </g>
-              );
-            })
-          }
-        </g>
-      </g>
-    );
-  }
+  // renderTicks(svgWidth, svgHeight) {
+  //   const tickCount = Math.floor(this.metrics.chartWidth / 96);
+  //   const ticks = this.scales.x.ticks(tickCount);
+  //   if (!ticks.length) {
+  //     return '';
+  //   }
+  //   let tickArray = [...new Set([0].concat(...ticks))];
+  //   const xMax = this.scales.x.domain()[1];
+  //   if (this.state.mode !== 'value') {
+  //     tickArray = [];
+  //     for (let i = 0; i < 11; i += 1) {
+  //       tickArray.push((xMax / 10) * i);
+  //     }
+  //   }
+  //   return (
+  //     <g
+  //       id="x-axis"
+  //       pointerEvents="none"
+  //       textAnchor="middle"
+  //       fill="#808080"
+  //       transform={`translate(${this.metrics.padding / 2}, 0)`}
+  //     >
+  //       <text
+  //         id="axis-title"
+  //         transform={`translate(
+  //           ${svgWidth / 2},
+  //           ${this.metrics.lineHeight * 0.825}
+  //         )`}
+  //       >
+  //         Sequence Reads
+  //       </text>
+  //       <g
+  //         id="axis-labels"
+  //         transform={`translate(
+  //           ${this.metrics.barInfoWidth + 2},
+  //           ${this.metrics.lineHeight}
+  //         )`}
+  //         width={(this.state.width - (this.metrics.padding * 2))}
+  //         height={(this.metrics.chartHeight + (this.metrics.lineHeight * 2))}
+  //       >
+  //         {
+  //           tickArray.map(t => {
+  //             const label = (this.state.mode === 'value') ? (
+  //                 t.toLocaleString()
+  //               ) : (
+  //                 `${Math.round((t / xMax) * 100).toLocaleString()}%`
+  //               );
+  //             return (
+  //               <g
+  //                 key={`g-${t}`}
+  //                 id={`Marker ${t}`}
+  //                 transform={`translate(${this.scales.x(t)}, ${(this.metrics.lineHeight)})`}
+  //               >
+  //                 <text id={label} fontSize={10} dy={-4} dx={-1}>
+  //                   {label}
+  //                 </text>
+  //                 <line
+  //                   id={`Line ${label}`}
+  //                   x1={-1}
+  //                   y1={0}
+  //                   x2={-1}
+  //                   y2={svgHeight}
+  //                   stroke="#808080"
+  //                   strokeWidth={0.5}
+  //                 />
+  //               </g>
+  //             );
+  //           })
+  //         }
+  //       </g>
+  //     </g>
+  //   );
+  // }
 
   filterData(filters, tags, preData, deleted) {
     const deletedSamples = deleted.map(d => d.sampleName);
@@ -1233,12 +1244,23 @@ export default class Vis extends Component {
     return levelSelector;
   }
 
-  renderTopSequences(sequences) {
-    return sequences.map((s, i) => {
+  updateSequences() {
+    return Object.keys(this.readsBySequence)
+      .map(k => ({ name: k, reads: this.readsBySequence[k] }))
+      .sort((a, b) => b.reads - a.reads)
+      .map((s, i) => {
+        s.rank = (i + 1);
+        return s;
+      });
+  }
+
+  renderTopSequences() {
+    return this.sequences.map((s, i) => {
       return (
         <Sequence
           seq={s}
           index={i}
+          key={s.name}
           scales={this.scales}
           metrics={this.metrics}
           filters={this.state.filters}
@@ -1372,14 +1394,6 @@ export default class Vis extends Component {
       />
     ) : null;
 
-    const sequences = Object.keys(this.readsBySequence)
-      .map(k => ({ name: k, reads: this.readsBySequence[k] }))
-      .sort((a, b) => b.reads - a.reads)
-      .map((s, i) => {
-        s.rank = (i + 1);
-        return s;
-      });
-
     const result = this.state.result ? (
       <div
         role="button"
@@ -1431,7 +1445,6 @@ export default class Vis extends Component {
         });
     }
     const unit = isAttribute ? attribute.unit : null;
-    const ticksWidth = this.metrics.chartWidth + this.metrics.nonbarWidth;
 
     const dataLength = isAttribute ? (
       attribute.values
@@ -1445,9 +1458,18 @@ export default class Vis extends Component {
       (this.metrics.barContainerHeight + (
         this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
       )) * dataLength);
-    const ticks = this.renderTicks(ticksWidth, svgHeight);
-    const topSequences = this.renderTopSequences(sequences);
 
+    const ticks = (
+      <StackedBarTicks
+        metrics={this.metrics}
+        scale={this.scales.x}
+        mode={this.state.mode}
+        width={this.state.width}
+        svgWidth={this.metrics.chartWidth + this.metrics.nonbarWidth}
+        svgHeight={svgHeight - (this.metrics.lineHeight * 4)}
+      />
+    );
+    
     return (
       <div className={gstyle.container}>
         {redirect}
@@ -1463,7 +1485,7 @@ export default class Vis extends Component {
             {/* ROW 1 */}
             <div className={styles.controlRow}>
               <Search
-                options={sequences}
+                options={this.sequences}
                 onValueCleared={this.onValueCleared}
                 onSuggestionSelected={this.onSuggestionSelected}
                 onSuggestionHighlighted={this.onSuggestionHighlighted}
@@ -1547,6 +1569,9 @@ export default class Vis extends Component {
               height: this.metrics.chartHeight,
             }}
           >
+          {
+            // pass this.topSequences to SVGRenderer component
+          }
             <StackedBarContainer
               id={this.state.summary.path.slice(-1)}
               renderSVG={this.state.renderSVG}
@@ -1601,9 +1626,9 @@ export default class Vis extends Component {
             left: this.metrics.leftSidebar,
             width: this.metrics.chartWidth + (this.metrics.nonbarWidth - 4),
           }}
-          data={topSequences}
+          data={this.topSequences}
           svgContainer
-          svgHeight={this.metrics.sequenceRowHeight * sequences.length}
+          svgHeight={this.metrics.sequenceRowHeight * this.topSequences.length}
         />
         <Modal
           buttonTitle="Archived Samples"

@@ -87,11 +87,17 @@ export default class StackedBar extends Component {
         d.x = offset * this.scale;
         d.width = this.props.xscale(d.reads);
         ctx.fillRect(
-          Math.max(i > 0 ? 1 : 0, Math.floor(d.x)),
+          d.x,
           0 * this.scale,
-          Math.max(1, Math.floor(d.width * this.scale)),
+          d.width * this.scale,
           this.props.height * this.scale,
         );
+        // ctx.fillRect(
+        //   Math.max(i > 0 ? 1 : 0, Math.floor(d.x)),
+        //   0 * this.scale,
+        //   Math.max(1, Math.floor(d.width * this.scale)),
+        //   this.props.height * this.scale,
+        // );
         offset += this.props.xscale(d.reads);
       });
 
