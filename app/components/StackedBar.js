@@ -4,8 +4,8 @@ export default class StackedBar extends Component {
   constructor(props) {
     super(props);
     this.scale = 1; // KISS
-    this._needsUpdate = true;
-    this._renderedCanvas = false;
+    // this._needsUpdate = true;
+    // this._renderedCanvas = false;
   }
 
   componentDidMount() {
@@ -14,19 +14,19 @@ export default class StackedBar extends Component {
 
   componentDidUpdate(prevProps) {
     // console.log(this.props);
-    let update = false;
-    Object.keys(this.props).forEach(k => {
-      if (k === 'data' && this.props[k].length !== prevProps[k].length) {
-        update = true;
-      } else if (this.props[k] !== prevProps[k]) {
-        update = true;
-      }
-    });
-    if (update) {
-      this._needsUpdate = true;
-      this._renderedCanvas = false;
+    // let update = false;
+    // Object.keys(this.props).forEach(k => {
+      // if (k === 'data' && this.props[k].length !== prevProps[k].length) {
+        // update = true;
+      // } else if (this.props[k] !== prevProps[k]) {
+        // update = true;
+      // }
+    // });
+    // if (update) {
+      // this._needsUpdate = true;
+      // this._renderedCanvas = false;
       this.updateCanvas();
-    }
+    // }
   }
 
   _getDatum(event) {
@@ -92,21 +92,17 @@ export default class StackedBar extends Component {
           d.width * this.scale,
           this.props.height * this.scale,
         );
-        // ctx.fillRect(
-        //   Math.max(i > 0 ? 1 : 0, Math.floor(d.x)),
-        //   0 * this.scale,
-        //   Math.max(1, Math.floor(d.width * this.scale)),
-        //   this.props.height * this.scale,
-        // );
         offset += this.props.xscale(d.reads);
       });
 
-    this._renderedCanvas = true;
-    // this._needsUpdate = false;
+    // this._renderedCanvas = true;
+    // // this._needsUpdate = false;
   }
 
   render() {
-    if (this._needsUpdate) {
+    // console.log(this.props);
+    // console.log(this.props.onHoverDatum);
+    // if (this._needsUpdate) {
       if (this.props.renderSVG) {
         if (this.props.isPercent) {
           this.props.xscale
@@ -131,9 +127,10 @@ export default class StackedBar extends Component {
           );
         });
         this._content = bars;
-        this._needsUpdate = false;
+        // this._needsUpdate = false;
       } else {
         // console.log('rendering');
+        // console.log(this.props.onHoverDatum);
         this._content = (
           <foreignObject>
             <canvas
@@ -164,11 +161,11 @@ export default class StackedBar extends Component {
         );
       }
       // this._needsUpdate = false;
-      if (this._renderedCanvas) {
-        this._needsUpdate = false;
-        this._renderedCanvas = false;
-      }
-    }
+      // if (this._renderedCanvas) {
+      //   this._needsUpdate = false;
+      //   this._renderedCanvas = false;
+      // }
+    // }
     return this._content;
   }
 }

@@ -209,7 +209,6 @@ export default class StackedBarRow extends Component {
                   className={`${gstyle.circle} ${styles.tagIcon}`}
                   style={{ background: t.color }}
                 >
-                  {selected ? '-' : '+'}
                   <img src={tagIcon} alt={selected ? 'minus' : 'plus'} />
                 </div>
                 <span className={styles.tagLabel}>

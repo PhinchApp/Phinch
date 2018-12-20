@@ -91,6 +91,11 @@
   font-weight: 400;
 }
 
+.tagIcon img {
+  width: 12px;
+  height: 12px;
+}
+
 .tagLabel {
   font-size: 12px;
   font-weight: 300;

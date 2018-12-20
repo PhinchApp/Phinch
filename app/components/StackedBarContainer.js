@@ -10,89 +10,38 @@ import styles from './StackedBarContainer.css';
 export default class StackedBarContainer extends Component {
   constructor(props) {
     super(props);
-    this.metrics = this._updateMetrics(this.props);
-    this.scales = this._updateScales(this.props);
+    // this.metrics = this._updateMetrics(this.props);
+    // this.scales = this._updateScales(this.props);
   }
 
-  componentWillUpdate(nextProps) {
-    this.metrics = this._updateMetrics(nextProps);
-    this.scales = this._updateScales(nextProps);
-  }
+  // componentWillUpdate(nextProps) {
+  //   this.metrics = this._updateMetrics(nextProps);
+  //   this.scales = this._updateScales(nextProps);
+  // }
 
-  _updateMetrics(props) {
-    const metrics = _cloneDeep(props.metrics);
-    if (props.isAttribute) {
-      metrics.barContainerHeight = metrics.attrBarContainerHeight;
-      metrics.barHeight = metrics.attrBarHeight;
-    }
-    return metrics;
-  }
+  // _updateMetrics(props) {
+  //   const metrics = _cloneDeep(props.metrics);
+  //   if (props.isAttribute) {
+  //     metrics.barContainerHeight = metrics.attrBarContainerHeight;
+  //     metrics.barHeight = metrics.attrBarHeight;
+  //   }
+  //   return metrics;
+  // }
 
-  _updateScales(props) {
-    const scales = _cloneDeep(props.scales);
-    if (props.isAttribute) {
-      scales.x
-        .domain([0, Math.max(...this.props.attribute.values.map(d => d.reads))])
-        .range([0, this.metrics.chartWidth])
-        .clamp();
-    }
-    return scales;
-  }
+  // _updateScales(props) {
+  //   const scales = _cloneDeep(props.scales);
+  //   if (props.isAttribute) {
+  //     scales.x
+  //       .domain([0, Math.max(...this.props.attribute.values.map(d => d.reads))])
+  //       .range([0, this.metrics.chartWidth])
+  //       .clamp();
+  //   }
+  //   return scales;
+  // }
 
-  stack = (datum, index, yOffset) => {
-    return (
-      <StackedBarRow
-        key={datum.id}
-        data={datum}
-        index={index}
-        yOffset={yOffset}
-        labelKey={this.props.labelKey}
-        filters={this.props.filters} // TODO: replace w/ minibar count prop
-        metrics={this.metrics}
-        scales={this.scales}
-        tags={this.props.tags.filter(t => t.id !== 'none')}
-        toggleTag={this.props.toggleTag}
-        isPercent={(this.props.mode === 'percent')}
-        isRemoved={this.props.isRemoved}
-        highlightedDatum={this.props.highlightedDatum}
-        removeDatum={this.props.removeDatum}
-        restoreDatum={this.props.restoreDatum}
-        hoverDatum={this.props.hoverDatum}
-        clickDatum={this.props.clickDatum}
-        updatePhinchName={this.props.updatePhinchName}
-        renderSVG={this.props.renderSVG}
-      />
-    );
-  }
+  stackRow = ({ index, style }) => this.props.stack(this.props.data[index], index, style.top);
 
-  stackRow = ({ index, style }) => this.stack(this.props.data[index], index, style.top);
-
-  attr = (datum, index, yOffset) => {
-    return (
-      <StackedBarRow
-        key={`${this.props.selectedAttribute}-${datum.value}`}
-        data={datum}
-        index={index}
-        yOffset={yOffset}
-        labelKey="name"
-        metrics={this.metrics}
-        scales={this.scales}
-        filters={this.props.filters} // TODO: replace w/ minibar count prop
-        highlightedDatum={this.props.highlightedDatum}
-        hoverDatum={this.props.hoverDatum}
-        clickDatum={this.props.clickDatum}
-        isPercent={(this.props.mode === 'percent')}
-        isRemoved={null}
-        isAttribute
-        unit={this.props.attribute.unit}
-        styles={this.props.attrStyles}
-        tags={[]}
-        renderSVG={this.props.renderSVG}
-      />
-    );
-  }
-
-  attrRow = ({ index, style }) => this.attr(this.props.attribute.values[index], index, style.top);
+  attrRow = ({ index, style }) => this.props.attr(this.props.attribute.values[index], index, style.top);
 
   render() {
     const dataLength = this.props.isAttribute ? (
@@ -114,7 +63,7 @@ export default class StackedBarContainer extends Component {
 
     if (this.props.renderSVG) {
       return (
-        <svg
+        <svg 
           ref={this.props.setRef}
           id={this.props.id}
           version="1.1"

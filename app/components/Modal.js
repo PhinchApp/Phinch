@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { FixedSizeList as List } from 'react-window';
 
 import close from 'images/close.svg';
 
@@ -17,6 +18,8 @@ export default class Modal extends Component {
     const showHidden = !this.state.showHidden;
     this.setState({ showHidden }, this.props.onHide);
   }
+                
+  stackRow = ({ index, style }) => this.props.row(this.props.data[index], index, style.top, true);
 
   render() {
     const shownClass = this.state.showHidden ? styles.shown : '';
@@ -68,18 +71,23 @@ export default class Modal extends Component {
         </div>
         {
           this.props.useList ? (
-            'test'
+            <List
+              className={`${styles.dataContainer} ${gstyle.darkbgscrollbar}`}
+              innerTagName={this.props.svgContainer ? 'svg' : 'div'}
+              height={this.props.svgContainer ? this.props.svgHeight : (
+                this.props.itemHeight * this.props.data.length
+              )}
+              itemSize={this.props.itemHeight}
+              itemCount={this.props.data.length}
+              itemKey={index => this.props.data[index][this.props.dataKey]}
+            >
+              {this.stackRow}
+            </List>
           ) : (
             <div className={`${styles.dataContainer} ${gstyle.darkbgscrollbar}`}>
               {
                 this.props.svgContainer ? (
-                  <svg
-                    className={styles.svgContainer}
-                    height={this.props.svgHeight}
-                    fontFamily="IBM Plex Sans Condensed"
-                    fontWeight="200"
-                    fontSize="12px"
-                  >
+                  <svg height={this.props.svgHeight}>
                     {this.props.data}
                   </svg>
                 ) : this.props.data
