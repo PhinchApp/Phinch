@@ -74,9 +74,7 @@ export default class Modal extends Component {
             <List
               className={`${styles.dataContainer} ${gstyle.darkbgscrollbar}`}
               innerTagName={this.props.svgContainer ? 'svg' : 'div'}
-              height={this.props.svgContainer ? this.props.svgHeight : (
-                this.props.itemHeight * this.props.data.length
-              )}
+              height={314}
               itemSize={this.props.itemHeight}
               itemCount={this.props.data.length}
               itemKey={index => this.props.data[index][this.props.dataKey]}
