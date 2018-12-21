@@ -19,7 +19,7 @@ export default function SideBar(props) {
           role="button"
           tabIndex={0}
           onClick={() => props.context.setState({ redirect: '/' })}
-          onKeyDown={() => props.context.setState({ redirect: '/' })}
+          onKeyPress={e => e.key === ' ' ? props.context.setState({ redirect: '/' }) : null}
         >
           <img
             src={logo}
@@ -37,3 +37,4 @@ export default function SideBar(props) {
     </div>
   );
 }
+

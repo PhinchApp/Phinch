@@ -36,6 +36,10 @@
   background-color: inherit;
 }
 
+html {
+  height: 100vh;
+  overflow: hidden;
+}
 
 body {
   position: relative;
@@ -45,8 +49,7 @@ body {
   color: #eeeeee;
   font-family: 'IBM Plex Sans';
   margin: 0;
-  overflow-x: hidden;
-  overflow-y: hidden;
+  overflow: hidden;
 }
 
 h1 {

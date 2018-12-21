@@ -1,7 +1,9 @@
 .toggle {
   width: 130px;
-  height: 32px;
-  border-radius: 8px;
+  /*height: 32px;*/
+  height: 24px;
+  /*border-radius: 8px;*/
+  border-radius: 8px 8px 0 0;
   font-size: 13px;
   font-weight: 400;
   text-align: center;

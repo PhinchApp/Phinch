@@ -32,7 +32,11 @@ export default class Modal extends Component {
           ...this.props.buttonPosition,
         }}
         onClick={this.toggleHidden}
-        onKeyDown={this.toggleHidden}
+        onFocus={e => {
+          e.preventDefault();
+          e.target.focus({preventScroll: true});
+        }}
+        onKeyPress={e => e.key === ' ' ? this.toggleHidden() : null}
       >
         {this.props.buttonTitle}
       </div>
@@ -64,7 +68,7 @@ export default class Modal extends Component {
               ...this.props.closePosition
             }}
             onClick={this.toggleHidden}
-            onKeyDown={this.toggleHidden}
+            onKeyPress={e => e.key === ' ' ? this.toggleHidden() : null}
           >
             <img src={close} alt="close" />
           </div>

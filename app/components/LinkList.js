@@ -36,8 +36,8 @@ function InfoLink(l, i, context) {
       role="button"
       tabIndex={0}
       className={styles.link}
-      onClick={() => { l.action(context); }}
-      onKeyDown={() => { l.action(context); }}
+      onClick={() => l.action(context)}
+      onKeyPress={e => e.key === ' ' ? l.action(context) : null}
     >
       {icon}
       <div className={styles.info}>

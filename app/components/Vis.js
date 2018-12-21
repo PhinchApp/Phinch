@@ -25,6 +25,7 @@ import Sequence from './Sequence';
 import StackedBarRow from './StackedBarRow';
 import StackedBarTicks from './StackedBarTicks';
 import StackedBarTooltip from './StackedBarTooltip';
+import StackedBarsSVG from './StackedBarsSVG';
 import FilterChart from './FilterChart';
 import Summary from './Summary';
 import Modal from './Modal';
@@ -1098,7 +1099,7 @@ export default class Vis extends Component {
             tabIndex={0}
             className={`${selected} ${styles.selector}`}
             onClick={() => this.setLevel(l.order)}
-            onKeyPress={() => this.setLevel(l.order)}
+            onKeyPress={e => e.key === ' ' ? this.setLevel(l.order) : null}
           >
             {l.name}
           </div>
@@ -1174,7 +1175,7 @@ export default class Vis extends Component {
             margin: '4px 0',
           }}
           onClick={() => { this._toggleTags(); }}
-          onKeyPress={() => { this._toggleTags(); }}
+          onKeyPress={e => e.key === ' ' ? this._toggleTags() : null}
         >
           x
         </div>
@@ -1219,7 +1220,7 @@ export default class Vis extends Component {
                   id={t.id}
                   ref={i => { this._inputs[t.id] = i; }}
                   onChange={e => this.updateTagName(e, t)}
-                  onKeyDown={e => (e.key === 'Enter' ? this._inputs[t.id].blur() : null)}
+                  onKeyPress={e => (e.key === 'Enter' ? this._inputs[t.id].blur() : null)}
                   onMouseOver={this._hoverTag}
                   onFocus={this._hoverTag}
                   onMouseOut={this._unhoverTag}
@@ -1243,7 +1244,7 @@ export default class Vis extends Component {
           tabIndex={0}
           className={styles.inlineControl}
           onClick={this._toggleTags}
-          onKeyPress={this._toggleTags}
+          onKeyPress={e => e.key === ' ' ? this._toggleTags() : null}
         >
           <div key="tags" className={`${styles.selector} ${styles.button} ${showTags}`}>Tags</div>
           {
@@ -1304,7 +1305,7 @@ export default class Vis extends Component {
           background: (this.state.result === 'error') ? '#ff2514' : '#00da3e',
         }}
         onClick={this.clearResult}
-        onKeyPress={this.clearResult}
+        onKeyPress={e => e.key === ' ' ? this.clearResult() : null}
       >
         {this.state.result}
       </div>
@@ -1443,7 +1444,7 @@ export default class Vis extends Component {
                     tabIndex={0}
                     className={styles.attrToggle}
                     onClick={this.toggleEmptyAttrs}
-                    onKeyPress={this.toggleEmptyAttrs}
+                    onKeyPress={e => e.key === ' ' ? this.toggleEmptyAttrs() : null}
                   >
                     {`${this.state.showEmptyAttrs ? 'Hide' : 'Show'} Empty`}
                   </div>
@@ -1459,21 +1460,41 @@ export default class Vis extends Component {
               height: this.metrics.chartHeight,
             }}
           >
-          <List
-            className={`${styles.svglist}`}
-            innerTagName='svg'
-            width={this.metrics.chartWidth + this.metrics.nonbarWidth}
-            height={this.metrics.chartHeight - (this.metrics.padding * 4)}
-            itemSize={this.metrics.barContainerHeight + (
-              this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
-            )}
-            itemCount={dataLength}
-            itemKey={index => (
-              isAttribute ? this.attribute.values[index].name : this.state.data[index].sampleName
-            )}
-          >
-            {isAttribute ? this.attrRow : this.stackRow}
-          </List>
+          {
+            this.state.renderSVG ? (
+              <StackedBarsSVG
+                setRef={r => this._svg = r}
+                id={this.state.summary.path.slice(-1)}
+                svgWidth={this.metrics.chartWidth + this.metrics.nonbarWidth}
+                svgHeight={svgHeight}
+                seqHeight={this.metrics.sequenceRowHeight * this.topSequences.length}
+                data={isAttribute ? this.attribute.values : this.state.data}
+                row={isAttribute ? this.attrRow : this.stackRow}
+                itemSize={this.metrics.barContainerHeight + (
+                  this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
+                )}
+                padding={this.metrics.padding}
+                ticks={ticks}
+                topSequences={this.renderTopSequences()}
+              />
+            ) : (
+              <List
+                className={`${styles.svglist}`}
+                innerTagName='svg'
+                width={this.metrics.chartWidth + this.metrics.nonbarWidth}
+                height={this.metrics.chartHeight - (this.metrics.padding * 4)}
+                itemSize={this.metrics.barContainerHeight + (
+                  this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
+                )}
+                itemCount={dataLength}
+                itemKey={index => (
+                  isAttribute ? this.attribute.values[index].name : this.state.data[index].sampleName
+                )}
+              >
+                {isAttribute ? this.attrRow : this.stackRow}
+              </List>
+            )
+          }
           </div>
         </div>
         {this.renderFilters()}
@@ -1484,7 +1505,9 @@ export default class Vis extends Component {
           buttonPosition={{
             position: 'absolute',
             bottom: 0,
-            marginBottom: '-8px',
+            // marginBottom: '-8px',
+            // borderRadius: '8px 8px 0 0',
+            // height: '24px',
             left: (
               this.metrics.leftSidebar + this.metrics.barInfoWidth + (this.metrics.padding / 2) + 2
             ),
@@ -1505,7 +1528,9 @@ export default class Vis extends Component {
           buttonPosition={{
             position: 'absolute',
             bottom: 0,
-            marginBottom: '-8px',
+            // marginBottom: '-8px',
+            // borderRadius: '8px 8px 0 0',
+            // height: '24px',
             left: (
               this.metrics.leftSidebar + this.metrics.barInfoWidth + this.metrics.padding + 2 + 130
             ),
@@ -1524,10 +1549,6 @@ export default class Vis extends Component {
             (this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length)
           }
           svgContainer
-          // svgHeight={((this.metrics.padding * 2) + (this.metrics.barContainerHeight +
-          //     (this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length)
-          //   ) * this.state.deleted.length
-          // )}
           badge
         />
       </div>

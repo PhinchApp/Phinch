@@ -47,7 +47,7 @@ export default class NewProject extends Component {
               tabIndex={0}
               className={styles.link}
               onClick={() => shell.openExternal('https://github.com/PhinchApp/Phinch')}
-              onKeyDown={() => shell.openExternal('https://github.com/PhinchApp/Phinch')}
+              onKeyPress={e => e.key === ' ' ? shell.openExternal('https://github.com/PhinchApp/Phinch') : null}
             >
               Community page
             </span>

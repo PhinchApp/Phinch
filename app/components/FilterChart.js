@@ -128,7 +128,7 @@ export default class FilterChart extends Component {
         tabIndex={0}
         className={gstyle.close}
         onClick={() => { this.props.remove(this.props.name); }}
-        onKeyDown={() => { this.props.remove(this.props.name); }}
+        onKeyPress={e => e.key === ' ' ? this.props.remove(this.props.name) : null}
       >
         <img src={close} alt="close" />
       </div>

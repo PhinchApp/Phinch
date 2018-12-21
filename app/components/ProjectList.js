@@ -12,7 +12,7 @@ function ProjectThumb(props) {
       role="button"
       tabIndex={0}
       onClick={() => props.remove(props.project)}
-      onKeyDown={() => props.remove(props.project)}
+      onKeyPress={e => e.key === ' ' ? props.remove(props.project) : null}
     >
       <img src={removeIcon} alt="remove" />
     </div>
@@ -74,7 +74,7 @@ function ProjectThumb(props) {
       tabIndex={0}
       className={styles.project}
       onClick={onClick}
-      onKeyDown={onClick}
+      onKeyPress={e => e.key === ' ' ? onClick() : null}
     >
       {icon}
       {remove}

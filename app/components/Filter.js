@@ -328,7 +328,7 @@ export default class Filter extends Component {
           className={styles.columnHeading}
           style={{ width: this.metrics.tableWidth * this.columnWidths[c.id] }}
           onClick={onClick}
-          onKeyDown={onClick}
+          onKeyPress={e => e.key === ' ' ? onClick() : null}
         >
           {`${c.name} `}
           {arrow}
@@ -500,7 +500,7 @@ export default class Filter extends Component {
               tabIndex={0}
               className={styles.expand}
               onClick={toggleExpand}
-              onKeyDown={toggleExpand}
+              onKeyPress={e => e.key === ' ' ? toggleExpand() : null}
             >
               <img src={icon} alt={expanded ? 'minus' : 'plus'} />
             </div>
@@ -659,7 +659,7 @@ export default class Filter extends Component {
           background: (this.state.result === 'error') ? '#ff2514' : '#00da3e',
         }}
         onClick={this.clearResult}
-        onKeyDown={this.clearResult}
+        onKeyPress={e => e.key === ' ' ? this.clearResult() : null}
       >
         {this.state.result}
       </div>
@@ -696,7 +696,7 @@ export default class Filter extends Component {
               tabIndex={0}
               className={`${gstyle.button} ${styles.button}`}
               onClick={viewVisualization}
-              onKeyDown={viewVisualization}
+              onKeyPress={e => e.key === ' ' ? viewVisualization() : null}
             >
               View Visualization
             </div>
@@ -739,7 +739,7 @@ export default class Filter extends Component {
               tabIndex={0}
               className={`${gstyle.button} ${styles.reset}`}
               onClick={this.resetFilters}
-              onKeyDown={this.resetFilters}
+              onKeyPress={e => e.key === ' ' ? this.resetFilters() : null}
             >
               Reset Filters
             </div>
@@ -759,7 +759,6 @@ export default class Filter extends Component {
               buttonPosition={{
                 position: 'absolute',
                 bottom: 0,
-                marginBottom: '-8px',
                 left: this.state.width - (this.metrics.tableWidth + (this.metrics.padding / 2)),
               }}
               modalPosition={{

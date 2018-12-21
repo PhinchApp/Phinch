@@ -113,7 +113,7 @@ export default class StackedBarRow extends Component {
           value={this.props.data[this.props.labelKey]}
           ref={i => { this._input = i; }}
           onChange={e => this.props.updatePhinchName(e, this.props.data, this.props.isRemoved)}
-          onKeyDown={e => ((e.key === 'Enter') ? this._input.blur() : null)}
+          onKeyPress={e => ((e.key === 'Enter') ? this._input.blur() : null)}
         />
         {edit}
       </div>
@@ -185,7 +185,7 @@ export default class StackedBarRow extends Component {
           letterSpacing: '2px',
         }}
         onClick={this._toggleTagMenu}
-        onKeyDown={this._toggleTagMenu}
+        onKeyPress={e => e.key === ' ' ? this._toggleTagMenu() : null}
       >
       ...
       </div>
@@ -203,7 +203,7 @@ export default class StackedBarRow extends Component {
                 key={`t-${t.color}`}
                 className={`${styles.tag} ${selected ? styles.selected : ''}`}
                 onClick={() => this.props.toggleTag(this.props.data, t)}
-                onKeyDown={() => this.props.toggleTag(this.props.data, t)}
+                onKeyPress={e => e.key === ' ' ? this.props.toggleTag(this.props.data, t) : null}
               >
                 <div
                   className={`${gstyle.circle} ${styles.tagIcon}`}
@@ -261,9 +261,13 @@ export default class StackedBarRow extends Component {
         onClick={
           this.props.isRemoved ? this.props.restoreDatum : this.props.removeDatum
         }
-        onKeyDown={
-          this.props.isRemoved ? this.props.restoreDatum : this.props.removeDatum
-        }
+        onKeyPress={e => {
+          const fn = this.props.isRemoved ? this.props.restoreDatum : this.props.removeDatum;
+          if (e.key === ' ') {
+            return fn();
+          }
+          return null;
+        }}
       >
         {this.props.isRemoved ? 'Restore' : 'Archive'}
       </div>
