@@ -24,7 +24,6 @@ import SideMenu from './SideMenu';
 import Sequence from './Sequence';
 import StackedBarRow from './StackedBarRow';
 import StackedBarTicks from './StackedBarTicks';
-// import StackedBarContainer from './StackedBarContainer';
 import StackedBarTooltip from './StackedBarTooltip';
 import FilterChart from './FilterChart';
 import Summary from './Summary';
@@ -264,6 +263,8 @@ export default class Vis extends Component {
       this.state.selectedAttribute = this.init.selectedAttribute ? (
         this.init.selectedAttribute
       ) : this.state.selectedAttribute;
+      this.state.showEmptyAttrs = this.init.showEmptyAttrs === undefined
+        ? true : this.init.showEmptyAttrs;
       //
       // Ugly...
       this.state.showLeftSidebar = (this.init.showLeftSidebar !== undefined) ? (
@@ -339,6 +340,7 @@ export default class Vis extends Component {
       rowTags: this.state.rowTags,
       showLeftSidebar: this.state.showLeftSidebar,
       selectedAttribute: this.state.selectedAttribute,
+      showEmptyAttrs: this.state.showEmptyAttrs,
     };
     setProjectFilters(
       this.state.summary.path,

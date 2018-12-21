@@ -117,7 +117,7 @@ export function getProjectFilters(path, dataKey, viewType) {
     filters.names = names;
     if (metadata[viewType]) {
       Object.keys(metadata[viewType]).forEach(k => {
-        if (metadata[viewType][k]) {
+        if (k !== 'type') {
           filters[k] = metadata[viewType][k];
         }
       });
