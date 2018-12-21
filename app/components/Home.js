@@ -133,7 +133,7 @@ export default class Home extends Component {
             tabIndex={0}
             className={`${gstyle.button} ${styles.button} ${styles.cancel}`}
             onClick={this.cancelRemove}
-            onKeyPress={e => e.key === ' ' ? this.cancelRemove() : null}
+            onKeyPress={e => (e.key === ' ' ? this.cancelRemove() : null)}
           >
             Cancel
           </div>
@@ -142,13 +142,12 @@ export default class Home extends Component {
             tabIndex={0}
             className={`${gstyle.button} ${styles.button}`}
             onClick={this.completeRemove}
-            onKeyPress={e => e.key === ' ' ? this.completeRemove() : null}
+            onKeyPress={e => (e.key === ' ' ? this.completeRemove() : null)}
           >
             Delete
           </div>
         </div>
       );
-    // ) : this.state.erroring ? (
     }
     if (this.state.erroring) {
       modalContent = (
@@ -164,14 +163,13 @@ export default class Home extends Component {
             tabIndex={0}
             className={`${gstyle.button} ${styles.button} ${styles.cancel}`}
             onClick={() => this.setState({ erroring: false })}
-            onKeyPress={e => e.key === ' ' ? this.setState({ erroring: false }) : null}
+            onKeyPress={e => (e.key === ' ' ? this.setState({ erroring: false }) : null)}
           >
             Ok
           </div>
         </div>
       );
     }
-    // ) : null;
     const modal = (this.state.deleting || this.state.erroring) ? (
       <Modal
         show
@@ -214,7 +212,7 @@ export default class Home extends Component {
               tabIndex={0}
               className={styles.edit}
               onClick={this.edit}
-              onKeyPress={e => e.key === ' ' ? this.edit() : null}
+              onKeyPress={e => (e.key === ' ' ? this.edit() : null)}
             >
               <img src={this.state.editing ? editOn : editOff} alt="edit" />
             </div>

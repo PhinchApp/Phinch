@@ -12,7 +12,7 @@ export default class CheckBoxes extends Component {
           tabIndex={0}
           className={styles.toggle}
           onClick={() => this.props.setAll(this.props.name, true)}
-          onKeyPress={e => e.key === ' ' ? this.props.setAll(this.props.name, true) : null}
+          onKeyPress={e => (e.key === ' ' ? this.props.setAll(this.props.name, true) : null)}
         >
           all
         </div>
@@ -21,7 +21,7 @@ export default class CheckBoxes extends Component {
           tabIndex={0}
           className={styles.toggle}
           onClick={() => this.props.setAll(this.props.name, false)}
-          onKeyPress={e => e.key === ' ' ? this.props.setAll(this.props.name, false) : null}
+          onKeyPress={e => (e.key === ' ' ? this.props.setAll(this.props.name, false) : null)}
         >
           none
         </div>

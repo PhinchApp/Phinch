@@ -818,63 +818,59 @@ export default class Vis extends Component {
     });
   }
 
-  stack = (datum, index, yOffset, removed) => {
-    return (
-      <StackedBarRow
-        key={datum.id}
-        data={datum}
-        index={index}
-        yOffset={yOffset}
-        labelKey={this.state.labelKey}
-        filters={this.state.filters}
-        metrics={this.metrics}
-        scales={this.scales}
-        tags={this.state.tags.filter(t => t.id !== 'none')}
-        toggleTag={this._toggleTag}
-        isPercent={(this.state.mode === 'percent')}
-        isRemoved={removed}
-        highlightedDatum={this.state.highlightedDatum}
-        removeDatum={() => { removeRows(this, [datum]); }}
-        restoreDatum={() => { restoreRows(this, [datum]); }}
-        hoverDatum={this._hoverDatum}
-        clickDatum={this._clickDatum}
-        updatePhinchName={this.updatePhinchName}
-        renderSVG={this.state.renderSVG}
-      />
-    );
-  }
+  stack = (datum, index, yOffset, removed) => (
+    <StackedBarRow
+      key={datum.id}
+      data={datum}
+      index={index}
+      yOffset={yOffset}
+      labelKey={this.state.labelKey}
+      filters={this.state.filters}
+      metrics={this.metrics}
+      scales={this.scales}
+      tags={this.state.tags.filter(t => t.id !== 'none')}
+      toggleTag={this._toggleTag}
+      isPercent={(this.state.mode === 'percent')}
+      isRemoved={removed}
+      highlightedDatum={this.state.highlightedDatum}
+      removeDatum={() => { removeRows(this, [datum]); }}
+      restoreDatum={() => { restoreRows(this, [datum]); }}
+      hoverDatum={this._hoverDatum}
+      clickDatum={this._clickDatum}
+      updatePhinchName={this.updatePhinchName}
+      renderSVG={this.state.renderSVG}
+    />
+  );
 
   stackRow = ({ index, style }) => this.stack(this.state.data[index], index, style.top, false)
 
-  attr = (datum, index, yOffset) => {
-    return (
-      <StackedBarRow
-        key={`${this.state.selectedAttribute}-${datum.value}`}
-        data={datum}
-        index={index}
-        yOffset={yOffset}
-        labelKey="name"
-        metrics={this.metrics}
-        scales={this.scales}
-        filters={this.state.filters} // TODO: replace w/ minibar count prop
-        highlightedDatum={this.state.highlightedDatum}
-        hoverDatum={this._hoverDatum}
-        clickDatum={this._clickDatum}
-        isPercent={(this.props.mode === 'percent')}
-        isRemoved={null}
-        isAttribute
-        unit={this.attribute.unit}
-        styles={{
-          cell: styles.cell,
-          circle: gstyle.circle,
-          name: styles.name,
-          reads: styles.reads,
-        }}
-        tags={[]}
-        renderSVG={this.state.renderSVG}
-      />
-    );
-  }
+  attr = (datum, index, yOffset) => (
+    <StackedBarRow
+      key={`${this.state.selectedAttribute}-${datum.value}`}
+      data={datum}
+      index={index}
+      yOffset={yOffset}
+      labelKey="name"
+      metrics={this.metrics}
+      scales={this.scales}
+      filters={this.state.filters} // TODO: replace w/ minibar count prop
+      highlightedDatum={this.state.highlightedDatum}
+      hoverDatum={this._hoverDatum}
+      clickDatum={this._clickDatum}
+      isPercent={(this.props.mode === 'percent')}
+      isRemoved={null}
+      isAttribute
+      unit={this.attribute.unit}
+      styles={{
+        cell: styles.cell,
+        circle: gstyle.circle,
+        name: styles.name,
+        reads: styles.reads,
+      }}
+      tags={[]}
+      renderSVG={this.state.renderSVG}
+    />
+  );
 
   attrRow = ({ index, style }) => this.attr(this.attribute.values[index], index, style.top)
 
@@ -1099,7 +1095,7 @@ export default class Vis extends Component {
             tabIndex={0}
             className={`${selected} ${styles.selector}`}
             onClick={() => this.setLevel(l.order)}
-            onKeyPress={e => e.key === ' ' ? this.setLevel(l.order) : null}
+            onKeyPress={e => (e.key === ' ' ? this.setLevel(l.order) : null)}
           >
             {l.name}
           </div>
@@ -1146,22 +1142,20 @@ export default class Vis extends Component {
   }
 
   renderTopSequences() {
-    return this.sequences.map((s, i) => {
-      return (
-        <Sequence
-          seq={s}
-          index={i}
-          key={s.name}
-          scales={this.scales}
-          metrics={this.metrics}
-          filters={this.state.filters}
-          renderSVG={this.state.renderSVG}
-          yOffset={this.metrics.sequenceRowHeight * i}
-          removeFilter={this.removeFilter}
-          clickDatum={this._clickDatum}
-        />
-      );
-    });
+    return this.sequences.map((s, i) => (
+      <Sequence
+        seq={s}
+        index={i}
+        key={s.name}
+        scales={this.scales}
+        metrics={this.metrics}
+        filters={this.state.filters}
+        renderSVG={this.state.renderSVG}
+        yOffset={this.metrics.sequenceRowHeight * i}
+        removeFilter={this.removeFilter}
+        clickDatum={this._clickDatum}
+      />
+    ));
   }
 
   renderTagFilter() {
@@ -1175,7 +1169,7 @@ export default class Vis extends Component {
             margin: '4px 0',
           }}
           onClick={() => { this._toggleTags(); }}
-          onKeyPress={e => e.key === ' ' ? this._toggleTags() : null}
+          onKeyPress={e => (e.key === ' ' ? this._toggleTags() : null)}
         >
           x
         </div>
@@ -1244,7 +1238,7 @@ export default class Vis extends Component {
           tabIndex={0}
           className={styles.inlineControl}
           onClick={this._toggleTags}
-          onKeyPress={e => e.key === ' ' ? this._toggleTags() : null}
+          onKeyPress={e => (e.key === ' ' ? this._toggleTags() : null)}
         >
           <div key="tags" className={`${styles.selector} ${styles.button} ${showTags}`}>Tags</div>
           {
@@ -1305,7 +1299,7 @@ export default class Vis extends Component {
           background: (this.state.result === 'error') ? '#ff2514' : '#00da3e',
         }}
         onClick={this.clearResult}
-        onKeyPress={e => e.key === ' ' ? this.clearResult() : null}
+        onKeyPress={e => (e.key === ' ' ? this.clearResult() : null)}
       >
         {this.state.result}
       </div>
@@ -1335,7 +1329,6 @@ export default class Vis extends Component {
           return 0;
         });
     }
-    const unit = isAttribute ? this.attribute.unit : null;
 
     const dataLength = isAttribute ? (
       this.attribute.values
@@ -1360,7 +1353,7 @@ export default class Vis extends Component {
         svgHeight={svgHeight - (this.metrics.lineHeight * 3)}
       />
     );
-    
+
     return (
       <div className={gstyle.container}>
         {redirect}
@@ -1414,7 +1407,6 @@ export default class Vis extends Component {
             className={styles.axis}
             style={{
               width: this.metrics.chartWidth + (this.metrics.nonbarWidth - this.metrics.padding),
-              // height: this.metrics.lineHeight * 2.5,
               height: this.metrics.lineHeight * 2,
             }}
           >
@@ -1444,7 +1436,7 @@ export default class Vis extends Component {
                     tabIndex={0}
                     className={styles.attrToggle}
                     onClick={this.toggleEmptyAttrs}
-                    onKeyPress={e => e.key === ' ' ? this.toggleEmptyAttrs() : null}
+                    onKeyPress={e => (e.key === ' ' ? this.toggleEmptyAttrs() : null)}
                   >
                     {`${this.state.showEmptyAttrs ? 'Hide' : 'Show'} Empty`}
                   </div>
@@ -1460,41 +1452,41 @@ export default class Vis extends Component {
               height: this.metrics.chartHeight,
             }}
           >
-          {
-            this.state.renderSVG ? (
-              <StackedBarsSVG
-                setRef={r => this._svg = r}
-                id={this.state.summary.path.slice(-1)}
-                svgWidth={this.metrics.chartWidth + this.metrics.nonbarWidth}
-                svgHeight={svgHeight}
-                seqHeight={this.metrics.sequenceRowHeight * this.topSequences.length}
-                data={isAttribute ? this.attribute.values : this.state.data}
-                row={isAttribute ? this.attrRow : this.stackRow}
-                itemSize={this.metrics.barContainerHeight + (
-                  this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
-                )}
-                padding={this.metrics.padding}
-                ticks={ticks}
-                topSequences={this.renderTopSequences()}
-              />
-            ) : (
-              <List
-                className={`${styles.svglist}`}
-                innerTagName='svg'
-                width={this.metrics.chartWidth + this.metrics.nonbarWidth}
-                height={this.metrics.chartHeight - (this.metrics.padding * 4)}
-                itemSize={this.metrics.barContainerHeight + (
-                  this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
-                )}
-                itemCount={dataLength}
-                itemKey={index => (
-                  isAttribute ? this.attribute.values[index].name : this.state.data[index].sampleName
-                )}
-              >
-                {isAttribute ? this.attrRow : this.stackRow}
-              </List>
-            )
-          }
+            {
+              this.state.renderSVG ? (
+                <StackedBarsSVG
+                  setRef={r => { this._svg = r; }}
+                  id={this.state.summary.path.slice(-1)}
+                  svgWidth={this.metrics.chartWidth + this.metrics.nonbarWidth}
+                  svgHeight={svgHeight}
+                  seqHeight={this.metrics.sequenceRowHeight * this.topSequences.length}
+                  data={isAttribute ? this.attribute.values : this.state.data}
+                  row={isAttribute ? this.attrRow : this.stackRow}
+                  itemSize={this.metrics.barContainerHeight + (
+                    this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
+                  )}
+                  padding={this.metrics.padding}
+                  ticks={ticks}
+                  topSequences={this.renderTopSequences()}
+                />
+              ) : (
+                <List
+                  className={`${styles.svglist}`}
+                  innerTagName="svg"
+                  width={this.metrics.chartWidth + this.metrics.nonbarWidth}
+                  height={this.metrics.chartHeight - (this.metrics.padding * 4)}
+                  itemSize={this.metrics.barContainerHeight + (
+                    this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
+                  )}
+                  itemCount={dataLength}
+                  itemKey={index => (isAttribute
+                    ? this.attribute.values[index].name : this.state.data[index].sampleName
+                  )}
+                >
+                  {isAttribute ? this.attrRow : this.stackRow}
+                </List>
+              )
+            }
           </div>
         </div>
         {this.renderFilters()}
@@ -1505,9 +1497,6 @@ export default class Vis extends Component {
           buttonPosition={{
             position: 'absolute',
             bottom: 0,
-            // marginBottom: '-8px',
-            // borderRadius: '8px 8px 0 0',
-            // height: '24px',
             left: (
               this.metrics.leftSidebar + this.metrics.barInfoWidth + (this.metrics.padding / 2) + 2
             ),
@@ -1528,9 +1517,6 @@ export default class Vis extends Component {
           buttonPosition={{
             position: 'absolute',
             bottom: 0,
-            // marginBottom: '-8px',
-            // borderRadius: '8px 8px 0 0',
-            // height: '24px',
             left: (
               this.metrics.leftSidebar + this.metrics.barInfoWidth + this.metrics.padding + 2 + 130
             ),
@@ -1544,7 +1530,7 @@ export default class Vis extends Component {
           useList
           data={this.state.deleted}
           row={this.stack}
-          dataKey='sampleName'
+          dataKey="sampleName"
           itemHeight={this.metrics.barContainerHeight +
             (this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length)
           }

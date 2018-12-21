@@ -3,30 +3,15 @@ import React, { Component } from 'react';
 export default class StackedBar extends Component {
   constructor(props) {
     super(props);
-    this.scale = 1; // KISS
-    // this._needsUpdate = true;
-    // this._renderedCanvas = false;
+    this.scale = 1;
   }
 
   componentDidMount() {
     this.updateCanvas();
   }
 
-  componentDidUpdate(prevProps) {
-    // console.log(this.props);
-    // let update = false;
-    // Object.keys(this.props).forEach(k => {
-      // if (k === 'data' && this.props[k].length !== prevProps[k].length) {
-        // update = true;
-      // } else if (this.props[k] !== prevProps[k]) {
-        // update = true;
-      // }
-    // });
-    // if (update) {
-      // this._needsUpdate = true;
-      // this._renderedCanvas = false;
-      this.updateCanvas();
-    // }
+  componentDidUpdate() {
+    this.updateCanvas();
   }
 
   _getDatum(event) {
@@ -77,7 +62,7 @@ export default class StackedBar extends Component {
     }
     let offset = 0;
     this.props.data
-      .forEach((d, i) => {
+      .forEach(d => {
         ctx.fillStyle = this.props.cscale(d.name);
         let alpha = 1;
         if (this.props.highlightedDatum) {
@@ -94,78 +79,63 @@ export default class StackedBar extends Component {
         );
         offset += this.props.xscale(d.reads);
       });
-
-    // this._renderedCanvas = true;
-    // // this._needsUpdate = false;
   }
 
   render() {
-    // console.log(this.props);
-    // console.log(this.props.onHoverDatum);
-    // if (this._needsUpdate) {
-      if (this.props.renderSVG) {
-        if (this.props.isPercent) {
-          this.props.xscale
-            .domain([0, this.props.data.map(d => d.reads).reduce((a, v) => a + v, 0)])
-            .range([0, this.props.width])
-            .clamp();
-        }
-        let offset = 0;
-        const bars = this.props.data.map(d => {
-          d.width = this.props.xscale(d.reads);
-          offset += d.width;
-          return (
-            <rect
-              key={d.name}
-              id={d.name}
-              x={offset - d.width}
-              y={0}
-              width={d.width}
-              height={this.props.height}
-              fill={this.props.cscale(d.name)}
-            />
-          );
-        });
-        this._content = bars;
-        // this._needsUpdate = false;
-      } else {
-        // console.log('rendering');
-        // console.log(this.props.onHoverDatum);
-        this._content = (
-          <foreignObject>
-            <canvas
-              ref={c => { this._canvas = c; }}
-              width={this.props.width * this.scale}
-              height={this.props.height * this.scale}
-              style={{
-                width: `${this.props.width}px`,
-                height: `${this.props.height}px`,
-                margin: 0,
-                padding: 0,
-                outline: 'none',
-                border: 'none',
-                overflow: 'hidden',
-                verticalAlign: 'top',
-                cursor: 'pointer',
-                position: 'fixed',
-                zIndex: 1,
-              }}
-              onMouseOver={this.props.onHoverDatum ? this._mouseMove : null}
-              onFocus={this.props.onHoverDatum ? this._mouseMove : null}
-              onMouseMove={this.props.onHoverDatum ? this._mouseMove : null}
-              onMouseOut={this.props.onHoverDatum ? this._mouseOut : null}
-              onBlur={this.props.onHoverDatum ? this._mouseOut : null}
-              onClick={this.props.onClickDatum ? this._mouseClick : null}
-            />
-          </foreignObject>
-        );
+    if (this.props.renderSVG) {
+      if (this.props.isPercent) {
+        this.props.xscale
+          .domain([0, this.props.data.map(d => d.reads).reduce((a, v) => a + v, 0)])
+          .range([0, this.props.width])
+          .clamp();
       }
-      // this._needsUpdate = false;
-      // if (this._renderedCanvas) {
-      //   this._needsUpdate = false;
-      //   this._renderedCanvas = false;
-      // }
-    // }
+      let offset = 0;
+      const bars = this.props.data.map(d => {
+        d.width = this.props.xscale(d.reads);
+        offset += d.width;
+        return (
+          <rect
+            key={d.name}
+            id={d.name}
+            x={offset - d.width}
+            y={0}
+            width={d.width}
+            height={this.props.height}
+            fill={this.props.cscale(d.name)}
+          />
+        );
+      });
+      this._content = bars;
+    } else {
+      this._content = (
+        <foreignObject>
+          <canvas
+            ref={c => { this._canvas = c; }}
+            width={this.props.width * this.scale}
+            height={this.props.height * this.scale}
+            style={{
+              width: `${this.props.width}px`,
+              height: `${this.props.height}px`,
+              margin: 0,
+              padding: 0,
+              outline: 'none',
+              border: 'none',
+              overflow: 'hidden',
+              verticalAlign: 'top',
+              cursor: 'pointer',
+              position: 'fixed',
+              zIndex: 1,
+            }}
+            onMouseOver={this.props.onHoverDatum ? this._mouseMove : null}
+            onFocus={this.props.onHoverDatum ? this._mouseMove : null}
+            onMouseMove={this.props.onHoverDatum ? this._mouseMove : null}
+            onMouseOut={this.props.onHoverDatum ? this._mouseOut : null}
+            onBlur={this.props.onHoverDatum ? this._mouseOut : null}
+            onClick={this.props.onClickDatum ? this._mouseClick : null}
+          />
+        </foreignObject>
+      );
+    }
     return this._content;
   }
 }

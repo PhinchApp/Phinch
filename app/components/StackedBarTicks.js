@@ -12,7 +12,7 @@ props:
 >
 */
 
-export default function StackedBarTicks (props) {
+export default function StackedBarTicks(props) {
   const tickCount = Math.floor(props.metrics.chartWidth / 96);
   const ticks = props.scale.ticks(tickCount);
   if (!ticks.length) {

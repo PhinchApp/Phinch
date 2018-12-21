@@ -18,7 +18,7 @@ export default class Modal extends Component {
     const showHidden = !this.state.showHidden;
     this.setState({ showHidden }, this.props.onHide);
   }
-                
+
   stackRow = ({ index, style }) => this.props.row(this.props.data[index], index, style.top, true);
 
   render() {
@@ -32,11 +32,7 @@ export default class Modal extends Component {
           ...this.props.buttonPosition,
         }}
         onClick={this.toggleHidden}
-        onFocus={e => {
-          e.preventDefault();
-          e.target.focus({preventScroll: true});
-        }}
-        onKeyPress={e => e.key === ' ' ? this.toggleHidden() : null}
+        onKeyPress={e => (e.key === ' ' ? this.toggleHidden() : null)}
       >
         {this.props.buttonTitle}
       </div>
@@ -68,7 +64,7 @@ export default class Modal extends Component {
               ...this.props.closePosition
             }}
             onClick={this.toggleHidden}
-            onKeyPress={e => e.key === ' ' ? this.toggleHidden() : null}
+            onKeyPress={e => (e.key === ' ' ? this.toggleHidden() : null)}
           >
             <img src={close} alt="close" />
           </div>

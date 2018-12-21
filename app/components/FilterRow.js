@@ -16,7 +16,7 @@ export default class FilterRow extends Component {
           role="button"
           tabIndex={0}
           onClick={this.props.restoreDatum}
-          onKeyPress={e => e.key === ' ' ? this.props.restoreDatum() : null}
+          onKeyPress={e => (e.key === ' ' ? this.props.restoreDatum() : null)}
         >
           <div className={styles.delete}>⤴</div>
         </div>
@@ -27,7 +27,7 @@ export default class FilterRow extends Component {
           role="button"
           tabIndex={0}
           onClick={this.props.removeDatum}
-          onKeyPress={e => e.key === ' ' ? this.props.removeDatum() : null}
+          onKeyPress={e => (e.key === ' ' ? this.props.removeDatum() : null)}
         >
           <div className={styles.delete}>
             <img src={close} alt="delete" />

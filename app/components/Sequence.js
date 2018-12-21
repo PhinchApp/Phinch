@@ -17,7 +17,7 @@ props:
 
 import styles from './Sequence.css';
 
-export default function Sequence (props) {
+export default function Sequence(props) {
   const metrics = {
     width: (props.metrics.chartWidth + props.metrics.nonbarWidth)
       - (3 + (props.metrics.padding * 2)),

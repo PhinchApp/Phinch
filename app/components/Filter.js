@@ -328,7 +328,7 @@ export default class Filter extends Component {
           className={styles.columnHeading}
           style={{ width: this.metrics.tableWidth * this.columnWidths[c.id] }}
           onClick={onClick}
-          onKeyPress={e => e.key === ' ' ? onClick() : null}
+          onKeyPress={e => (e.key === ' ' ? onClick() : null)}
         >
           {`${c.name} `}
           {arrow}
@@ -500,7 +500,7 @@ export default class Filter extends Component {
               tabIndex={0}
               className={styles.expand}
               onClick={toggleExpand}
-              onKeyPress={e => e.key === ' ' ? toggleExpand() : null}
+              onKeyPress={e => (e.key === ' ' ? toggleExpand() : null)}
             >
               <img src={icon} alt={expanded ? 'minus' : 'plus'} />
             </div>
@@ -578,11 +578,11 @@ export default class Filter extends Component {
         const [datum] = deleted.splice(source, 1);
         data.splice(target, 0, datum);
       }
-      data = data.map((d, i) => {
+      data = data.map(d => {
         d.order = 1;
         return d;
       });
-      deleted = deleted.map((d, i) => {
+      deleted = deleted.map(d => {
         d.order = 1;
         return d;
       });
@@ -659,7 +659,7 @@ export default class Filter extends Component {
           background: (this.state.result === 'error') ? '#ff2514' : '#00da3e',
         }}
         onClick={this.clearResult}
-        onKeyPress={e => e.key === ' ' ? this.clearResult() : null}
+        onKeyPress={e => (e.key === ' ' ? this.clearResult() : null)}
       >
         {this.state.result}
       </div>
@@ -696,7 +696,7 @@ export default class Filter extends Component {
               tabIndex={0}
               className={`${gstyle.button} ${styles.button}`}
               onClick={viewVisualization}
-              onKeyPress={e => e.key === ' ' ? viewVisualization() : null}
+              onKeyPress={e => (e.key === ' ' ? viewVisualization() : null)}
             >
               View Visualization
             </div>
@@ -739,7 +739,7 @@ export default class Filter extends Component {
               tabIndex={0}
               className={`${gstyle.button} ${styles.reset}`}
               onClick={this.resetFilters}
-              onKeyPress={e => e.key === ' ' ? this.resetFilters() : null}
+              onKeyPress={e => (e.key === ' ' ? this.resetFilters() : null)}
             >
               Reset Filters
             </div>

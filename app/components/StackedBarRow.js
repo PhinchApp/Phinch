@@ -185,7 +185,7 @@ export default class StackedBarRow extends Component {
           letterSpacing: '2px',
         }}
         onClick={this._toggleTagMenu}
-        onKeyPress={e => e.key === ' ' ? this._toggleTagMenu() : null}
+        onKeyPress={e => (e.key === ' ' ? this._toggleTagMenu() : null)}
       >
       ...
       </div>
@@ -203,7 +203,7 @@ export default class StackedBarRow extends Component {
                 key={`t-${t.color}`}
                 className={`${styles.tag} ${selected ? styles.selected : ''}`}
                 onClick={() => this.props.toggleTag(this.props.data, t)}
-                onKeyPress={e => e.key === ' ' ? this.props.toggleTag(this.props.data, t) : null}
+                onKeyPress={e => (e.key === ' ' ? this.props.toggleTag(this.props.data, t) : null)}
               >
                 <div
                   className={`${gstyle.circle} ${styles.tagIcon}`}

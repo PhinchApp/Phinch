@@ -13,7 +13,7 @@ function constructItem(l) {
       tabIndex={0}
       className={styles.menuItem}
       onClick={l.action}
-      onKeyDown={e => e.key === ' ' ? l.action() : null}
+      onKeyDown={e => (e.key === ' ' ? l.action() : null)}
     >
       <div className={styles.menuBox}>
         {l.icon}
@@ -63,7 +63,7 @@ export default class SideMenu extends Component {
               tabIndex={0}
               className={`${styles.menuToggle} ${rotation}`}
               onClick={this.props.toggleMenu}
-              onKeyPress={e => e.key === ' ' ? this.props.toggleMenu() : null}
+              onKeyPress={e => (e.key === ' ' ? this.props.toggleMenu() : null)}
             >
               <img src={arrow} alt="arrow-toggle-menu" />
             </div>

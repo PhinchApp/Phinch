@@ -1,17 +1,15 @@
-import React, { Component } from 'react';
-
-import styles from './StackedBarsSVG.css';
+import React from 'react';
 
 export default function StackedBarsSVG(props) {
   return (
-    <svg 
+    <svg
       ref={props.setRef}
       id={props.id}
       version="1.1"
       baseProfile="full"
       xmlns="http://www.w3.org/2000/svg"
       width={props.svgWidth}
-      height={props.svgHeight + props.seqHeight + props.padding * 8}
+      height={props.svgHeight + (props.seqHeight + (props.padding * 8))}
       fontFamily="IBM Plex Sans Condensed"
       fontWeight="200"
       fontSize="12px"
