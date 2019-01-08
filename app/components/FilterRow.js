@@ -44,12 +44,13 @@ export default class FilterRow extends Component {
       <div
         className={className}
         key={this.props.data.sampleName}
-        data-id={this.props.data.order}
-        data-group={this.props.isRemoved ? 'removed' : 'data'}
-        draggable="true"
-        onDragEnd={this.props.dragEnd}
-        onDragOver={this.props.dragOver}
-        onDragStart={this.props.dragStart}
+        style={{ position: 'absolute', top: `${this.props.yOffset}px` }}
+        // data-id={this.props.data.order}
+        // data-group={this.props.isRemoved ? 'removed' : 'data'}
+        // draggable="true"
+        // onDragEnd={this.props.dragEnd}
+        // onDragOver={this.props.dragOver}
+        // onDragStart={this.props.dragStart}
       >
         <div
           className={styles.cell}

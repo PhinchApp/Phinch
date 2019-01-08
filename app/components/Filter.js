@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
+import { FixedSizeList as List } from 'react-window';
 
 import _debounce from 'lodash.debounce';
 import _cloneDeep from 'lodash.clonedeep';
@@ -358,6 +359,27 @@ export default class Filter extends Component {
     ));
   }
 
+  row = (datum, index, yOffset, removed) => (
+    <FilterRow
+      key={datum.sampleName}
+      index={index}
+      yOffset={yOffset}
+      data={datum}
+      allData={this.allData}
+      isRemoved={removed}
+      columnWidths={this.columnWidths}
+      tableWidth={this.metrics.tableWidth}
+      dragEnd={this.dragEnd}
+      dragOver={this.dragOver}
+      dragStart={this.dragStart}
+      updatePhinchName={this.updatePhinchName}
+      removeDatum={() => { removeRows(this, [datum]); }}
+      restoreDatum={() => { restoreRows(this, [datum]); }}
+    />
+  );
+
+  tableRow = ({ index, style }) => this.row(this.state.data[index], index, style.top, false)
+
   setResult(value) {
     const result = value;
     this.timeout = setTimeout(() => {
@@ -674,6 +696,8 @@ export default class Filter extends Component {
       });
     };
 
+    this.allData = this.state.data.concat(this.state.deleted);
+
     return (
       <div className={gstyle.container}>
         <Loader loading={this.state.loading} />
@@ -749,10 +773,18 @@ export default class Filter extends Component {
             style={{
               width: this.metrics.tableWidth,
               height: this.state.height - 130,
-              overflowY: 'scroll',
             }}
           >
-            {this.renderRows(this.state.data, false)}
+            <List
+              className={`${styles.divlist}`}
+              width={this.metrics.tableWidth}
+              height={this.state.height - 130}
+              itemSize={28}
+              itemCount={this.state.data.length}
+              itemKey={index => this.state.data[index].sampleName}
+            >
+              {this.tableRow}
+            </List>
             <Modal
               buttonTitle="Archived Samples"
               modalTitle="Archived Samples"

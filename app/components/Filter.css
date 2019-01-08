@@ -18,6 +18,10 @@
   color: #00bbda;
 }
 
+.divlist {
+  will-change: auto !important;
+}
+
 .visRowLabel {
   display: inline-block;
   vertical-align: top;
