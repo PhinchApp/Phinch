@@ -276,6 +276,7 @@ export default class StackedBarRow extends Component {
     // const yOffset = this.props.metrics.padding + ((this.props.metrics.barContainerHeight
     //   + (this.props.metrics.miniBarContainerHeight * miniBarCount)) * this.props.index);
     //
+    const rowName = this.props.data[this.props.labelKey] === '' ? 'no_data' : this.props.data[this.props.labelKey];
     const rowColor = (this.props.index % 2 === 0) ? '#ffffff' : '#f4f4f4';
     return (
       <g
@@ -333,7 +334,7 @@ export default class StackedBarRow extends Component {
             {
               (this.state.hovered && (this.props.labelKey === 'phinchName')) ? (
                 ''
-              ) : this.props.data[this.props.labelKey]
+              ) : rowName
             }
           </text>
           <g
