@@ -10,7 +10,7 @@ export default function StackedBarsSVG(props) {
       xmlns="http://www.w3.org/2000/svg"
       width={props.svgWidth}
       height={props.svgHeight + (props.seqHeight + (props.padding * 8))}
-      fontFamily="IBM Plex Sans Condensed"
+      fontFamily="IBM Plex Sans Condensed, Verdana, Sans-serif"
       fontWeight="200"
       fontSize="12px"
       overflow="visible"

@@ -613,7 +613,7 @@ export default class Filter extends Component {
       this.setState({ data, deleted }, this.setResult);
     }
 
-    this.over.style = null;
+    // this.over.style = null;
     this.over = null;
     this.dragged = null;
   }
@@ -624,8 +624,11 @@ export default class Filter extends Component {
       this.over.style = null;
     }
     this.over = e.currentTarget;
+
+    console.log(this.over.style);
     // I know this isn't the React way, but re-rendering the whole table takes forever
-    this.over.style = 'background: #e4e4e4; height: 3rem; vertical-align: top;';
+    // this.over.style = 'background: #e4e4e4; height: 3rem; vertical-align: top;';
+    // this.over.style = 'background: #e4e4e4;'; //' height: 28px; vertical-align: top;';
   }
 
   dragStart(e) {

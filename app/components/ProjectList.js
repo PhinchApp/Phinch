@@ -57,7 +57,7 @@ function ProjectThumb(props) {
       </div>
     </div>
   );
-  const onClick = props.editing ? null : () => props.view(props.project);
+  const onClick = props.editing ? () => {} : () => props.view(props.project);
   const name = (props.editing && !isNew) ? (
     <textarea
       className={styles.name}
