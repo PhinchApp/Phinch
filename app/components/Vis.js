@@ -1472,7 +1472,7 @@ export default class Vis extends Component {
               ) : (
                 <List
                   className={`${styles.svglist}`}
-                  innerTagName="svg"
+                  innerElementType="svg"
                   width={this.metrics.chartWidth + this.metrics.nonbarWidth}
                   height={this.metrics.chartHeight - (this.metrics.padding * 4)}
                   itemSize={this.metrics.barContainerHeight + (
