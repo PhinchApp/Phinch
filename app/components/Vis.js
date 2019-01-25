@@ -851,14 +851,15 @@ export default class Vis extends Component {
       index={index}
       yOffset={yOffset}
       labelKey="name"
+      filters={this.state.filters} // TODO: replace w/ minibar count prop
       metrics={this.metrics}
       scales={this.scales}
-      filters={this.state.filters} // TODO: replace w/ minibar count prop
+      tags={[]}
+      isPercent={(this.state.mode === 'percent')}
+      isRemoved={null}
       highlightedDatum={this.state.highlightedDatum}
       hoverDatum={this._hoverDatum}
       clickDatum={this._clickDatum}
-      isPercent={(this.props.mode === 'percent')}
-      isRemoved={null}
       isAttribute
       unit={this.attribute.unit}
       styles={{
@@ -867,7 +868,6 @@ export default class Vis extends Component {
         name: styles.name,
         reads: styles.reads,
       }}
-      tags={[]}
       renderSVG={this.state.renderSVG}
     />
   );
@@ -875,6 +875,7 @@ export default class Vis extends Component {
   attrRow = ({ index, style }) => this.attr(this.attribute.values[index], index, style.top)
 
   updateAttributeValues(attribute, data) {
+    console.log('updateAttributeValues');
     if (attribute !== '') {
       this.attributes[attribute].values.map(a => {
         a.name = (attribute === 'Year') ? a.value.toString() : a.value.toLocaleString();
@@ -1308,35 +1309,38 @@ export default class Vis extends Component {
     const spacer = <div className={styles.spacer} />;
     const isAttribute = !(this.state.selectedAttribute === '');
     this.attribute = isAttribute ? _cloneDeep(this.attributes[this.state.selectedAttribute]) : null;
-    if (isAttribute) {
-      this.attribute.values = this.attribute.values
-        .filter(v => {
-          if (this.state.showEmptyAttrs) return true;
-          return v.reads > 0;
-        })
-        .sort((a, b) => {
-          if (this.sort.reverse) {
-            if (a.value === 'no_data') return -Infinity;
-            if (b.value === 'no_data') return +Infinity;
-            if (a.value < b.value) return -1;
-            if (a.value > b.value) return 1;
-          } else {
-            if (b.value === 'no_data') return -Infinity;
-            if (a.value === 'no_data') return +Infinity;
-            if (b.value < a.value) return -1;
-            if (b.value > a.value) return 1;
-          }
-          return 0;
-        });
-    }
+    // if (isAttribute) {
+    //   this.attribute.values = this.attribute.values
+    //     .filter(v => {
+    //       if (this.state.showEmptyAttrs) return true;
+    //       return v.reads > 0;
+    //     })
+    //     .sort((a, b) => {
+    //       if (this.sort.reverse) {
+    //         if (a.value === 'no_data') return -Infinity;
+    //         if (b.value === 'no_data') return +Infinity;
+    //         if (a.value < b.value) return -1;
+    //         if (a.value > b.value) return 1;
+    //       } else {
+    //         if (b.value === 'no_data') return -Infinity;
+    //         if (a.value === 'no_data') return +Infinity;
+    //         if (b.value < a.value) return -1;
+    //         if (b.value > a.value) return 1;
+    //       }
+    //       return 0;
+    //     });
+    // }
 
-    const dataLength = isAttribute ? (
-      this.attribute.values
-        .filter(v => {
-          if (this.state.showEmptyAttrs) return true;
-          return v.reads > 0;
-        }).length
-    ) : this.state.data.length;
+    // const dataLength = isAttribute ? (
+    //   this.attribute.values
+    //     .filter(v => {
+    //       if (this.state.showEmptyAttrs) return true;
+    //       return v.reads > 0;
+    //     }).length
+    // ) : this.state.data.length;
+
+    const dataLength = isAttribute ? this.attribute.values.length : this.state.data.length;
+
     //
     const svgHeight = (this.metrics.lineHeight * 4) + (
       (this.metrics.barContainerHeight + (

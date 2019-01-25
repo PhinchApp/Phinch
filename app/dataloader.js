@@ -1,33 +1,23 @@
 import { remote } from 'electron';
-import { spawn } from 'child_process';
-import { join } from 'path';
+import { join, resolve } from 'path';
 
 const isDev = () => process.env.NODE_ENV === 'development';
 const appPath = isDev() ? __dirname : remote.app.getAppPath();
-
-function uint8arrayToString(data) {
-  return String.fromCharCode.apply(null, data);
-}
+const biomhandlerPath = join(appPath, '/..', '/biomhandler', '/dist', '/biomhandler');
 
 function loadFile(filepath, success, failure) {
-  const python = spawn(join(appPath, '/..', '/biomhandler', '/dist', '/biomhandler'), [filepath]);
-  let json = '';
-  python.stdout.on('data', (data) => {
-    json += uint8arrayToString(data);
+  const worker = new Worker(resolve(appPath, 'worker.js'));
+  worker.postMessage({
+    biomhandlerPath,
+    filepath,
   });
-  python.stdout.on('end', () => {
-    try {
-      const data = JSON.parse(json);
-      success(data);
-    } catch (e) {
-      console.warn(e);
+  worker.onmessage = (e) => {
+    if (e.data.status === 'success') {
+      success(e.data.data);
+    } else {
       failure();
     }
-  });
-  python.on('error', (error) => {
-    console.warn(error);
-    failure();
-  });
+  };
 }
 
 export default loadFile;
