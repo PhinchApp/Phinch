@@ -115,7 +115,6 @@ export default class Vis extends Component {
       show: 'phinchName',
     };
 
-
     // Move this to data
     const tagColors = [
       '#ff0000',
@@ -814,6 +813,7 @@ export default class Vis extends Component {
   toggleEmptyAttrs() {
     const showEmptyAttrs = !this.state.showEmptyAttrs;
     this.setState({ showEmptyAttrs }, () => {
+      this.updateAttributeValues(this.state.selectedAttribute, this.state.data);
       this.save(this.setResult);
     });
   }
@@ -872,22 +872,22 @@ export default class Vis extends Component {
     />
   );
 
-  attrRow = ({ index, style }) => this.attr(this.attribute.values[index], index, style.top)
+  attrRow = ({ index, style }) => this.attr(this.attribute.displayValues[index], index, style.top)
 
   updateAttributeValues(attribute, data) {
-    console.log('updateAttributeValues');
     if (attribute !== '') {
-      this.attributes[attribute].values.map(a => {
-        a.name = (attribute === 'Year') ? a.value.toString() : a.value.toLocaleString();
-        a.samples = [...new Set(a.samples)];
-        a.sampleObjects = a.samples.map(s => {
+      this.attributes[attribute].displayValues = this.attributes[attribute].values.map(a => {
+        const datum = {};
+        datum.name = (attribute === 'Year') ? a.value.toString() : a.value.toLocaleString();
+        datum.samples = [...new Set(a.samples)];
+        datum.sampleObjects = datum.samples.map(s => {
           const [sample] = data.filter(d => d.sampleName === s);
           return sample;
         }).filter(s => s !== undefined);
-        a.reads = a.sampleObjects.map(s => s.reads).reduce((ac, v) => ac + v, 0);
-        a.sequences = nest()
+        datum.reads = datum.sampleObjects.map(s => s.reads).reduce((ac, v) => ac + v, 0);
+        datum.sequences = nest()
           .key(s => s.name)
-          .entries(a.sampleObjects
+          .entries(datum.sampleObjects
             .map(s => s.sequences)
             .reduce((ac, v) => ac.concat(v), []))
           .map(s => ({
@@ -895,8 +895,27 @@ export default class Vis extends Component {
             reads: s.values.map(v => v.reads).reduce((ac, v) => ac + v, 0),
             taxonomy: s.values[0].taxonomy,
           }));
-        return a;
-      });
+        return datum;
+      })
+        .filter(v => {
+          if (this.state.showEmptyAttrs) return true;
+          return v.reads > 0;
+        })
+        .sort((a, b) => {
+          if (this.sort.reverse) {
+            if (a.value === 'no_data') return -Infinity;
+            if (b.value === 'no_data') return +Infinity;
+            if (a.value < b.value) return -1;
+            if (a.value > b.value) return 1;
+          } else {
+            if (b.value === 'no_data') return -Infinity;
+            if (a.value === 'no_data') return +Infinity;
+            if (b.value < a.value) return -1;
+            if (b.value > a.value) return 1;
+          }
+          return 0;
+        });
+
     }
   }
 
@@ -906,7 +925,7 @@ export default class Vis extends Component {
     const onSelectChange = (event) => {
       const selectedAttribute = event.target.value;
       this.updateAttributeValues(selectedAttribute, this.state.data);
-      this.setState({ selectedAttribute }, () => {
+      this.setState({ selectedAttribute  }, () => {
         this.save(this.setResult);
       });
     };
@@ -1308,40 +1327,10 @@ export default class Vis extends Component {
 
     const spacer = <div className={styles.spacer} />;
     const isAttribute = !(this.state.selectedAttribute === '');
-    this.attribute = isAttribute ? _cloneDeep(this.attributes[this.state.selectedAttribute]) : null;
-    // if (isAttribute) {
-    //   this.attribute.values = this.attribute.values
-    //     .filter(v => {
-    //       if (this.state.showEmptyAttrs) return true;
-    //       return v.reads > 0;
-    //     })
-    //     .sort((a, b) => {
-    //       if (this.sort.reverse) {
-    //         if (a.value === 'no_data') return -Infinity;
-    //         if (b.value === 'no_data') return +Infinity;
-    //         if (a.value < b.value) return -1;
-    //         if (a.value > b.value) return 1;
-    //       } else {
-    //         if (b.value === 'no_data') return -Infinity;
-    //         if (a.value === 'no_data') return +Infinity;
-    //         if (b.value < a.value) return -1;
-    //         if (b.value > a.value) return 1;
-    //       }
-    //       return 0;
-    //     });
-    // }
+    this.attribute = isAttribute ? this.attributes[this.state.selectedAttribute] : null;
 
-    // const dataLength = isAttribute ? (
-    //   this.attribute.values
-    //     .filter(v => {
-    //       if (this.state.showEmptyAttrs) return true;
-    //       return v.reads > 0;
-    //     }).length
-    // ) : this.state.data.length;
+    const dataLength = isAttribute ? this.attribute.displayValues.length : this.state.data.length;
 
-    const dataLength = isAttribute ? this.attribute.values.length : this.state.data.length;
-
-    //
     const svgHeight = (this.metrics.lineHeight * 4) + (
       (this.metrics.barContainerHeight + (
         this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
@@ -1464,7 +1453,7 @@ export default class Vis extends Component {
                   svgWidth={this.metrics.chartWidth + this.metrics.nonbarWidth}
                   svgHeight={svgHeight}
                   seqHeight={this.metrics.sequenceRowHeight * this.topSequences.length}
-                  data={isAttribute ? this.attribute.values : this.state.data}
+                  data={isAttribute ? this.attribute.displayValues : this.state.data}
                   row={isAttribute ? this.attrRow : this.stackRow}
                   itemSize={this.metrics.barContainerHeight + (
                     this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
@@ -1484,7 +1473,7 @@ export default class Vis extends Component {
                   )}
                   itemCount={dataLength}
                   itemKey={index => (isAttribute
-                    ? this.attribute.values[index].name : this.state.data[index].sampleName
+                    ? this.attribute.displayValues[index].name : this.state.data[index].sampleName
                   )}
                 >
                   {isAttribute ? this.attrRow : this.stackRow}
