@@ -915,7 +915,6 @@ export default class Vis extends Component {
           }
           return 0;
         });
-
     }
   }
 
@@ -925,7 +924,7 @@ export default class Vis extends Component {
     const onSelectChange = (event) => {
       const selectedAttribute = event.target.value;
       this.updateAttributeValues(selectedAttribute, this.state.data);
-      this.setState({ selectedAttribute  }, () => {
+      this.setState({ selectedAttribute }, () => {
         this.save(this.setResult);
       });
     };
