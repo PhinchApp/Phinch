@@ -1282,8 +1282,16 @@ export default class Vis extends Component {
   render() {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
 
+    
+    const isAttribute = !(this.state.selectedAttribute === '');
+    this.attribute = isAttribute ? this.attributes[this.state.selectedAttribute] : null;
+    const dataLength = isAttribute ? this.attribute.displayValues.length : this.state.data.length;
+
+    const maxReads = isAttribute
+      ? Math.max(...this.attribute.displayValues.map(d => d.reads))
+      : Math.max(...this.state.data.map(d => d.reads));
     this.scales.x
-      .domain([0, Math.max(...this.state.data.map(d => d.reads))])
+      .domain([0, maxReads])
       .range([0, this.metrics.chartWidth])
       .clamp();
 
@@ -1325,10 +1333,6 @@ export default class Vis extends Component {
     ) : '';
 
     const spacer = <div className={styles.spacer} />;
-    const isAttribute = !(this.state.selectedAttribute === '');
-    this.attribute = isAttribute ? this.attributes[this.state.selectedAttribute] : null;
-
-    const dataLength = isAttribute ? this.attribute.displayValues.length : this.state.data.length;
 
     const svgHeight = (this.metrics.lineHeight * 4) + (
       (this.metrics.barContainerHeight + (

@@ -52,17 +52,7 @@ export default class StackedBar extends Component {
     }
 
     const ctx = this._canvas.getContext('2d');
-    let dataNeedsUpdate = !this.imageData;
-    if (
-      !dataNeedsUpdate
-        &&
-      (this.props.width !== this.imageData.width || this.props.height !== this.imageData.height)
-    ) {
-      dataNeedsUpdate = true;
-    }
-    if (dataNeedsUpdate) {
-      this.imageData = ctx.createImageData(this.props.width, this.props.height);
-    }
+    const imageData = ctx.createImageData(this.props.width, this.props.height);
 
     if (this.props.isPercent) {
       this.props.xscale
@@ -90,29 +80,30 @@ export default class StackedBar extends Component {
         d.x = offset;
 
         for (let x = offset; x < offset + Math.max(1, d.width); x += 1) {
-          for (let y = 0; y < this.props.height; y += 1) {
-            const i = (x << 2) + (y * this.imageData.width << 2);
-            this.imageData.data[i] = color.r;
-            this.imageData.data[i + 1] = color.g;
-            this.imageData.data[i + 2] = color.b;
-            this.imageData.data[i + 3] = 255 * alpha;
+          for (let y = 0; y < imageData.height; y += 1) {
+            const i = (x << 2) + (y * imageData.width << 2);
+            imageData.data[i] = color.r;
+            imageData.data[i + 1] = color.g;
+            imageData.data[i + 2] = color.b;
+            imageData.data[i + 3] = 255 * alpha;
           }
         }
 
         offset += width;
       });
 
-    for (let x = offset; x < this.props.width; x += 1) {
-      for (let y = 0; y < this.props.height; y += 1) {
-        const i = (x << 2) + (y * this.imageData.width << 2);
-        this.imageData.data[i] = 0;
-        this.imageData.data[i + 1] = 0;
-        this.imageData.data[i + 2] = 0;
-        this.imageData.data[i + 3] = 0;
-      }
-    }
+    // if (offset < imageData.width) {}
+    // for (let x = offset; x < this.props.width; x += 1) {
+    //   for (let y = 0; y < this.props.height; y += 1) {
+    //     const i = (x << 2) + (y * imageData.width << 2);
+    //     imageData.data[i] = 0;
+    //     imageData.data[i + 1] = 0;
+    //     imageData.data[i + 2] = 0;
+    //     imageData.data[i + 3] = 0;
+    //   }
+    // }
 
-    ctx.putImageData(this.imageData, 0, 0);
+    ctx.putImageData(imageData, 0, 0);
   }
 
   render() {
