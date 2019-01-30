@@ -136,7 +136,7 @@ export default class Filter extends Component {
         .reduce((a, v) => a.concat(v), []))]
         .filter(k => k !== 'phinchID')
         .sort();
-      this.metadataKeys.forEach((k) => {
+      this.metadataKeys.forEach(k => {
         const units = [];
         const entries = this.state.data.map(d => {
           const [value, unit] = d.metadata[k].split(' ');
@@ -149,7 +149,7 @@ export default class Filter extends Component {
             splitValue: value,
             unit,
           };
-        }).filter(d => d.value !== 'no_data');
+        }).filter(d => d.value !== 'no_data' && d.value !== '');
         const values = nest()
           .key(d => d.value)
           .entries(entries)
@@ -160,11 +160,12 @@ export default class Filter extends Component {
             count: d.values.length,
             samples: d.values.map(v => v.sampleName),
           }));
+
         const unit = units.length ? units[0] : '';
         let groupKey = 'string';
         let filterValues = values;
 
-        if (k.toLowerCase().trim().includes('date') || k.toLowerCase().trim().includes('year')) {
+        if (k.toLowerCase().trim().includes('date')) {
           groupKey = 'date';
           filterValues = values.map(d => {
             if (k.toLowerCase().trim().includes('date')) {
@@ -172,6 +173,12 @@ export default class Filter extends Component {
             }
             return d;
           }).filter(v => !v.value.toString().toLowerCase().trim().includes('invalid date'));
+        } else if (k.toLowerCase().trim().includes('year')) {
+          groupKey = 'date';
+          filterValues = values.map((v) => {
+            v.value = filterFloat(v.splitValue);
+            return v;
+          }).filter(v => v.value !== null);
         } else if (filterFloat(values.filter(v => v.splitValue !== 'no_data')[0].splitValue) !== null) {
           groupKey = 'number';
           filterValues = values.map((v) => {

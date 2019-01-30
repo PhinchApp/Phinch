@@ -140,6 +140,7 @@ export default class StackedBarRow extends Component {
           width: '316px',
           height: '216px',
           color: 'white',
+          zIndex: 20,
         }}
         data={
           this.props.data.sampleObjects.map((s, i) => (
