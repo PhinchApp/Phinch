@@ -1121,7 +1121,7 @@ export default class Vis extends Component {
         </div>
       );
     });
-    const [currentLevel] = _cloneDeep(this.levels).filter(l => l.order === this.state.level);
+    const [currentLevel] = this.levels.filter(l => l.order === this.state.level);
     const levelSelector = modalLevel ? (
       <Modal
         buttonTitle={`Level: ${currentLevel.name}`}

@@ -52,7 +52,17 @@ export default class StackedBar extends Component {
     }
 
     const ctx = this._canvas.getContext('2d');
-    ctx.clearRect(0, 0, this.props.width, this.props.height);
+    let dataNeedsUpdate = !this.imageData;
+    if (
+      !dataNeedsUpdate
+        &&
+      (this.props.width !== this.imageData.width || this.props.height !== this.imageData.height)
+    ) {
+      dataNeedsUpdate = true;
+    }
+    if (dataNeedsUpdate) {
+      this.imageData = ctx.createImageData(this.props.width, this.props.height);
+    }
 
     if (this.props.isPercent) {
       this.props.xscale
@@ -61,26 +71,48 @@ export default class StackedBar extends Component {
         .clamp();
     }
     let offset = 0;
+
     this.props.data
       .forEach(d => {
-        ctx.fillStyle = this.props.cscale(d.name);
+        const hex = this.props.cscale(d.name);
+        const color = {
+          r: parseInt(hex.slice(1, 3), 16),
+          g: parseInt(hex.slice(3, 5), 16),
+          b: parseInt(hex.slice(5, 7), 16),
+        };
         let alpha = 1;
         if (this.props.highlightedDatum) {
           alpha = this.props.highlightedDatum.datum.name === d.name ? 1 : 0.25;
         }
-        ctx.globalAlpha = alpha;
-        d.x = offset * this.scale;
+
         const width = this.props.xscale(d.reads);
         d.width = width;
-        ctx.fillRect(
-          d.x,
-          0 * this.scale,
-          d.width * this.scale,
-          this.props.height * this.scale,
-        );
-        // offset += this.props.xscale(d.reads);
+        d.x = offset;
+
+        for (let x = offset; x < offset + Math.max(1, d.width); x += 1) {
+          for (let y = 0; y < this.props.height; y += 1) {
+            const i = (x << 2) + (y * this.imageData.width << 2);
+            this.imageData.data[i] = color.r;
+            this.imageData.data[i + 1] = color.g;
+            this.imageData.data[i + 2] = color.b;
+            this.imageData.data[i + 3] = 255 * alpha;
+          }
+        }
+
         offset += width;
       });
+
+    for (let x = offset; x < this.props.width; x += 1) {
+      for (let y = 0; y < this.props.height; y += 1) {
+        const i = (x << 2) + (y * this.imageData.width << 2);
+        this.imageData.data[i] = 0;
+        this.imageData.data[i + 1] = 0;
+        this.imageData.data[i + 2] = 0;
+        this.imageData.data[i + 3] = 0;
+      }
+    }
+
+    ctx.putImageData(this.imageData, 0, 0);
   }
 
   render() {

@@ -20,6 +20,7 @@
     "import/no-unresolved": "error",
     "import/no-extraneous-dependencies": "off",
     "jsx-a11y/anchor-is-valid": "off",
+    "no-bitwise": "off",
     "no-console": "off",
     "no-confusing-arrow": ["error", {"allowParens": true}],
     "no-use-before-define": "off",

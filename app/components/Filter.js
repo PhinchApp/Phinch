@@ -138,21 +138,21 @@ export default class Filter extends Component {
         .sort();
       this.metadataKeys.forEach((k) => {
         const units = [];
+        const entries = this.state.data.map(d => {
+          const [value, unit] = d.metadata[k].split(' ');
+          if (unit !== undefined && !units.includes(unit)) {
+            units.push(unit);
+          }
+          return {
+            sampleName: d.sampleName,
+            value: d.metadata[k],
+            splitValue: value,
+            unit,
+          };
+        }).filter(d => d.value !== 'no_data');
         const values = nest()
           .key(d => d.value)
-          .entries(_cloneDeep(this.state.data).map(d => {
-            const [value, unit] = d.metadata[k].split(' ');
-            if (unit !== undefined && !units.includes(unit)) {
-              units.push(unit);
-            }
-            return {
-              sampleName: d.sampleName,
-              value: _cloneDeep(d.metadata[k]),
-              splitValue: value,
-              unit,
-            };
-          })
-            .filter(d => d.value !== 'no_data'))
+          .entries(entries)
           .map((d, i) => ({
             index: i,
             value: d.key,
@@ -162,11 +162,11 @@ export default class Filter extends Component {
           }));
         const unit = units.length ? units[0] : '';
         let groupKey = 'string';
-        let filterValues = _cloneDeep(values);
+        let filterValues = values;
 
         if (k.toLowerCase().trim().includes('date') || k.toLowerCase().trim().includes('year')) {
           groupKey = 'date';
-          filterValues = _cloneDeep(values).map(d => {
+          filterValues = values.map(d => {
             if (k.toLowerCase().trim().includes('date')) {
               d.value = new Date(d.value);
             }
@@ -174,7 +174,7 @@ export default class Filter extends Component {
           }).filter(v => !v.value.toString().toLowerCase().trim().includes('invalid date'));
         } else if (filterFloat(values.filter(v => v.splitValue !== 'no_data')[0].splitValue) !== null) {
           groupKey = 'number';
-          filterValues = _cloneDeep(values).map((v) => {
+          filterValues = values.map((v) => {
             v.value = filterFloat(v.splitValue);
             return v;
           }).filter(v => v.value !== null);
@@ -424,7 +424,7 @@ export default class Filter extends Component {
         include = false;
       }
       Object.keys(filters).forEach((k) => {
-        let value = _cloneDeep(d.metadata[k]);
+        let value = d.metadata[k];
         if (k.toLowerCase().trim().includes('date')) {
           value = new Date(value);
           if (
@@ -625,7 +625,7 @@ export default class Filter extends Component {
     }
     this.over = e.currentTarget;
 
-    console.log(this.over.style);
+    // console.log(this.over.style);
     // I know this isn't the React way, but re-rendering the whole table takes forever
     // this.over.style = 'background: #e4e4e4; height: 3rem; vertical-align: top;';
     // this.over.style = 'background: #e4e4e4;'; //' height: 28px; vertical-align: top;';

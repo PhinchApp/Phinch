@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 
 import _sortBy from 'lodash.sortby';
-import _cloneDeep from 'lodash.clonedeep';
 
 import minus from 'images/minus.svg';
 import plus from 'images/plus.svg';
@@ -53,12 +52,12 @@ export default class StackedBarRow extends Component {
   }
 
   render() {
-    const sequence = _sortBy(_cloneDeep(this.props.data.sequences), (s) => -s.reads);
+    const sequence = _sortBy(this.props.data.sequences, s => -s.reads);
     const miniBars = [];
     let miniBarIndex = 0;
     const miniBarCount = Object.keys(this.props.filters).length;
     Object.keys(this.props.filters).forEach(k => {
-      const [miniSequence] = _cloneDeep(sequence).filter(s => (s.name === k));
+      const [miniSequence] = sequence.filter(s => (s.name === k));
       if (miniSequence) {
         miniBars.push(
           <g
@@ -272,10 +271,6 @@ export default class StackedBarRow extends Component {
         {this.props.isRemoved ? 'Restore' : 'Archive'}
       </div>
     ) : '';
-    // Replaced by List component in StackedBarContainer
-    // const yOffset = this.props.metrics.padding + ((this.props.metrics.barContainerHeight
-    //   + (this.props.metrics.miniBarContainerHeight * miniBarCount)) * this.props.index);
-    //
     const rowName = this.props.data[this.props.labelKey] === '' ? 'no_data' : this.props.data[this.props.labelKey];
     const rowColor = (this.props.index % 2 === 0) ? '#ffffff' : '#f4f4f4';
     return (
@@ -286,9 +281,7 @@ export default class StackedBarRow extends Component {
           this.props.metrics.barContainerHeight
           + (this.props.metrics.miniBarContainerHeight * miniBarCount)
         }
-        // transform={`translate(1, ${yOffset})`}
         transform={`translate(1, ${this.props.yOffset})`}
-        // transform={`translate(1, 0)`}
         onMouseEnter={this._showEditable}
         onMouseLeave={this._hideEditable}
       >
