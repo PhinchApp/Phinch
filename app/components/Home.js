@@ -6,7 +6,6 @@ import editOff from 'images/edit-off.svg';
 import editOn from 'images/edit-on.svg';
 
 import { pageView } from '../analytics';
-import loadFile from '../dataloader';
 import DataContainer from '../datacontainer';
 import { getProjects, getSamples, setProjectFilters, deleteProject } from '../projects';
 
@@ -46,8 +45,7 @@ export default class Home extends Component {
     this.completeRemove = this.completeRemove.bind(this);
   }
 
-  success(data) {
-    DataContainer.setData(data);
+  success() {
     this.setState({
       redirect: '/filter',
       loading: false,
@@ -63,8 +61,9 @@ export default class Home extends Component {
       this.setState({ redirect: '/newproject' });
     } else if (project.data) {
       this.setState({ loading: true });
-      DataContainer.setSummary(project);
-      loadFile(project.data, this.success, this.failure);
+      DataContainer.setSummary(project, () => {
+        DataContainer.loadAndFormatData(project.data, this.success, this.failure);
+      }, this.failure);
     } else {
       this.failure();
     }
@@ -74,9 +73,15 @@ export default class Home extends Component {
     const editing = !this.state.editing;
     Object.keys(this.shouldUpdate).forEach(k => {
       const p = this.shouldUpdate[k];
-      DataContainer.setSummary(p);
-      setProjectFilters(p.summary.path, p.summary.dataKey, null, null, () => {});
-      // setup error handling in callback here
+      DataContainer.setSummarySync(p);
+      const summary = DataContainer.getSummary();
+      setProjectFilters(
+        summary.path,
+        summary.dataKey,
+        null,
+        null,
+        () => {} // setup error handling in callback here
+      );
     });
     this.shouldUpdate = {};
     const deleting = editing ? this.state.deleting : false;
@@ -113,9 +118,9 @@ export default class Home extends Component {
   }
 
   render() {
-    const redirect = (this.state.redirect === null) ? '' : (
-      <Redirect push to={this.state.redirect} />
-    );
+    if (this.state.redirect !== null) {
+      return <Redirect push to={this.state.redirect} />;
+    }
     let modalContent = null;
     if (this.state.deleting) {
       modalContent = (
@@ -204,7 +209,6 @@ export default class Home extends Component {
       <div>
         <div className={styles.container} data-tid="container">
           <Loader loading={this.state.loading} />
-          {redirect}
           <SideBar context={this} />
           <div className={`${styles.section} ${styles.right}`}>
             <div

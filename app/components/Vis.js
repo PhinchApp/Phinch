@@ -1284,7 +1284,6 @@ export default class Vis extends Component {
   render() {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
 
-    
     const isAttribute = !(this.state.selectedAttribute === '');
     this.attribute = isAttribute ? this.attributes[this.state.selectedAttribute] : null;
     const dataLength = isAttribute ? this.attribute.displayValues.length : this.state.data.length;

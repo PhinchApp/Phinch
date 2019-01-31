@@ -1,5 +1,11 @@
-import { statSync } from 'fs';
-import { join } from 'path';
+import { remote } from 'electron';
+import { stat } from 'fs';
+import { join, resolve } from 'path';
+
+const isDev = () => process.env.NODE_ENV === 'development';
+const appPath = isDev() ? __dirname : remote.app.getAppPath();
+const biomhandlerPath = join(appPath, '/..', '/biomhandler', '/dist', '/biomhandler');
+const worker = new Worker(resolve(appPath, 'workers', 'loadAndFormatData.js'));
 
 // Maybe externalize this to utils or something
 function formatFileSize(bytes) {
@@ -26,7 +32,20 @@ class DataContainer {
     this.observations = [];
   }
 
-  setSummary(project) {
+  setSummary(project, success, failure) {
+    this.setSummarySync(project);
+    stat(project.data, (error, stats) => {
+      if (error) {
+        console.warn(error);
+        failure();
+      } else {
+        this.summary.size = formatFileSize(stats.size);
+        success();
+      }
+    });
+  }
+
+  setSummarySync(project) {
     if (project.summary) {
       this.summary = Object.assign(this.summary, project.summary);
     } else {
@@ -40,7 +59,6 @@ class DataContainer {
     if (Array.isArray(this.summary.path)) {
       this.summary.path = join(...this.summary.path);
     }
-    this.summary.size = formatFileSize(statSync(project.data).size);
   }
   getSummary() {
     return this.summary;
@@ -54,61 +72,25 @@ class DataContainer {
     return this.observations;
   }
 
-  setData(data) {
-    this.data = data;
-
-    /*
-      SIDE EFFECTS
-    */
-    const sequenceReads = {};
-    this.data.data.forEach((d) => {
-      if (sequenceReads[d[1]]) {
-        sequenceReads[d[1]] += d[2];
+  loadAndFormatData(filepath, success, failure) {
+    worker.postMessage({
+      biomhandlerPath,
+      filepath,
+    });
+    worker.onmessage = e => {
+      if (e.data.status === 'success') {
+        this.data = e.data.data;
+        this.samples = e.data.data.columns;
+        this.observations = e.data.data.rows;
+        this.summary.samples = this.samples.length;
+        this.summary.observations = this.observations.length;
+        success();
       } else {
-        sequenceReads[d[1]] = d[2];
+        failure();
       }
-    });
-    // const seqids = Object.keys(sequenceReads).map(k => parseInt(k))
-    // console.log(seqids);
-    // const colids = this.data.columns.slice().map(c => c.metadata.phinchID)
-    // console.log(colids);
-    // const diff = seqids.filter(x => !colids.includes(x))
-    // console.log(diff);
-
-    this.summary.samples = this.data.columns.length;
-    this.summary.observations = this.data.rows.length;
-
-    this.data.columns = this.data.columns.map((c, i) => {
-      // c.metadata['phinchID'] = c.metadata['phinchID'] ? c.metadata['phinchID'] : i;
-      c.metadata.phinchID = i;
-      const reads = (sequenceReads[i] === undefined) ? 0 : sequenceReads[i];
-      Object.keys(c.metadata).forEach(k => {
-        if (c.metadata[k] === '') {
-          c.metadata[k] = '__empty__'
-        }
-      });
-      return {
-        biomid: i + 1,
-        id: c.id,
-        sampleName: c.id,
-        phinchName: c.phinchName || (c.metadata.phinchName ? c.metadata.phinchName : c.id),
-        metadata: c.metadata,
-        reads,
-      };
-    });
-    // console.log(this.data.columns.slice()[2]);
-    this.samples = this.data.columns;
-
-    this.data.rows = this.data.rows.map((r, i) => {
-      r.metadata.phinchID = i;
-      // r.metadata['phinchID'] = r.metadata['phinchID'] ? r.metadata['phinchID'] : i;
-      return r;
-    });
-    this.observations = this.data.rows;
-    /*
-      SIDE EFFECTS
-    */
+    };
   }
+
   getData() {
     return this.data;
   }

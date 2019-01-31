@@ -6,7 +6,6 @@ import logo from 'images/phinch.svg';
 import back from 'images/back.svg';
 
 import { createProject } from '../projects';
-import loadFile from '../dataloader';
 import DataContainer from '../datacontainer';
 
 import SideMenu from './SideMenu';
@@ -130,15 +129,16 @@ export default class NewProject extends Component {
   }
 
   updateSummary(project) {
-    DataContainer.setSummary(project);
-    const summary = DataContainer.getSummary();
-    this.setState({
-      name: summary.name,
-      size: summary.size,
-      valid: null,
-      error: null,
-      observations: null,
-    });
+    DataContainer.setSummary(project, () => {
+      const summary = DataContainer.getSummary();
+      this.setState({
+        name: summary.name,
+        size: summary.size,
+        valid: null,
+        error: null,
+        observations: null,
+      });
+    }, this.failure);
   }
 
   updateValid(isvalid) {
@@ -160,17 +160,18 @@ export default class NewProject extends Component {
     this.setState({ loading: isLoading });
   }
 
-  success(data) {
-    if (data.data) {
-      this.updateValid(true);
-      this.updateObservations(Number.parseFloat(data.rows.length).toLocaleString());
-      this.updateLoading(false);
-      const project = createProject({ name: this.state.name, data });
-      DataContainer.setSummary(project);
-      DataContainer.setData(data);
-    } else {
-      this.failure();
-    }
+  success() {
+    const project = createProject({ name: this.state.name, data: DataContainer.getData() });
+    DataContainer.setSummary(project, () => {
+      const { name, size, observations } = DataContainer.getSummary();
+      this.setState({
+        valid: 'Yes',
+        loading: false,
+        name,
+        size,
+        observations,
+      });
+    }, this.failure);
   }
 
   failure() {
@@ -180,8 +181,18 @@ export default class NewProject extends Component {
 
   onChosenFileToOpen(filepath) {
     this.updateLoading(true);
-    this.updateSummary({ data: filepath });
-    loadFile(filepath, this.success, this.failure);
+    DataContainer.setSummary({ data: filepath }, () => {
+      const summary = DataContainer.getSummary();
+      this.setState({
+        name: summary.name,
+        size: summary.size,
+        valid: null,
+        error: null,
+        observations: null,
+      }, () => {
+        DataContainer.loadAndFormatData(filepath, this.success, this.failure);
+      });
+    }, this.failure);
   }
 
   handleOpenButton() {
@@ -287,8 +298,6 @@ export default class NewProject extends Component {
         <Loader loading={this.state.loading} />
         <Microbes
           show={this.state.loading || this.state.valid !== null}
-          // width={window.innerWidth}
-          // height={window.innerHeight}
           width={this.state.width}
           height={this.state.height}
           count={100}

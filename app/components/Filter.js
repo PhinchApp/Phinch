@@ -715,10 +715,12 @@ export default class Filter extends Component {
       <div className={gstyle.container}>
         <Loader loading={this.state.loading} />
         {redirect}
+        {result}
         <div className={styles.header}>
           <div className={gstyle.logo}>
             <Link to="/">
               <img src={logo} alt="Phinch" />
+
             </Link>
           </div>
           <div className={gstyle.header}>
@@ -750,7 +752,6 @@ export default class Filter extends Component {
               />
               {this.renderHeader()}
             </div>
-            {result}
           </div>
         </div>
         <div style={{ position: 'relative', backgroundColor: '#ffffff', color: '#808080' }}>

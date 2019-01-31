@@ -91,7 +91,7 @@ export default class StackedBar extends Component {
 
         offset += width;
       });
-      
+
     ctx.putImageData(imageData, 0, 0);
   }
 
