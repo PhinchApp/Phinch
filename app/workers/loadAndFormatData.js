@@ -43,7 +43,6 @@ function formatData(data) {
 }
 
 function loadBiomFile(e) {
-  // console.log(e);
   const { biomhandlerPath, filepath } = e.data;
   const python = spawn(biomhandlerPath, [filepath]);
   let json = '';
@@ -63,14 +62,12 @@ function loadBiomFile(e) {
         status: 'failure',
       });
     }
-    // close(); /* eslint-disable-line no-restricted-globals */
   });
   python.on('error', (error) => {
     console.warn(error);
     postMessage({
       status: 'failure',
     });
-    // close(); /* eslint-disable-line no-restricted-globals */
   });
 }
 
