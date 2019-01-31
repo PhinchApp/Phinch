@@ -135,7 +135,7 @@ export default class StackedBarRow extends Component {
         }}
         modalPosition={{
           position: 'absolute',
-          marginTop: this.props.metrics.padding,
+          marginTop: this.props.isLast ? (-216 + this.props.metrics.padding * 2) : this.props.metrics.padding,
           marginLeft: this.props.metrics.idWidth + (this.props.metrics.nameWidth / 2),
           width: '316px',
           height: '216px',
@@ -191,7 +191,12 @@ export default class StackedBarRow extends Component {
       </div>
     ) : '';
     const tagMenu = this.state.showTags ? (
-      <div className={styles.tagMenu}>
+      <div
+        className={styles.tagMenu}
+        style={{
+          marginTop: this.props.isLast ? -62 : -32,
+        }}
+      >
         {
           this.props.tags.map(t => {
             const selected = this.props.data.tags[t.id];

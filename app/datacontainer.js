@@ -82,6 +82,11 @@ class DataContainer {
       // c.metadata['phinchID'] = c.metadata['phinchID'] ? c.metadata['phinchID'] : i;
       c.metadata.phinchID = i;
       const reads = (sequenceReads[i] === undefined) ? 0 : sequenceReads[i];
+      Object.keys(c.metadata).forEach(k => {
+        if (c.metadata[k] === '') {
+          c.metadata[k] = '__empty__'
+        }
+      });
       return {
         biomid: i + 1,
         id: c.id,

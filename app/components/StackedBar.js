@@ -91,18 +91,7 @@ export default class StackedBar extends Component {
 
         offset += width;
       });
-
-    // if (offset < imageData.width) {}
-    // for (let x = offset; x < this.props.width; x += 1) {
-    //   for (let y = 0; y < this.props.height; y += 1) {
-    //     const i = (x << 2) + (y * imageData.width << 2);
-    //     imageData.data[i] = 0;
-    //     imageData.data[i + 1] = 0;
-    //     imageData.data[i + 2] = 0;
-    //     imageData.data[i + 3] = 0;
-    //   }
-    // }
-
+      
     ctx.putImageData(imageData, 0, 0);
   }
 
