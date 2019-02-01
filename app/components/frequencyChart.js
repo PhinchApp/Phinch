@@ -14,14 +14,15 @@ export default class FrequencyChart extends Component {
   }
 
   componentDidMount() {
-    this.updateCanvas(this.canvas.getContext('2d'));
+    this.updateCanvas();
   }
 
   componentDidUpdate() {
-    this.updateCanvas(this.canvas.getContext('2d'));
+    this.updateCanvas();
   }
 
-  updateCanvas(ctx) {
+  updateCanvas() {
+    const ctx = this.canvas.getContext('2d');
     ctx.clearRect(0, 0, this.props.width, this.props.height);
     ctx.fillStyle = 'black';
     ctx.fillRect(
