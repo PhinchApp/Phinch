@@ -31,7 +31,7 @@ export default class FrequencyChart extends Component {
       this.props.width - (this.padding * 2),
       0.25
     );
-    this.props.data.forEach((d) => {
+    this.props.data.forEach(d => {
       ctx.fillRect(
         this.scale(d.reads),
         (this.props.height / 3) + this.padding,

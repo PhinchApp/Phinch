@@ -4,7 +4,6 @@ import { FixedSizeList as List } from 'react-window';
 
 import _debounce from 'lodash.debounce';
 import _cloneDeep from 'lodash.clonedeep';
-import { nest } from 'd3-collection';
 
 import stackedbar from 'images/stackedbar.svg';
 import logo from 'images/phinch.svg';
@@ -52,16 +51,18 @@ export default class Filter extends Component {
     this.state = {
       summary: DataContainer.getSummary(),
       data: DataContainer.getSamples(),
+      filters: DataContainer.getAttributes(),
       deleted: [],
       names: {},
       height: window.innerHeight,
       width: window.innerWidth,
-      filters: {},
       result: null,
       loading: false,
       redirect: null,
       showLeftSidebar: false,
     };
+
+    this.filters = DataContainer.getFilters();
 
     this.metrics = {
       padding: 16,
@@ -120,127 +121,27 @@ export default class Filter extends Component {
     this.metrics.tableWidth = this.state.width
       - (this.metrics.leftSidebar + this.metrics.filterWidth + (this.metrics.padding * 4));
 
-    this.filters = {
-      date: {},
-      number: {},
-      string: {},
-    };
-
-    /*
-      FILTER Controls
-    */
-    // TODO: Move this to data container or similar
-    if (this.state.data.length) {
-      this.metadataKeys = [...new Set(this.state.data
-        .map(d => Object.keys(d.metadata))
-        .reduce((a, v) => a.concat(v), []))]
-        .filter(k => k !== 'phinchID')
-        .sort();
-      this.metadataKeys.forEach(k => {
-        const units = [];
-        const entries = this.state.data.map(d => {
-          const [value, unit] = d.metadata[k].split(' ');
-          if (unit !== undefined && !units.includes(unit)) {
-            units.push(unit);
-          }
-          return {
-            sampleName: d.sampleName,
-            value: d.metadata[k],
-            splitValue: value,
-            unit,
-          };
-        });
-
-        const values = nest()
-          .key(d => d.value)
-          .entries(entries)
-          .map((d, i) => ({
-            index: i,
-            value: d.key,
-            splitValue: d.values.map(v => v.splitValue)[0],
-            count: d.values.length,
-            samples: d.values.map(v => v.sampleName),
-          }));
-
-        const unit = units.length ? units[0] : '';
-        let groupKey = 'string';
-        let filterValues = values;
-
-        if (k.toLowerCase().trim().includes('date')) {
-          groupKey = 'date';
-          filterValues = values.map(d => {
-            if (k.toLowerCase().trim().includes('date')) {
-              d.value = new Date(d.value);
-            }
-            return d;
-          }).filter(v => !v.value.toString().toLowerCase().trim().includes('invalid date'));
-        } else if (k.toLowerCase().trim().includes('year')) {
-          groupKey = 'date';
-          filterValues = values.map((v) => {
-            v.value = filterFloat(v.splitValue);
-            return v;
-          }).filter(v => v.value !== null);
-        } else if (filterFloat(values.filter(v => v.splitValue !== 'no_data')[0].splitValue) !== null) {
-          groupKey = 'number';
-          filterValues = values.map((v) => {
-            v.value = filterFloat(v.splitValue);
-            return v;
-          }).filter(v => v.value !== null);
-        }
-
-        filterValues = filterValues
-          .sort((a, b) => a.value.valueOf() - b.value.valueOf())
-          .map((d, i) => {
-            d.index = i;
-            return d;
-          });
-
-        let range = {
-          min: filterValues[0],
-          max: filterValues[filterValues.length - 1],
-        };
-        if (groupKey === 'string') {
-          range = {};
-          filterValues.forEach(v => {
-            range[v.value] = true;
-          });
-        }
-
-        this.state.filters[k] = {
-          key: k,
-          unit,
-          range,
-          type: groupKey,
-          values: filterValues,
-          expanded: false,
-        };
-        this.filters[groupKey][k] = {
-          values: filterValues,
-          unit,
-          log: true,
-        };
-
-        if (!this.init.filters) {
-          this.init.filters = {};
-        }
-        if (this.init.filters[k]) {
-          this.init.filters[k].values = filterValues;
-          if (k.toLowerCase().trim().includes('date')) {
-            this.init.filters[k].range.max.value = new Date(this.init.filters[k].range.max.value);
-            this.init.filters[k].range.min.value = new Date(this.init.filters[k].range.min.value);
-          }
-          this.state.filters[k] = this.init.filters[k];
-        }
-      });
-
-      this.state.deleted = this.init.deleted ? this.init.deleted : [];
-      this.state.names = this.init.names;
-      if (this.init.sort) {
-        this.sort = this.init.sort;
+    Object.keys(this.state.filters).forEach(k => {
+      if (!this.init.filters) {
+        this.init.filters = {};
       }
+      if (this.init.filters[k]) {
+        this.init.filters[k].values = this.state.filters[k].values;
+        if (k.toLowerCase().trim().includes('date')) {
+          this.init.filters[k].range.max.value = new Date(this.init.filters[k].range.max.value);
+          this.init.filters[k].range.min.value = new Date(this.init.filters[k].range.min.value);
+        }
+        this.state.filters[k] = this.init.filters[k];
+      }
+    });
 
-      DataContainer.setAttributes(this.state.filters);
+    this.state.deleted = this.init.deleted ? this.init.deleted : [];
+    this.state.names = this.init.names;
+    if (this.init.sort) {
+      this.sort = this.init.sort;
     }
+
+    DataContainer.setAttributes(this.state.filters);
 
     this.dragEnd = this.dragEnd.bind(this);
     this.dragOver = this.dragOver.bind(this);

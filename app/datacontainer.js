@@ -84,6 +84,10 @@ class DataContainer {
         this.observations = e.data.data.rows;
         this.summary.samples = this.samples.length;
         this.summary.observations = this.observations.length;
+        //
+        this.attributes = e.data.data.stateFilters;
+        this.filters = e.data.data.filters;
+        //
         success();
       } else {
         failure();
@@ -93,6 +97,10 @@ class DataContainer {
 
   getData() {
     return this.data;
+  }
+
+  getFilters() {
+    return this.filters;
   }
 
   applyFiltersToData(columns) {
