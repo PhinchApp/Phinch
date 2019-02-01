@@ -619,7 +619,6 @@ export default class Filter extends Component {
           <div className={gstyle.logo}>
             <Link to="/">
               <img src={logo} alt="Phinch" />
-
             </Link>
           </div>
           <div className={gstyle.header}>
@@ -712,7 +711,11 @@ export default class Filter extends Component {
                 left: this.state.width - (this.metrics.tableWidth + (this.metrics.padding / 2)),
                 width: this.metrics.tableWidth,
               }}
-              data={this.renderRows(this.state.deleted, true)}
+              useList
+              data={this.state.deleted}
+              row={this.row}
+              dataKey="sampleName"
+              itemHeight={28}
               badge
             />
           </div>
