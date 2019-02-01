@@ -7,7 +7,7 @@ export default class FrequencyChart extends Component {
     this.padding = 2;
     this.scale = scaleLog()
       .domain([
-        1,
+        Math.max(1, Math.min(...this.props.data.map(d => d.reads))),
         Math.max(...this.props.data.map(d => d.reads))
       ])
       .range([this.padding, this.props.width - (this.padding * 2)]);
