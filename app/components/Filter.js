@@ -139,8 +139,6 @@ export default class Filter extends Component {
       this.metadataKeys.forEach(k => {
         const units = [];
         const entries = this.state.data.map(d => {
-          // const category = d.metadata[k] === '' ? '_blank_' : d.metadata[k];
-          // const [value, unit] = category.split(' ');
           const [value, unit] = d.metadata[k].split(' ');
           if (unit !== undefined && !units.includes(unit)) {
             units.push(unit);

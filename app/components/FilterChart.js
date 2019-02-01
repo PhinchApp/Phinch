@@ -48,9 +48,21 @@ export default class FilterChart extends Component {
   render() {
     this.updateScales();
     const isDate = (this.props.name.toLowerCase().includes('date'));
+    let isYear = false;
+    const maybeYear = this.props.name.toLowerCase().includes('year') && !isDate;
+    if (maybeYear) {
+      const valueLengths = [
+        ...new Set([...this.props.data.values.map(d => d.value.toString().length)])
+      ];
+      if (valueLengths.length === 1 && valueLengths[0] === 4) {
+        isYear = true;
+      }
+    }
+
     const barWidth = (this.xscale(1) - this.xscale(0));
     const strokeWidth = barWidth > 2 ? 0.5 : 0;
     const filter = this.props.filters[this.props.name];
+
     const bars = this.props.data.values.map((d, i) => {
       const valueInRange = (isDate) ? (
         !(
@@ -102,22 +114,27 @@ export default class FilterChart extends Component {
         [min] = new Date(filter.range.min.value).toLocaleString().split(', ');
         [max] = new Date(filter.range.max.value).toLocaleString().split(', ');
       }
+      if (!isYear) {
+        min = min.toLocaleString();
+        max = max.toLocaleString();
+      }
+
       range = (min !== undefined) ? (
         <div className={styles.range} style={{ color: this.props.color }}>
-          min: {min.toLocaleString()} — max: {max.toLocaleString()}
+          min: {min} — max: {max}
         </div>
       ) : '';
       marks[this.xscale(filter.range.min.index)] = {
         label: (
           <div className={styles.mark} style={{ color: this.props.color }}>
-            {min.toLocaleString()}
+            {min}
           </div>
         )
       };
       marks[this.xscale(filter.range.max.index + 1)] = {
         label: (
           <div className={styles.mark} style={{ color: this.props.color }}>
-            {max.toLocaleString()}
+            {max}
           </div>
         )
       };
