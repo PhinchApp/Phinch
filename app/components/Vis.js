@@ -1415,7 +1415,6 @@ export default class Vis extends Component {
                 position: 'absolute',
                 left: 0,
                 pointerEvents: 'none',
-                // paddingLeft: this.metrics.padding * 0.5,
                 width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
                 height: this.metrics.chartHeight,
               }}

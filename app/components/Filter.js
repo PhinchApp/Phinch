@@ -474,7 +474,9 @@ export default class Filter extends Component {
 
   dragEnd(e) {
     const source = Number(this.dragged.dataset.id);
+    console.log(source);
     let target = Number(this.over.dataset.id);
+    console.log(target);
     if ((e.clientY - this.over.offsetTop) > (this.over.offsetHeight / 2)) {
       target += 1;
     }
@@ -495,9 +497,9 @@ export default class Filter extends Component {
       });
       data = visSortBy(this, data, false);
       if (isRemoved) {
-        this.setState({ deleted: data }, this.setResult);
+        this.setState({ deleted: data }, () => this.save(this.setResult));
       } else {
-        this.setState({ data }, this.setResult);
+        this.setState({ data }, () => this.save(this.setResult));
       }
     } else {
       let data = _cloneDeep(this.state.data);
@@ -519,29 +521,37 @@ export default class Filter extends Component {
       });
       data = visSortBy(this, data, false);
       deleted = visSortBy(this, deleted, false);
-      this.setState({ data, deleted }, this.setResult);
+      this.setState({ data, deleted }, () => this.save(this.setResult));
     }
 
-    // this.over.style = null;
+    this.over.style.background = '';
+    this.over.style.outline = '';
     this.over = null;
     this.dragged = null;
   }
 
   dragOver(e) {
+    e.stopPropagation();
     e.preventDefault();
     if (this.over) {
-      this.over.style = null;
+      this.over.style.background = '';
+      this.over.style.outline = '';
     }
     this.over = e.currentTarget;
-
-    // console.log(this.over.style);
-    // I know this isn't the React way, but re-rendering the whole table takes forever
-    // this.over.style = 'background: #e4e4e4; height: 3rem; vertical-align: top;';
-    // this.over.style = 'background: #e4e4e4;'; //' height: 28px; vertical-align: top;';
+    console.log(this.over.dataset.id);
+    this.over.style.background = '#e4e4e4';
   }
 
   dragStart(e) {
-    this.dragged = e.currentTarget;
+    // this.dragged = {
+    //   dataset: {
+    //     id: e.currentTarget.dataset.id,
+    //     group: e.currentTarget.dataset.group,
+    //   },
+    // };
+    this.dragged = {
+      dataset: _cloneDeep(e.currentTarget.dataset),
+    };
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/html', null);
   }

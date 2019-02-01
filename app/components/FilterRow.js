@@ -47,10 +47,11 @@ export default class FilterRow extends Component {
         style={{ position: 'absolute', top: `${this.props.yOffset}px` }}
         data-id={this.props.data.order}
         data-group={this.props.isRemoved ? 'removed' : 'data'}
-        // draggable="true"
-        // onDragEnd={this.props.dragEnd}
-        // onDragOver={this.props.dragOver}
-        // onDragStart={this.props.dragStart}
+        draggable="true"
+        onMouseUp={(e) => console.log(e)}
+        onDragEnd={this.props.dragEnd}
+        onDragOver={this.props.dragOver}
+        onDragStart={this.props.dragStart}
       >
         <div
           className={styles.cell}
