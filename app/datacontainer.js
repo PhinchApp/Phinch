@@ -60,6 +60,32 @@ class DataContainer {
       this.summary.path = join(...this.summary.path);
     }
   }
+
+  loadAndFormatData(filepath, success, failure) {
+    worker.postMessage({
+      biomhandlerPath,
+      filepath,
+    });
+    worker.onmessage = e => {
+      if (e.data.status === 'success') {
+        const data = JSON.parse(e.data.data);
+
+        this.data = data;
+        this.samples = data.columns;
+        this.observations = data.rows;
+        this.summary.samples = this.samples.length;
+        this.summary.observations = this.observations.length;
+        this.attributes = data.stateFilters;
+        this.filters = data.filters;
+        this.levels = data.levels;
+
+        success();
+      } else {
+        failure();
+      }
+    };
+  }
+
   getSummary() {
     return this.summary;
   }
@@ -72,29 +98,6 @@ class DataContainer {
     return this.observations;
   }
 
-  loadAndFormatData(filepath, success, failure) {
-    worker.postMessage({
-      biomhandlerPath,
-      filepath,
-    });
-    worker.onmessage = e => {
-      if (e.data.status === 'success') {
-        this.data = e.data.data;
-        this.samples = e.data.data.columns;
-        this.observations = e.data.data.rows;
-        this.summary.samples = this.samples.length;
-        this.summary.observations = this.observations.length;
-        //
-        this.attributes = e.data.data.stateFilters;
-        this.filters = e.data.data.filters;
-        //
-        success();
-      } else {
-        failure();
-      }
-    };
-  }
-
   getData() {
     return this.data;
   }
@@ -103,9 +106,15 @@ class DataContainer {
     return this.filters;
   }
 
+  getLevels() {
+    return this.levels;
+  }
+
   applyFiltersToData(columns) {
+    // move to worker?
+    // console.time('applyFiltersToData');
     // Modify Data
-    const filteredData = Object.assign({}, this.data);
+    const filteredData = this.data;
     // 1. columns - apply this from filter.state.data
     filteredData.columns = columns;
     // 2. data - filter by column id
@@ -124,6 +133,7 @@ class DataContainer {
     filteredData.shape = [filteredData.rows.length, filteredData.columns.length];
     //
     this.filteredData = filteredData;
+    // console.timeEnd('applyFiltersToData');
     return filteredData;
   }
   getFilteredData() {

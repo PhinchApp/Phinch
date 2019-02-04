@@ -554,6 +554,7 @@ export default class Filter extends Component {
     if (result === 'error') {
       this.setResult(result);
     } else {
+      // console.timeEnd('viewVisualization');
       this.setState({ redirect: '/vis' });
     }
   }
@@ -592,6 +593,7 @@ export default class Filter extends Component {
     ) : '';
 
     const viewVisualization = () => {
+      // console.time('viewVisualization');
       this.setState({ loading: true }, () => {
         setTimeout(() => {
           DataContainer.applyFiltersToData(this.state.data);

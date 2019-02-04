@@ -36,6 +36,7 @@ import gstyle from './general.css';
 export default class Vis extends Component {
   constructor(props) {
     super(props);
+    // console.time('vis constructor');
 
     pageView('/vis');
 
@@ -71,6 +72,8 @@ export default class Vis extends Component {
     this.initdata = DataContainer.getFilteredData();
 
     this.attributes = DataContainer.getAttributes();
+
+    this.levels = DataContainer.getLevels() || [];
 
     // move to config or own file
     this.menuItems = [
@@ -136,7 +139,6 @@ export default class Vis extends Component {
       }))
     ];
 
-    this.levels = [];
     this.readsBySequence = {};
     this.sequences = [];
     this.topSequences = [];
@@ -181,65 +183,65 @@ export default class Vis extends Component {
     if (Object.keys(this.initdata).length === 0) {
       this.state.redirect = '/';
     } else {
-      // move to config / metadata
-      const ignoreLevels = ['', 'unclassified', 'unassigned', 'unassignable', 'ambiguous taxa', 'ambiguous_taxa'];
+      // // move to config / metadata
+      // const ignoreLevels = ['', 'unclassified', 'unassigned', 'unassignable', 'ambiguous taxa', 'ambiguous_taxa'];
 
-      // Autogenerate levels from data
-      // TODO: Test w/ addtional data formats
-      const uniqTaxa = [
-        ...new Set([]
-          .concat(...[
-            ...new Set(this.initdata.rows
-              .map(r => r.metadata.taxonomy.filter(t => t.includes('__'))
-                .map(t => t.split('__')[0])
-                .join('|')))
-          ]
-            .map(r => r.split('|').map((l, i) => JSON.stringify({
-              name: l,
-              order: i,
-            })))))
-      ]
-        .map(l => JSON.parse(l))
-        .filter(l => !ignoreLevels.includes(l.name.trim().toLowerCase()));
+      // // Autogenerate levels from data
+      // // TODO: Test w/ addtional data formats
+      // const uniqTaxa = [
+      //   ...new Set([]
+      //     .concat(...[
+      //       ...new Set(this.initdata.rows
+      //         .map(r => r.metadata.taxonomy.filter(t => t.includes('__'))
+      //           .map(t => t.split('__')[0])
+      //           .join('|')))
+      //     ]
+      //       .map(r => r.split('|').map((l, i) => JSON.stringify({
+      //         name: l,
+      //         order: i,
+      //       })))))
+      // ]
+      //   .map(l => JSON.parse(l))
+      //   .filter(l => !ignoreLevels.includes(l.name.trim().toLowerCase()));
 
-      const defaultTaxa = {
-        k: 'kingdom',
-        p: 'phylum',
-        c: 'class',
-        o: 'order',
-        f: 'family',
-        g: 'genus',
-        s: 'species',
-      };
+      // const defaultTaxa = {
+      //   k: 'kingdom',
+      //   p: 'phylum',
+      //   c: 'class',
+      //   o: 'order',
+      //   f: 'family',
+      //   g: 'genus',
+      //   s: 'species',
+      // };
 
-      this.levels = nest()
-        .key(t => t.name)
-        .entries(uniqTaxa)
-        .map(l => {
-          let number = null;
-          const numbers = l.key.match(/\d+/g);
-          if (numbers) {
-            number = Number(numbers[0]);
-          }
-          return {
-            name: l.key,
-            number,
-            order: Math.min(...l.values.map(t => t.order)),
-          };
-        })
-        .sort((a, b) => {
-          if (a.number && b.number) {
-            return a.number - b.number;
-          }
-          return a.order - b.order;
-        })
-        .map((l, i) => {
-          if (l.name in defaultTaxa) {
-            l.name = defaultTaxa[l.name];
-          }
-          l.order = i;
-          return l;
-        });
+      // this.levels = nest()
+      //   .key(t => t.name)
+      //   .entries(uniqTaxa)
+      //   .map(l => {
+      //     let number = null;
+      //     const numbers = l.key.match(/\d+/g);
+      //     if (numbers) {
+      //       number = Number(numbers[0]);
+      //     }
+      //     return {
+      //       name: l.key,
+      //       number,
+      //       order: Math.min(...l.values.map(t => t.order)),
+      //     };
+      //   })
+      //   .sort((a, b) => {
+      //     if (a.number && b.number) {
+      //       return a.number - b.number;
+      //     }
+      //     return a.order - b.order;
+      //   })
+      //   .map((l, i) => {
+      //     if (l.name in defaultTaxa) {
+      //       l.name = defaultTaxa[l.name];
+      //     }
+      //     l.order = i;
+      //     return l;
+      //   });
 
       // Break this whole chunk into a function or something
       //
@@ -278,16 +280,23 @@ export default class Vis extends Component {
       this.state.labelKey = this.sort.show;
       this.state.mode = this.sort.type;
       //
+      //
+      // console.time('visSortBy');
       this.state.data = visSortBy(
         this,
         this.formatTaxonomyData(this.initdata, this.state.level),
         false,
       );
+      // console.timeEnd('visSortBy');
       //
+      // console.time('updateAttributeValues');
       this.updateAttributeValues(this.state.selectedAttribute, this.state.data);
+      // console.timeEnd('updateAttributeValues');
       //
       this.state.preData = this.state.data;
-      this.setColorScale(this.state.data);
+      //
+      // really performance intensive - just don't do it?
+      // this.setColorScale(this.state.data);
     }
 
     this.onSuggestionHighlighted = this.onSuggestionHighlighted.bind(this);
@@ -300,6 +309,8 @@ export default class Vis extends Component {
     this.removeFilter = this.removeFilter.bind(this);
     this.toggleMenu = this.toggleMenu.bind(this);
     this.toggleLog = this.toggleLog.bind(this);
+
+    // console.timeEnd('vis constructor');
   }
 
   componentDidMount() {
@@ -506,6 +517,8 @@ export default class Vis extends Component {
   }
 
   setColorScale(data) {
+    // really performance intensive - just don't do it?
+    // do 
     const uniqSequences = _sortBy([...new Set([]
       .concat(...data.map(d => []
         .concat(...d.matches.map(s => []

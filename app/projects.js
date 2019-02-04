@@ -75,6 +75,7 @@ export function exportProjectData(path, dataKey, data, callback) {
 }
 
 export function setProjectFilters(path, dataKey, names, view, callback) {
+  // console.time('setProjectFilters');
   const metadataPath = join('/', path, `${dataKey}.json`);
   const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
   if (names) {
@@ -102,6 +103,7 @@ export function setProjectFilters(path, dataKey, names, view, callback) {
 
   try {
     fs.writeFileSync(metadataPath, JSON.stringify(metadata));
+    // console.timeEnd('setProjectFilters');
     callback('Saved');
   } catch (e) {
     callback('Error');

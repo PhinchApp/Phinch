@@ -1,5 +1,12 @@
 import React from 'react';
+import { remote } from 'electron';
+import { resolve } from 'path';
+
 import gstyle from 'components/general.css';
+
+const isDev = () => process.env.NODE_ENV === 'development';
+const appPath = isDev() ? __dirname : remote.app.getAppPath();
+const worker = new Worker(resolve(appPath, 'workers', 'loadAndFormatData.js'));
 
 export function updateFilters(filters, attribute, min, max, callback) {
   // const filters = context.state.filters;
@@ -46,6 +53,9 @@ export function restoreRows(context, rows) {
 }
 
 export function visSortBy(context, indata, setState) {
+  // if (setState) {
+  //   const data = worker.postMessage(data, sortKey);
+  // } else {
   const data = indata.sort((a, b) => {
     if (context.sort.reverse) {
       if (a[context.sort.key] < b[context.sort.key]) return -1;
@@ -59,6 +69,8 @@ export function visSortBy(context, indata, setState) {
     d.order = i;
     return d;
   });
+  // }
+  // const data = 
   if (setState) {
     context.setState({ data }, () => {
       context.save(context.setResult);
@@ -68,6 +80,7 @@ export function visSortBy(context, indata, setState) {
   }
 }
 
+// Should this be it's own component?
 export function getSortArrow(context, key) {
   if (key === context.sort.key) {
     const angle = context.sort.reverse ? 180 : 0;

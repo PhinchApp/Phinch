@@ -146,6 +146,75 @@ function formatData(data) {
     };
   });
 
+
+  /*
+    USED in VIS, could be done later (after filter load)
+  */
+  //
+  // move to config / metadata
+  const ignoreLevels = ['', 'unclassified', 'unassigned', 'unassignable', 'ambiguous taxa', 'ambiguous_taxa'];
+
+  // Autogenerate levels from data
+  // TODO: Test w/ addtional data formats
+  const uniqTaxa = [
+    ...new Set([]
+      .concat(...[
+        ...new Set(thisData.rows
+          .map(r => r.metadata.taxonomy.filter(t => t.includes('__'))
+            .map(t => t.split('__')[0])
+            .join('|')))
+      ]
+        .map(r => r.split('|').map((l, i) => JSON.stringify({
+          name: l,
+          order: i,
+        })))))
+  ]
+    .map(l => JSON.parse(l))
+    .filter(l => !ignoreLevels.includes(l.name.trim().toLowerCase()));
+
+  const defaultTaxa = {
+    k: 'kingdom',
+    p: 'phylum',
+    c: 'class',
+    o: 'order',
+    f: 'family',
+    g: 'genus',
+    s: 'species',
+  };
+
+  thisData.levels = nest()
+    .key(t => t.name)
+    .entries(uniqTaxa)
+    .map(l => {
+      let number = null;
+      const numbers = l.key.match(/\d+/g);
+      if (numbers) {
+        number = Number(numbers[0]);
+      }
+      return {
+        name: l.key,
+        number,
+        order: Math.min(...l.values.map(t => t.order)),
+      };
+    })
+    .sort((a, b) => {
+      if (a.number && b.number) {
+        return a.number - b.number;
+      }
+      return a.order - b.order;
+    })
+    .map((l, i) => {
+      if (l.name in defaultTaxa) {
+        l.name = defaultTaxa[l.name];
+      }
+      l.order = i;
+      return l;
+    });
+  //
+  /*
+    USED in VIS, could be done later (after filter load)
+  */
+
   return thisData;
 }
 
@@ -161,7 +230,7 @@ function loadBiomFile(e) {
       const data = formatData(JSON.parse(json));
       postMessage({
         status: 'success',
-        data,
+        data: JSON.stringify(data),
       });
     } catch (error) {
       console.warn(error);
