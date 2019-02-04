@@ -247,27 +247,6 @@ export default class Filter extends Component {
     });
   }
 
-  renderRows(data, isRemoved) {
-    const allData = this.state.data.concat(this.state.deleted);
-    return data.map((d, i) => (
-      <FilterRow
-        key={d.sampleName}
-        index={i}
-        data={d}
-        allData={allData}
-        isRemoved={isRemoved}
-        columnWidths={this.columnWidths}
-        tableWidth={this.metrics.tableWidth}
-        dragEnd={this.dragEnd}
-        dragOver={this.dragOver}
-        dragStart={this.dragStart}
-        updatePhinchName={this.updatePhinchName}
-        removeDatum={() => { removeRows(this, [d]); }}
-        restoreDatum={() => { restoreRows(this, [d]); }}
-      />
-    ));
-  }
-
   row = (datum, index, yOffset, removed) => (
     <FilterRow
       key={datum.sampleName}
@@ -278,9 +257,7 @@ export default class Filter extends Component {
       isRemoved={removed}
       columnWidths={this.columnWidths}
       tableWidth={this.metrics.tableWidth}
-      dragEnd={this.dragEnd}
       dragOver={this.dragOver}
-      dragStart={this.dragStart}
       updatePhinchName={this.updatePhinchName}
       removeDatum={() => { removeRows(this, [datum]); }}
       restoreDatum={() => { restoreRows(this, [datum]); }}
@@ -474,9 +451,21 @@ export default class Filter extends Component {
 
   dragEnd(e) {
     const source = Number(this.dragged.dataset.id);
-    console.log(source);
     let target = Number(this.over.dataset.id);
-    console.log(target);
+
+    this.over.style.background = '';
+    this.over.style.outline = '';
+
+    if (
+      isNaN(source)
+        ||
+      isNaN(target)
+        ||
+      (source === target && this.dragged.dataset.group === this.over.dataset.group)
+    ) {
+      return;
+    }
+    
     if ((e.clientY - this.over.offsetTop) > (this.over.offsetHeight / 2)) {
       target += 1;
     }
@@ -485,7 +474,7 @@ export default class Filter extends Component {
     }
 
     this.sort.reverse = true;
-    this.sort.key = 'order';
+    this.sort.key = 'order';    
 
     if (this.dragged.dataset.group === this.over.dataset.group) {
       const isRemoved = this.over.dataset.group === 'removed';
@@ -538,19 +527,12 @@ export default class Filter extends Component {
       this.over.style.outline = '';
     }
     this.over = e.currentTarget;
-    console.log(this.over.dataset.id);
     this.over.style.background = '#e4e4e4';
   }
 
   dragStart(e) {
-    // this.dragged = {
-    //   dataset: {
-    //     id: e.currentTarget.dataset.id,
-    //     group: e.currentTarget.dataset.group,
-    //   },
-    // };
     this.dragged = {
-      dataset: _cloneDeep(e.currentTarget.dataset),
+      dataset: Object.assign({}, e.target.dataset),
     };
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/html', null);
@@ -696,6 +678,8 @@ export default class Filter extends Component {
               width: this.metrics.tableWidth,
               height: this.state.height - 130,
             }}
+            onDragStart={this.dragStart}
+            onDrop={this.dragEnd}
           >
             <List
               className={`${styles.divlist}`}

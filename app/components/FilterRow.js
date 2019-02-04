@@ -48,10 +48,7 @@ export default class FilterRow extends Component {
         data-id={this.props.data.order}
         data-group={this.props.isRemoved ? 'removed' : 'data'}
         draggable="true"
-        onMouseUp={(e) => console.log(e)}
-        onDragEnd={this.props.dragEnd}
         onDragOver={this.props.dragOver}
-        onDragStart={this.props.dragStart}
       >
         <div
           className={styles.cell}
