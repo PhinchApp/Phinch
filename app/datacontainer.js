@@ -62,10 +62,7 @@ class DataContainer {
   }
 
   loadAndFormatData(filepath, success, failure) {
-    worker.postMessage({
-      biomhandlerPath,
-      filepath,
-    });
+    worker.postMessage({ biomhandlerPath, filepath });
     worker.onmessage = e => {
       if (e.data.status === 'success') {
         const data = JSON.parse(e.data.data);

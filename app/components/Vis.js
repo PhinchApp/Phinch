@@ -36,7 +36,6 @@ import gstyle from './general.css';
 export default class Vis extends Component {
   constructor(props) {
     super(props);
-    // console.time('vis constructor');
 
     pageView('/vis');
 
@@ -70,9 +69,7 @@ export default class Vis extends Component {
     this._inputs = {};
 
     this.initdata = DataContainer.getFilteredData();
-
     this.attributes = DataContainer.getAttributes();
-
     this.levels = DataContainer.getLevels() || [];
 
     // move to config or own file
@@ -183,66 +180,6 @@ export default class Vis extends Component {
     if (Object.keys(this.initdata).length === 0) {
       this.state.redirect = '/';
     } else {
-      // // move to config / metadata
-      // const ignoreLevels = ['', 'unclassified', 'unassigned', 'unassignable', 'ambiguous taxa', 'ambiguous_taxa'];
-
-      // // Autogenerate levels from data
-      // // TODO: Test w/ addtional data formats
-      // const uniqTaxa = [
-      //   ...new Set([]
-      //     .concat(...[
-      //       ...new Set(this.initdata.rows
-      //         .map(r => r.metadata.taxonomy.filter(t => t.includes('__'))
-      //           .map(t => t.split('__')[0])
-      //           .join('|')))
-      //     ]
-      //       .map(r => r.split('|').map((l, i) => JSON.stringify({
-      //         name: l,
-      //         order: i,
-      //       })))))
-      // ]
-      //   .map(l => JSON.parse(l))
-      //   .filter(l => !ignoreLevels.includes(l.name.trim().toLowerCase()));
-
-      // const defaultTaxa = {
-      //   k: 'kingdom',
-      //   p: 'phylum',
-      //   c: 'class',
-      //   o: 'order',
-      //   f: 'family',
-      //   g: 'genus',
-      //   s: 'species',
-      // };
-
-      // this.levels = nest()
-      //   .key(t => t.name)
-      //   .entries(uniqTaxa)
-      //   .map(l => {
-      //     let number = null;
-      //     const numbers = l.key.match(/\d+/g);
-      //     if (numbers) {
-      //       number = Number(numbers[0]);
-      //     }
-      //     return {
-      //       name: l.key,
-      //       number,
-      //       order: Math.min(...l.values.map(t => t.order)),
-      //     };
-      //   })
-      //   .sort((a, b) => {
-      //     if (a.number && b.number) {
-      //       return a.number - b.number;
-      //     }
-      //     return a.order - b.order;
-      //   })
-      //   .map((l, i) => {
-      //     if (l.name in defaultTaxa) {
-      //       l.name = defaultTaxa[l.name];
-      //     }
-      //     l.order = i;
-      //     return l;
-      //   });
-
       // Break this whole chunk into a function or something
       //
       this.init = getProjectFilters(this.state.summary.path, this.state.summary.dataKey, 'vis');
@@ -280,20 +217,7 @@ export default class Vis extends Component {
       this.state.labelKey = this.sort.show;
       this.state.mode = this.sort.type;
       //
-      //
-      // console.time('visSortBy');
-      this.state.data = visSortBy(
-        this,
-        this.formatTaxonomyData(this.initdata, this.state.level),
-        false,
-      );
-      // console.timeEnd('visSortBy');
-      //
-      // console.time('updateAttributeValues');
-      this.updateAttributeValues(this.state.selectedAttribute, this.state.data);
-      // console.timeEnd('updateAttributeValues');
-      //
-      this.state.preData = this.state.data;
+
       //
       // really performance intensive - just don't do it?
       // this.setColorScale(this.state.data);
@@ -309,13 +233,15 @@ export default class Vis extends Component {
     this.removeFilter = this.removeFilter.bind(this);
     this.toggleMenu = this.toggleMenu.bind(this);
     this.toggleLog = this.toggleLog.bind(this);
-
-    // console.timeEnd('vis constructor');
   }
 
   componentDidMount() {
     window.addEventListener('resize', this.updateDimensions);
-    this.setLevel(this.state.level);
+    const data = this.formatTaxonomyData(this.initdata, this.state.level);
+    this.setState({ data, preData: data }, () => {
+      this.updateAttributeValues(this.state.selectedAttribute, this.state.data);
+      this.setLevel(this.state.level);
+    });
   }
 
   componentDidUpdate() {
@@ -437,7 +363,6 @@ export default class Vis extends Component {
     }
     const filters = _cloneDeep(this.state.filters);
     if (!Object.prototype.hasOwnProperty.call(this.filters[this.state.level], datum.name)) {
-      // const sequences = [{reads: 0}];
       const sequences = [];
       this.state.preData.forEach(d => {
         d.sequences.forEach(s => {
@@ -516,26 +441,25 @@ export default class Vis extends Component {
     });
   }
 
-  setColorScale(data) {
-    // really performance intensive - just don't do it?
-    // do 
-    const uniqSequences = _sortBy([...new Set([]
-      .concat(...data.map(d => []
-        .concat(...d.matches.map(s => []
-          .concat(...s.taxonomy.map((t, k) => {
-            const taxa = [];
-            let j = 0;
-            while (j <= k) {
-              taxa.push(s.taxonomy[j]);
-              j += 1;
-            }
-            return taxa.join();
-          })))))))]);
-    // .sort((a, b) => { // sort to make adjacent less likely to be equal
-    //   return this.readsBySequence[b] - this.readsBySequence[a];
-    // });
-    this.scales.c.domain(uniqSequences);
-  }
+  // setColorScale(data) {
+  //   // really performance intensive - just don't do it?
+  //   const uniqSequences = _sortBy([...new Set([]
+  //     .concat(...data.map(d => []
+  //       .concat(...d.matches.map(s => []
+  //         .concat(...s.taxonomy.map((t, k) => {
+  //           const taxa = [];
+  //           let j = 0;
+  //           while (j <= k) {
+  //             taxa.push(s.taxonomy[j]);
+  //             j += 1;
+  //           }
+  //           return taxa.join();
+  //         })))))))]);
+  //   // .sort((a, b) => { // sort to make adjacent less likely to be equal
+  //   //   return this.readsBySequence[b] - this.readsBySequence[a];
+  //   // });
+  //   this.scales.c.domain(uniqSequences);
+  // }
 
   setLevel(level) {
     if (!Object.prototype.hasOwnProperty.call(this.filters, level)) {
@@ -609,10 +533,10 @@ export default class Vis extends Component {
   }
 
   updateTaxonomyData(data, level, updateSequences) {
+    console.time('updateTaxonomyData');
     if (updateSequences) {
       this.readsBySequence = {};
     }
-    // return data.map(d => {
     const taxonomyData = data.map(d => {
       d.sequences = nest()
         .key(s => s.taxonomy.slice(0, level + 1))
@@ -637,6 +561,7 @@ export default class Vis extends Component {
     if (updateSequences) {
       this.sequences = this.updateSequences();
     }
+    console.timeEnd('updateTaxonomyData');
     return taxonomyData;
   }
 
@@ -668,8 +593,7 @@ export default class Vis extends Component {
       }
       return include;
     });
-    const data = visSortBy(this, samples, false);
-    return data;
+    return visSortBy(this, samples, false);
   }
 
   applyFilters(filters) {
@@ -811,12 +735,7 @@ export default class Vis extends Component {
       }
       return t;
     });
-    const data = this.filterData(
-      this.state.filters,
-      tags,
-      this.state.preData,
-      this.state.deleted,
-    );
+    const data = this.filterData(this.state.filters, tags, this.state.preData, this.state.deleted);
     this.updateAttributeValues(this.state.selectedAttribute, data);
     this.setState({ tags, data }, () => {
       this.save(this.setResult);
@@ -1297,13 +1216,21 @@ export default class Vis extends Component {
   render() {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
 
-    const isAttribute = !(this.state.selectedAttribute === '');
+    const isAttribute = (
+      !(this.state.selectedAttribute === '')
+        &&
+      this.attributes[this.state.selectedAttribute].displayValues
+    );
+
     this.attribute = isAttribute ? this.attributes[this.state.selectedAttribute] : null;
     const dataLength = isAttribute ? this.attribute.displayValues.length : this.state.data.length;
 
-    const maxReads = isAttribute
-      ? Math.max(...this.attribute.displayValues.map(d => d.reads))
-      : Math.max(...this.state.data.map(d => d.reads));
+    let maxReads = 1;
+    if (dataLength) {
+      maxReads = isAttribute
+        ? Math.max(...this.attribute.displayValues.map(d => d.reads))
+        : Math.max(...this.state.data.map(d => d.reads));
+    }
     this.scales.x
       .domain([0, maxReads])
       .range([0, this.metrics.chartWidth])
