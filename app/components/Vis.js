@@ -175,6 +175,8 @@ export default class Vis extends Component {
       c: scaleOrdinal().range(palette),
     };
 
+    console.log(palette);
+
     this.totalDataReads = 0;
 
     if (Object.keys(this.initdata).length === 0) {
@@ -220,7 +222,7 @@ export default class Vis extends Component {
 
       //
       // really performance intensive - just don't do it?
-      // this.setColorScale(this.state.data);
+      // this.scales.c.domain(getUniqSequences(this.state.data));
     }
 
     this.onSuggestionHighlighted = this.onSuggestionHighlighted.bind(this);
@@ -440,26 +442,6 @@ export default class Vis extends Component {
       height: window.innerHeight,
     });
   }
-
-  // setColorScale(data) {
-  //   // really performance intensive - just don't do it?
-  //   const uniqSequences = _sortBy([...new Set([]
-  //     .concat(...data.map(d => []
-  //       .concat(...d.matches.map(s => []
-  //         .concat(...s.taxonomy.map((t, k) => {
-  //           const taxa = [];
-  //           let j = 0;
-  //           while (j <= k) {
-  //             taxa.push(s.taxonomy[j]);
-  //             j += 1;
-  //           }
-  //           return taxa.join();
-  //         })))))))]);
-  //   // .sort((a, b) => { // sort to make adjacent less likely to be equal
-  //   //   return this.readsBySequence[b] - this.readsBySequence[a];
-  //   // });
-  //   this.scales.c.domain(uniqSequences);
-  // }
 
   setLevel(level) {
     if (!Object.prototype.hasOwnProperty.call(this.filters, level)) {
