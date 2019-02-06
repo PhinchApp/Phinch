@@ -175,8 +175,6 @@ export default class Vis extends Component {
       c: scaleOrdinal().range(palette),
     };
 
-    console.log(palette);
-
     this.totalDataReads = 0;
 
     if (Object.keys(this.initdata).length === 0) {
@@ -764,7 +762,7 @@ export default class Vis extends Component {
       key={`${this.state.selectedAttribute}-${datum.value}`}
       data={datum}
       index={index}
-      isLast={index >= this.attribute.displayValues.length - 3} // more generous for taller modal
+      isLast={index >= Math.max(4, this.attribute.displayValues.length - 4)} // more generous for taller modal
       yOffset={yOffset}
       labelKey="name"
       filters={this.state.filters} // TODO: replace w/ minibar count prop
