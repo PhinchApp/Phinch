@@ -29,7 +29,11 @@ export function updateFilters(filters, attribute, min, max, callback) {
 
 export function removeRows(context, rows) {
   const data = context.state.data.filter(d => !rows.includes(d));
-  const deleted = visSortBy(context, context.state.deleted.concat(rows), false);
+  const deleted = visSortBy(
+    context.state.deleted.concat(rows),
+    context.state.sortReverse,
+    context.state.sortKey,
+  );
   context.setState({ data, deleted }, () => {
     context.save(context.setResult);
   });
@@ -37,14 +41,18 @@ export function removeRows(context, rows) {
 
 export function restoreRows(context, rows) {
   const deleted = context.state.deleted.filter(d => !rows.includes(d));
-  const data = visSortBy(context, context.state.data.concat(rows), false);
+  const data = visSortBy(
+    context.state.data.concat(rows),
+    context.state.sortReverse,
+    context.state.sortKey,
+  );
   context.setState({ data, deleted }, () => {
     context.save(context.setResult);
   });
 }
 
-export function visSortBy(context, indata, sortReverse, sortKey, setState) {
-  const data = indata.sort((a, b) => {
+export function visSortBy(indata, sortReverse, sortKey) {
+  return indata.sort((a, b) => {
     if (sortReverse) {
       if (a[sortKey] < b[sortKey]) return -1;
       if (a[sortKey] > b[sortKey]) return 1;
@@ -57,13 +65,6 @@ export function visSortBy(context, indata, sortReverse, sortKey, setState) {
     d.order = i;
     return d;
   });
-  if (setState) {
-    context.setState({ data }, () => {
-      context.save(context.setResult);
-    });
-  } else {
-    return data;
-  }
 }
 
 // Should this be it's own component?

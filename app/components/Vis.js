@@ -56,12 +56,10 @@ export default class Vis extends Component {
       selectedAttribute: '',
       showTooltip: false,
       showTags: false,
-      //
       mode: 'percent',
       labelKey: 'phinchName',
       sortReverse: true,
       sortKey: 'biomid',
-      //
       showRightSidebar: false,
       showLeftSidebar: false,
       showEmptyAttrs: true,
@@ -209,10 +207,18 @@ export default class Vis extends Component {
         this.metrics.left.max : this.metrics.left.min;
       //
       if (this.init.sort) {
-        this.state.mode = this.init.sort.mode;
-        this.state.labelKey = this.init.sort.labelKey;
-        this.state.sortReverse = this.init.sort.sortReverse;
-        this.state.sortKey = this.init.sort.sortKey;
+        this.state.mode = this.init.sort.mode === undefined
+          ? this.state.mode
+          : this.init.sort.mode;
+        this.state.labelKey = this.init.sort.labelKey === undefined
+          ? this.state.labelKey
+          : this.init.sort.labelKey;
+        this.state.sortReverse = this.init.sort.sortReverse === undefined
+          ? this.state.sortReverse
+          : this.init.sort.sortReverse;
+        this.state.sortKey = this.init.sort.sortKey === undefined
+          ? this.state.sortKey
+          : this.init.sort.sortKey;
       }
       //
     }
@@ -572,7 +578,7 @@ export default class Vis extends Component {
       }
       return include;
     });
-    return visSortBy(this, samples, this.state.sortReverse, this.state.sortKey, false);
+    return visSortBy(samples, this.state.sortReverse, this.state.sortKey);
   }
 
   applyFilters(filters) {
@@ -789,48 +795,35 @@ export default class Vis extends Component {
 
   updateAttributeValues(attribute, data) {
     if (attribute !== '') {
-      this.attributes[attribute].displayValues = this.attributes[attribute].values.map(a => {
-        const datum = {};
-        datum.name = (attribute === 'Year') ? a.value.toString() : a.value.toLocaleString();
-        datum.samples = [...new Set(a.samples)];
-        datum.sampleObjects = datum.samples.map(s => {
-          const [sample] = data.filter(d => d.sampleName === s);
-          return sample;
-        }).filter(s => s !== undefined);
-        datum.reads = datum.sampleObjects.map(s => s.reads).reduce((ac, v) => ac + v, 0);
-        datum.sequences = nest()
-          .key(s => s.name)
-          .entries(datum.sampleObjects
-            .map(s => s.sequences)
-            .reduce((ac, v) => ac.concat(v), []))
-          .map(s => ({
-            name: s.key,
-            reads: s.values.map(v => v.reads).reduce((ac, v) => ac + v, 0),
-            taxonomy: s.values[0].taxonomy,
-          }));
-        return datum;
-      })
-        .filter(v => {
-          if (this.state.showEmptyAttrs) return true;
-          return v.reads > 0;
+      this.attributes[attribute].displayValues = visSortBy(
+        this.attributes[attribute].values.map(a => {
+          const datum = {};
+          datum.name = (attribute === 'Year') ? a.value.toString() : a.value.toLocaleString();
+          datum.samples = [...new Set(a.samples)];
+          datum.sampleObjects = datum.samples.map(s => {
+            const [sample] = data.filter(d => d.sampleName === s);
+            return sample;
+          }).filter(s => s !== undefined);
+          datum.reads = datum.sampleObjects.map(s => s.reads).reduce((ac, v) => ac + v, 0);
+          datum.sequences = nest()
+            .key(s => s.name)
+            .entries(datum.sampleObjects
+              .map(s => s.sequences)
+              .reduce((ac, v) => ac.concat(v), []))
+            .map(s => ({
+              name: s.key,
+              reads: s.values.map(v => v.reads).reduce((ac, v) => ac + v, 0),
+              taxonomy: s.values[0].taxonomy,
+            }));
+          return datum;
         })
-        /*
-          replace w/ visSortBy?
-        */
-        // .sort((a, b) => {
-        //   if (this.sort.reverse) {
-        //     if (a.value === 'no_data') return -Infinity;
-        //     if (b.value === 'no_data') return +Infinity;
-        //     if (a.value < b.value) return -1;
-        //     if (a.value > b.value) return 1;
-        //   } else {
-        //     if (b.value === 'no_data') return -Infinity;
-        //     if (a.value === 'no_data') return +Infinity;
-        //     if (b.value < a.value) return -1;
-        //     if (b.value > a.value) return 1;
-        //   }
-        //   return 0;
-        // });
+          .filter(v => {
+            if (this.state.showEmptyAttrs) return true;
+            return v.reads > 0;
+          }),
+        this.state.sortReverse,
+        this.state.sortKey,
+      );
     }
   }
 
@@ -924,14 +917,15 @@ export default class Vis extends Component {
         name: 'Sequence Reads',
       },
     ];
-    const isAttribute = !(this.state.selectedAttribute === '');
-    const sortOptions = isAttribute ? attrOptions : sampleOptions;
+    const sortOptions = this.state.selectedAttribute !== '' ? attrOptions : sampleOptions;
     const options = sortOptions.map(o => <option key={o.id} value={o.id}>{o.name}</option>);
     const onSelectChange = (event) => {
       const sortKey = event.target.value;
-      const isAttribute = !(this.state.selectedAttribute === '');
-      const indata = isAttribute ? this.attributes[this.state.selectedAttribute].displayValues : this.state.data;
-      const data = visSortBy(this, indata, this.state.sortReverse, sortKey, false);
+      const isAttribute = this.state.selectedAttribute !== '';
+      const indata = isAttribute
+        ? this.attributes[this.state.selectedAttribute].displayValues
+        : this.state.data;
+      const data = visSortBy(indata, this.state.sortReverse, sortKey);
       if (isAttribute) {
         this.attributes[this.state.selectedAttribute].displayValues = data;
         this.setState({ sortKey }, () => this.save(this.setResult));
@@ -951,9 +945,11 @@ export default class Vis extends Component {
     ];
     const onRadioChange = (event) => {
       const sortReverse = event.target.name === 'Ascending';
-      const isAttribute = !(this.state.selectedAttribute === '');
-      const indata = isAttribute ? this.attributes[this.state.selectedAttribute].displayValues : this.state.data;
-      const data = visSortBy(this, indata, sortReverse, this.state.sortKey, false);
+      const isAttribute = this.state.selectedAttribute !== '';
+      const indata = isAttribute
+        ? this.attributes[this.state.selectedAttribute].displayValues
+        : this.state.data;
+      const data = visSortBy(indata, sortReverse, this.state.sortKey);
       if (isAttribute) {
         this.attributes[this.state.selectedAttribute].displayValues = data;
         this.setState({ sortReverse }, () => this.save(this.setResult));
@@ -988,7 +984,6 @@ export default class Vis extends Component {
             onChange={onSelectChange}
             className={styles.inlineControl}
             value={this.state.sortKey}
-            // disabled={this.state.selectedAttribute !== ''}
           >
             {options}
           </select>
@@ -1225,7 +1220,7 @@ export default class Vis extends Component {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
 
     const isAttribute = (
-      !(this.state.selectedAttribute === '')
+      this.state.selectedAttribute !== ''
         &&
       this.attributes[this.state.selectedAttribute].displayValues
     );
