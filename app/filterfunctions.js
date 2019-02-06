@@ -43,15 +43,15 @@ export function restoreRows(context, rows) {
   });
 }
 
-export function visSortBy(context, indata, setState) {
+export function visSortBy(context, indata, sortReverse, sortKey, setState) {
   const data = indata.sort((a, b) => {
-    if (context.sort.reverse) {
-      if (a[context.sort.key] < b[context.sort.key]) return -1;
-      if (a[context.sort.key] > b[context.sort.key]) return 1;
+    if (sortReverse) {
+      if (a[sortKey] < b[sortKey]) return -1;
+      if (a[sortKey] > b[sortKey]) return 1;
       return 0;
     }
-    if (b[context.sort.key] < a[context.sort.key]) return -1;
-    if (b[context.sort.key] > a[context.sort.key]) return 1;
+    if (b[sortKey] < a[sortKey]) return -1;
+    if (b[sortKey] > a[sortKey]) return 1;
     return 0;
   }).map((d, i) => {
     d.order = i;
@@ -67,9 +67,9 @@ export function visSortBy(context, indata, setState) {
 }
 
 // Should this be it's own component?
-export function getSortArrow(context, key) {
-  if (key === context.sort.key) {
-    const angle = context.sort.reverse ? 180 : 0;
+export function getSortArrow(sortReverse, sortKey, key) {
+  if (key === sortKey) {
+    const angle = sortReverse ? 180 : 0;
     return (<div className={gstyle.arrow} style={{ transform: `rotate(${angle}deg)` }}>⌃</div>);
   }
   return '';

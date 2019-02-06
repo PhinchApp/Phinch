@@ -43,11 +43,6 @@ export default class Filter extends Component {
 
     this.timeout = null;
 
-    this.sort = {
-      reverse: false,
-      key: 'biomid',
-    };
-
     this.state = {
       summary: DataContainer.getSummary(),
       data: DataContainer.getSamples(),
@@ -60,6 +55,8 @@ export default class Filter extends Component {
       loading: false,
       redirect: null,
       showLeftSidebar: false,
+      sortReverse: false,
+      sortKey: 'biomid',
     };
 
     this.filters = DataContainer.getFilters();
@@ -138,7 +135,8 @@ export default class Filter extends Component {
     this.state.deleted = this.init.deleted ? this.init.deleted : [];
     this.state.names = this.init.names;
     if (this.init.sort) {
-      this.sort = this.init.sort;
+      this.state.sortReverse = this.init.sort.sortReverse;
+      this.state.sortKey = this.init.sort.sortKey;
     }
 
     DataContainer.setAttributes(this.state.filters);
@@ -173,7 +171,10 @@ export default class Filter extends Component {
       type: 'filter',
       filters: this.state.filters,
       deleted: this.state.deleted,
-      sort: this.sort,
+      sort: {
+        sortReverse: this.state.sortReverse,
+        sortKey: this.state.sortKey,
+      },
       showLeftSidebar: this.state.showLeftSidebar,
     };
     setProjectFilters(
@@ -222,14 +223,16 @@ export default class Filter extends Component {
     return columns.map(c => {
       const onClick = (c.id === 'order') ? (() => {}) : (
         () => {
-          this.sort.key = c.id;
-          this.sort.reverse = !this.sort.reverse;
-          const data = visSortBy(this, this.state.data, false);
-          const deleted = visSortBy(this, this.state.deleted, false);
-          this.setState({ data, deleted }, () => this.save(this.setResult));
+          const sortReverse = !this.state.sortReverse;
+          const sortKey = c.id;
+          const data = visSortBy(this, this.state.data, sortReverse, sortKey, false);
+          const deleted = visSortBy(this, this.state.deleted, sortReverse, sortKey, false);
+          this.setState({ data, deleted, sortReverse, sortKey }, () => this.save(this.setResult));
         }
       );
-      const arrow = (c.id !== 'order') ? (getSortArrow(this, c.id)) : '';
+      const arrow = (c.id !== 'order')
+        ? getSortArrow(this.state.sortReverse, this.state.sortKey, c.id)
+        : '';
       return (
         <div
           key={c.id}
@@ -338,7 +341,7 @@ export default class Filter extends Component {
       });
       return include;
     });
-    data = visSortBy(this, data, false);
+    data = visSortBy(this, data, this.state.sortReverse, this.state.sortKey, false);
     this.setState({ filters, data }, _debounce(() => {
       this.save(this.setResult);
     }), this.metrics.debounce, { leading: false, trailing: true });
@@ -473,8 +476,8 @@ export default class Filter extends Component {
       target -= 1;
     }
 
-    this.sort.reverse = true;
-    this.sort.key = 'order';
+    const sortReverse = true;
+    const sortKey = 'order';
 
     if (this.dragged.dataset.group === this.over.dataset.group) {
       const isRemoved = this.over.dataset.group === 'removed';
@@ -484,11 +487,11 @@ export default class Filter extends Component {
         d.order = i;
         return d;
       });
-      data = visSortBy(this, data, false);
+      data = visSortBy(this, data, sortReverse, sortKey, false);
       if (isRemoved) {
-        this.setState({ deleted: data }, () => this.save(this.setResult));
+        this.setState({ deleted: data, sortReverse, sortKey }, () => this.save(this.setResult));
       } else {
-        this.setState({ data }, () => this.save(this.setResult));
+        this.setState({ data, sortReverse, sortKey }, () => this.save(this.setResult));
       }
     } else {
       let data = _cloneDeep(this.state.data);
@@ -508,9 +511,9 @@ export default class Filter extends Component {
         d.order = 1;
         return d;
       });
-      data = visSortBy(this, data, false);
-      deleted = visSortBy(this, deleted, false);
-      this.setState({ data, deleted }, () => this.save(this.setResult));
+      data = visSortBy(this, data, sortReverse, sortKey, false);
+      deleted = visSortBy(this, deleted, sortReverse, sortKey, false);
+      this.setState({ data, deleted, sortReverse, sortKey }, () => this.save(this.setResult));
     }
 
     this.over.style.background = '';

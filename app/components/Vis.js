@@ -56,8 +56,12 @@ export default class Vis extends Component {
       selectedAttribute: '',
       showTooltip: false,
       showTags: false,
+      //
       mode: 'percent',
       labelKey: 'phinchName',
+      sortReverse: true,
+      sortKey: 'biomid',
+      //
       showRightSidebar: false,
       showLeftSidebar: false,
       showEmptyAttrs: true,
@@ -105,14 +109,6 @@ export default class Vis extends Component {
     this.tooltip = {
       timer: null,
       duration: 1500,
-    };
-
-    // duplicate values in state - move to state?
-    this.sort = {
-      reverse: true,
-      key: 'biomid',
-      type: 'percent',
-      show: 'phinchName',
     };
 
     // Move this to data
@@ -212,15 +208,13 @@ export default class Vis extends Component {
       this.metrics.leftSidebar = this.state.showLeftSidebar ?
         this.metrics.left.max : this.metrics.left.min;
       //
-      // Consolidate these  VVVV
-      this.sort = this.init.sort ? this.init.sort : this.sort;
-      this.state.labelKey = this.sort.show;
-      this.state.mode = this.sort.type;
+      if (this.init.sort) {
+        this.state.mode = this.init.sort.mode;
+        this.state.labelKey = this.init.sort.labelKey;
+        this.state.sortReverse = this.init.sort.sortReverse;
+        this.state.sortKey = this.init.sort.sortKey;
+      }
       //
-
-      //
-      // really performance intensive - just don't do it?
-      // this.scales.c.domain(getUniqSequences(this.state.data));
     }
 
     this.onSuggestionHighlighted = this.onSuggestionHighlighted.bind(this);
@@ -272,7 +266,12 @@ export default class Vis extends Component {
       level: this.state.level,
       filters: this.filters,
       deleted: this.state.deleted,
-      sort: this.sort,
+      sort: {
+        mode: this.state.mode,
+        labelKey: this.state.labelKey,
+        sortReverse: this.state.sortReverse,
+        sortKey: this.state.sortKey,
+      },
       tags: this.state.tags,
       rowTags: this.state.rowTags,
       showLeftSidebar: this.state.showLeftSidebar,
@@ -573,7 +572,7 @@ export default class Vis extends Component {
       }
       return include;
     });
-    return visSortBy(this, samples, false);
+    return visSortBy(this, samples, this.state.sortReverse, this.state.sortKey, false);
   }
 
   applyFilters(filters) {
@@ -815,20 +814,23 @@ export default class Vis extends Component {
           if (this.state.showEmptyAttrs) return true;
           return v.reads > 0;
         })
-        .sort((a, b) => {
-          if (this.sort.reverse) {
-            if (a.value === 'no_data') return -Infinity;
-            if (b.value === 'no_data') return +Infinity;
-            if (a.value < b.value) return -1;
-            if (a.value > b.value) return 1;
-          } else {
-            if (b.value === 'no_data') return -Infinity;
-            if (a.value === 'no_data') return +Infinity;
-            if (b.value < a.value) return -1;
-            if (b.value > a.value) return 1;
-          }
-          return 0;
-        });
+        /*
+          replace w/ visSortBy?
+        */
+        // .sort((a, b) => {
+        //   if (this.sort.reverse) {
+        //     if (a.value === 'no_data') return -Infinity;
+        //     if (b.value === 'no_data') return +Infinity;
+        //     if (a.value < b.value) return -1;
+        //     if (a.value > b.value) return 1;
+        //   } else {
+        //     if (b.value === 'no_data') return -Infinity;
+        //     if (a.value === 'no_data') return +Infinity;
+        //     if (b.value < a.value) return -1;
+        //     if (b.value > a.value) return 1;
+        //   }
+        //   return 0;
+        // });
     }
   }
 
@@ -875,7 +877,6 @@ export default class Vis extends Component {
     const options = showOptions.map(o => <option key={o.id} value={o.id}>{o.name}</option>);
     const onSelectChange = (event) => {
       const labelKey = event.target.value;
-      this.sort.show = labelKey;
       this.setState({ labelKey }, () => {
         this.save(this.setResult);
       });
@@ -915,8 +916,9 @@ export default class Vis extends Component {
     ];
     const options = sortOptions.map(o => <option key={o.id} value={o.id}>{o.name}</option>);
     const onSelectChange = (event) => {
-      this.sort.key = event.target.value;
-      visSortBy(this, this.state.data, true);
+      const sortKey = event.target.value;
+      const data = visSortBy(this, this.state.data, this.state.sortReverse, sortKey, false);
+      this.setState({ sortKey, data }, () => this.save(this.setResult));
     };
     const radioOptions = [
       {
@@ -929,11 +931,20 @@ export default class Vis extends Component {
       },
     ];
     const onRadioChange = (event) => {
-      this.sort.reverse = (event.target.name === 'Ascending');
-      visSortBy(this, this.state.data, true);
+      const sortReverse = event.target.name === 'Ascending';
+      const isAttribute = !(this.state.selectedAttribute === '');
+      const indata = isAttribute ? this.attributes[this.state.selectedAttribute].displayValues : this.state.data;
+      const data = visSortBy(this, indata, sortReverse, this.state.sortKey, false);
+      if (isAttribute) {
+        this.attributes[this.state.selectedAttribute].displayValues = data;
+        // const selectedAttribute = this.state.selectedAttribute;
+        this.setState({ sortReverse }, () => this.save(this.setResult));
+      } else {
+        this.setState({ data, sortReverse }, () => this.save(this.setResult));
+      }
     };
     const buttons = radioOptions.map(o => {
-      const checked = this.sort.reverse === o.value ? 'checked' : '';
+      const checked = this.state.sortReverse === o.value ? 'checked' : '';
       return (
         <div key={o.name} className={styles.inlineControl}>
           <label htmlFor={o.name}>
@@ -958,7 +969,7 @@ export default class Vis extends Component {
             id="sortSelect"
             onChange={onSelectChange}
             className={styles.inlineControl}
-            value={this.sort.key}
+            value={this.state.sortKey}
             disabled={this.state.selectedAttribute !== ''}
           >
             {options}
@@ -982,7 +993,6 @@ export default class Vis extends Component {
     ];
     const toggle = buttons.map(b => {
       const onRadioChange = (event) => {
-        this.sort.type = event.target.id;
         this.setState({ mode: event.target.id }, () => {
           this.save(this.setResult);
         });
