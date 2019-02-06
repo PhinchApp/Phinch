@@ -457,15 +457,15 @@ export default class Filter extends Component {
     this.over.style.outline = '';
 
     if (
-      isNaN(source)
+      Number.isNaN(source)
         ||
-      isNaN(target)
+      Number.isNaN(target)
         ||
       (source === target && this.dragged.dataset.group === this.over.dataset.group)
     ) {
       return;
     }
-    
+
     if ((e.clientY - this.over.offsetTop) > (this.over.offsetHeight / 2)) {
       target += 1;
     }
@@ -474,7 +474,7 @@ export default class Filter extends Component {
     }
 
     this.sort.reverse = true;
-    this.sort.key = 'order';    
+    this.sort.key = 'order';
 
     if (this.dragged.dataset.group === this.over.dataset.group) {
       const isRemoved = this.over.dataset.group === 'removed';

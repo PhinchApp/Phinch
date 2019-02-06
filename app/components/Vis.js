@@ -762,7 +762,7 @@ export default class Vis extends Component {
       key={`${this.state.selectedAttribute}-${datum.value}`}
       data={datum}
       index={index}
-      isLast={index >= Math.max(4, this.attribute.displayValues.length - 4)} // more generous for taller modal
+      isLast={index >= Math.max(4, this.attribute.displayValues.length - 4)}
       yOffset={yOffset}
       labelKey="name"
       filters={this.state.filters} // TODO: replace w/ minibar count prop
