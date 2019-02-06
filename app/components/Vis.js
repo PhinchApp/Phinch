@@ -512,7 +512,7 @@ export default class Vis extends Component {
   }
 
   updateTaxonomyData(data, level, updateSequences) {
-    console.time('updateTaxonomyData');
+    // console.time('updateTaxonomyData');
     if (updateSequences) {
       this.readsBySequence = {};
     }
@@ -540,7 +540,7 @@ export default class Vis extends Component {
     if (updateSequences) {
       this.sequences = this.updateSequences();
     }
-    console.timeEnd('updateTaxonomyData');
+    // console.timeEnd('updateTaxonomyData');
     return taxonomyData;
   }
 
@@ -900,7 +900,7 @@ export default class Vis extends Component {
   }
 
   renderSort() {
-    const sortOptions = [
+    const sampleOptions = [
       {
         id: 'biomid',
         name: 'BIOM ID',
@@ -914,11 +914,30 @@ export default class Vis extends Component {
         name: 'Sequence Reads',
       },
     ];
+    const attrOptions = [
+      {
+        id: 'name',
+        name: 'Name',
+      },
+      {
+        id: 'reads',
+        name: 'Sequence Reads',
+      },
+    ];
+    const isAttribute = !(this.state.selectedAttribute === '');
+    const sortOptions = isAttribute ? attrOptions : sampleOptions;
     const options = sortOptions.map(o => <option key={o.id} value={o.id}>{o.name}</option>);
     const onSelectChange = (event) => {
       const sortKey = event.target.value;
-      const data = visSortBy(this, this.state.data, this.state.sortReverse, sortKey, false);
-      this.setState({ sortKey, data }, () => this.save(this.setResult));
+      const isAttribute = !(this.state.selectedAttribute === '');
+      const indata = isAttribute ? this.attributes[this.state.selectedAttribute].displayValues : this.state.data;
+      const data = visSortBy(this, indata, this.state.sortReverse, sortKey, false);
+      if (isAttribute) {
+        this.attributes[this.state.selectedAttribute].displayValues = data;
+        this.setState({ sortKey }, () => this.save(this.setResult));
+      } else {
+        this.setState({ data, sortKey }, () => this.save(this.setResult));
+      }
     };
     const radioOptions = [
       {
@@ -937,7 +956,6 @@ export default class Vis extends Component {
       const data = visSortBy(this, indata, sortReverse, this.state.sortKey, false);
       if (isAttribute) {
         this.attributes[this.state.selectedAttribute].displayValues = data;
-        // const selectedAttribute = this.state.selectedAttribute;
         this.setState({ sortReverse }, () => this.save(this.setResult));
       } else {
         this.setState({ data, sortReverse }, () => this.save(this.setResult));
@@ -970,7 +988,7 @@ export default class Vis extends Component {
             onChange={onSelectChange}
             className={styles.inlineControl}
             value={this.state.sortKey}
-            disabled={this.state.selectedAttribute !== ''}
+            // disabled={this.state.selectedAttribute !== ''}
           >
             {options}
           </select>
