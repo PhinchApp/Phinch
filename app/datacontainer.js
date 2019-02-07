@@ -62,6 +62,8 @@ class DataContainer {
   }
 
   loadAndFormatData(filepath, success, failure) {
+    // const worker = new Worker(resolve(appPath, 'workers', 'loadAndFormatData.js'));
+    // 
     worker.postMessage({ biomhandlerPath, filepath });
     worker.onmessage = e => {
       if (e.data.status === 'success') {
@@ -80,6 +82,8 @@ class DataContainer {
       } else {
         failure();
       }
+      //
+      // worker.terminate();
     };
   }
 

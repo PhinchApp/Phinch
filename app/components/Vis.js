@@ -237,10 +237,12 @@ export default class Vis extends Component {
 
   componentDidMount() {
     window.addEventListener('resize', this.updateDimensions);
-    const data = this.formatTaxonomyData(this.initdata, this.state.level);
-    this.setState({ data, preData: data }, () => {
-      this.updateAttributeValues(this.state.selectedAttribute, this.state.data);
-      this.setLevel(this.state.level);
+    // const data = this.formatTaxonomyData(this.initdata, this.state.level);
+    this.formatTaxonomyData(this.initdata, this.state.level, (data) => {
+      this.setState({ data, preData: data }, () => {
+        this.updateAttributeValues(this.state.selectedAttribute, this.state.data);
+        this.setLevel(this.state.level);
+      });
     });
   }
 
@@ -450,26 +452,35 @@ export default class Vis extends Component {
     if (!Object.prototype.hasOwnProperty.call(this.filters, level)) {
       this.filters[level] = {};
     }
-    const preData = this.updateTaxonomyData(this.state.preData, level, true);
-    const deleted = this.updateTaxonomyData(this.state.deleted, level, false);
+    // const preData = this.updateTaxonomyData(this.state.preData, level, true);
+    // const deleted = this.updateTaxonomyData(this.state.deleted, level, false);
     const filters = this.filters[level];
     const showRightSidebar = Object.keys(filters).length > 0;
     this.updateChartWidth(showRightSidebar);
-    const data = this.filterData(filters, this.state.tags, preData, deleted);
-    this.updateAttributeValues(this.state.selectedAttribute, data);
-    this.setState({
-      level, data, preData, deleted, filters, showRightSidebar
-    }, () => {
-      this.topSequences = this.renderTopSequences();
-      this.save(this.setResult);
+
+    this.updateTaxonomyData(this.state.preData, level, true, (preData) => {
+      this.updateTaxonomyData(this.state.deleted, level, false, (deleted) => {
+        //
+        const data = this.filterData(filters, this.state.tags, preData, deleted);
+        this.updateAttributeValues(this.state.selectedAttribute, data);
+        this.setState({
+          level, data, preData, deleted, filters, showRightSidebar
+        }, () => {
+          this.topSequences = this.renderTopSequences();
+          this.save(this.setResult);
+        });
+        //
+      });
     });
   }
 
   // data.data schema: [row(observations), column(samples), count]
   // Move to data container?
-  formatTaxonomyData(data, level) {
+  // formatTaxonomyData(data, level) {
+  formatTaxonomyData(data, level, callback) {
+    console.time('formatTaxonomyData');
     let totalDataReads = 0;
-    const formatedData = this.updateTaxonomyData(data.columns.map(c => {
+    const indata = data.columns.map(c => {
       const matches = data.data
         .filter(d => d[1] === c.metadata.phinchID)
         .map(d => {
@@ -512,13 +523,19 @@ export default class Vis extends Component {
         tags,
         matches,
       };
-    }), level, true);
+    });
     this.totalDataReads = totalDataReads;
-    return formatedData;
+    // const formatedData = this.updateTaxonomyData(indata, level, true);
+    this.updateTaxonomyData(indata, level, true, (formatedData) => {
+      console.timeEnd('formatTaxonomyData');
+      callback(formatedData);
+    });
+    // return formatedData;
   }
 
-  updateTaxonomyData(data, level, updateSequences) {
-    // console.time('updateTaxonomyData');
+  // updateTaxonomyData(data, level, updateSequences) {
+  updateTaxonomyData(data, level, updateSequences, callback) {
+    console.time('updateTaxonomyData');
     if (updateSequences) {
       this.readsBySequence = {};
     }
@@ -546,8 +563,9 @@ export default class Vis extends Component {
     if (updateSequences) {
       this.sequences = this.updateSequences();
     }
-    // console.timeEnd('updateTaxonomyData');
-    return taxonomyData;
+    console.timeEnd('updateTaxonomyData');
+    callback(taxonomyData);
+    // return taxonomyData;
   }
 
   filterData(filters, tags, preData, deleted) {
@@ -1070,11 +1088,11 @@ export default class Vis extends Component {
           backgroundColor: '#4d4d4d',
         }}
         modalPosition={{
-          position: 'absolute',
+          position: 'fixed',
           top: 136,
           left: this.metrics.leftSidebar,
           width: this.metrics.chartWidth + (this.metrics.nonbarWidth - 4),
-          height: '90px',
+          height: '98px',
           color: 'white',
         }}
         data={levelButtons}
