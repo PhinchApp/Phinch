@@ -14,7 +14,6 @@ function filterFloat(value) {
 
 function formatData(data) {
   const thisData = data;
-  console.log(thisData);
 
   const sequenceReads = {};
   thisData.data.forEach((d) => {
@@ -61,7 +60,6 @@ function formatData(data) {
     string: {},
   };
 
-  console.log(metadataKeys);
   metadataKeys.forEach(k => {
     const units = [];
     const entries = thisData.columns.map(d => {
