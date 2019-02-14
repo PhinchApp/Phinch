@@ -1,6 +1,6 @@
 .menuToggle {
   position: relative;
-  color: #ffffff;
+  color: #fff;
   background: #1fbbd8;
   width: 24px;
   height: 24px;
@@ -13,12 +13,8 @@
   padding: 0;
   text-align: center;
   cursor: pointer;
-  border: 3px solid #333333;
+  border: 3px solid #333;
   transition: transform 0.5s ease-in-out;
-}
-
-.menuToggle img {
-
 }
 
 .menuToggle.rotated {
@@ -27,7 +23,7 @@
 
 .toggleSquare {
   position: absolute;
-  background: #333333;
+  background: #333;
   width: 9px;
   height: 24px;
   margin: 0;
@@ -36,8 +32,8 @@
 }
 
 .menu {
-  color: #ffffff;
-  background: #333333;
+  color: #fff;
+  background: #333;
   font-weight: 400;
   font-size: 18px;
   text-transform: uppercase;
@@ -46,7 +42,7 @@
 .menuItem {
   width: 100%;
   margin: 1rem 0.5rem;
-  color: #ffffff;
+  color: #fff;
   text-align: center;
   cursor: pointer;
 }

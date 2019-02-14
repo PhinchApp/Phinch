@@ -1,5 +1,5 @@
 .group {
-  color: #000000;
+  color: #000;
   font-weight: 300;
 }
 
@@ -16,7 +16,7 @@
 }
 
 .toggle:hover {
-  color: #000000;
+  color: #000;
 }
 
 .name {

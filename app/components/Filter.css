@@ -9,7 +9,7 @@
 }
 
 .filterHeading {
-  font-family: 'IBM Plex Sans Condensed';
+  font-family: 'IBM Plex Sans Condensed', Verdana, Sans-serif;
   font-size: 14px;
   font-weight: 400;
   display: inline-block;
@@ -29,7 +29,7 @@
   line-height: 20px;
   font-size: 12px;
   font-weight: 400;
-  color: #999999;
+  color: #999;
 }
 
 .visOption {
@@ -84,8 +84,6 @@
   padding-right: 1rem;
   overflow: hidden;
 }
-.right {
-}
 
 .grey {
   background: #f4f4f4;
@@ -112,7 +110,7 @@
   padding: 0 8px;
   color: #b2b2b2;
   vertical-align: top;
-  font-family: 'IBM Plex Sans Condensed';
+  font-family: 'IBM Plex Sans Condensed', Verdana, Sans-serif;
   font-weight: 400;
   cursor: pointer;
   z-index: 10;
@@ -128,6 +126,7 @@
   opacity: 1;
   transition: opacity 0.5s ease-in-out;
 }
+
 .button:hover {
   opacity: 0.5;
 }
@@ -141,6 +140,7 @@
   opacity: 1;
   transition: opacity 0.5s ease-in-out;
 }
+
 .reset:hover {
   opacity: 0.5;
 }
@@ -153,6 +153,7 @@
 .error {
   color: red;
 }
+
 .success {
   color: green;
 }

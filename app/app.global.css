@@ -3,7 +3,6 @@
  *        See https://github.com/webpack-contrib/sass-loader#imports
  */
 @import "~font-awesome/css/font-awesome.css";
-
 @import "~@ibm/plex/css/ibm-plex.css";
 
 * {
@@ -11,11 +10,19 @@
   -webkit-box-sizing: border-box;
 }
 
-
 ::-webkit-scrollbar {
   -webkit-appearance: none;
   cursor: pointer;
+}
 
+::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background-color: #999;
+  border: 2px solid white;
+}
+
+::-webkit-scrollbar-track {
+  background-color: inherit;
 }
 
 ::-webkit-scrollbar:vertical {
@@ -24,16 +31,6 @@
 
 ::-webkit-scrollbar:horizontal {
   height: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-  border-radius: 8px;
-  background-color: #999999;
-  border: 2px solid white;
-}
-
-::-webkit-scrollbar-track {
-  background-color: inherit;
 }
 
 html {
@@ -45,9 +42,9 @@ body {
   position: relative;
   height: 100vh;
   font-weight: 200;
-  background-color: #333333;
-  color: #eeeeee;
-  font-family: 'IBM Plex Sans';
+  background-color: #333;
+  color: #eee;
+  font-family: 'IBM Plex Sans', Verdana, Sans-serif;
   margin: 0;
   overflow: hidden;
 }

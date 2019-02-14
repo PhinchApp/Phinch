@@ -1,5 +1,5 @@
 h1.heading {
-  color: #666666;
+  color: #666;
   margin: 0;
   margin-bottom: 4rem;
   line-height: 1rem;
@@ -14,7 +14,7 @@ h1.heading {
   position: relative;
   vertical-align: top;
   width: 100px;
-  background: #333333;
+  background: #333;
 }
 
 .section {
@@ -42,7 +42,8 @@ h1.heading {
   font-size: 1rem;
 }
 
-input.wide, textarea.textarea {
+input.wide,
+textarea.textarea {
   width: 540px;
   margin: 1rem;
   margin-left: 0;
@@ -50,10 +51,10 @@ input.wide, textarea.textarea {
   resize: none;
   border: 1px solid #dcdcdc;
   background: white;
-  color: #666666;
+  color: #666;
   font-size: 1rem;
   font-weight: 200;
-  font-family: 'IBM Plex Mono';
+  font-family: 'IBM Plex Mono', Verdana, Sans-serif;
 }
 
 textarea.textarea {
@@ -117,6 +118,7 @@ td.label {
   border-bottom: #f8f8f8 1px solid;
   transition: border 0.5s ease-in-out;
 }
+
 .link:hover {
   border-bottom: black 1px solid;
 }

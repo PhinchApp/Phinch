@@ -1,15 +1,15 @@
 .StackedBarTooltip {
-  font-family: 'IBM Plex Sans Condensed';
+  font-family: 'IBM Plex Sans Condensed', Verdana, Sans-serif;
   position: absolute;
   font-size: 12px;
   top: 0;
   left: 0;
   width: 316px;
-  color: #ffffff;
-  background-color: #000000;
+  color: #fff;
+  background-color: #000;
   pointer-events: none;
   padding: 1em;
-  border: 1px solid #333333;
+  border: 1px solid #333;
   border-radius: 8px;
   z-index: 10;
 }

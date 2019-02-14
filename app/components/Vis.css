@@ -9,7 +9,7 @@
 
 .menuToggle {
   position: relative;
-  color: #ffffff;
+  color: #fff;
   background: #1fbbd8;
   width: 22px;
   height: 22px;
@@ -20,12 +20,12 @@
   padding: 0;
   text-align: center;
   cursor: pointer;
-  border: 2px solid #333333;
+  border: 2px solid #333;
 }
 
 .toggleSquare {
   position: absolute;
-  background: #333333;
+  background: #333;
   width: 11px;
   height: 22px;
   margin: 0;
@@ -33,8 +33,8 @@
 }
 
 .menu {
-  color: #ffffff;
-  background: #333333;
+  color: #fff;
+  background: #333;
   font-weight: 400;
   font-size: 18px;
   text-transform: uppercase;
@@ -42,7 +42,7 @@
 
 .menuItem {
   margin: 1rem;
-  color: #ffffff;
+  color: #fff;
   text-align: center;
 }
 
@@ -84,7 +84,7 @@
   line-height: 16px;
   font-size: 13px;
   cursor: pointer;
-  border: 1px solid #999999;
+  border: 1px solid #999;
   text-transform: capitalize;
 }
 
@@ -114,7 +114,7 @@
   height: 14px;
   line-height: 12px;
   font-size: 9px;
-  background: #666666;
+  background: #666;
   border-radius: 6px;
   text-align: center;
   text-transform: uppercase;
@@ -134,16 +134,19 @@
   margin-right: 0.25rem;
   cursor: pointer;
 }
+
 .inlineControl label {
   margin-right: 0.25rem;
 }
+
 .inlineControl input {
   vertical-align: middle;
   margin: 0 0.25rem;
   padding: 0;
   cursor: pointer;
 }
-.inlineControl input[type='radio']:after {
+
+.inlineControl input[type='radio']::after {
   width: 12px;
   height: 12px;
   border-radius: 12px;
@@ -156,7 +159,8 @@
   border: 3px solid #4d4d4d;
   background: #4d4d4d;
 }
-.inlineControl input[type='radio']:checked:after {
+
+.inlineControl input[type='radio']:checked::after {
   width: 12px;
   height: 12px;
   border-radius: 12px;
@@ -169,12 +173,13 @@
   border: 3px solid #4d4d4d;
   background: #1fbbd8;
 }
+
 .inlineControl select {
-  font-family: 'IBM Plex Sans Condensed';
+  font-family: 'IBM Plex Sans Condensed', Verdana, Sans-serif;
   font-weight: 300;
   font-size: 14px;
   background: #4d4d4d;
-  color: #ffffff;
+  color: #fff;
   border-radius: 4px;
   border: none;
   height: 24px;
@@ -182,6 +187,7 @@
   margin-right: 0.5rem;
   cursor: pointer;
 }
+
 .inlineControl select[disabled] {
   opacity: 0.5;
 }
@@ -199,9 +205,11 @@
 .selected {
   font-weight: 400;
 }
+
 .dash.selected {
   color: #1fbbd8;
 }
+
 .selector.selected {
   border: 1px solid #1fbbd8;
   background: #1fbbd8;
@@ -209,7 +217,7 @@
 
 .tagFilter {
   position: fixed;
-  background: #333333;
+  background: #333;
   width: 192px;
   padding: 6px 12px;
   border-radius: 8px;
@@ -220,9 +228,10 @@
 
 .tagName {
   font-size: 13px;
-  color: #999999;
+  color: #999;
   width: 116px;
 }
+
 .tagName.selected {
   color: white;
 }
@@ -233,7 +242,7 @@
   width: 144px;
   padding: 0 1rem;
   z-index: 3;
-  font-family: 'IBM Plex Sans Condensed';
+  font-family: 'IBM Plex Sans Condensed', Verdana, Sans-serif;
   text-align: left;
   color: #2b2b2b;
 }
@@ -267,12 +276,14 @@
   margin-right: 0.25rem;
   font-size: 12px;
 }
+
 .name {
   text-align: left;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
 .reads {
   text-align: right;
 }
@@ -286,6 +297,7 @@
   background: white;
   border: 1px solid #2b2b2b;
 }
+
 .modalbottom p {
   margin: 0;
   margin-bottom: 0.5rem;
@@ -296,13 +308,15 @@
   width: 144px;
   margin-right: 0.25rem;
 }
+
 .biomid {
   width: 72px;
-  margin-right: 0.25rem; 
+  margin-right: 0.25rem;
 }
+
 .restore {
   background: none;
-  width:  36px;
+  width: 36px;
   margin-right: 0.25rem;
 }
 
@@ -312,7 +326,7 @@
 }
 
 .svglist > svg {
-  font-family: 'IBM Plex Sans Condensed';
+  font-family: 'IBM Plex Sans Condensed', Verdana, Sans-serif;
   font-weight: 200;
   font-size: 12px;
   padding-top: 6px;

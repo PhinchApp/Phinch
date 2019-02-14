@@ -1,5 +1,5 @@
 .rowLabel {
-  font-family: 'IBM Plex Sans Condensed';
+  font-family: 'IBM Plex Sans Condensed', Verdana, Sans-serif;
   position: relative;
   margin: 0;
   font-size: 12px;
@@ -13,7 +13,7 @@
 }
 
 .rowLabel input {
-  font-family: 'IBM Plex Sans Condensed';
+  font-family: 'IBM Plex Sans Condensed', Verdana, Sans-serif;
   font-weight: 400;
   font-size: 12px;
   line-height: 14px;
@@ -52,9 +52,11 @@
   vertical-align: middle;
   border-radius: 6px;
 }
+
 .button:hover {
   background: #808080;
 }
+
 .input:hover .button {
   background: #808080;
   cursor: pointer;
@@ -74,7 +76,7 @@
 
 .tag {
   line-height: 16px;
-  vertical-align: middle; 
+  vertical-align: middle;
   color: #808080;
   user-select: none;
 }
@@ -99,14 +101,18 @@
 .tagLabel {
   font-size: 12px;
   font-weight: 300;
-  font-family: 'IBM Plex Sans Condensed';
+  font-family: 'IBM Plex Sans Condensed', Verdana, Sans-serif;
 }
-.tag:hover, .tag.selected {
-  color: #000000;
+
+.tag:hover,
+.tag.selected {
+  color: #000;
 }
+
 .tag:hover .tagIcon {
   border-color: #808080;
 }
+
 .tag.selected:hover {
   color: #808080;
 }
