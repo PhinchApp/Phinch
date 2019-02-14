@@ -14,6 +14,7 @@ function filterFloat(value) {
 
 function formatData(data) {
   const thisData = data;
+  console.log(thisData);
 
   const sequenceReads = {};
   thisData.data.forEach((d) => {
@@ -60,6 +61,7 @@ function formatData(data) {
     string: {},
   };
 
+  console.log(metadataKeys);
   metadataKeys.forEach(k => {
     const units = [];
     const entries = thisData.columns.map(d => {
@@ -90,26 +92,29 @@ function formatData(data) {
     let groupKey = 'string';
     let filterValues = values;
 
-    if (k.toLowerCase().trim().includes('date')) {
-      groupKey = 'date';
-      filterValues = values.map(d => {
-        if (k.toLowerCase().trim().includes('date')) {
-          d.value = new Date(d.value);
-        }
-        return d;
-      }).filter(v => !v.value.toString().toLowerCase().trim().includes('invalid date'));
-    } else if (k.toLowerCase().trim().includes('year')) {
-      groupKey = 'date';
-      filterValues = values.map((v) => {
-        v.value = filterFloat(v.splitValue);
-        return v;
-      }).filter(v => v.value !== null);
-    } else if (filterFloat(values.filter(v => v.splitValue !== 'no_data')[0].splitValue) !== null) {
-      groupKey = 'number';
-      filterValues = values.map((v) => {
-        v.value = filterFloat(v.splitValue);
-        return v;
-      }).filter(v => v.value !== null);
+    const possibleNumericValues = values.filter(v => v.splitValue !== 'no_data');
+    if (possibleNumericValues.length) {
+      if (k.toLowerCase().trim().includes('date')) {
+        groupKey = 'date';
+        filterValues = values.map(d => {
+          if (k.toLowerCase().trim().includes('date')) {
+            d.value = new Date(d.value);
+          }
+          return d;
+        }).filter(v => !v.value.toString().toLowerCase().trim().includes('invalid date'));
+      } else if (k.toLowerCase().trim().includes('year')) {
+        groupKey = 'date';
+        filterValues = values.map((v) => {
+          v.value = filterFloat(v.splitValue);
+          return v;
+        }).filter(v => v.value !== null);
+      } else if (filterFloat(possibleNumericValues[0].splitValue) !== null) {
+        groupKey = 'number';
+        filterValues = values.map((v) => {
+          v.value = filterFloat(v.splitValue);
+          return v;
+        }).filter(v => v.value !== null);
+      }
     }
 
     filterValues = filterValues
@@ -144,6 +149,8 @@ function formatData(data) {
       unit,
       log: true,
     };
+
+
   });
 
 
