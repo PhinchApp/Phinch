@@ -256,7 +256,6 @@ export default class Vis extends Component {
   componentWillUnmount() {
     clearTimeout(this.tooltip.handle);
     clearTimeout(this.timeout);
-    this.exportComplete();
     window.removeEventListener('resize', this.updateDimensions);
   }
 
