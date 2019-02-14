@@ -1052,7 +1052,6 @@ export default class Vis extends Component {
   }
 
   renderLevelSelector(levels) {
-    console.log(levels);
     const modalLevel = (this.state.width - 580) < ((800 / 12) * this.levels.length);
     const levelButtons = levels.map((l, i) => {
       const selected = (l.order <= this.state.level) ? styles.selected : '';
