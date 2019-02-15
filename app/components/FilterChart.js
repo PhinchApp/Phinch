@@ -198,7 +198,15 @@ export default class FilterChart extends Component {
       <div className={styles.filterChart}>
         {circle}
         {remove}
-        <div className={styles.name} style={{ color: this.props.color }}>{name}</div>
+        <div
+          className={styles.name}
+          style={{
+            color: this.props.color,
+            display: this.props.showCircle ? 'inline-block' : 'block',
+          }}
+        >
+          {name}
+        </div>
         {info}
         <svg
           width={this.props.width}

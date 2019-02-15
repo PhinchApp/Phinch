@@ -18,7 +18,7 @@
 .filterChart {
   font-family: 'IBM Plex Sans Condensed', Verdana, Sans-serif;
   vertical-align: top;
-  display: inline-block;
+  /*display: inline-block;*/
   font-size: 16px;
   font-weight: 300;
   color: #ccc;
@@ -29,6 +29,9 @@
   font-size: 14px;
   font-weight: 400;
   vertical-align: top;
+  /**/
+  margin-right: 1rem;
+  overflow-wrap: break-word;
 }
 
 .toggleLabel {

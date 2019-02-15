@@ -105,6 +105,7 @@ export default class StackedBarRow extends Component {
           width: this.props.metrics.nameWidth,
           left: this.props.metrics.idWidth + (this.props.metrics.padding / 2),
         }}
+        title={this.props.data[this.props.labelKey]}
       >
         <input
           className={gstyle.input}
@@ -116,7 +117,19 @@ export default class StackedBarRow extends Component {
         />
         {edit}
       </div>
-    ) : '';
+    ) : (
+      <div
+        className={`${styles.rowLabel}`}
+        style={{
+          position: 'absolute',
+          width: this.props.metrics.nameWidth,
+          left: this.props.metrics.idWidth + (this.props.metrics.padding / 2),
+        }}
+        title={this.props.data[this.props.labelKey]}
+      >
+        {this.props.data[this.props.labelKey]}
+      </div>
+    );
     const samples = (this.state.hovered && this.props.isAttribute) ? (
       <Modal
         buttonTitle="Samples"
@@ -279,7 +292,8 @@ export default class StackedBarRow extends Component {
         {this.props.isRemoved ? 'Restore' : 'Archive'}
       </div>
     ) : '';
-    const rowName = this.props.data[this.props.labelKey] === '' ? 'no_data' : this.props.data[this.props.labelKey];
+    // const rowName = this.props.data[this.props.labelKey] === '' ? 'no_data' : this.props.data[this.props.labelKey];
+    const rowName = this.props.data[this.props.labelKey];
     const rowColor = (this.props.index % 2 === 0) ? '#ffffff' : '#f4f4f4';
     return (
       <g
@@ -333,9 +347,11 @@ export default class StackedBarRow extends Component {
             )`}
           >
             {
-              (this.state.hovered && (this.props.labelKey === 'phinchName')) ? (
-                ''
-              ) : rowName
+              // (this.state.hovered && (this.props.labelKey === 'phinchName')) ? (
+              //   ''
+              // // ) : rowName
+              // ) : ''
+              this.props.renderSVG ? rowName : ''
             }
           </text>
           <g

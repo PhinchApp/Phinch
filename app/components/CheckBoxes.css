@@ -23,4 +23,6 @@
   font-size: 14px;
   font-weight: 400;
   vertical-align: top;
+  margin-right: 1rem;
+  overflow-wrap: break-word;
 }
