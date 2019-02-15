@@ -781,7 +781,7 @@ export default class Vis extends Component {
 
   attr = (datum, index, yOffset) => (
     <StackedBarRow
-      key={`${this.state.selectedAttribute}-${datum.value}`}
+      key={`${this.state.selectedAttribute}-${datum.name}`}
       data={datum}
       index={index}
       isLast={index >= Math.max(4, this.attribute.displayValues.length - 4)}
