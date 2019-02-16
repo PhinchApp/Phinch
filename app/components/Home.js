@@ -118,7 +118,7 @@ export default class Home extends Component {
   }
 
   render() {
-    if (this.state.redirect !== null) {
+    if (this.state.redirect !== null && this.state.redirect !== '/') {
       return <Redirect push to={this.state.redirect} />;
     }
     let modalContent = null;

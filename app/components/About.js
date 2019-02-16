@@ -20,11 +20,12 @@ export default class About extends Component {
   }
 
   render() {
-    const redirect = (this.state.redirect === null) ? '' : <Redirect push to={this.state.redirect} />;
+    if (this.state.redirect !== null && this.state.redirect !== '/about') {
+      return <Redirect push to={this.state.redirect} />;
+    }
     return (
       <div>
         <div className={styles.container} data-tid="container">
-          {redirect}
           <SideBar context={this} />
           <div className={`${styles.section} ${styles.right} ${styles.about}`}>
             <div className={`${styles.section} ${styles.center} ${styles.scroll}`}>
