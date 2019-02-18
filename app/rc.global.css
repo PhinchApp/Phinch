@@ -181,51 +181,52 @@
 
 .rc-slider-tooltip-zoom-down-enter,
 .rc-slider-tooltip-zoom-down-appear {
-  animation-duration: .3s;
+  animation-duration: 0.3s;
   animation-fill-mode: both;
   display: block !important;
   animation-play-state: paused;
+  transform: scale(0, 0);
+  animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .rc-slider-tooltip-zoom-down-leave {
-  animation-duration: .3s;
+  animation-duration: 0.3s;
   animation-fill-mode: both;
   display: block !important;
   animation-play-state: paused;
+  animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
 }
+
 .rc-slider-tooltip-zoom-down-enter.rc-slider-tooltip-zoom-down-enter-active,
 .rc-slider-tooltip-zoom-down-appear.rc-slider-tooltip-zoom-down-appear-active {
   animation-name: rcSliderTooltipZoomDownIn;
   animation-play-state: running;
 }
+
 .rc-slider-tooltip-zoom-down-leave.rc-slider-tooltip-zoom-down-leave-active {
   animation-name: rcSliderTooltipZoomDownOut;
   animation-play-state: running;
 }
-.rc-slider-tooltip-zoom-down-enter,
-.rc-slider-tooltip-zoom-down-appear {
-  transform: scale(0, 0);
-  animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
-}
-.rc-slider-tooltip-zoom-down-leave {
-  animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
-}
+
 @keyframes rcSliderTooltipZoomDownIn {
   0% {
     opacity: 0;
     transform-origin: 50% 100%;
     transform: scale(0, 0);
   }
+
   100% {
     transform-origin: 50% 100%;
     transform: scale(1, 1);
   }
 }
+
 @keyframes rcSliderTooltipZoomDownOut {
   0% {
     transform-origin: 50% 100%;
     transform: scale(1, 1);
   }
+
   100% {
     opacity: 0;
     transform-origin: 50% 100%;

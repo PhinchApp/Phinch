@@ -292,7 +292,6 @@ export default class StackedBarRow extends Component {
         {this.props.isRemoved ? 'Restore' : 'Archive'}
       </div>
     ) : '';
-    // const rowName = this.props.data[this.props.labelKey] === '' ? 'no_data' : this.props.data[this.props.labelKey];
     const rowName = this.props.data[this.props.labelKey];
     const rowColor = (this.props.index % 2 === 0) ? '#ffffff' : '#f4f4f4';
     return (

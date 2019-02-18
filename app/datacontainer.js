@@ -4,7 +4,7 @@ import { join, resolve } from 'path';
 
 const isDev = () => process.env.NODE_ENV === 'development';
 const appPath = isDev() ? __dirname : remote.app.getAppPath();
-const biomhandlerPath = resolve(appPath, '..', 'biomhandler', 'dist', 'biomhandler');
+const biomhandlerPath = resolve(appPath, '..', 'biomhandler', 'biomhandler'); // os-specific?
 const workerPath = resolve(appPath, '..', 'workers', 'loadAndFormatData.js');
 const worker = new Worker(workerPath);
 
