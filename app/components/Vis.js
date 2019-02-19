@@ -1090,7 +1090,7 @@ export default class Vis extends Component {
         }}
         modalPosition={{
           position: 'fixed',
-          zIndex: dataLength,
+          zIndex: dataLength + 1,
           top: 136,
           left: this.metrics.leftSidebar,
           width: this.metrics.chartWidth + (this.metrics.nonbarWidth - 4),
