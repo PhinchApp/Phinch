@@ -337,22 +337,20 @@ export default class StackedBarRow extends Component {
           >
             {(this.props.data.biomid !== undefined) ? this.props.data.biomid.toLocaleString() : ''}
           </text>
-          <text
-            id="name"
-            fontWeight={400}
-            transform={`translate(
-              ${this.props.metrics.idWidth + (this.props.metrics.padding / 2)},
-              ${(this.props.metrics.lineHeight * 1) - 3}
-            )`}
-          >
             {
-              // (this.state.hovered && (this.props.labelKey === 'phinchName')) ? (
-              //   ''
-              // // ) : rowName
-              // ) : ''
-              this.props.renderSVG ? rowName : ''
-            }
-          </text>
+              this.props.renderSVG ? (
+              <text
+                id="name"
+                fontWeight={400}
+                transform={`translate(
+                  ${this.props.metrics.idWidth + (this.props.metrics.padding / 2)},
+                  ${(this.props.metrics.lineHeight * 1) - 3}
+                )`}
+              >
+                {rowName}
+              </text>
+            ) : null
+          }
           <g
             transform={`translate(
               ${this.props.metrics.idWidth + (this.props.metrics.padding / 2)},
@@ -364,21 +362,25 @@ export default class StackedBarRow extends Component {
             </text>
           </g>
           {tagList}
-          <foreignObject>
-            <div
-              style={{
-                position: 'fixed',
-                width: this.props.metrics.barInfoWidth - (this.props.metrics.padding / 2),
-                zIndex: 3,
-              }}
-            >
-              {name}
-              {samples}
-              {ellipsis}
-              {tagMenu}
-              {action}
-            </div>
-          </foreignObject>
+          {
+            this.props.renderSVG ? null : (
+              <foreignObject>
+                <div
+                  style={{
+                    position: 'fixed',
+                    width: this.props.metrics.barInfoWidth - (this.props.metrics.padding / 2),
+                    zIndex: 3,
+                  }}
+                >
+                  {name}
+                  {samples}
+                  {ellipsis}
+                  {tagMenu}
+                  {action}
+                </div>
+              </foreignObject>
+            )
+          }
         </g>
         <g
           id="Bars"
