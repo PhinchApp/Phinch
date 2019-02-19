@@ -757,6 +757,7 @@ export default class Vis extends Component {
       key={datum.id}
       data={datum}
       index={index}
+      zIndex={this.state.data.length - index}
       isLast={index === this.state.data.length - 1}
       yOffset={yOffset}
       labelKey={this.state.labelKey}
@@ -784,6 +785,7 @@ export default class Vis extends Component {
       key={`${this.state.selectedAttribute}-${datum.name}`}
       data={datum}
       index={index}
+      zIndex={this.attribute.displayValues.length - index}
       isLast={index >= Math.max(4, this.attribute.displayValues.length - 4)}
       yOffset={yOffset}
       labelKey="name"
@@ -1050,7 +1052,7 @@ export default class Vis extends Component {
     );
   }
 
-  renderLevelSelector(levels) {
+  renderLevelSelector(levels, dataLength) {
     const modalLevel = (this.state.width - 580) < ((800 / 12) * this.levels.length);
     const levelButtons = levels.map((l, i) => {
       const selected = (l.order <= this.state.level) ? styles.selected : '';
@@ -1088,6 +1090,7 @@ export default class Vis extends Component {
         }}
         modalPosition={{
           position: 'fixed',
+          zIndex: dataLength,
           top: 136,
           left: this.metrics.leftSidebar,
           width: this.metrics.chartWidth + (this.metrics.nonbarWidth - 4),
@@ -1338,7 +1341,7 @@ export default class Vis extends Component {
             </div>
             {/* ROW 2 */}
             <div className={styles.controlRow}>
-              {this.renderLevelSelector(this.levels)}
+              {this.renderLevelSelector(this.levels, dataLength)}
               {this.levels.length ? spacer : null}
               {this.renderAttributesSelect()}
               {spacer}
@@ -1459,6 +1462,7 @@ export default class Vis extends Component {
           }}
           modalPosition={{
             position: 'absolute',
+            zIndex: dataLength + 1,
             bottom: this.metrics.padding * 2,
             left: this.metrics.leftSidebar,
             width: this.metrics.chartWidth + (this.metrics.nonbarWidth - 4),
@@ -1479,6 +1483,7 @@ export default class Vis extends Component {
           }}
           modalPosition={{
             position: 'absolute',
+            zIndex: dataLength + 1,
             bottom: this.metrics.padding * 2,
             left: this.metrics.leftSidebar,
             width: this.metrics.chartWidth + (this.metrics.nonbarWidth - 4),
