@@ -326,9 +326,9 @@ export default class Filter extends Component {
             !value.toString().toLowerCase().trim().includes('invalid date')
               &&
             (
-              value.valueOf() < filters[k].range.min.value.valueOf()
+              value.valueOf() < new Date(filters[k].range.min.value).valueOf()
                 ||
-              value.valueOf() > filters[k].range.max.value.valueOf()
+              value.valueOf() > new Date(filters[k].range.max.value).valueOf()
             )
           ) {
             include = false;

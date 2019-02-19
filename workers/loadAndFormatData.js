@@ -96,9 +96,7 @@ function formatData(data) {
       if (k.toLowerCase().trim().includes('date')) {
         groupKey = 'date';
         filterValues = values.map(d => {
-          if (k.toLowerCase().trim().includes('date')) {
-            d.value = new Date(d.value);
-          }
+          d.value = new Date(d.value);
           return d;
         }).filter(v => !v.value.toString().toLowerCase().trim().includes('invalid date'));
       } else if (k.toLowerCase().trim().includes('year')) {
