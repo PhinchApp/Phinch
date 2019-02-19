@@ -20,7 +20,6 @@ const sampleProjects = [
 const homedirectory = homedir();
 
 function checkFolders() {
-  // maybe check platform? console.log(platform());
   // check settings file - look somewhere other than home folder
   const home = fs.readdirSync(join(homedirectory));
   if (!home.includes('Documents')) { // weird but ok
@@ -57,7 +56,7 @@ function getProjectInfo(path, dataKey) {
 }
 
 export function exportProjectData(path, dataKey, data, callback) {
-  const projectdir = join('/', path);
+  const projectdir = join(path);
   const project = fs.readdirSync(projectdir);
   let version = 0;
   let exportname = `export-${dataKey}-${version}`;
@@ -65,7 +64,7 @@ export function exportProjectData(path, dataKey, data, callback) {
     version += 1;
     exportname = `export-${dataKey}-${version}`;
   }
-  const exportPath = join('/', path, exportname);
+  const exportPath = join(path, exportname);
   try {
     fs.writeFileSync(exportPath, JSON.stringify(data));
     callback('Exported');
@@ -76,7 +75,7 @@ export function exportProjectData(path, dataKey, data, callback) {
 
 export function setProjectFilters(path, dataKey, names, view, callback) {
   // console.time('setProjectFilters');
-  const metadataPath = join('/', path, `${dataKey}.json`);
+  const metadataPath = join(path, `${dataKey}.json`);
   const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
   if (names) {
     metadata.names = names;
@@ -113,7 +112,7 @@ export function setProjectFilters(path, dataKey, names, view, callback) {
 export function getProjectFilters(path, dataKey, viewType) {
   const filters = {};
   if (path.length) {
-    const metadataPath = join('/', path, `${dataKey}.json`);
+    const metadataPath = join(path, `${dataKey}.json`);
     const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
     const names = metadata.names || {};
     filters.names = names;
@@ -132,7 +131,7 @@ export function createProject(project) {
   checkFolders();
   const phinchdir = join(homedirectory, 'Documents', 'Phinch2.0');
   const phinch = fs.readdirSync(phinchdir);
-  const basename = project.name.split('.').slice(0, -1).join('.');
+  const basename = project.name;
   let foldername = basename;
   let version = 0;
   while (phinch.includes(foldername)) {

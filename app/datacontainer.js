@@ -1,6 +1,6 @@
 import { remote } from 'electron';
 import { stat } from 'fs';
-import { join, resolve } from 'path';
+import { join, resolve, parse } from 'path';
 
 const isDev = () => process.env.NODE_ENV === 'development';
 const appPath = isDev() ? __dirname : remote.app.getAppPath();
@@ -50,10 +50,9 @@ class DataContainer {
     if (project.summary) {
       this.summary = Object.assign(this.summary, project.summary);
     } else {
-      const filename = project.data.toString().split('/');
-      this.summary.name = filename[filename.length - 1];
-      this.summary.dataKey = filename[filename.length - 1];
-      filename.pop();
+      const filename = parse(project.data.toString());
+      this.summary.name = filename.name;
+      this.summary.dataKey = filename.name;
       this.summary.path = project.data;
     }
     /* if summary was saved in other format previously */
