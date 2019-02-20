@@ -21,10 +21,16 @@ $ cd phinch
 $ yarn
 ```
 
-Finally, here's *the tricky part*. Phinch uses a python script in the  `biomhandler` folder to load hdf5 biom files. To make Phinch easy to install, we use PyInstaller to package that script into a standablone executable. If you'd like to create your own version of the biomhandler executable, Follow the build steps listed in that project's repository: [https://github.com/PhinchApp/biomhandler](https://github.com/PhinchApp/biomhandler)
+To keep the main thread responsive, we use workers for some tasks. They have their own dependencies and package.json. To install:
+
+```bash
+$ cd workers
+$ yarn
+```
+
+Finally, there's an *optional* step that can be a little tricky. Phinch uses a python script in the  `biomhandler` folder to load hdf5 biom files. To make Phinch easy to install, we use PyInstaller to package that script into a standablone executable. We've included prepacked versions for macOS and Windows in the Phinch repository. If you'd like to create your own version of the biomhandler executable, follow the build steps listed in that project's repository [here](https://github.com/PhinchApp/biomhandler), and place the result in the `biomhandler/` folder.
 
 ## Run
-
 ```bash
 $ npm run dev
 ```
