@@ -62,6 +62,8 @@ class DataContainer {
   }
 
   loadAndFormatData(filepath, success, failure) {
+    console.log(biomhandlerPath);
+    console.log(filepath);
     // const worker = new Worker(workerPath);
     //
     worker.postMessage({ biomhandlerPath, filepath });

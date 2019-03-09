@@ -238,12 +238,14 @@ export default class Vis extends Component {
   componentDidMount() {
     window.addEventListener('resize', this.updateDimensions);
     // const data = this.formatTaxonomyData(this.initdata, this.state.level);
-    this.formatTaxonomyData(this.initdata, this.state.level, (data) => {
-      this.setState({ data, preData: data }, () => {
-        this.updateAttributeValues(this.state.selectedAttribute, this.state.data);
-        this.setLevel(this.state.level);
+    if (this.initdata) {
+      this.formatTaxonomyData(this.initdata, this.state.level, (data) => {
+        this.setState({ data, preData: data }, () => {
+          this.updateAttributeValues(this.state.selectedAttribute, this.state.data);
+          this.setLevel(this.state.level);
+        });
       });
-    });
+    }
   }
 
   componentDidUpdate() {

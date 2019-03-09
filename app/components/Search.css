@@ -23,7 +23,7 @@
   max-width: calc(100vw - 128px);
   overflow-y: scroll;
   overflow-x: hidden;
-  position: absolute;
+  position: fixed;
   margin-left: -0.25rem;
   margin-top: 0.25rem;
   background-color: #000;

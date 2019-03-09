@@ -5,12 +5,6 @@ export default class FrequencyChart extends Component {
   constructor(props) {
     super(props);
     this.padding = 2;
-    this.scale = scaleLog()
-      .domain([
-        Math.max(1, Math.min(...this.props.data.map(d => d.reads))),
-        Math.max(...this.props.data.map(d => d.reads))
-      ])
-      .range([this.padding, this.props.width - (this.padding * 2)]);
   }
 
   componentDidMount() {
@@ -22,6 +16,12 @@ export default class FrequencyChart extends Component {
   }
 
   updateCanvas() {
+    this.scale = scaleLog()
+      .domain([
+        Math.max(1, Math.min(...this.props.data.map(d => d.reads))),
+        Math.max(...this.props.data.map(d => d.reads))
+      ])
+      .range([this.padding, this.props.width - (this.padding * 2)]);
     const ctx = this.canvas.getContext('2d');
     ctx.clearRect(0, 0, this.props.width, this.props.height);
     ctx.fillStyle = 'black';
