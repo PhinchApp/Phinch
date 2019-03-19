@@ -62,15 +62,10 @@ class DataContainer {
   }
 
   loadAndFormatData(filepath, success, failure) {
-    console.log(biomhandlerPath);
-    console.log(filepath);
-    // const worker = new Worker(workerPath);
-    //
     worker.postMessage({ biomhandlerPath, filepath });
     worker.onmessage = e => {
       if (e.data.status === 'success') {
         const data = JSON.parse(e.data.data);
-
         this.data = data;
         this.samples = data.columns;
         this.observations = data.rows;
@@ -79,13 +74,10 @@ class DataContainer {
         this.attributes = data.stateFilters;
         this.filters = data.filters;
         this.levels = data.levels;
-
         success();
       } else {
         failure();
       }
-      //
-      // worker.terminate();
     };
   }
 
@@ -115,7 +107,6 @@ class DataContainer {
 
   applyFiltersToData(columns) {
     // move to worker?
-    // console.time('applyFiltersToData');
     // Modify Data
     const filteredData = this.data;
     // 1. columns - apply this from filter.state.data
@@ -136,7 +127,6 @@ class DataContainer {
     filteredData.shape = [filteredData.rows.length, filteredData.columns.length];
     //
     this.filteredData = filteredData;
-    // console.timeEnd('applyFiltersToData');
     return filteredData;
   }
   getFilteredData() {

@@ -217,12 +217,10 @@ function formatData(data) {
   /*
     USED in VIS, could be done later (after filter load)
   */
-  console.timeEnd('loadBiomFile');
   return thisData;
 }
 
 function loadBiomFile(e) {
-  console.time('loadBiomFile');
   const { biomhandlerPath, filepath } = e.data;
   const python = spawn(biomhandlerPath, [filepath]);
   let json = '';
