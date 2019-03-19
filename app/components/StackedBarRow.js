@@ -337,8 +337,8 @@ export default class StackedBarRow extends Component {
           >
             {(this.props.data.biomid !== undefined) ? this.props.data.biomid.toLocaleString() : ''}
           </text>
-            {
-              this.props.renderSVG ? (
+          {
+            this.props.renderSVG ? (
               <text
                 id="name"
                 fontWeight={400}

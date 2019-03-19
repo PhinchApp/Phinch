@@ -1,5 +1,6 @@
 const spawn = require('child_process').spawn;
 const nest = require('d3-collection').nest;
+
 const decoder = new TextDecoder('utf-8');
 
 function uint8arrayToString(data) {
