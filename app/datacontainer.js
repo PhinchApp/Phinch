@@ -2,9 +2,11 @@ import { remote } from 'electron';
 import { stat } from 'fs';
 import { join, resolve, parse } from 'path';
 
+const isLinux = () => process.platform === 'linux';
 const isDev = () => process.env.NODE_ENV === 'development';
 const appPath = isDev() ? __dirname : remote.app.getAppPath();
-const biomhandlerPath = resolve(appPath, '..', 'biomhandler', 'biomhandler'); // os-specific?
+const executable = isLinux() ? 'linux-biomhandler' : 'biomhandler';
+const biomhandlerPath = resolve(appPath, '..', 'biomhandler', executable);
 const workerPath = resolve(appPath, '..', 'workers', 'loadAndFormatData.js');
 const worker = new Worker(workerPath);
 
