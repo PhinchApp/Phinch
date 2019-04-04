@@ -12,7 +12,13 @@ import logo from 'images/phinch.svg';
 import back from 'images/back.svg';
 import save from 'images/save.svg';
 
-import { updateFilters, removeRows, restoreRows, visSortBy } from '../filterfunctions';
+import {
+  updateFilters,
+  removeRows,
+  restoreRows,
+  visSortBy,
+  countObservations
+} from '../filterfunctions';
 import { setProjectFilters, getProjectFilters } from '../projects';
 import handleExportButton from '../export';
 import DataContainer from '../datacontainer';
@@ -43,6 +49,7 @@ export default class Vis extends Component {
       summary: DataContainer.getSummary(),
       names: [],
       data: [],
+      observations: 0,
       preData: [],
       deleted: [],
       tags: [],
@@ -423,8 +430,9 @@ export default class Vis extends Component {
     const showRightSidebar = Object.keys(filters).length > 0;
     this.updateChartWidth(showRightSidebar);
     const data = this.filterData(filters, this.state.tags, this.state.preData, this.state.deleted);
+    const observations = countObservations(data);
     this.updateAttributeValues(this.state.selectedAttribute, data);
-    this.setState({ data, filters, showRightSidebar }, () => {
+    this.setState({ data, observations, filters, showRightSidebar }, () => {
       this.topSequences = this.renderTopSequences();
       this.save(this.setResult);
     });
@@ -461,11 +469,11 @@ export default class Vis extends Component {
 
     this.updateTaxonomyData(this.state.preData, level, true, (preData) => {
       this.updateTaxonomyData(this.state.deleted, level, false, (deleted) => {
-        //
         const data = this.filterData(filters, this.state.tags, preData, deleted);
+        const observations = countObservations(data);
         this.updateAttributeValues(this.state.selectedAttribute, data);
         this.setState({
-          level, data, preData, deleted, filters, showRightSidebar
+          level, data, observations, preData, deleted, filters, showRightSidebar
         }, () => {
           this.topSequences = this.renderTopSequences();
           this.save(this.setResult);
@@ -518,6 +526,7 @@ export default class Vis extends Component {
         order: c.order,
         sampleName: c.sampleName,
         phinchName,
+        observations: c.observations,
         reads: c.reads,
         sequences: [],
         date: collectionDate,
@@ -602,8 +611,9 @@ export default class Vis extends Component {
 
   applyFilters(filters) {
     const data = this.filterData(filters, this.state.tags, this.state.preData, this.state.deleted);
+    const observations = countObservations(data);
     this.updateAttributeValues(this.state.selectedAttribute, data);
-    this.setState({ filters, data }, _debounce(() => {
+    this.setState({ filters, data, observations }, _debounce(() => {
       this.save(this.setResult);
     }), this.metrics.debounce, { leading: false, trailing: true });
   }
@@ -740,8 +750,9 @@ export default class Vis extends Component {
       return t;
     });
     const data = this.filterData(this.state.filters, tags, this.state.preData, this.state.deleted);
+    const observations = countObservations(data);
     this.updateAttributeValues(this.state.selectedAttribute, data);
-    this.setState({ tags, data }, () => {
+    this.setState({ tags, data, observations }, () => {
       this.save(this.setResult);
     });
   }
@@ -1326,7 +1337,11 @@ export default class Vis extends Component {
           </Link>
         </div>
         <div className={gstyle.header}>
-          <Summary summary={this.state.summary} datalength={this.state.data.length} />
+          <Summary
+            summary={this.state.summary}
+            observations={this.state.observations}
+            datalength={this.state.data.length}
+          />
           <div className={styles.controls}>
             {/* ROW 1 */}
             <div className={styles.controlRow}>

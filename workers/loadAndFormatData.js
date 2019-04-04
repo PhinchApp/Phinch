@@ -18,27 +18,30 @@ function formatData(data) {
   const thisData = data;
 
   const sequenceReads = {};
-  thisData.data.forEach((d) => {
+
+  // ???
+  const observationsBySample = {};
+  // console.log(this.data.)
+  thisData.data.forEach(d => {
     if (sequenceReads[d[1]]) {
       sequenceReads[d[1]] += d[2];
     } else {
       sequenceReads[d[1]] = d[2];
     }
+    //
+    if (!observationsBySample[d[1]]) {
+      observationsBySample[d[1]] = [];
+    }
+    observationsBySample[d[1]].push(d[0]);
+    //
   });
+  // console.log(observationsBySample);
 
   thisData.rejectedSamples = []; // (cols w/ all empty-string metadata)
 
   thisData.columns = thisData.columns.map((c, i) => {
     const keys = Object.keys(c.metadata);
     const emptyMetadata = keys.map(k => c.metadata[k] === '').filter(k => k).length === keys.length;
-
-    // allow empty metadata values for now
-    // Object.keys(c.metadata).forEach(k => {
-    //   if (c.metadata[k] === '') {
-    //     c.metadata[k] = '__empty__';
-    //   }
-    // });
-    // return {
 
     c.metadata.phinchID = i;
     const reads = (sequenceReads[i] === undefined) ? 0 : sequenceReads[i];
@@ -49,6 +52,7 @@ function formatData(data) {
       sampleName: c.id,
       phinchName: c.phinchName || (c.metadata.phinchName ? c.metadata.phinchName : c.id),
       metadata: c.metadata,
+      observations: observationsBySample[i],
       reads,
     };
 

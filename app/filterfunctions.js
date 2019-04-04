@@ -67,6 +67,13 @@ export function visSortBy(indata, sortReverse, sortKey) {
   });
 }
 
+export function countObservations(data) {
+  if (data.length) {
+    return [...new Set([].concat.apply([], data.slice().map(d => d.observations)))].length;
+  }
+  return 0;
+}
+
 // Should this be it's own component?
 export function getSortArrow(sortReverse, sortKey, key) {
   if (key === sortKey) {

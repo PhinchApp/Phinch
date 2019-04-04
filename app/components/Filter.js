@@ -12,7 +12,14 @@ import plus from 'images/plus.svg';
 import back from 'images/back.svg';
 import save from 'images/save.svg';
 
-import { updateFilters, removeRows, restoreRows, visSortBy, getSortArrow } from '../filterfunctions';
+import {
+  updateFilters,
+  removeRows,
+  restoreRows,
+  visSortBy,
+  getSortArrow,
+  countObservations
+} from '../filterfunctions';
 import { setProjectFilters, getProjectFilters } from '../projects';
 import DataContainer from '../datacontainer';
 import { pageView } from '../analytics';
@@ -47,6 +54,7 @@ export default class Filter extends Component {
       summary: DataContainer.getSummary(),
       data: DataContainer.getSamples(),
       filters: DataContainer.getAttributes(),
+      observations: 0,
       deleted: [],
       names: {},
       height: window.innerHeight,
@@ -348,7 +356,11 @@ export default class Filter extends Component {
       return include;
     });
     data = visSortBy(data, this.state.sortReverse, this.state.sortKey);
-    this.setState({ filters, data }, _debounce(() => {
+    // const observations = [...new Set(
+    //     [].concat.apply([], data.slice().map(d => d.observations))
+    //   )].length;
+    const observations = countObservations(data);
+    this.setState({ filters, data, observations }, _debounce(() => {
       this.save(this.setResult);
     }), this.metrics.debounce, { leading: false, trailing: true });
   }
@@ -625,7 +637,11 @@ export default class Filter extends Component {
             </Link>
           </div>
           <div className={gstyle.header}>
-            <Summary summary={this.state.summary} datalength={this.state.data.length} />
+            <Summary
+              summary={this.state.summary}
+              observations={this.state.observations}
+              datalength={this.state.data.length}
+            />
             <div className={styles.visRowLabel}>Visualization Type</div>
             <div className={styles.visOption}>
               <img src={stackedbar} alt="Stacked bargraph" />

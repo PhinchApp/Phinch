@@ -18,7 +18,7 @@ export default class StackedBar extends Component {
           <div className={styles.segment}>
             <div className={`${styles.label} ${styles.summary}`}>Observations</div>
             <div className={`${styles.number} ${styles.summary}`}>
-              {this.props.summary.observations.toLocaleString()}
+              {this.props.observations.toLocaleString()}
             </div>
             <div className={`${styles.label} ${styles.summary}`}>TOTAL</div>
             <div className={`${styles.number} ${styles.summary}`}>
