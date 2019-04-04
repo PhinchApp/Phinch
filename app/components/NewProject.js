@@ -23,13 +23,7 @@ function allowDrop(e) {
 }
 
 function preventDrop(e) {
-  // return e => e.preventDefault();
-  // console.log(e);
   return e.preventDefault();
-  // return (e) => {
-  //   console.log(e);
-  //   e.preventDefault();
-  // };
 }
 
 export default class NewProject extends Component {
