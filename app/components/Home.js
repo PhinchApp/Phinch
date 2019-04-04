@@ -7,7 +7,7 @@ import editOn from 'images/edit-on.svg';
 
 import { pageView } from '../analytics';
 import DataContainer from '../datacontainer';
-import { getProjects, getSamples, setProjectFilters, deleteProject } from '../projects';
+import { getProjects, setProjectFilters, deleteProject } from '../projects';
 
 import ProjectList from './ProjectList';
 import SideBar from './SideBar';
@@ -32,7 +32,6 @@ export default class Home extends Component {
       erroring: false,
       redirect: null,
       projects: getProjects(),
-      samples: getSamples(),
     };
 
     this.success = this.success.bind(this);
@@ -200,11 +199,6 @@ export default class Home extends Component {
       editing: this.state.editing,
       type: 'projects',
     });
-    const samples = ProjectList({
-      projectList: this.state.samples,
-      view: this.state.editing ? () => {} : this.view,
-      editing: false,
-    });
     return (
       <div>
         <div className={styles.container} data-tid="container">
@@ -227,13 +221,6 @@ export default class Home extends Component {
                   <div className={styles.sectionRule} />
                 </div>
                 {projects}
-              </div>
-              <div className={`${styles.area} ${styles.rightSpace}`}>
-                <div className={styles.projectType}>
-                  <h2 className={styles.sectionTitle}>Samples</h2>
-                  <div className={styles.sectionRule} />
-                </div>
-                {samples}
               </div>
             </div>
             {modal}

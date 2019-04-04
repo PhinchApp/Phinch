@@ -6,17 +6,6 @@ import newicon from 'images/new.svg';
 
 import DataContainer from './datacontainer';
 
-const sampleProjects = [
-  {
-    name: 'Sample Project One',
-    slug: 'sampleprojectone',
-  },
-  {
-    name: 'Sample Project Two',
-    slug: 'sampleprojecttwo',
-  },
-];
-
 const homedirectory = homedir();
 
 function checkFolders() {
@@ -176,7 +165,6 @@ export function deleteProject(project) {
 export function getProjects() {
   checkFolders();
   const projects = fs.readdirSync(join(homedirectory, 'Documents', 'Phinch2.0'))
-    .filter(f => f !== 'Samples')
     .filter(f => fs.lstatSync(join(homedirectory, 'Documents', 'Phinch2.0', f)).isDirectory())
     .map((p) => {
       // check for files inside phinch directory folders (data*, settings, thumbnails, etc)
@@ -194,33 +182,4 @@ export function getProjects() {
   };
   projects.unshift(newproject);
   return projects;
-}
-
-export function getSamples() {
-  checkFolders();
-  const phinchdir = join(homedirectory, 'Documents', 'Phinch2.0');
-  const phinch = fs.readdirSync(phinchdir);
-  if (!phinch.includes('Samples')) {
-    fs.mkdirSync(join(phinchdir, 'Samples'));
-    // Make our 2 default samples now
-    sampleProjects.forEach((s) => {
-      fs.mkdirSync(join(phinchdir, 'Samples', s.slug));
-      const projectSettings = {
-        summary: {
-          name: s.name,
-          path: join(phinchdir, s.slug),
-          dataKey: s.slug,
-        },
-      };
-      fs.writeFileSync(join(phinchdir, 'Samples', s.slug, `${s.slug}.json`), JSON.stringify(projectSettings));
-      // add some data
-    });
-  }
-  const samples = fs.readdirSync(join(phinchdir, 'Samples'))
-    .filter(f => fs.lstatSync(join(phinchdir, 'Samples', f)).isDirectory())
-    .map((s) => {
-      const path = join(phinchdir, 'Samples', s);
-      return getProjectInfo(path, s);
-    });
-  return samples;
 }
