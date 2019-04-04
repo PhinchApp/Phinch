@@ -22,10 +22,14 @@ function allowDrop(e) {
   return false;
 }
 
-function preventDrop() {
-  return (e) => {
-    e.preventDefault();
-  };
+function preventDrop(e) {
+  // return e => e.preventDefault();
+  // console.log(e);
+  return e.preventDefault();
+  // return (e) => {
+  //   console.log(e);
+  //   e.preventDefault();
+  // };
 }
 
 export default class NewProject extends Component {
@@ -66,7 +70,7 @@ export default class NewProject extends Component {
           <div className={styles.head}>
             <div>BIOM ID</div><div>Sample Name</div><div>Sequence Reads</div>
           </div>
-          <ul>            
+          <ul>
             {this.rejected.map(r => (
               <li key={r.phinchName}>
                 <div>{r.biomid}</div><div>{r.phinchName}</div><div>{r.reads.toLocaleString()}</div>

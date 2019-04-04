@@ -69,7 +69,7 @@ export function visSortBy(indata, sortReverse, sortKey) {
 
 export function countObservations(data) {
   if (data.length) {
-    return [...new Set([].concat.apply([], data.slice().map(d => d.observations)))].length;
+    return [...new Set([].concat([], ...data.slice().map(d => d.observations)))].length;
   }
   return 0;
 }
