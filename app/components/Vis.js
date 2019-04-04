@@ -431,7 +431,9 @@ export default class Vis extends Component {
     const data = this.filterData(filters, this.state.tags, this.state.preData, this.state.deleted);
     const observations = countObservations(data);
     this.updateAttributeValues(this.state.selectedAttribute, data);
-    this.setState({ data, observations, filters, showRightSidebar }, () => {
+    this.setState({
+      data, observations, filters, showRightSidebar
+    }, () => {
       this.topSequences = this.renderTopSequences();
       this.save(this.setResult);
     });
