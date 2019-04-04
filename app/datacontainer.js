@@ -32,6 +32,7 @@ class DataContainer {
     this.filteredData = {};
     this.attributes = {};
     this.samples = [];
+    this.rejectedSamples = [];
     this.observations = [];
   }
 
@@ -63,20 +64,25 @@ class DataContainer {
     }
   }
 
-  loadAndFormatData(filepath, success, failure) {
+  loadAndFormatData(filepath, success, failure, metadataWarning = null) {
     worker.postMessage({ biomhandlerPath, filepath });
     worker.onmessage = e => {
       if (e.data.status === 'success') {
         const data = JSON.parse(e.data.data);
-        this.data = data;
-        this.samples = data.columns;
-        this.observations = data.rows;
-        this.summary.samples = this.samples.length;
-        this.summary.observations = this.observations.length;
-        this.attributes = data.stateFilters;
-        this.filters = data.filters;
-        this.levels = data.levels;
-        success();
+        this.rejectedSamples = data.rejectedSamples;
+        if (this.rejectedSamples.length && metadataWarning !== null) {
+          metadataWarning(this.rejectedSamples);
+        } else {
+          this.data = data;
+          this.samples = data.columns;
+          this.observations = data.rows;
+          this.summary.samples = this.samples.length;
+          this.summary.observations = this.observations.length;
+          this.attributes = data.stateFilters;
+          this.filters = data.filters;
+          this.levels = data.levels;
+          success();
+        }
       } else {
         failure();
       }
@@ -89,6 +95,10 @@ class DataContainer {
 
   getSamples() {
     return this.samples;
+  }
+
+  getRejectedSamples() {
+    return this.rejectedSamples;
   }
 
   getObservations() {

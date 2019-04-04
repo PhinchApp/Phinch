@@ -26,16 +26,24 @@ function formatData(data) {
     }
   });
 
+  thisData.rejectedSamples = []; // (cols w/ all empty-string metadata)
+
   thisData.columns = thisData.columns.map((c, i) => {
-    c.metadata.phinchID = i;
-    const reads = (sequenceReads[i] === undefined) ? 0 : sequenceReads[i];
+    const keys = Object.keys(c.metadata);
+    const emptyMetadata = keys.map(k => c.metadata[k] === '').filter(k => k).length === keys.length;
+
     // allow empty metadata values for now
     // Object.keys(c.metadata).forEach(k => {
     //   if (c.metadata[k] === '') {
     //     c.metadata[k] = '__empty__';
     //   }
     // });
-    return {
+    // return {
+
+    c.metadata.phinchID = i;
+    const reads = (sequenceReads[i] === undefined) ? 0 : sequenceReads[i];
+
+    const sample = {
       biomid: i + 1,
       id: c.id,
       sampleName: c.id,
@@ -43,7 +51,13 @@ function formatData(data) {
       metadata: c.metadata,
       reads,
     };
-  });
+
+    if (emptyMetadata) {
+      thisData.rejectedSamples.push(sample);
+      return null;
+    }
+    return sample;
+  }).filter(c => c);
 
   thisData.rows = thisData.rows.map((r, i) => {
     r.metadata.phinchID = i;

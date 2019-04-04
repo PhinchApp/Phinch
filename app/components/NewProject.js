@@ -32,26 +32,48 @@ export default class NewProject extends Component {
   constructor(props) {
     super(props);
 
+    const communityInfo = (
+      <p>
+        {'If you’re having trouble, visit our Help page or '}
+        <span
+          role="button"
+          tabIndex={0}
+          className={styles.link}
+          onClick={() => shell.openExternal('https://github.com/PhinchApp/Phinch')}
+          onKeyPress={e => (e.key === ' ' ? shell.openExternal('https://github.com/PhinchApp/Phinch') : null)}
+        >
+          Community page
+        </span>
+        {' to see if you can resolve this. Once you have a correct data file, try loading it again.'}
+      </p>
+    );
+
     this.errors = {
-      missing: 'Please select a BIOM file.',
-      validation: (
-        <div>
+      missing: () => <div className={styles.warning}>Please select a BIOM file.</div>,
+      validation: () => (
+        <div className={styles.warning}>
           <p>
             The file you loaded does not validate for Phinch. There may be a problem with the file formatting. {/* eslint-disable-line max-len */}
           </p>
+          {communityInfo}
+        </div>
+      ),
+      metadata: () => (
+        <div className={styles.warning}>
           <p>
-            {'If you’re having trouble, visit our Help page or '}
-            <span
-              role="button"
-              tabIndex={0}
-              className={styles.link}
-              onClick={() => shell.openExternal('https://github.com/PhinchApp/Phinch')}
-              onKeyPress={e => (e.key === ' ' ? shell.openExternal('https://github.com/PhinchApp/Phinch') : null)}
-            >
-              Community page
-            </span>
-            {' to see if you can resolve this. Once you have a correct data file, try loading it again.'}
+            {this.rejected.length.toLocaleString()} samples contain no metadata values. Please add corresponding metadata for each OTU, or remove these samples. {/* eslint-disable-line max-len */}
           </p>
+          <div className={styles.head}>
+            <div>BIOM ID</div><div>Sample Name</div><div>Sequence Reads</div>
+          </div>
+          <ul>            
+            {this.rejected.map(r => (
+              <li key={r.phinchName}>
+                <div>{r.biomid}</div><div>{r.phinchName}</div><div>{r.reads.toLocaleString()}</div>
+              </li>
+            ))}
+          </ul>
+          {communityInfo}
         </div>
       ),
     };
@@ -92,6 +114,7 @@ export default class NewProject extends Component {
 
     this.success = this.success.bind(this);
     this.failure = this.failure.bind(this);
+    this.metadataWarning = this.metadataWarning.bind(this);
     this.showDrop = this.showDrop.bind(this);
     this.hideDrop = this.hideDrop.bind(this);
     this.handleDrop = this.handleDrop.bind(this);
@@ -151,9 +174,10 @@ export default class NewProject extends Component {
   }
 
   updateError(errortype) {
+    const loading = false;
     const valid = 'No';
-    const error = (this.errors[errortype]) ? this.errors[errortype] : 'unknown error';
-    this.setState({ error, valid });
+    const error = this.errors[errortype] ? this.errors[errortype]() : 'unknown error';
+    this.setState({ loading, valid, error });
   }
 
   updateLoading(isLoading) {
@@ -175,8 +199,12 @@ export default class NewProject extends Component {
   }
 
   failure() {
-    this.updateLoading(false);
     this.updateError('validation');
+  }
+
+  metadataWarning(rejected) {
+    this.rejected = rejected;
+    this.updateError('metadata');
   }
 
   onChosenFileToOpen(filepath) {
@@ -190,7 +218,7 @@ export default class NewProject extends Component {
         error: null,
         observations: null,
       }, () => {
-        DataContainer.loadAndFormatData(filepath, this.success, this.failure);
+        DataContainer.loadAndFormatData(filepath, this.success, this.failure, this.metadataWarning);
       });
     }, this.failure);
   }
