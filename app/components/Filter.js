@@ -356,9 +356,6 @@ export default class Filter extends Component {
       return include;
     });
     data = visSortBy(data, this.state.sortReverse, this.state.sortKey);
-    // const observations = [...new Set(
-    //     [].concat.apply([], data.slice().map(d => d.observations))
-    //   )].length;
     const observations = countObservations(data);
     this.setState({ filters, data, observations }, _debounce(() => {
       this.save(this.setResult);

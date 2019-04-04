@@ -191,7 +191,7 @@ export default class Vis extends Component {
       this.state.deleted = this.init.deleted ? this.init.deleted : [];
       this.state.tags = this.init.tags ? this.init.tags : this.state.tags;
       //
-      // Can lose this after next version
+      // Can probably lose this for release
       this.state.tags = this.state.tags.map(t => {
         if (t.id === 'none') {
           t.name = 'No Tags';
@@ -244,7 +244,6 @@ export default class Vis extends Component {
 
   componentDidMount() {
     window.addEventListener('resize', this.updateDimensions);
-    // const data = this.formatTaxonomyData(this.initdata, this.state.level);
     if (this.initdata) {
       this.formatTaxonomyData(this.initdata, this.state.level, (data) => {
         this.setState({ data, preData: data }, () => {
@@ -461,12 +460,9 @@ export default class Vis extends Component {
     if (!Object.prototype.hasOwnProperty.call(this.filters, level)) {
       this.filters[level] = {};
     }
-    // const preData = this.updateTaxonomyData(this.state.preData, level, true);
-    // const deleted = this.updateTaxonomyData(this.state.deleted, level, false);
     const filters = this.filters[level];
     const showRightSidebar = Object.keys(filters).length > 0;
     this.updateChartWidth(showRightSidebar);
-
     this.updateTaxonomyData(this.state.preData, level, true, (preData) => {
       this.updateTaxonomyData(this.state.deleted, level, false, (deleted) => {
         const data = this.filterData(filters, this.state.tags, preData, deleted);
@@ -478,16 +474,13 @@ export default class Vis extends Component {
           this.topSequences = this.renderTopSequences();
           this.save(this.setResult);
         });
-        //
       });
     });
   }
 
   // data.data schema: [row(observations), column(samples), count]
   // Move to data container?
-  // formatTaxonomyData(data, level) {
   formatTaxonomyData(data, level, callback) {
-    console.time('formatTaxonomyData');
     let totalDataReads = 0;
     const indata = data.columns.map(c => {
       const matches = data.data
@@ -535,17 +528,12 @@ export default class Vis extends Component {
       };
     });
     this.totalDataReads = totalDataReads;
-    // const formatedData = this.updateTaxonomyData(indata, level, true);
     this.updateTaxonomyData(indata, level, true, (formatedData) => {
-      console.timeEnd('formatTaxonomyData');
       callback(formatedData);
     });
-    // return formatedData;
   }
 
-  // updateTaxonomyData(data, level, updateSequences) {
   updateTaxonomyData(data, level, updateSequences, callback) {
-    console.time('updateTaxonomyData');
     if (updateSequences) {
       this.readsBySequence = {};
     }
@@ -573,9 +561,7 @@ export default class Vis extends Component {
     if (updateSequences) {
       this.sequences = this.updateSequences();
     }
-    console.timeEnd('updateTaxonomyData');
     callback(taxonomyData);
-    // return taxonomyData;
   }
 
   filterData(filters, tags, preData, deleted) {
@@ -1343,7 +1329,6 @@ export default class Vis extends Component {
             datalength={this.state.data.length}
           />
           <div className={styles.controls}>
-            {/* ROW 1 */}
             <div className={styles.controlRow}>
               <Search
                 options={this.sequences}
@@ -1356,7 +1341,6 @@ export default class Vis extends Component {
               {spacer}
               {this.renderToggle()}
             </div>
-            {/* ROW 2 */}
             <div className={styles.controlRow}>
               {this.renderLevelSelector(this.levels, dataLength)}
               {this.levels.length ? spacer : null}

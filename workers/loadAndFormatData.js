@@ -18,24 +18,18 @@ function formatData(data) {
   const thisData = data;
 
   const sequenceReads = {};
-
-  // ???
   const observationsBySample = {};
-  // console.log(this.data.)
   thisData.data.forEach(d => {
     if (sequenceReads[d[1]]) {
       sequenceReads[d[1]] += d[2];
     } else {
       sequenceReads[d[1]] = d[2];
     }
-    //
     if (!observationsBySample[d[1]]) {
       observationsBySample[d[1]] = [];
     }
     observationsBySample[d[1]].push(d[0]);
-    //
   });
-  // console.log(observationsBySample);
 
   thisData.rejectedSamples = []; // (cols w/ all empty-string metadata)
 
@@ -172,12 +166,10 @@ function formatData(data) {
   /*
     USED in VIS, could be done later (after filter load)
   */
-  //
   // move to config / metadata
   const ignoreLevels = ['', 'unclassified', 'unassigned', 'unassignable', 'ambiguous taxa', 'ambiguous_taxa'];
 
   // Autogenerate levels from data
-  // TODO: Test w/ addtional data formats
   const uniqTaxa = [
     ...new Set([]
       .concat(...[

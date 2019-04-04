@@ -370,7 +370,6 @@ export default class StackedBarRow extends Component {
                     position: 'fixed',
                     width: this.props.metrics.barInfoWidth - (this.props.metrics.padding / 2),
                     zIndex: this.props.zIndex,
-                    // zIndex: 10,
                   }}
                 >
                   {name}
