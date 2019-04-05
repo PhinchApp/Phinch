@@ -41,13 +41,11 @@ export default class MenuBuilder {
 
   buildDarwinTemplate() {
     const subMenuAbout = {
-      label: 'Electron',
+      label: 'Phinch',
       submenu: [
-        { label: 'About ElectronReact', selector: 'orderFrontStandardAboutPanel:' },
+        { label: 'About Phinch', selector: 'orderFrontStandardAboutPanel:' },
         { type: 'separator' },
-        { label: 'Services', submenu: [] },
-        { type: 'separator' },
-        { label: 'Hide ElectronReact', accelerator: 'Command+H', selector: 'hide:' },
+        { label: 'Hide Phinch', accelerator: 'Command+H', selector: 'hide:' },
         { label: 'Hide Others', accelerator: 'Command+Shift+H', selector: 'hideOtherApplications:' },
         { label: 'Show All', selector: 'unhideAllApplications:' },
         { type: 'separator' },
@@ -66,7 +64,7 @@ export default class MenuBuilder {
         { label: 'Select All', accelerator: 'Command+A', selector: 'selectAll:' }
       ]
     };
-    const subMenuViewDev = {
+    const subMenuView = {
       label: 'View',
       submenu: [
         { label: 'Reload', accelerator: 'Command+R', click: () => { this.mainWindow.webContents.reload(); } },
@@ -74,17 +72,10 @@ export default class MenuBuilder {
         { label: 'Toggle Developer Tools', accelerator: 'Alt+Command+I', click: () => { this.mainWindow.toggleDevTools(); } }
       ]
     };
-    const subMenuViewProd = {
-      label: 'View',
-      submenu: [
-        { label: 'Toggle Full Screen', accelerator: 'Ctrl+Command+F', click: () => { this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen()); } }
-      ]
-    };
     const subMenuWindow = {
       label: 'Window',
       submenu: [
         { label: 'Minimize', accelerator: 'Command+M', selector: 'performMiniaturize:' },
-        { label: 'Close', accelerator: 'Command+W', selector: 'performClose:' },
         { type: 'separator' },
         { label: 'Bring All to Front', selector: 'arrangeInFront:' }
       ]
@@ -92,16 +83,11 @@ export default class MenuBuilder {
     const subMenuHelp = {
       label: 'Help',
       submenu: [
-        { label: 'Learn More', click() { shell.openExternal('http://electron.atom.io'); } },
-        { label: 'Documentation', click() { shell.openExternal('https://github.com/atom/electron/tree/master/docs#readme'); } },
-        { label: 'Community Discussions', click() { shell.openExternal('https://discuss.atom.io/c/electron'); } },
-        { label: 'Search Issues', click() { shell.openExternal('https://github.com/atom/electron/issues'); } }
+        { label: 'Learn More', click() { shell.openExternal('https://github.com/PhinchApp/Phinch'); } },
+        { label: 'Community Discussions', click() { shell.openExternal('https://phinch.slack.com/'); } },
+        { label: 'Search Issues', click() { shell.openExternal('https://github.com/PhinchApp/Phinch/issues'); } }
       ]
     };
-
-    const subMenuView = process.env.NODE_ENV === 'development'
-      ? subMenuViewDev
-      : subMenuViewProd;
 
     return [
       subMenuAbout,
@@ -116,9 +102,6 @@ export default class MenuBuilder {
     const templateDefault = [{
       label: '&File',
       submenu: [{
-        label: '&Open',
-        accelerator: 'Ctrl+O'
-      }, {
         label: '&Close',
         accelerator: 'Ctrl+W',
         click: () => {
@@ -127,7 +110,7 @@ export default class MenuBuilder {
       }]
     }, {
       label: '&View',
-      submenu: (process.env.NODE_ENV === 'development') ? [{
+      submenu: [{
         label: '&Reload',
         accelerator: 'Ctrl+R',
         click: () => {
@@ -145,34 +128,23 @@ export default class MenuBuilder {
         click: () => {
           this.mainWindow.toggleDevTools();
         }
-      }] : [{
-        label: 'Toggle &Full Screen',
-        accelerator: 'F11',
-        click: () => {
-          this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
-        }
       }]
     }, {
       label: 'Help',
       submenu: [{
         label: 'Learn More',
         click() {
-          shell.openExternal('http://electron.atom.io');
-        }
-      }, {
-        label: 'Documentation',
-        click() {
-          shell.openExternal('https://github.com/atom/electron/tree/master/docs#readme');
+          shell.openExternal('https://github.com/PhinchApp/Phinch');
         }
       }, {
         label: 'Community Discussions',
         click() {
-          shell.openExternal('https://discuss.atom.io/c/electron');
+          shell.openExternal('https://phinch.slack.com/');
         }
       }, {
         label: 'Search Issues',
         click() {
-          shell.openExternal('https://github.com/atom/electron/issues');
+          shell.openExternal('https://github.com/PhinchApp/Phinch/issues');
         }
       }]
     }];
