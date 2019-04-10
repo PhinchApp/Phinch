@@ -37,16 +37,23 @@ class DataContainer {
   }
 
   setSummary(project, success, failure) {
-    this.setSummarySync(project);
-    stat(project.data, (error, stats) => {
-      if (error) {
-        console.warn(error);
-        failure();
-      } else {
-        this.summary.size = formatFileSize(stats.size);
-        success();
-      }
-    });
+    try {
+      this.setSummarySync(project);
+      // todo: make this handle renamed metadata file
+      // (does not catch that error for some reason)
+      stat(project.data, (error, stats) => {
+        if (error) {
+          console.warn(error);
+          failure();
+        } else {
+          this.summary.size = formatFileSize(stats.size);
+          success();
+        }
+      });
+    } catch (error) {
+      console.warn(error);
+      failure();
+    }
   }
 
   setSummarySync(project) {
@@ -65,7 +72,7 @@ class DataContainer {
   }
 
   loadAndFormatData(filepath, success, failure, metadataWarning = null) {
-    worker.postMessage({ biomhandlerPath, filepath });
+    worker.postMessage({ biomhandlerPath, filepath, isLinux: isLinux() });
     worker.onmessage = e => {
       if (e.data.status === 'success') {
         const data = JSON.parse(e.data.data);
@@ -84,7 +91,8 @@ class DataContainer {
           success();
         }
       } else {
-        failure();
+        const { type, file } = e.data;
+        failure(type, file);
       }
     };
   }

@@ -1,4 +1,5 @@
 const spawn = require('child_process').spawn;
+const spawnSync = require('child_process').spawnSync;
 const nest = require('d3-collection').nest;
 
 const decoder = new TextDecoder('utf-8');
@@ -232,32 +233,49 @@ function formatData(data) {
 }
 
 function loadBiomFile(e) {
-  const { biomhandlerPath, filepath } = e.data;
-  const python = spawn(biomhandlerPath, [filepath]);
-  let json = '';
-  python.stdout.on('data', (data) => {
-    json += uint8arrayToString(data);
-  });
-  python.stdout.on('end', () => {
-    try {
-      const data = formatData(JSON.parse(json));
-      postMessage({
-        status: 'success',
-        data: JSON.stringify(data),
-      });
+  const { biomhandlerPath, filepath, isLinux } = e.data;
+  if (isLinux) { // don't do this where we don't need to 
+    try { // make sure biomhandler is executable
+      spawnSync('chmod +x', [biomhandlerPath], { shell: true });
     } catch (error) {
       console.warn(error);
       postMessage({
         status: 'failure',
+        error: 'permissions',
+        file: biomhandlerPath,
       });
+      return;
     }
-  });
-  python.on('error', (error) => {
-    console.warn(error);
+  }
+  try { // make sure data is where we think
+    const python = spawn(biomhandlerPath, [filepath]);
+    let json = '';
+    python.stdout.on('data', (data) => {
+      json += uint8arrayToString(data);
+    });
+    python.stdout.on('end', () => {
+      try {
+        const data = formatData(JSON.parse(json));
+        postMessage({
+          status: 'success',
+          data: JSON.stringify(data),
+        });
+      } catch (error) {
+        console.warn(error);
+        postMessage({
+          status: 'failure',
+          type: 'file',
+        });
+      }
+    });
+  } catch (error) {
+    const isPermissions = error.toString().includes('EACCES');
     postMessage({
       status: 'failure',
+      type: isPermissions ? 'permissions' : 'file',
+      file: biomhandlerPath,
     });
-  });
+  }
 }
 
 onmessage = loadBiomFile;

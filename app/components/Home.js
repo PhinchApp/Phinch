@@ -25,11 +25,38 @@ export default class Home extends Component {
 
     this.shouldUpdate = {};
 
+    this.errors = {
+      file: () => (
+        <div>
+          <p>
+            Data not found!
+          </p>
+          <p>
+            The data file must be a JSON or HDF5 BIOM file with the same name as it&#39;s containing folder, and the `.biom` extension. {/* eslint-disable-line max-len */}
+          </p>
+        </div>
+      ),
+      permissions: biomhandlerLocation => (
+        <div>
+          <p>
+            Permission Error!
+          </p>
+          <p>
+            Please make sure the data loading script is executable on your system:
+          </p>
+          <p>
+            <code>{`\`chmod +x ${biomhandlerLocation}\`.`}</code>
+          </p>
+        </div>
+      ),
+    };
+
     this.state = {
       loading: false,
       editing: false,
       deleting: false,
       erroring: false,
+      error: this.errors.file(),
       redirect: null,
       projects: getProjects(),
     };
@@ -51,8 +78,9 @@ export default class Home extends Component {
     });
   }
 
-  failure() {
-    this.setState({ loading: false, erroring: true });
+  failure(type = 'file', path = '') {
+    const error = this.errors[type](path);
+    this.setState({ loading: false, erroring: true, error });
   }
 
   view(project) {
@@ -156,12 +184,7 @@ export default class Home extends Component {
     if (this.state.erroring) {
       modalContent = (
         <div key="modal" className={styles.modal}>
-          <p>
-            Data not found!
-          </p>
-          <p>
-            The data file must be a JSON or HDF5 BIOM file with the same name as it&#39;s containing folder, and the `.biom` extension. {/* eslint-disable-line max-len */}
-          </p>
+          {this.state.error}
           <div
             role="button"
             tabIndex={0}
@@ -184,7 +207,7 @@ export default class Home extends Component {
           top: '33%',
           left: '50%',
           width: '410px',
-          height: '192px',
+          height: this.state.error.props.children.length > 2 ? '256px' : '192px',
           background: 'white',
           color: 'black',
         }}

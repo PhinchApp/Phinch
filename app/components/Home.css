@@ -72,6 +72,10 @@
   margin: 1rem 0;
 }
 
+.modal code {
+  word-break: break-all;
+}
+
 .modal .modalTitle {
   font-weight: 600;
   font-style: italic;
