@@ -234,7 +234,7 @@ function formatData(data) {
 
 function loadBiomFile(e) {
   const { biomhandlerPath, filepath, isLinux } = e.data;
-  if (isLinux) { // don't do this where we don't need to 
+  if (isLinux) { // don't do this where we don't need to
     try { // make sure biomhandler is executable
       spawnSync('chmod +x', [biomhandlerPath], { shell: true });
     } catch (error) {
