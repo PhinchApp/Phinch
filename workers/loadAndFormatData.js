@@ -269,6 +269,7 @@ function loadBiomFile(e) {
       }
     });
   } catch (error) {
+    console.warn(error);
     const isPermissions = error.toString().includes('EACCES');
     postMessage({
       status: 'failure',

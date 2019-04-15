@@ -47,9 +47,7 @@ export default function Sequence(props) {
       className={styles.row}
       transform={`translate(0, ${props.yOffset})`}
       fill={textColor}
-      fontFamily="IBM Plex Sans Condensed"
       fontWeight={highlighted ? '400' : '300'}
-      fontSize="12px"
       onClick={() => {
         if (highlighted) {
           props.removeFilter(props.seq.name);
