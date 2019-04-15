@@ -1063,6 +1063,8 @@ export default class Vis extends Component {
           style={{
             display: 'inline-block',
             marginBottom: '4px',
+            position: 'relative',
+            zIndex: dataLength + 1,
           }}
         >
           {(i === 0) ? '' : (<div className={`${selected} ${styles.dash}`}>—</div>)}
@@ -1324,7 +1326,7 @@ export default class Vis extends Component {
             <img src={logo} alt="Phinch" />
           </Link>
         </div>
-        <div className={gstyle.header}>
+        <div className={gstyle.header} style={{ zIndex: dataLength + 1 }}>
           <Summary
             summary={this.state.summary}
             observations={this.state.observations}
