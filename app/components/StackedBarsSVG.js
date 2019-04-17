@@ -1,6 +1,7 @@
 import React from 'react';
 
 export default function StackedBarsSVG(props) {
+  const fullHeight = props.svgHeight + (props.seqHeight + (props.padding * 8));
   return (
     <svg
       ref={props.setRef}
@@ -9,12 +10,13 @@ export default function StackedBarsSVG(props) {
       baseProfile="full"
       xmlns="http://www.w3.org/2000/svg"
       width={props.svgWidth}
-      height={props.svgHeight + (props.seqHeight + (props.padding * 8))}
+      height={fullHeight}
       fontFamily="IBM Plex Sans Condensed, Verdana, Sans-serif"
       fontWeight="200"
       fontSize="12px"
       overflow="visible"
     >
+      <rect id="Background" fill="white" width={props.svgWidth} height={fullHeight} />
       <g id="Visual">
         <g id="Sequence Reads" transform={`translate(0, ${props.padding * 2})`}>
           {props.data.map((d, i) => props.row({ index: i, style: { top: props.itemSize * i } }))}
