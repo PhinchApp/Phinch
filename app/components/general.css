@@ -95,6 +95,10 @@
   opacity: 0.65;
 }
 
+.notMac .button {
+  padding-bottom: 0;
+}
+
 .close {
   display: inline-block;
   cursor: pointer;

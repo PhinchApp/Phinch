@@ -35,6 +35,8 @@ import Modal from './Modal';
 import gstyle from './general.css';
 import styles from './Filter.css';
 
+const isMac = () => process.platform === 'darwin';
+
 function filterFloat(value) {
   if (/^(-|\+)?([0-9]+(\.[0-9]+)?|Infinity)$/.test(value)) {
     return Number(value);
@@ -622,8 +624,9 @@ export default class Filter extends Component {
 
     this.allData = this.state.data.concat(this.state.deleted);
 
+    const notMac = isMac() ? '' : gstyle.notMac;
     return (
-      <div className={gstyle.container}>
+      <div className={`${gstyle.container} ${notMac}`}>
         <Loader loading={this.state.loading} />
         {redirect}
         {result}
