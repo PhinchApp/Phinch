@@ -188,6 +188,10 @@
   cursor: pointer;
 }
 
+.inlineControl select option {
+  background: #4d4d4d;
+}
+
 .inlineControl select[disabled] {
   opacity: 0.5;
 }
