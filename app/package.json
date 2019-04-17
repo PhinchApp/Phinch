@@ -1,7 +1,7 @@
 {
   "name": "Phinch",
   "productName": "Phinch",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Phinch is an open-source framework for visualizing biological data",
   "main": "./main.prod.js",
   "author": {
