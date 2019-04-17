@@ -1144,10 +1144,8 @@ export default class Vis extends Component {
           role="button"
           tabIndex={0}
           className={gstyle.close}
-          style={{
-            margin: '4px 0',
-          }}
-          onClick={() => { this._toggleTags(); }}
+          style={{ marginTop: '4px' }}
+          onClick={this._toggleTags}
           onKeyPress={e => (e.key === ' ' ? this._toggleTags() : null)}
         >
           x
