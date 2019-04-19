@@ -5,7 +5,7 @@
 
 [![Join the chat at https://gitter.im/Phinch2/Lobby](https://badges.gitter.im/Phinch2/Lobby.svg)](https://gitter.im/Phinch2/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Phinch is a data visualization framework aimed at promoting novel explorations of large biological datasets (microbiomes, metagenomes, etc.). Phinch 2.0 has now been relaunched as a standalone desktop application, compatible with Mac OS X, Windows, and Linux _(coming soon)_ operating systems. New features include support for HDF5 and JSON BIOM files, retooled visualizations, improved image export and sharing, and the ability to work offline.
+Phinch is a data visualization framework aimed at promoting novel explorations of large biological datasets (microbiomes, metagenomes, etc.). Phinch 2.0 has now been relaunched as a standalone desktop application, compatible with Mac OS X, Windows, and Linux operating systems. New features include support for HDF5 and JSON BIOM files, retooled visualizations, improved image export and sharing, and the ability to work offline.
 
 Phinch is an open-source framework for visualizing biological data, funded by a grant from the Alfred P. Sloan foundation. This project represents an interdisciplinary collaboration between Pitch Interactive (a data visualization studio in Oakland, CA; [https://pitchinteractive.com](https://pitchinteractive.com)) and biological researchers at UC Riverside (Principal Investigator: Dr. Holly Bik, [https://www.biklab.org](https://www.biklab.org)).
 
