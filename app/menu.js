@@ -83,8 +83,8 @@ export default class MenuBuilder {
     const subMenuHelp = {
       label: 'Help',
       submenu: [
-        { label: 'Learn More', click() { shell.openExternal('https://github.com/PhinchApp/Phinch'); } },
-        { label: 'Community Discussions', click() { shell.openExternal('https://phinch.slack.com/'); } },
+        { label: 'Learn More', click() { shell.openExternal('http://phinch.org/'); } },
+        { label: 'Community Discussions', click() { shell.openExternal('http://phinch.org/Community'); } },
         { label: 'Search Issues', click() { shell.openExternal('https://github.com/PhinchApp/Phinch/issues'); } }
       ]
     };
@@ -134,12 +134,12 @@ export default class MenuBuilder {
       submenu: [{
         label: 'Learn More',
         click() {
-          shell.openExternal('https://github.com/PhinchApp/Phinch');
+          shell.openExternal('http://phinch.org/');
         }
       }, {
         label: 'Community Discussions',
         click() {
-          shell.openExternal('https://phinch.slack.com/');
+          shell.openExternal('http://phinch.org/Community');
         }
       }, {
         label: 'Search Issues',

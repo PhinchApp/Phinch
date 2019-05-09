@@ -7,17 +7,17 @@ import styles from './LinkList.css';
 const linkList = [
   {
     name: 'New to Phinch?',
-    action: (context) => { context.setState({ redirect: '/' }); },
+    action: () => { shell.openExternal('http://phinch.org/Tutorials'); },
     info: 'Get started with these tutorials',
   },
   {
     name: 'View our Gallery',
-    action: (context) => { context.setState({ redirect: '/' }); },
+    action: () => { shell.openExternal('https://github.com/PhinchApp/Phinch/wiki/Tutorials'); },
     info: 'See what other researchers have created with Phinch.',
   },
   {
     name: 'Join the Community',
-    action: () => { shell.openExternal('https://github.com/PhinchApp/Phinch'); },
+    action: () => { shell.openExternal('http://phinch.org/Community'); },
     info: 'Discuss features and get the latest update feeds.',
   },
   {
