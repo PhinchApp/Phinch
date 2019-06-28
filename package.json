@@ -45,6 +45,7 @@
       "workers/**"
     ],
     "dmg": {
+      "sign": false,
       "contents": [
         {
           "x": 130,
@@ -57,6 +58,12 @@
           "path": "/Applications"
         }
       ]
+    },
+    "mac": {
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "./build/entitlements.mac.plist",
+      "entitlementsInherit": "./build/entitlements.mac.plist"
     },
     "win": {
       "target": [
@@ -73,7 +80,8 @@
     "directories": {
       "buildResources": "resources",
       "output": "release"
-    }
+    },
+    "afterSign": "./internals/scripts/notarize.js"
   },
   "repository": {
     "type": "git",
@@ -136,8 +144,9 @@
     "css-loader": "^0.28.9",
     "detect-port": "^1.2.2",
     "electron": "^1.7.11",
-    "electron-builder": "^19.55.3",
+    "electron-builder": "^20.43.0",
     "electron-devtools-installer": "^2.2.3",
+    "electron-notarize": "^0.1.1",
     "electron-rebuild": "^1.7.3",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
