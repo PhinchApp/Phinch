@@ -173,7 +173,7 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^22.1.4",
     "minimist": "^1.2.0",
-    "node-sass": "^4.9.2",
+    "node-sass": "4.14",
     "npm-logical-tree": "^1.2.1",
     "react-test-renderer": "^16.2.0",
     "redux-logger": "^3.0.6",
@@ -194,7 +194,7 @@
     "webpack-merge": "^4.1.1"
   },
   "dependencies": {
-    "@ibm/plex": "^1.3.1",
+    "@ibm/plex": "^5.2.1",
     "d3": "^5.0.0",
     "devtron": "^1.4.0",
     "electron-debug": "^1.5.0",
