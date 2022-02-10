@@ -173,7 +173,7 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^22.1.4",
     "minimist": "^1.2.0",
-    "node-sass": "4.14",
+    "node-sass": "7.0",
     "npm-logical-tree": "^1.2.1",
     "react-test-renderer": "^16.2.0",
     "redux-logger": "^3.0.6",
