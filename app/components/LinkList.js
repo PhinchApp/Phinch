@@ -8,22 +8,27 @@ const linkList = [
   {
     name: 'New to Phinch?',
     action: () => { shell.openExternal('http://phinch.org/Tutorials'); },
-    info: 'Get started with these tutorials',
+    info: 'Click here for data formatting instructions and visualization tutorials.',
   },
   {
-    name: 'View our Gallery',
+    name: 'View our Flagship Datasets',
     action: () => { shell.openExternal('https://github.com/PhinchApp/Phinch/wiki/Tutorials'); },
-    info: 'See what other researchers have created with Phinch.',
+    info: 'Download and explore datasets from published research studies.',
   },
   {
     name: 'Join the Community',
     action: () => { shell.openExternal('http://phinch.org/Community'); },
-    info: 'Discuss features and get the latest update feeds.',
+    info: 'Join our Slack channel to discuss features and get help.',
   },
   {
     name: 'About Phinch',
     action: (context) => { context.setState({ redirect: '/about' }); },
-    info: 'What is this all about anyway?',
+    info: 'Click here for more information about Phinch and our project team.',
+  },
+  {
+    name: 'Find a software issue?',
+    action: (context) => { context.setState({ redirect: 'https://github.com/PhinchApp/Phinch/issues' }); },
+    info: 'Report software bugs and errors on our Github issue tracker.',
   },
 ];
 

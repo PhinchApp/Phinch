@@ -90,12 +90,14 @@ export default class NewProject extends Component {
       showLeftSidebar: true,
     };
 
+    /*This sets the width of the sidemenu to 6.72% of the inner window width
+    and it also has a min max set for the size of the sidebar to maximize other components screen size 
+    NOTE: left min and max should be removed someday as the current formula is more effecient.*/
     this.metrics = {
-      padding: 16,
-      leftSidebar: 121,
+      leftSidebar: (window.innerWidth*0.0672),
       left: {
-        min: 27,
-        max: 121,
+        min: -10,
+        max: (window.innerWidth*0.0672 + 30),
       },
     };
 

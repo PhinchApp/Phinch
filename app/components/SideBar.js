@@ -28,6 +28,8 @@ export default function SideBar(props) {
           />
         </div>
         <p>Version {version}</p>
+        <p>A newer version is available. <a href="{https://github.com/PhinchApp/Phinch.git}">{'Download 2.0.3'}</a></p>
+        
       </div>
       <div className={`${styles.links} ${gstyle.exdarkbgscrollbar}`}>
         <div className={`${styles.area} ${styles.rightSpace}`}>

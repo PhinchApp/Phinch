@@ -31,7 +31,7 @@
 }
 
 .logo {
-  background: #1a1a1a;
+  background: #001226;
   width: 100px;
   height: 130px;
   padding: 2.5rem 1rem;
@@ -81,7 +81,7 @@
   margin: 0;
   display: inline-block;
   padding: 0.25rem 0.75rem;
-  border: 1px solid #00bbda;
+  border: 1px solid #F09E6A;
   border-radius: 4px;
   background: white;
   color: black;
@@ -125,7 +125,7 @@
 }
 
 .darkbgscrollbar::-webkit-scrollbar-thumb {
-  border: 2px solid #333;
+  border: 2px solid #999999;
 }
 
 .exdarkbgscrollbar::-webkit-scrollbar-thumb {
@@ -179,7 +179,7 @@
   top: 1px;
   width: 4px;
   height: 8px;
-  border: solid #1fbbd8;
+  border: solid #F09E6A;
   border-width: 0 3px 3px 0;
   -webkit-transform: rotate(45deg);
   -ms-transform: rotate(45deg);

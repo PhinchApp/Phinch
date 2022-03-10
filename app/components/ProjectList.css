@@ -40,7 +40,7 @@
 
 img.new {
   transition: background 0.5s ease-in-out;
-  background: #00bbda;
+  background: #F09E6A;
 }
 
 .edit img.new {
@@ -59,7 +59,7 @@ p {
 
 p.number {
   font-weight: 400;
-  color: #00bbda;
+  color: #F09E6A;
 }
 
 p.label {

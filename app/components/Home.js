@@ -4,6 +4,7 @@ import _clonedeep from 'lodash.clonedeep';
 
 import editOff from 'images/edit-off.svg';
 import editOn from 'images/edit-on.svg';
+import editHover from 'images/edit-hover.svg';
 
 import { pageView } from '../analytics';
 import DataContainer from '../datacontainer';
@@ -59,6 +60,7 @@ export default class Home extends Component {
       error: this.errors.file(),
       redirect: null,
       projects: getProjects(),
+      iconSRC: editOff,
     };
 
     this.success = this.success.bind(this);
@@ -113,6 +115,13 @@ export default class Home extends Component {
     this.shouldUpdate = {};
     const deleting = editing ? this.state.deleting : false;
     this.setState({ editing, deleting });
+    if(this.state.iconSRC === editOn) {
+      this.setState({iconSRC: editOff});
+    }
+    else 
+    {
+      this.setState({iconSRC: editOn});
+    }
   }
 
   updateName(project, name) {
@@ -142,6 +151,30 @@ export default class Home extends Component {
   remove(project) {
     this.deleting = project;
     this.setState({ deleting: true });
+  }
+
+  /*This function deals with when the mouse hovers over the edit icon on top right of
+  the home screen and changes img src accordingly to correct svg file */
+  handleMouseOver () {
+    if(this.state.iconSRC === editOff) {
+      this.setState({ iconSRC: editHover });
+    }
+  }
+
+  /*This function deals with the mouse leaving an icon (no longer hovering) and 
+  changed img src to correct svg file */
+  handleMouseLeave () {
+    if(this.state.iconSRC === editHover) {
+      this.setState({iconSRC: editOff});
+    }
+    else if(this.state.iconSRC === editOn)
+    {
+      this.setState({iconSRC: editOn});
+    }
+    else 
+    {
+      this.setState({iconSRC: editOff});
+    }
   }
 
   render() {
@@ -220,6 +253,7 @@ export default class Home extends Component {
       updateName: this.updateName,
       remove: this.remove,
       editing: this.state.editing,
+      iconSRC: this.state.iconSRC,
       type: 'projects',
     });
     return (
@@ -234,8 +268,10 @@ export default class Home extends Component {
               className={styles.edit}
               onClick={this.edit}
               onKeyPress={e => (e.key === ' ' ? this.edit() : null)}
+              onMouseEnter={() => this.handleMouseOver()}
+              onMouseLeave={() => this.handleMouseLeave()}
             >
-              <img src={this.state.editing ? editOn : editOff} alt="edit" />
+              <img src={this.state.iconSRC} alt="edit" />
             </div>
             <div className={`${styles.scroll} ${gstyle.darkbgscrollbar}`}>
               <div className={`${styles.area} ${styles.rightSpace}`}>

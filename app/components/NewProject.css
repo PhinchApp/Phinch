@@ -63,7 +63,7 @@ textarea.textarea {
 }
 
 textarea.textarea.drag {
-  background: #00bbda;
+  background: #F09E6A;
   color: white;
 }
 
@@ -73,7 +73,7 @@ textarea.textarea.drag * {
 
 .button {
   color: white;
-  background: #00bbda;
+  background: #F09E6A;
 }
 
 .filter {

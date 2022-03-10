@@ -6,7 +6,7 @@
 .sectionTitle {
   display: inline-block;
   vertical-align: top;
-  color: #666;
+  color: #000000;
   font-size: 20px;
   height: 26px;
   line-height: 26px;
@@ -22,7 +22,7 @@
   padding: 0;
   width: calc(100vw - 660px);
   height: 2px;
-  background: #191919;
+  background: #584f47;
 }
 
 .area {
@@ -36,7 +36,7 @@
 .left {
   width: 400px;
   vertical-align: top;
-  background: #191919;
+  background: #001226;
 }
 
 .right {
@@ -51,6 +51,9 @@
 
 .edit {
   position: absolute;
+  font-size: 13px;
+  font-family: "OpenSans-SemiBold, Open Sans";
+  font-weight: 600;
   top: 3rem;
   right: 2rem;
   cursor: pointer;
@@ -90,8 +93,8 @@
 
 .modal .button.cancel {
   right: 0;
-  background: #00bbda;
-  color: white;
+  background: #F09E6A;
+  color: #FFFFFF;
 }
 
 .info {
@@ -113,7 +116,7 @@
 }
 
 .links {
-  height: calc(100vh - 238px);
+  height: calc(100vh - 190px);
   overflow-y: scroll;
 }
 
@@ -127,7 +130,7 @@
 
 .about {
   background: white;
-  color: #191919;
+  color: #001226;
 }
 
 .about h2 {
@@ -150,7 +153,7 @@
 
 p.first::first-letter {
   vertical-align: top;
-  color: #00bbda;
+  color: #F09E6A;
   font-size: 800%;
   font-weight: 100;
   float: left;
@@ -163,7 +166,7 @@ p.first::first-letter {
 }
 
 .about .logos {
-  width: 300px;
+  width: 100%;
   vertical-align: top;
   padding: 3rem 1rem;
 }
@@ -178,7 +181,7 @@ p.first::first-letter {
   float: right;
   width: 2rem;
   height: 2rem;
-  background: #00bbda;
+  background: #F09E6A;
   border-radius: 1rem;
   color: white;
   font-weight: 400;

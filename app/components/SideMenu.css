@@ -1,7 +1,7 @@
 .menuToggle {
   position: relative;
   color: #fff;
-  background: #1fbbd8;
+  background: #f0946a;
   width: 24px;
   height: 24px;
   border-radius: 12px;
@@ -27,7 +27,7 @@
   width: 9px;
   height: 24px;
   margin: 0;
-  margin-top: 0.5rem;
+  margin-top: .5rem;
   padding: 0;
 }
 
@@ -40,8 +40,11 @@
 }
 
 .menuItem {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
   width: 100%;
-  margin: 1rem 0.5rem;
+  margin: 1rem .5rem;
   color: #fff;
   text-align: center;
   cursor: pointer;
@@ -59,7 +62,7 @@
   margin: auto;
   width: 30px;
   height: 30px;
-  background: #1fbbd8;
+  background: #F09E6A;
   font-size: 24px;
   text-align: center;
   border-radius: 8px;
