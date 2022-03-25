@@ -26,10 +26,10 @@ export default function SideBar(props) {
             className={styles.logo}
             alt="Phinch Logo"
           />
+          <p>Version {version}</p>
+          {/* Possible change wording of linke to "Download 2.0.3 Here" as clicking does not actually download it automatically (Yet). */}
+          <p>A newer version is available. <a href="{https://github.com/PhinchApp/Phinch.git}">{'Download 2.0.3'}</a></p>
         </div>
-        <p>Version {version}</p>
-        <p>A newer version is available. <a href="{https://github.com/PhinchApp/Phinch.git}">{'Download 2.0.3'}</a></p>
-        
       </div>
       <div className={`${styles.links} ${gstyle.exdarkbgscrollbar}`}>
         <div className={`${styles.area} ${styles.rightSpace}`}>

@@ -21,8 +21,18 @@
   margin: 12px 6px;
   padding: 0;
   width: calc(100vw - 660px);
-  height: 2px;
-  background: #584f47;
+  height: 1.5px;
+  background: #001226;
+}
+
+.sectionRuleFlagShip {
+  display: inline-block;
+  vertical-align: top;
+  margin: 12px 6px;
+  padding: 0;
+  width: calc(100vw - 791.99px);
+  height: 1.5px;
+  background: #001226;
 }
 
 .area {
@@ -44,8 +54,18 @@
   vertical-align: top;
 }
 
+.top {
+  height: 60vh;
+  width: 100%;
+}
+
+.bottom {
+  height: calc(100vh - 70vh);
+  width: 100%;
+}
+
 .scroll {
-  height: 100vh;
+  height: 200vh;
   overflow-y: scroll;
 }
 
@@ -54,8 +74,8 @@
   font-size: 13px;
   font-family: "OpenSans-SemiBold, Open Sans";
   font-weight: 600;
-  top: 3rem;
-  right: 2rem;
+  top:3.5em;
+  right: 1rem;
   cursor: pointer;
 }
 
@@ -103,11 +123,16 @@
   padding-bottom: 40px;
   height: 238px;
 }
-
+/* Controls font for version and letters below logo on side bar */
 .info p {
   font-size: 16px;
-  margin: 38px;
+  margin: 1rem;
   margin-bottom: 0;
+}
+
+.info a {
+  color: #FF4A14;
+  text-decoration: underline;
 }
 
 .logo {
@@ -116,7 +141,7 @@
 }
 
 .links {
-  height: calc(100vh - 190px);
+  height: calc(100vh - 300px);
   overflow-y: scroll;
 }
 
@@ -128,6 +153,10 @@
   padding-top: 2rem;
 }
 
+.projectType.bottom {
+  padding-bottom: 4rem;
+}
+
 .about {
   background: white;
   color: #001226;
@@ -135,14 +164,22 @@
 
 .about h2 {
   text-transform: uppercase;
-  font-size: 13px;
+  font-size: 20px;
   font-weight: 300;
-  letter-spacing: 4px;
+  letter-spacing: .15rem;
   margin-bottom: 2rem;
+  margin-top: 1rem;
+  margin-left: 1rem;
+}
+
+.about .bottom {
+  height: calc(100vh - 400px);
+  width: 100%;
+  padding: 3rem;
 }
 
 .about .center {
-  width: calc(100vw - 700px);
+  width: calc(100vw - 425px);
   padding: 3rem;
 }
 
@@ -151,41 +188,48 @@
   margin-bottom: 1rem;
 }
 
+.about p {
+  margin: 1rem;
+  margin-right: 2.5rem;
+  margin-left: 1rem;
+}
+
 p.first::first-letter {
   vertical-align: top;
   color: #F09E6A;
   font-size: 800%;
   font-weight: 100;
   float: left;
-  margin: 0;
-  margin-top: -2.5rem;
-  margin-bottom: -2.5rem;
-  margin-right: 0.5rem;
+  margin: 1rem;
+  margin-top: -2rem;
+  margin-bottom: -1rem;
+  margin-right: 0.75rem;
   margin-left: -0.75rem;
-  padding: 0;
+  padding: 0px;
 }
 
 .about .logos {
   width: 100%;
-  vertical-align: top;
+  
   padding: 3rem 1rem;
 }
 
 .alogo {
-  width: 100%;
-  vertical-align: top;
+  width: 33.33%;
+  vertical-align: middle;
   padding: 1rem 2rem;
 }
 
 .about .close {
   float: right;
-  width: 2rem;
-  height: 2rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 1rem;
+  
   background: #F09E6A;
   border-radius: 1rem;
   color: white;
   font-weight: 400;
-  vertical-align: middle;
   text-align: center;
   font-size: 1.5rem;
   line-height: 1.75rem;

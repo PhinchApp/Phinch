@@ -33,7 +33,7 @@
   background: black;
   border-radius: 8px;
   text-align: right;
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem .75rem;
   font-size: 12px;
   line-height: 12px;
 }

@@ -72,19 +72,19 @@ export default class Home extends Component {
     this.cancelRemove = this.cancelRemove.bind(this);
     this.completeRemove = this.completeRemove.bind(this);
   }
-
+  // this is to find if file up load for new project worked
   success() {
     this.setState({
       redirect: '/filter',
       loading: false,
     });
   }
-
+  //this reports errors if file uploaded for new project failed
   failure(type = 'file', path = '') {
     const error = this.errors[type](path);
     this.setState({ loading: false, erroring: true, error });
   }
-
+  //This takes you to data view page when a project is selected at home screen
   view(project) {
     if (project.slug === 'newproject') {
       this.setState({ redirect: '/newproject' });
@@ -97,7 +97,7 @@ export default class Home extends Component {
       this.failure();
     }
   }
-
+  //This handels delection and renaming of listed projects in home screen
   edit() {
     const editing = !this.state.editing;
     Object.keys(this.shouldUpdate).forEach(k => {
@@ -113,6 +113,7 @@ export default class Home extends Component {
       );
     });
     this.shouldUpdate = {};
+    //this const will handle the deleting of data when projects are deleted
     const deleting = editing ? this.state.deleting : false;
     this.setState({ editing, deleting });
     if(this.state.iconSRC === editOn) {
@@ -273,16 +274,22 @@ export default class Home extends Component {
             >
               <img src={this.state.iconSRC} alt="edit" />
             </div>
-            <div className={`${styles.scroll} ${gstyle.darkbgscrollbar}`}>
+            <div className={`${styles.section} ${styles.top}`}>
               <div className={`${styles.area} ${styles.rightSpace}`}>
                 <div className={`${styles.projectType} ${styles.top}`}>
-                  <h2 className={styles.sectionTitle}>Projects</h2>
+                  <h2 className={styles.sectionTitle}>PROJECTS</h2>
                   <div className={styles.sectionRule} />
+                  {projects}
+                  {modal}
                 </div>
-                {projects}
               </div>
             </div>
-            {modal}
+            <div className={`${styles.section} ${styles.bottom}`}>
+              <div className={`${styles.projectType} ${styles.top}`}>
+                <h2 className={styles.sectionTitle}>FLAGSHIP DATASETS</h2>
+                <div className={styles.sectionRuleFlagShip} />
+              </div>
+            </div>
           </div>
         </div>
       </div>
