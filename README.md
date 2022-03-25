@@ -81,8 +81,8 @@ The BSD 2-Clause License
 
 * * *
 
-![Alfred P. Sloan](./app/images/ASF-logo.png)
+![Alfred P. Sloan](./app/images/apsf-logo.png)
 
-![University of Georgia at Athens](./app/images/uga-logo.png)
+![University of Georgia at Athens](./app/images/uga-logo@2x.png)
 
 ![Pitch Interactive](./app/images/pitch.png)
