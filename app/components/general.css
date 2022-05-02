@@ -62,6 +62,7 @@
   position: relative;
   display: inline-block;
   vertical-align: top;
+  background: #575a5c;
   width: calc(100% - 100px);
   height: 130px;
   overflow-y: hidden;
@@ -81,19 +82,18 @@
   margin: 0;
   display: inline-block;
   padding: 0.25rem 0.75rem;
-  border: 1px solid #F09E6A;
+  border: 1px solid #FFFFFF;
   border-radius: 4px;
-  background: white;
+  background: #F09E6A;
   color: black;
   font-weight: 400;
   font-size: 1rem;
   cursor: pointer;
-  transition: opacity 0.5s ease-in-out;
 }
 
-.button:hover {
-  opacity: 0.65;
-}
+/* .button:hover {
+
+} */
 
 .notMac .button {
   padding-bottom: 0;

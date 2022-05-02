@@ -87,11 +87,11 @@ export default class Filter extends Component {
     };
 
     this.columnWidths = {
-      order: 0.08,
-      phinchName: 0.18,
-      biomid: 0.12,
-      sampleName: 0.18,
-      reads: 0.24,
+      order: 0.04,
+      phinchName: 0.25,
+      biomid: 0.09,
+      sampleName: 0.30,
+      reads: 0.20,
     };
 
     this.menuItems = [
@@ -255,7 +255,8 @@ export default class Filter extends Component {
           role="button"
           tabIndex={0}
           className={styles.columnHeading}
-          style={{ width: this.metrics.tableWidth * this.columnWidths[c.id] }}
+          style={{ width: this.metrics.tableWidth * this.columnWidths[c.id],
+                   textAlign: c.id === 'biomid' ? 'right':'left', }}
           onClick={onClick}
           onKeyPress={e => (e.key === ' ' ? onClick() : null)}
         >
@@ -402,9 +403,9 @@ export default class Filter extends Component {
             name={g}
             showScale={false}
             showCircle={false}
-            fill="#4c4c4c"
+            fill="#4D4D4D"
             stroke="#ffffff"
-            handle="#00bbda"
+            handle="#F09E6A"
             color="#000000"
             data={this.filters[k][g]}
             width={this.metrics.filterWidth}
@@ -630,8 +631,8 @@ export default class Filter extends Component {
         <Loader loading={this.state.loading} />
         {redirect}
         {result}
-        <div className={styles.header}>
-          <div className={gstyle.logo}>
+        <div className={`${styles.header}`}>
+          <div className={`${styles.filterLogo}`}>
             <Link to="/">
               <img src={logo} alt="Phinch" />
             </Link>

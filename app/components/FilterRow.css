@@ -27,6 +27,7 @@
 .row {
   background: white;
   cursor: move;
+  max-width: calc(100vw - 342px);
 }
 
 .row:hover .delete {
@@ -34,7 +35,7 @@
 }
 
 .row.grey {
-  background: #f4f4f4;
+  background: #f2f2f2;
 }
 
 .noLeft {

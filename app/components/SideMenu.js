@@ -39,7 +39,6 @@ export default class SideMenu extends Component {
         {items}
       </div>
     ) : '';
-    const rotation = this.props.showLeftSidebar ? styles.rotated : '';
     return (
       <div
         className={`${gstyle.panel} ${gstyle.noscrollbar}`}
@@ -61,7 +60,7 @@ export default class SideMenu extends Component {
             <div
               role="button"
               tabIndex={0}
-              className={`${styles.menuToggle} ${rotation}`}
+              className={`${styles.menuToggle}`}
               onClick={this.props.toggleMenu}
               onKeyPress={e => (e.key === ' ' ? this.props.toggleMenu() : null)}
             >

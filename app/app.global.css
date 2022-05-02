@@ -21,9 +21,10 @@
   border: 2px solid white;
 }
 
-::-webkit-scrollbar-track {
-  background-color: #001226;
-}
+/* This can later be used to add the line to show scroll bar range */
+/* ::-webkit-scrollbar-track {
+  
+} */
 
 ::-webkit-scrollbar:vertical {
   width: 10px;
@@ -86,4 +87,8 @@ img {
 
 button {
   cursor: pointer;
+}
+
+button:hover {
+  fill:#F09E6A;
 }

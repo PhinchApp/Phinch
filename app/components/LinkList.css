@@ -6,22 +6,24 @@
 }
 
 .arrow {
-  width: 14px;
-  height: 14px;
-  border-radius: 7px;
+  width: 22px;
+  height: 22px;
   margin: 8px 0;
-  margin-right: 8px;
+  margin-right: 4px;
+  margin-top: 4px;
   padding: 0;
-  background: #F09E6A;
   display: inline-block;
   vertical-align: top;
 }
 
 .arrow img {
   display: inline-block;
-  width: 14px;
+  width: 20px;
   margin-bottom: 2px;
 }
+
+
+
 
 .link h2 {
   font-size: 22px;

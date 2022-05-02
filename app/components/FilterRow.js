@@ -54,6 +54,7 @@ export default class FilterRow extends Component {
           className={styles.cell}
           style={{
             width: this.props.tableWidth * this.props.columnWidths.order,
+            textAlign: 'right',
           }}
         >
           {(this.props.data.order !== undefined) ? this.props.data.order.toLocaleString() : ''}
@@ -75,6 +76,7 @@ export default class FilterRow extends Component {
           className={styles.cell}
           style={{
             width: this.props.tableWidth * this.props.columnWidths.biomid,
+            textAlign: 'right',
           }}
         >
           {this.props.data.biomid}
@@ -91,6 +93,7 @@ export default class FilterRow extends Component {
           className={styles.cell}
           style={{
             width: (this.props.tableWidth * this.props.columnWidths.reads) / 2,
+            textAlign: 'right',
           }}
         >
           {(this.props.data.reads !== undefined) ? this.props.data.reads.toLocaleString() : ''}

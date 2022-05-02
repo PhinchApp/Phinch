@@ -2,6 +2,21 @@
   border-bottom: 1px solid #2b2b2b;
 }
 
+.header {
+  background: #2D2F31;
+}
+
+.filterLogo {
+  background: #001226;
+  width: 100px;
+  height: 108px;
+  padding: 2.5rem 1rem;
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+  z-index: 2;
+}
+
 .filter {
   position: relative;
   padding: 0.25rem 0.5rem;
@@ -15,7 +30,7 @@
   display: inline-block;
   padding: 0.25rem 0.5rem;
   margin: 0;
-  color: #00bbda;
+  color: #F09E6A;
 }
 
 .divlist {
@@ -29,7 +44,7 @@
   line-height: 20px;
   font-size: 12px;
   font-weight: 400;
-  color: #999;
+  color: #B2B2B2;
 }
 
 .visOption {
@@ -46,7 +61,7 @@
   display: inline-block;
   width: auto;
   color: white;
-  background: #191919;
+  background: #001226;
   padding: 0.25rem 0.5rem;
   border-radius: 1rem;
   font-weight: 400;
@@ -63,10 +78,10 @@
   text-align: center;
   font-weight: 400;
   margin-bottom: -1rem;
-  background: #00bbda;
+  background: #F09E6A;
   color: white;
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   border-radius: 7px;
   cursor: pointer;
 }
@@ -87,19 +102,21 @@
 }
 
 .grey {
-  background: #f4f4f4;
+  background: #F2F2F2;
 }
 
 .headingRow {
   display: block;
   height: 22px;
-  background: #4c4c4c;
+  background: #2D2F31;
   z-index: 1;
 }
 
 .spacer {
   display: inline-block;
   height: 22px;
+  left: -200px;
+  width: 66px;
 }
 
 .columnHeading {
@@ -119,17 +136,21 @@
 
 .button {
   float: right;
-  background: #00bbda;
-  color: white;
-  border: unset;
+  background: #575A5C;
+  border: solid;
+  border-width: .75px;
+  border-color: #F09E6A;
+  border-radius: 24px;
+  box-shadow: inset 0 0px 2px rgb(255, 255, 255);
+  color: #F09E6A;
   margin: 1.25rem 2rem;
   right: 0;
-  opacity: 1;
-  transition: opacity 0.5s ease-in-out;
 }
 
 .button:hover {
-  opacity: 0.5;
+  background: #F09E6A;
+  color: white;
+  border-color: white;
 }
 
 .reset {
