@@ -1,0 +1,293 @@
+.section {
+  display: inline-block;
+  height: 100vh;
+}
+
+.sectionTitle {
+  display: inline-block;
+  vertical-align: top;
+  color: #888e8d;
+  font-size: 22px;
+  height: 26px;
+  line-height: 26px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+.sectionRule {
+  display: inline-block;
+  vertical-align: top;
+  margin: 12px 6px;
+  padding: 0;
+  width: calc(100vw - 660px);
+  height: 1.5px;
+  background: #001226;
+}
+
+.sectionRuleFlagShip {
+  display: inline-block;
+  vertical-align: top;
+  margin: 12px 6px;
+  padding: 0;
+  width: calc(100vw - 791.99px);
+  height: 1.5px;
+  background: #001226;
+}
+
+.area {
+  padding: 1rem 0 0 0;
+}
+
+.rightSpace {
+  padding-right: 0.5rem;
+}
+
+.left {
+  width: 400px;
+  vertical-align: top;
+  background: #001226;
+}
+
+.left .bottomLeft {
+  vertical-align: top;
+  height: 62px;
+
+}
+
+.help {
+  display: inline-block;
+  margin: .5rem 2rem;
+  width: 152.47px;
+}
+
+.helpIcons {
+  display: inline-block;
+  margin-left: .5rem;
+}
+
+
+
+.right {
+  width: calc(100vw - 400px);
+  vertical-align: top;
+}
+
+.top {
+  height: 60vh;
+  width: 100%;
+}
+
+.bottom {
+  height: calc(100vh - 70vh);
+  width: 100%;
+  padding-top: 2rem;
+}
+
+.scroll {
+  height: 200vh;
+  overflow-y: scroll;
+}
+
+.edit {
+  position: absolute;
+  font-size: 13px;
+  font-family: 'Open Sans';
+  font-weight: 600;
+  top:3.5em;
+  right: 1rem;
+  cursor: pointer;
+  z-index: 999;
+}
+
+.modal {
+  display: block;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0.5rem 2rem;
+}
+
+.modal p {
+  font-size: 16px;
+  font-weight: 400;
+  margin: 1rem 0;
+}
+
+.modal code {
+  word-break: break-all;
+}
+
+.modal .modalTitle {
+  font-weight: 600;
+  font-style: italic;
+  word-wrap: break-word;
+}
+
+/* This is the Delete button on confirm delete pop up */
+.modal .button {
+  position: absolute;
+  bottom: 0.75rem;
+  right: 7.25rem;
+  border-radius: 15px;
+}
+
+.modal .button:hover {
+  background: #F09E6A;
+  border: none;
+  color: white;
+}
+
+/* This is the Cancel button on confirm delete pop up */
+.modal .button.cancel {
+  right: 0;
+  background: none;
+}
+
+.modal .button.cancel:hover {
+  background: #F09E6A;
+  border: none;
+  color: white;
+}
+
+.info {
+  text-align: center;
+  margin: 20px 20px 4px;
+  height: 195px;
+}
+/* Controls font for version and letters below logo on side bar */
+.info p {
+  font-size: 16px;
+  margin: 1.5rem 0 0 0;
+}
+
+.info a {
+  color: #FF4A14;
+  text-decoration: underline;
+  font-size: 16px;
+}
+
+.info p.vUpdate {
+  font-size: 16px;
+  font-weight: 700;
+  margin: .5rem 0 0 0;
+  color: #FF4A14;
+}
+
+.logo {
+  width: 130px;
+  height: 84px;
+  cursor: pointer;
+}
+
+.links {
+  height: calc(100vh - 300px);
+  overflow-y: scroll;
+}
+
+.projectType {
+  padding: 0 2rem;
+}
+
+.projectType.top {
+  padding-top: 2rem;
+  overflow-y: scroll;
+}
+
+.projectType.bottom {
+  padding-bottom: 4rem;
+}
+
+.about {
+  background: white;
+  color: #001226;
+  padding: .5rem 1.5rem;
+}
+
+.about h2 {
+  text-transform: uppercase;
+  color: #888e8d;
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: .15rem;
+  margin-bottom: 2rem;
+  margin-top: 1rem;
+  margin-left: 1rem;
+}
+
+.about .bottom {
+  height: calc(100vh - 400px);
+  width: 100%;
+  padding: 3rem;
+}
+
+.about .center {
+  width: calc(100vw - 425px);
+  padding: 3rem;
+}
+
+.about .center p {
+  font-weight: 400;
+  margin-bottom: 1rem;
+}
+
+.about p {
+  margin: 1rem;
+  margin-right: 2.5rem;
+  margin-left: 1rem;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+p.first::first-letter {
+  vertical-align: left;
+  color: #F09E6A;
+  font-size: 800%;
+  font-weight: 100;
+  float: left;
+  margin: -3rem 0;
+}
+
+.about .logos {
+  width: 100%;
+  vertical-align: middle;
+  padding: 3rem 1rem;
+}
+
+.alogo {
+  width: 40.22%;
+  padding-right: 0.5rem;
+}
+
+.ugalogo {
+  width: 27%;
+}
+
+.pitchlogo {
+  width: 32.76%
+}
+
+.about .close {
+  float: right;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 1rem;
+  
+  background: white;
+  border-color: #F09E6A;
+  border-radius: 1rem;
+  border-bottom: #f8f8f8 1px solid;
+  transition: border 0.5s ease-in-out;
+  color: white;
+  font-weight: 400;
+  text-align: center;
+  font-size: 1.5rem;
+  line-height: 1.75rem;
+}
+
+.about .close:hover {
+  background: #F09E6A;
+  border-color: white;
+}

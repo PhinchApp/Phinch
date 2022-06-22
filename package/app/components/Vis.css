@@ -1,0 +1,338 @@
+.leftGutter {
+  padding-left: 0.5rem;
+}
+
+.controls {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.menuToggle {
+  position: relative;
+  color: #fff;
+  background: #1fbbd8;
+  width: 22px;
+  height: 22px;
+  border-radius: 11px;
+  font-size: 15px;
+  line-height: 15px;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  cursor: pointer;
+  border: 2px solid #333;
+}
+
+.toggleSquare {
+  position: absolute;
+  background: #333;
+  width: 11px;
+  height: 22px;
+  margin: 0;
+  padding: 0;
+}
+
+.menu {
+  color: #fff;
+  background: #333;
+  font-weight: 400;
+  font-size: 18px;
+  text-transform: uppercase;
+}
+
+.menuItem {
+  margin: 1rem;
+  color: #fff;
+  text-align: center;
+}
+
+.menuBox {
+  margin: auto;
+  margin-bottom: 0.5rem;
+  width: 45px;
+  height: 45px;
+  background: #1fbbd8;
+  padding: 9px;
+  font-size: 24px;
+  text-align: center;
+  border-radius: 8px;
+}
+
+.axis {
+  position: absolute;
+  display: inline-block;
+  text-align: center;
+  background-color: white;
+  vertical-align: top;
+  z-index: 2;
+}
+
+.controlRow {
+  width: 100%;
+  vertical-align: top;
+  display: inline-block;
+  padding: 1rem;
+  font-size: 13px;
+  padding-bottom: 0;
+}
+
+.selector {
+  display: inline-block;
+  padding: 0.125rem 0.5rem;
+  border-radius: 16px;
+  text-align: center;
+  line-height: 16px;
+  font-size: 13px;
+  cursor: pointer;
+  border: 1px solid #999;
+  text-transform: capitalize;
+}
+
+.selector:hover {
+  background: #1fbbd8;
+  color: white;
+}
+
+.button {
+  background-color: #4d4d4d;
+  border: 1px solid #4d4d4d;
+  border-radius: 4px;
+  margin: 0 8px;
+  margin-left: 0;
+  font-weight: 400;
+}
+
+.editTag {
+  display: none;
+  position: absolute;
+  pointer-events: none;
+  right: 0;
+  margin: 0 12px;
+  margin-top: -15px;
+  padding: 0 4px;
+  padding-top: 1px;
+  height: 14px;
+  line-height: 12px;
+  font-size: 9px;
+  background: #666;
+  border-radius: 6px;
+  text-align: center;
+  text-transform: uppercase;
+  vertical-align: middle;
+  color: white;
+  cursor: pointer;
+}
+
+.tag:hover .editTag {
+  display: block;
+}
+
+.inlineControl {
+  position: relative;
+  display: inline-block;
+  margin: 0;
+  margin-right: 0.25rem;
+  cursor: pointer;
+}
+
+.inlineControl label {
+  margin-right: 0.25rem;
+}
+
+.inlineControl input {
+  vertical-align: middle;
+  margin: 0 0.25rem;
+  padding: 0;
+  cursor: pointer;
+}
+
+.inlineControl input[type='radio']::after {
+  width: 12px;
+  height: 12px;
+  border-radius: 12px;
+  top: -3px;
+  left: -4px;
+  position: relative;
+  content: '';
+  display: inline-block;
+  visibility: visible;
+  border: 3px solid #4d4d4d;
+  background: #4d4d4d;
+}
+
+.inlineControl input[type='radio']:checked::after {
+  width: 12px;
+  height: 12px;
+  border-radius: 12px;
+  top: -3px;
+  left: -4px;
+  position: relative;
+  content: '';
+  display: inline-block;
+  visibility: visible;
+  border: 3px solid #4d4d4d;
+  background: #1fbbd8;
+}
+
+.inlineControl select {
+  font-family: 'IBM Plex Sans Condensed', Verdana, Sans-serif;
+  font-weight: 300;
+  font-size: 14px;
+  background: #4d4d4d;
+  color: #fff;
+  border-radius: 4px;
+  border: none;
+  height: 24px;
+  padding: 0.25rem;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+.inlineControl select option {
+  background: #4d4d4d;
+}
+
+.inlineControl select[disabled] {
+  opacity: 0.5;
+}
+
+.inlineControl select.selected {
+  background: #1fbbd8;
+}
+
+.dash {
+  display: inline-block;
+  margin: 0 0.25rem;
+  padding: 0;
+}
+
+.selected {
+  font-weight: 400;
+}
+
+.dash.selected {
+  color: #1fbbd8;
+}
+
+.selector.selected {
+  border: 1px solid #1fbbd8;
+  background: #1fbbd8;
+}
+
+.tagFilter {
+  position: fixed;
+  background: #333;
+  width: 192px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  z-index: 10;
+  margin-top: 16px;
+  margin-left: -72px;
+}
+
+.tagName {
+  font-size: 13px;
+  color: #999;
+  width: 116px;
+}
+
+.tagName.selected {
+  color: white;
+}
+
+.attrInfo {
+  position: fixed;
+  display: block;
+  width: 144px;
+  padding: 0 1rem;
+  z-index: 3;
+  font-family: 'IBM Plex Sans Condensed', Verdana, Sans-serif;
+  text-align: left;
+  color: #2b2b2b;
+}
+
+.attrLabel {
+  margin-top: 4px;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 15px;
+}
+
+.attrToggle {
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 12px;
+  cursor: pointer;
+}
+
+.spacer {
+  display: inline-block;
+  vertical-align: top;
+  width: 4px;
+  height: 20px;
+  border-left: 2px solid #4c4c4c;
+  margin: 2px 8px;
+}
+
+.cell {
+  display: inline-block;
+  vertical-align: top;
+  margin-right: 0.25rem;
+  font-size: 12px;
+}
+
+.name {
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reads {
+  text-align: right;
+}
+
+.modalbottom {
+  position: relative;
+  margin-top: -360px;
+  overflow: hidden;
+  padding: 0.5rem 0;
+  height: 360px;
+  background: white;
+  border: 1px solid #2b2b2b;
+}
+
+.modalbottom p {
+  margin: 0;
+  margin-bottom: 0.5rem;
+  padding: 0 0.5rem;
+}
+
+.phinchName {
+  width: 144px;
+  margin-right: 0.25rem;
+}
+
+.biomid {
+  width: 72px;
+  margin-right: 0.25rem;
+}
+
+.restore {
+  background: none;
+  width: 36px;
+  margin-right: 0.25rem;
+}
+
+.svglist {
+  margin-top: 42px;
+  will-change: auto !important;
+}
+
+.svglist > svg {
+  font-family: 'IBM Plex Sans Condensed', Verdana, Sans-serif;
+  font-weight: 200;
+  font-size: 12px;
+  padding-top: 6px;
+  overflow: visible;
+}

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <title>Asset 13</title>
+  <g id="Layer_2" data-name="Layer 2">
+    <g id="content">
+      <circle cx="8" cy="8" r="8" style="fill:none" />
+      <line x1="4.86" y1="8" x2="11.14" y2="8" style="fill:#fafafa" />
+      <path d="M11.14,8.88H4.86a.88.88,0,0,1,0-1.76h6.28a.88.88,0,0,1,0,1.76Z" style="fill:#fafafa" />
+      <line x1="4.86" y1="11.13" x2="11.14" y2="11.13" style="fill:#fafafa" />
+      <path d="M11.14,12H4.86a.88.88,0,0,1,0-1.75h6.28a.88.88,0,0,1,0,1.75Z" style="fill:#fafafa" />
+      <line x1="4.86" y1="4.87" x2="11.14" y2="4.87" style="fill:#fafafa" />
+      <path d="M11.14,5.74H4.86A.88.88,0,0,1,4.86,4h6.28a.88.88,0,0,1,0,1.75Z" style="fill:#fafafa" />
+    </g>
+  </g>
+</svg>

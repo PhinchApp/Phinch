@@ -1,16 +1,25 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router';
 import _clonedeep from 'lodash.clonedeep';
+import Spotlight from "rc-spotlight";
+import 'antd/dist/antd.css';
+import { Tooltip } from 'antd';
 
 import editOff from 'images/edit-off.svg';
 import editOn from 'images/edit-on.svg';
 import editHover from 'images/edit-hover.svg';
+import fsIcon from 'images/flagshipIcons.svg';
+import helpGo from 'images/needHelpHP.svg';
+import helpStop from 'images/needHelpHover.svg'
+import arrow from 'images/arrow.svg';
+import arrowHover from 'images/arrowHover.svg';
 
 import { pageView } from '../analytics';
 import DataContainer from '../datacontainer';
-import { getProjects, setProjectFilters, deleteProject } from '../projects';
+import { getFSProjects, getProjects, setProjectFilters, deleteProject } from '../projects';
+import SpotlightWithToolTip from './SpotlightWithToolTip';
 
-import ProjectList from './ProjectList';
+import { FSProjectList, ProjectList } from './ProjectList';
 import SideBar from './SideBar';
 import Loader from './Loader';
 import Modal from './Modal';
@@ -57,10 +66,22 @@ export default class Home extends Component {
       editing: false,
       deleting: false,
       erroring: false,
+      helping: false,
+      helpIcon: helpGo,
       error: this.errors.file(),
       redirect: null,
       projects: getProjects(),
+      fsProjects: getFSProjects(),
       iconSRC: editOff,
+      help1: false,
+      help2: false,
+      help3: false,
+      help4: false,
+      link1: arrow,
+      link2: arrow,
+      link3: arrow,
+      link4: arrow,
+      link5: arrow,
     };
 
     this.success = this.success.bind(this);
@@ -97,7 +118,7 @@ export default class Home extends Component {
       this.failure();
     }
   }
-  //This handels delection and renaming of listed projects in home screen
+  //This handels deletion and renaming of listed projects in home screen
   edit() {
     const editing = !this.state.editing;
     Object.keys(this.shouldUpdate).forEach(k => {
@@ -156,25 +177,63 @@ export default class Home extends Component {
 
   /*This function deals with when the mouse hovers over the edit icon on top right of
   the home screen and changes img src accordingly to correct svg file */
-  handleMouseOver () {
-    if(this.state.iconSRC === editOff) {
-      this.setState({ iconSRC: editHover });
+  handleMouseOver (title) {
+    switch(title) {
+      case "edit":
+        if(this.state.iconSRC === editOff) {
+          this.setState({ iconSRC: editHover });
+        }
+        break;
+      case 'New to Phinch?':
+        this.setState({ link1: arrowHover });
+        break;
+      case 'View our Flagship Datasets':
+        this.setState({ link2: arrowHover });
+        break;
+      case 'Join the Community':
+        this.setState({ link3: arrowHover });
+        break;
+      case 'About Phinch':
+        this.setState({ link4: arrowHover });
+        break;
+      case 'Find a software issue?':
+        this.setState({ link5: arrowHover });
+        break;
     }
   }
 
   /*This function deals with the mouse leaving an icon (no longer hovering) and 
   changed img src to correct svg file */
-  handleMouseLeave () {
-    if(this.state.iconSRC === editHover) {
-      this.setState({iconSRC: editOff});
-    }
-    else if(this.state.iconSRC === editOn)
-    {
-      this.setState({iconSRC: editOn});
-    }
-    else 
-    {
-      this.setState({iconSRC: editOff});
+  handleMouseLeave (title) {
+    switch(title) {
+      case "edit":
+        if(this.state.iconSRC === editHover) {
+          this.setState({iconSRC: editOff});
+        }
+        else if(this.state.iconSRC === editOn)
+        {
+          this.setState({iconSRC: editOn});
+        }
+        else 
+        {
+          this.setState({iconSRC: editOff});
+        }
+        break;
+      case 'New to Phinch?':
+        this.setState({ link1: arrow });
+        break;
+      case 'View our Flagship Datasets':
+        this.setState({ link2: arrow });
+        break;
+      case 'Join the Community':
+        this.setState({ link3: arrow });
+        break;
+      case 'About Phinch':
+        this.setState({ link4: arrow });
+        break;
+      case 'Find a software issue?':
+        this.setState({ link5: arrow });
+        break;
     }
   }
 
@@ -230,7 +289,8 @@ export default class Home extends Component {
           </div>
         </div>
       );
-    }
+    } 
+
     const modal = (this.state.deleting || this.state.erroring) ? (
       <Modal
         show
@@ -254,7 +314,14 @@ export default class Home extends Component {
       updateName: this.updateName,
       remove: this.remove,
       editing: this.state.editing,
+      help2: this.state.help2,
+      help3: this.state.help3,
       iconSRC: this.state.iconSRC,
+      type: 'projects',
+    });
+    const flagshipProjects = FSProjectList({
+      projectList: this.state.fsProjects,
+      view: this.view,
       type: 'projects',
     });
     return (
@@ -263,17 +330,25 @@ export default class Home extends Component {
           <Loader loading={this.state.loading} />
           <SideBar context={this} />
           <div className={`${styles.section} ${styles.right}`}>
-            <div
-              role="button"
-              tabIndex={0}
-              className={styles.edit}
-              onClick={this.edit}
-              onKeyPress={e => (e.key === ' ' ? this.edit() : null)}
-              onMouseEnter={() => this.handleMouseOver()}
-              onMouseLeave={() => this.handleMouseLeave()}
+            <SpotlightWithToolTip
+              isActive = {this.state.help4} 
+              inheritParentBackgroundColor
+              toolTipPlacement="left"
+              toolTipTitle={"Click the edit button to edit the project name or delete the file from the Phinch app."}
+              style={{position: "absolute"}}
             >
-              <img src={this.state.iconSRC} alt="edit" />
-            </div>
+              <div
+                role="button"
+                tabIndex={0}
+                className={styles.edit}
+                onClick={this.edit}
+                onKeyPress={e => (e.key === ' ' ? this.edit() : null)}
+                onMouseEnter={() => this.handleMouseOver("edit")}
+                onMouseLeave={() => this.handleMouseLeave("edit")}
+              >
+                <img src={this.state.iconSRC} alt="edit" />
+              </div>
+            </SpotlightWithToolTip>
             <div className={`${styles.section} ${styles.top}`}>
               <div className={`${styles.area} ${styles.rightSpace}`}>
                 <div className={`${styles.projectType} ${styles.top}`}>
@@ -288,6 +363,7 @@ export default class Home extends Component {
               <div className={`${styles.projectType} ${styles.top}`}>
                 <h2 className={styles.sectionTitle}>FLAGSHIP DATASETS</h2>
                 <div className={styles.sectionRuleFlagShip} />
+                {flagshipProjects}
               </div>
             </div>
           </div>

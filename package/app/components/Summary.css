@@ -1,0 +1,49 @@
+.info {
+  display: inline-block;
+  vertical-align: top;
+  font-size: 0.75rem;
+  background: #2D2F31;
+  width: 100%;
+  height: 40px;
+  padding: 0 0.25rem;
+  padding-right: 1.25rem;
+}
+
+.segment {
+  display: inline-block;
+  vertical-align: top;
+  height: 100%;
+  padding: 0.5rem;
+  font-size: 12px;
+}
+
+.right {
+  float: right;
+}
+
+.file {
+  font-size: 14px;
+  max-width: 36vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #fafafa;
+}
+
+.label {
+  font-weight: 400;
+  color: #999;
+}
+
+.number {
+  color: #F09E6A;
+  font-weight: 400;
+}
+
+.summary {
+  height: 100%;
+  line-height: 26px;
+  display: inline-block;
+  margin: 0;
+  padding: 0 0.25rem;
+}

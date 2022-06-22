@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="148.263" height="29.99" viewBox="0 0 148.263 29.99">
+  <defs>
+    <filter id="Union_1">
+      <feOffset input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feFlood flood-color="#fdfdfa" flood-opacity="0.302" result="color"/>
+      <feComposite operator="out" in="SourceGraphic" in2="blur"/>
+      <feComposite operator="in" in="color"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="filter_data" data-name="filter data" transform="translate(0.5 0.5)">
+    <g data-type="innerShadowGroup">
+      <path id="Union_1-2" data-name="Union 1" d="M2583.364,1788.485H2465.477q-.178,0-.357,0a14.5,14.5,0,0,1,0-28.99h118.6a14.5,14.5,0,0,1,0,28.99Q2583.542,1788.49,2583.364,1788.485Z" transform="translate(-2450.789 -1759.5)" fill="#f09e6a"/>
+      <g transform="matrix(1, 0, 0, 1, -0.5, -0.5)" filter="url(#Union_1)">
+        <path id="Union_1-3" data-name="Union 1" d="M2583.364,1788.485H2465.477q-.178,0-.357,0a14.5,14.5,0,0,1,0-28.99h118.6a14.5,14.5,0,0,1,0,28.99Q2583.542,1788.49,2583.364,1788.485Z" transform="translate(-2450.29 -1759)" fill="#fff"/>
+      </g>
+      <path id="Union_1-4" data-name="Union 1" d="M2583.364,1788.485H2465.477q-.178,0-.357,0a14.5,14.5,0,0,1,0-28.99h118.6a14.5,14.5,0,0,1,0,28.99Q2583.542,1788.49,2583.364,1788.485Z" transform="translate(-2450.789 -1759.5)" fill="none" stroke="#fdfdfa" stroke-width="1"/>
+    </g>
+    <g id="Group_1474" data-name="Group 1474" transform="translate(113.603 1.802)">
+      <path id="Path_607" data-name="Path 607" d="M21.833,176.638a1.384,1.384,0,0,1-1.384,1.384H9.55a1.384,1.384,0,0,1,0-2.768h10.9a1.384,1.384,0,0,1,1.384,1.384" transform="translate(-0.974 -163.306)" fill="#fdfdfa"/>
+      <path id="Path_608" data-name="Path 608" d="M18.269,171.886l3.241,3.862a1.384,1.384,0,0,1-2.121,1.78l-3.24-3.863a1.384,1.384,0,1,1,2.12-1.779" transform="translate(0.845 -163.443)" fill="#fdfdfa"/>
+      <path id="Path_609" data-name="Path 609" d="M18.269,181.391l3.241-3.862a1.384,1.384,0,0,0-2.121-1.78l-3.24,3.863a1.384,1.384,0,1,0,2.12,1.779" transform="translate(0.845 -163.307)" fill="#fdfdfa"/>
+    </g>
+    <text id="Filter_Data-2" data-name="Filter Data" transform="translate(14.208 22.052)" fill="#fdfdfa" font-size="20" font-family="OpenSans-Semibold, Open Sans" font-weight="600"><tspan x="0" y="0">Filter Data</tspan></text>
+  </g>
+</svg>

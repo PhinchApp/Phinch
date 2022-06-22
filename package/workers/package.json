@@ -1,0 +1,14 @@
+{
+  "name": "workers",
+  "version": "1.0.0",
+  "description": "phinch workers",
+  "main": " ",
+  "repository": " ",
+  "author": "Pitch Interactive",
+  "license": "BSD-2-Clause",
+  "private": false,
+  "dependencies": {
+    "child_process": "^1.0.2",
+    "d3-collection": "^1.0.7"
+  }
+}
