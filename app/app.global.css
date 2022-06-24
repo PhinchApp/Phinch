@@ -10,6 +10,12 @@
   -webkit-box-sizing: border-box;
 }
 
+/* This gets rid of the blue border around different elements, might need to reimplement in future to
+to accomodate keyboard only users or find another way to visually replace it */
+*:focus {
+  outline: 0 !important;
+}
+
 ::-webkit-scrollbar {
   -webkit-appearance: none;
   cursor: pointer;
@@ -90,6 +96,7 @@ button {
   cursor: pointer;
   background: none;
   border: none;
+  outline: none !important;
 }
 
 button:hover {

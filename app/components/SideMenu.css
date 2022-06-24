@@ -68,10 +68,12 @@
     border-radius: 100px;
 }
 
-.menuBox:hover {
+.menuItem:hover .menuBox.newProject {
   border-color: #fff;
-  background: #F09E6A;
-
+  background-position: center;
+  background-image: url("images/backArrowW.svg");
+  background-color: #F09E6A;
+  background-repeat: no-repeat;
 }
 
 .menuBox img {
@@ -82,4 +84,19 @@
   border-color: white;
   border-style: inherit;
   border-width:0px;
+}
+
+.menuItem .menuBox.newProject img {
+  width: 14px;
+  height: 11px;
+  margin: 0;
+  margin-bottom: .85rem;
+  padding: 0;
+  border-color: white;
+  border-style: inherit;
+  border-width: 0px;
+}
+
+.menuItem:hover .menuBox.newProject img {
+  display: none !important;
 }

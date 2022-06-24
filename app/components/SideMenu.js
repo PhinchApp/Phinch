@@ -1,4 +1,4 @@
-import React, { Component, MouseEvent } from 'react';
+import React, { Component } from 'react';
 import ReactDOM, { render } from 'react-dom';
 
 import arrow from 'images/arrow.svg';
@@ -16,43 +16,43 @@ import { fix } from 'prelude-ls';
 // able to read mouse position or having access to that info in the rendering of
 // the JSX element. ReactDOM and possible React version updates to allow use of
 // React useCases would be a possible fix.
-function constructItem(l) {
-  return (l.id === 'back') ? (
-    <div
-    key={l.id}
-    role="button"
-    tabIndex={0}
-    className={styles.menuItem}
-    onClick={l.action}
-    onKeyDown={e => (e.key === ' ' ? l.action() : null)}
-    onMouseEnter={() => l.handleMouseOver()}
-    onMouseLeave={() => l.handleMouseLeave()}
-    >
-      <div className={styles.menuBox}>
-        {l.icon}
-      </div>
-      <span className={styles.menuItemLabel}>
-        {l.name}
-      </span>
-    </div>
-  ) : (
-    <div
-    key={l.id}
-    role="button"
-    tabIndex={0}
-    className={styles.menuItem}
-    onClick={l.action}
-    onKeyDown={e => (e.key === ' ' ? l.action() : null)}
-    >
-      <div className={styles.menuBox}>
-        {l.icon}
-      </div>
-      <span className={styles.menuItemLabel}>
-        {l.name}
-      </span>
-    </div>
-  );
-}
+// function constructItem(l) {
+//   return (l.id === 'back') ? (
+//     <div
+//     key={l.id}
+//     role="button"
+//     tabIndex={0}
+//     className={styles.menuItem}
+//     onClick={l.action}
+//     onKeyDown={e => (e.key === ' ' ? l.action() : null)}
+//     onMouseEnter={() => l.handleMouseOver()}
+//     onMouseLeave={() => l.handleMouseLeave()}
+//     >
+//       <div className={styles.menuBox}>
+//         {l.icon}
+//       </div>
+//       <span className={styles.menuItemLabel}>
+//         {l.name}
+//       </span>
+//     </div>
+//   ) : (
+//     <div
+//     key={l.id}
+//     role="button"
+//     tabIndex={0}
+//     className={styles.menuItem}
+//     onClick={l.action}
+//     onKeyDown={e => (e.key === ' ' ? l.action() : null)}
+//     >
+//       <div className={styles.menuBox}>
+//         {l.icon}
+//       </div>
+//       <span className={styles.menuItemLabel}>
+//         {l.name}
+//       </span>
+//     </div>
+//   );
+// }
 
 export default class SideMenu extends Component {
   constructor(props) {
@@ -60,6 +60,44 @@ export default class SideMenu extends Component {
       this.state = {
         sideMenuToggle: arrow,
       };
+  }
+
+  constructItem = (l) => {
+    return (l.id == "back") ? (
+      <div
+      key={l.id}
+      role="button"
+      tabIndex={0}
+      className={styles.menuItem}
+      onClick={l.action}
+      onKeyDown={e => (e.key === ' ' ? l.action() : null)}
+      >
+        <div 
+        className={`${styles.menuBox} ${styles.newProject}`}>
+          {l.icon}
+        </div>
+        <span className={styles.menuItemLabel}>
+          {l.name}
+        </span>
+      </div>
+    ) : (
+      <div
+      key={l.id}
+      role="button"
+      tabIndex={0}
+      className={styles.menuItem}
+      onClick={l.action}
+      onKeyDown={e => (e.key === ' ' ? l.action() : null)}
+      >
+        <div 
+        className={`${styles.menuBox}`}>
+          {l.icon}
+        </div>
+        <span className={styles.menuItemLabel}>
+          {l.name}
+        </span>
+      </div>
+    );
   }
   
   /*This function deals with when the mouse hovers over the edit icon on top right of
@@ -74,12 +112,12 @@ export default class SideMenu extends Component {
   changed img src to correct svg file */
   handleMouseLeave () {
     if(this.state.sideMenuToggle === arrowHover) {
-      this.setState({sideMenuToggle: arrow});
+      this.setState({ sideMenuToggle: arrow });
     }
   }
 
   render() {
-    const items = this.props.items.map((l) => constructItem(l));
+    const items = this.props.items.map((l) => this.constructItem(l));
     const menuItems = this.props.showLeftSidebar ? (
       <div
         className={`${gstyle.panel} ${styles.menu}`}

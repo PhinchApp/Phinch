@@ -121,14 +121,12 @@ export default class NewProject extends Component {
 
     this.menuItems = [
       {
-        id: 'back',
+        id: "back",
         name: 'Back',
         action: () => {
           this.setState({ redirect: '/Home' });
         },
-        icon: <img src={this.state.backArrow} alt="Back-Arrow"/>,
-        handleMouseOver: () => { this.handleMouseOver('back'); },
-        handleMouseLeave: () => { this.handleMouseLeave('back'); },
+        icon: <img src={this.state.backArrow} alt="back-arrow"/>,
       },
     ];
 
@@ -142,6 +140,8 @@ export default class NewProject extends Component {
     this.handleOpenButton = this.handleOpenButton.bind(this);
     this.toggleMenu = this.toggleMenu.bind(this);
     this.updateDimensions = this.updateDimensions.bind(this);
+    this.handleMouseLeave = this.handleMouseLeave.bind(this);
+    this.handleMouseOver = this.handleMouseOver.bind(this);
   }
 
   componentDidMount() {
@@ -330,7 +330,7 @@ export default class NewProject extends Component {
           this.setState({helpButton: needHelp});
         }
         break;
-      case 'break':
+      case 'back':
         this.setState({ backArrow: back });
         break;
      }
@@ -338,6 +338,7 @@ export default class NewProject extends Component {
 
   render() {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
+
     const result = (this.state.valid === 'Yes') ? (
       <button
         className={`${styles.filter}`}
@@ -436,7 +437,6 @@ export default class NewProject extends Component {
             chartHeight={(this.state.height - 130)}
             items={this.menuItems}
             toggleMenu={this.toggleMenu}
-            context={this}
             hideToggle
           />
         </div>
@@ -469,7 +469,7 @@ export default class NewProject extends Component {
                 <button
                   className={styles.downloadFS}
                   onClick={() => shell.openExternal('https://github.com/PhinchApp/datasets')}
-                  onMouseEnter={() => this.handleMouseOver("flagship")}
+                  onMouseEnter={() =>  this.handleMouseOver("flagship")}
                   onMouseLeave={() => this.handleMouseLeave("flagship")}
                 >
                   <img src={this.state.flagship} alt="flagship-Datasets" />
