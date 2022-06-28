@@ -50,8 +50,9 @@
 }
 
 .left .bottomLeft {
-  vertical-align: top;
-  height: 62px;
+  position: absolute;
+  bottom: 1em;
+  left: 0;
 
 }
 
@@ -274,7 +275,7 @@ p.first::first-letter {
   width: 1.5rem;
   height: 1.5rem;
   margin: 1rem;
-  
+
   background: white;
   border-color: #F09E6A;
   border-radius: 1rem;

@@ -1,6 +1,6 @@
 .link {
   color: #FFFFFF;
-  margin: 24px 26px;
+  margin: 0px 26px 12px 26px;
   vertical-align: top;
   cursor: pointer;
 }
@@ -19,6 +19,7 @@
 .arrow img {
   display: inline-block;
   width: 20px;
+  transform: translateY(2px);
 }
 
 
@@ -38,8 +39,8 @@
   font-size: 16px;
   font-weight: 400;
   margin: 0;
-  margin-top: 4px;
   padding: 0;
+  line-height: 1.2em;
 }
 
 .info {

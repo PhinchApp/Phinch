@@ -45,8 +45,8 @@ export default function SideBar(props) {
   //       break;
   //   }
   // }
-  
-  // /*This function deals with the mouse leaving an icon (no longer hovering) and 
+
+  // /*This function deals with the mouse leaving an icon (no longer hovering) and
   // changed img src to correct svg file */
   // function handleMouseLeave (icon) {
   //   switch(icon){
@@ -77,7 +77,7 @@ export default function SideBar(props) {
           role="button"
           tabIndex={0}
           className={styles.helpIcons}
-          onClick={() => props.context.setState({ 
+          onClick={() => props.context.setState({
             help1: false,
             help2: !props.context.state.help2,
             help3: false,
@@ -91,7 +91,7 @@ export default function SideBar(props) {
           role="button"
           tabIndex={0}
           className={styles.helpIcons}
-          onClick={() => props.context.setState({ 
+          onClick={() => props.context.setState({
             help1: false,
             help2: false,
             help3: !props.context.state.help3,
@@ -105,7 +105,7 @@ export default function SideBar(props) {
           role="button"
           tabIndex={0}
           className={styles.helpIcons}
-          onClick={() => props.context.setState({ 
+          onClick={() => props.context.setState({
             help1: false,
             help2: false,
             help3: false,
@@ -139,9 +139,9 @@ export default function SideBar(props) {
         </div>
       </div>
       <div className={`${styles.links} ${gstyle.exdarkbgscrollbar}`}>
-        <div className={`${styles.area} ${styles.rightSpace}`}>
-          <SpotlightWithToolTip 
-            isActive={props.context.state.help1} 
+        <div className={`${styles.area} ${styles.rightSpace}`} style={{ paddingTop: '0'}}>
+          <SpotlightWithToolTip
+            isActive={props.context.state.help1}
             inheritParentBackgroundColor
             toolTipPlacement="right"
             toolTipTitle={"Find a software bug or need help?\r\n Click these links to access our tutorials,\r\n community resources, and Github issue tracker."}
@@ -156,7 +156,7 @@ export default function SideBar(props) {
               role="button"
               tabIndex={0}
               className={styles.help}
-              onClick={() => props.context.setState({ 
+              onClick={() => props.context.setState({
                 helping: !props.context.state.helping,
                 help1: !props.context.state.helping,
                 help2: false,
