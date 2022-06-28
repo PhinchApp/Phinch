@@ -20,14 +20,14 @@ export default class About extends Component {
 
     pageView('/about');
 
-    this.state = { 
-      redirect: null, 
+    this.state = {
+      redirect: null,
       hoveringClose: false,
       link1: arrow,
       link2: arrow,
       link3: arrow,
       link4: arrow,
-      link5: arrow, 
+      link5: arrow,
     };
   }
 
@@ -53,7 +53,7 @@ export default class About extends Component {
     }
   }
 
-  /*This function deals with the mouse leaving an icon (no longer hovering) and 
+  /*This function deals with the mouse leaving an icon (no longer hovering) and
   changed img src to correct svg file */
   handleMouseLeave (title) {
     switch(title) {
@@ -84,11 +84,11 @@ export default class About extends Component {
         <div className={styles.container} data-tid="container">
           <SideBar context={this} />
           <div className={`${styles.section} ${styles.right} ${styles.about} ${styles.center}`}>
-            
+
             <div
               onMouseOver={() => this.setState({hoveringClose: true})}
               onMouseOut={() => this.setState({hoveringClose: false})}
-            > 
+            >
               <Link to="/"><img className={styles.close} src={this.state.hoveringClose ? close : closeDefault} alt="Home" /></Link>
             </div>
               <h2>About Phinch</h2>
@@ -104,7 +104,7 @@ export default class About extends Component {
               <p>
                 Scientific visualization represents an innovative method towards tackling the current bottleneck in bioinformatics; in addition to giving researchers a unique approach for exploring large datasets, it stands to empower biologists with the ability to conduct powerful analyses without requiring a deep level of computational knowledge. {/* eslint-disable-line max-len */}
               </p>
-              <div className={`${styles.section} ${styles.bottom} ${styles.logos}`}>
+              <div className={` ${styles.logos}`}>
                 <img src={aps} className={styles.alogo} alt="Alfred P. Sloan Logo" />
                 <img src={uga} className={styles.ugalogo} alt="University of Georgia Logo" />
                 <img src={pitch} className={styles.pitchlogo} alt="Pitch Interactive Logo" />
