@@ -154,7 +154,7 @@ export default function SideBar(props) {
         </div>
       </div>
       <div className={` ${styles.bottomLeft}`}>
-        <Spotlight isActive = {props.context.state.helping} inheritParentBackgroundColor>
+        <Spotlight isActive = {props.context.state.helping} inheritParentBackgroundColor={false}>
           <div
               role="button"
               tabIndex={0}
