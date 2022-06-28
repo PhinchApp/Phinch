@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Spotlight from "rc-spotlight";
 import { remote } from 'electron';
 
@@ -7,7 +7,8 @@ import SpotlightWithToolTip from './SpotlightWithToolTip';
 import logo from 'images/phinch.svg';
 import arrow from 'images/arrow.svg';
 import helpGo from 'images/needHelpHP.svg';
-import helpStop from 'images/needHelpHover.svg';
+import helpHover from 'images/needHelpHover.svg';
+import helpStop from 'images/needHelpStop.svg';
 
 import help1 from 'images/help1.svg';
 import help1Hover from 'images/help1Hover.svg';
@@ -35,6 +36,8 @@ export default function SideBar(props) {
   const help2Icon = null;
   const help3Icon = null;
   const help4Icon = null;
+
+  const [helpHovered, setHelpHovered] = useState(false)
 
   // /*This function deals with when the mouse hovers over the edit icon on top right of
   // the home screen and changes img src accordingly to correct svg file */
@@ -162,8 +165,14 @@ export default function SideBar(props) {
                 help2: false,
                 help3: false,
                 help4: false})}
+
             >
-              <img src={props.context.state.helping ? helpStop : helpGo} alt="help" />
+              <img
+                onMouseOver={() => setHelpHovered(true)}
+                onMouseLeave={() => setHelpHovered(false)}
+
+                style={{ cursor: 'pointer'}}
+                src={props.context.state.helping ? helpStop : helpHovered ? helpHover : helpGo } alt="help" />
           </div>
           {helpButtons}
         </Spotlight>
