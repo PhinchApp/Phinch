@@ -18,7 +18,7 @@ function ProjectThumb(props) {
       onClick={() => props.remove(props.project)}
       onKeyPress={e => (e.key === ' ' ? props.remove(props.project) : null)}
     >
-      <img src={removeIcon} alt="remove" />
+      <img src={removeIcon} alt="remove"  style={{ verticalAlign: 'top' }} />
     </div>
   ) : null;
   const icon = isNew ? (
@@ -66,6 +66,7 @@ function ProjectThumb(props) {
   const name = (props.editing && !isNew) ? (
     <textarea
       className={styles.name}
+      style={{ height: '7em' }}
       value={props.project.summary.name}
       onChange={(e) => props.update(props.project, e.target.value)}
     />
