@@ -142,7 +142,7 @@ export default function SideBar(props) {
         </div>
       </div>
       <div className={`${styles.links} ${gstyle.exdarkbgscrollbar}`}>
-        <div className={`${styles.area} ${styles.rightSpace}`} style={{ paddingTop: '0'}}>
+        <div className={`${styles.area} ${styles.rightSpace}`} style={{ marginTop: '-1em', paddingLeft: '1em'}}>
           <SpotlightWithToolTip
             isActive={props.context.state.help1}
             inheritParentBackgroundColor
