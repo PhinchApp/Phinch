@@ -248,6 +248,7 @@ p.first::first-letter {
   font-weight: 100;
   float: left;
   margin: -3rem 0;
+  margin-left: -0.08em;
 }
 
 .about .logos {
