@@ -4,7 +4,7 @@ h1.heading {
   margin-bottom: 1rem;
   line-height: 1rem;
   font-size: 22px;
-  font-weight: 400;
+  font-weight: 600;
   letter-spacing: 4px;
   text-transform: uppercase;
 }
@@ -17,8 +17,6 @@ h1.flagshipHeading {
   line-height: 1rem;
   font-size: 22px;
   font-weight: 600;
-  letter-spacing: 4px;
-  text-transform: uppercase;
   white-space: nowrap;
 }
 
@@ -50,7 +48,6 @@ h1.flagshipHeading {
 }
 
 .flagshipLink {
-  top: 3rem;
   width: calc(100vw - 600px);
   max-width: 350px;
   min-width: 272px;
@@ -95,7 +92,7 @@ input.wide,
 .textarea,
 .warning {
   width: 440px;
-  margin: 1rem 2rem 1rem 0;
+  margin: 1rem 4rem 1rem 0;
   padding: 3rem 0.25rem 0.5rem;
   resize: none;
   border-radius: 8px;

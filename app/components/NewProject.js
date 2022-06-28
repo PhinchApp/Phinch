@@ -460,7 +460,7 @@ export default class NewProject extends Component {
               // rows="5"
               className={`${styles.flagshipLink} ${styles.right}`}
             >
-              <h1 className={styles.flagshipHeading}>SAMPLE DATASETS</h1>
+              <h1 className={styles.flagshipHeading}>Sample Datasets</h1>
               <p>Whether it's your first time here or if your just want to explore Phinch's
                 capabilities before your're ready to upload your own BIOM file, use the links
                 below to download a dataset to your local HD that you can use</p>
