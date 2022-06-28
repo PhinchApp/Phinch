@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import Spotlight from 'rc-spotlight';
 
 import SpotlightWithToolTip from './SpotlightWithToolTip';
@@ -7,6 +7,7 @@ import styles from './ProjectList.css';
 
 import removeIcon from '../images/remove.svg';
 import fsIcon from 'images/flagshipIcons.png';
+import ReactTooltip from 'react-tooltip';
 
 function ProjectThumb(props) {
   const isNew = props.project.slug === 'newproject';
@@ -26,6 +27,7 @@ function ProjectThumb(props) {
       className={`${styles.info} ${styles.new}`}
       src={props.project.thumb}
       alt={props.project.summary.name}
+      data-tip='Click to load a new file'
     />
   ) : (
     <div className={styles.info}>

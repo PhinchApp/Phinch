@@ -29,7 +29,7 @@ to accomodate keyboard only users or find another way to visually replace it */
 
 /* This can later be used to add the line to show scroll bar range */
 /* ::-webkit-scrollbar-track {
-  
+
 } */
 
 ::-webkit-scrollbar:vertical {
@@ -105,4 +105,13 @@ button:hover {
 
 button:focus {
   outline: none;
+}
+
+.__react_component_tooltip {
+  padding: 2px 6px !important;
+  font-weight: 600;
+}
+.__react_component_tooltip.show {
+  opacity: 1 !important;
+
 }
