@@ -100,9 +100,11 @@ input.wide,
   background: #FFFFFF;
   color: #E6E6E6;
   font-size: 1rem;
-  font-weight: 400;
+  font-weight: 600;
   font-family: 'Open Sans';
   text-align: center;
+  line-height: 1.3em;
+
 }
 
 .textarea {
@@ -197,11 +199,13 @@ td.label {
 
 
 .warning {
-  color: red;
+  color: #FF4A14;
   padding: 0;
   border: none;
   background: none;
   text-align: left;
+  font-size: 14px;
+  width: 540px;
 }
 
 .warning ul {

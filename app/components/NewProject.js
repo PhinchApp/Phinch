@@ -357,11 +357,8 @@ export default class NewProject extends Component {
     ) : (
       <div className={styles.error}>{this.state.error}</div>
     );
-    const indicator = (this.state.valid === 'Yes') ? (
-      <div className={`${gstyle.circle} ${styles.indicator}`} style={{ background: '#00da3e' }} />
-    ) : (
-      <div className={`${gstyle.circle} ${styles.indicator}`} style={{ background: '#ff2514' }} />
-    );
+    const indicatorBG = (this.state.valid === 'Yes') ? '#00da3e' : '#ff2514';
+    const indicator = <div className={`${gstyle.circle} ${styles.indicator}`} style={{ background: indicatorBG, transform: 'translateY(-40%)' }} />
     const table = (this.state.valid === null) ? null : (
       <table className={styles.table}>
         <tbody>

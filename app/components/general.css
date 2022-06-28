@@ -48,7 +48,7 @@
   max-width: 150px !important;
   max-height: 29px !important;
   padding: .5rem .5rem;
-  
+
 }
 
 .arrow {
@@ -60,8 +60,8 @@
 
 .circle {
   vertical-align: bottom;
-  width: 16px;
-  height: 16px;
+  width: 12px;
+  height: 12px;
   border-radius: 8px;
   border: 1px solid #262626;
   display: inline-block;
