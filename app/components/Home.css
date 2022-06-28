@@ -167,11 +167,10 @@
 .info a {
   color: #FF4A14;
   text-decoration: underline;
-  font-size: 16px;
 }
 
 .info p.vUpdate {
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 700;
   margin: .5rem 0 0 0;
   color: #FF4A14;
