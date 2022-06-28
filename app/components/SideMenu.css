@@ -13,7 +13,7 @@
   padding: 0;
   text-align: center;
   cursor: pointer;
-  border: 3px solid #333;
+  border: 3px solid #575A5C;
   transition: transform 0.5s ease-in-out;
 }
 
@@ -33,7 +33,7 @@
 
 .menu {
   color: #fff;
-  background: #333;
+  background: #575A5C;
   font-weight: 400;
   font-size: 18px;
   text-transform: uppercase;

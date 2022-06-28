@@ -108,8 +108,8 @@ export default class NewProject extends Component {
       backArrow: back,
     };
 
-    /*This sets the width of the sidemenu to 100px (same as logo) and it also has a min max set for 
-    the size of the sidebar to maximize other components screen size 
+    /*This sets the width of the sidemenu to 100px (same as logo) and it also has a min max set for
+    the size of the sidebar to maximize other components screen size
     NOTE: left min and max should be removed someday as the current formula is more effecient.*/
     this.metrics = {
       leftSidebar: "100px",
@@ -306,7 +306,7 @@ export default class NewProject extends Component {
     }
   }
 
-  /*This function deals with the mouse leaving an icon (no longer hovering) and 
+  /*This function deals with the mouse leaving an icon (no longer hovering) and
   changed img src to correct svg file */
   handleMouseLeave (button) {
     switch(button) {
@@ -423,7 +423,7 @@ export default class NewProject extends Component {
             <button
               className={styles.help}
               // on click command is still undefined outside of home page, set to issues page for now until later
-              onClick={() => shell.openExternal('https://github.com/PhinchApp/Phinch/issues')} 
+              onClick={() => shell.openExternal('https://github.com/PhinchApp/Phinch/issues')}
                   onMouseEnter={() => this.handleMouseOver("help")}
                   onMouseLeave={() => this.handleMouseLeave("help")}
                 >
@@ -444,7 +444,6 @@ export default class NewProject extends Component {
           <div className={`${styles.column}`}>
             <h1 className={styles.heading}>New Project</h1>
             <div
-              class="textarea"
               rows="3"
               className={`${styles.textarea} ${indicateDrag}`}
               onDrop={this.handleDrop}
@@ -457,14 +456,13 @@ export default class NewProject extends Component {
               <p>To start a new project, drop the file here, or use the </p>
               <p>"Browse" button below for a file on your local drive.</p>
             </div>
-            <div 
-              class="flagshipLink"
+            <div
               // rows="5"
               className={`${styles.flagshipLink} ${styles.right}`}
             >
               <h1 className={styles.flagshipHeading}>SAMPLE DATASETS</h1>
-              <p>Whether it's your first time here or if your just want to explore Phinch's 
-                capabilities before your're ready to upload your own BIOM file, use the links 
+              <p>Whether it's your first time here or if your just want to explore Phinch's
+                capabilities before your're ready to upload your own BIOM file, use the links
                 below to download a dataset to your local HD that you can use</p>
                 <button
                   className={styles.downloadFS}
@@ -476,7 +474,7 @@ export default class NewProject extends Component {
                 </button>
             </div>
             <button
-              className={`${styles.browse}`} 
+              className={`${styles.browse}`}
               onClick={this.handleOpenButton}
               onMouseEnter={() => this.handleMouseOver("browse")}
               onMouseLeave={() => this.handleMouseLeave("browse")}

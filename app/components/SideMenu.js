@@ -72,7 +72,7 @@ export default class SideMenu extends Component {
       onClick={l.action}
       onKeyDown={e => (e.key === ' ' ? l.action() : null)}
       >
-        <div 
+        <div
         className={`${styles.menuBox} ${styles.newProject}`}>
           {l.icon}
         </div>
@@ -89,7 +89,7 @@ export default class SideMenu extends Component {
       onClick={l.action}
       onKeyDown={e => (e.key === ' ' ? l.action() : null)}
       >
-        <div 
+        <div
         className={`${styles.menuBox}`}>
           {l.icon}
         </div>
@@ -99,7 +99,7 @@ export default class SideMenu extends Component {
       </div>
     );
   }
-  
+
   /*This function deals with when the mouse hovers over the edit icon on top right of
   the home screen and changes img src accordingly to correct svg file */
   handleMouseOver () {
@@ -107,8 +107,8 @@ export default class SideMenu extends Component {
       this.setState({ sideMenuToggle: arrowHover });
     }
   }
-  
-  /*This function deals with the mouse leaving an icon (no longer hovering) and 
+
+  /*This function deals with the mouse leaving an icon (no longer hovering) and
   changed img src to correct svg file */
   handleMouseLeave () {
     if(this.state.sideMenuToggle === arrowHover) {
@@ -139,7 +139,7 @@ export default class SideMenu extends Component {
           className={`${gstyle.panel} ${gstyle.noscrollbar}`}
           style={{
             backgroundColor: '#ffffff',
-            borderLeft: '6px solid #333333',
+            borderLeft: '6px solid #575A5C',
             width: this.props.leftMin,
             height: this.props.chartHeight,
             overflowY: 'hidden',
