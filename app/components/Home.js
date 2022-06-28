@@ -140,7 +140,7 @@ export default class Home extends Component {
     if(this.state.iconSRC === editOn) {
       this.setState({iconSRC: editOff});
     }
-    else 
+    else
     {
       this.setState({iconSRC: editOn});
     }
@@ -202,7 +202,7 @@ export default class Home extends Component {
     }
   }
 
-  /*This function deals with the mouse leaving an icon (no longer hovering) and 
+  /*This function deals with the mouse leaving an icon (no longer hovering) and
   changed img src to correct svg file */
   handleMouseLeave (title) {
     switch(title) {
@@ -214,7 +214,7 @@ export default class Home extends Component {
         {
           this.setState({iconSRC: editOn});
         }
-        else 
+        else
         {
           this.setState({iconSRC: editOff});
         }
@@ -289,7 +289,7 @@ export default class Home extends Component {
           </div>
         </div>
       );
-    } 
+    }
 
     const modal = (this.state.deleting || this.state.erroring) ? (
       <Modal
@@ -331,9 +331,9 @@ export default class Home extends Component {
           <SideBar context={this} />
           <div className={`${styles.section} ${styles.right}`}>
             <SpotlightWithToolTip
-              isActive = {this.state.help4} 
-              inheritParentBackgroundColor
-              toolTipPlacement="left"
+              isActive = {this.state.help4}
+              inheritParentBackgroundColor={false}
+              toolTipPlacement="leftTop"
               toolTipTitle={"Click the edit button to edit the project name or delete the file from the Phinch app."}
               style={{position: "absolute"}}
             >

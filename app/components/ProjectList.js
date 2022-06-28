@@ -74,10 +74,10 @@ function ProjectThumb(props) {
   );
 
   const returnValue = isNew ? (
-    <SpotlightWithToolTip 
-    isActive={props.help2} 
+    <SpotlightWithToolTip
+    isActive={props.help2}
     inheritParentBackgroundColor
-    toolTipPlacement="bottomRight"
+    toolTipPlacement="bottomLeft"
     toolTipTitle={"Click “New Project” to load a new BIOM-formatted data file and start a new project."}
     >
       <div
@@ -93,16 +93,19 @@ function ProjectThumb(props) {
       </div>
     </SpotlightWithToolTip>
   ) : (
-    <SpotlightWithToolTip 
-    isActive={props.help3 && props.index<2} 
+    <SpotlightWithToolTip
+    isActive={props.help3 && props.index<2}
     inheritParentBackgroundColor
     toolTipPlacement="bottomLeft"
-    toolTipTitle={"Each saved project will be displayed with file size" +
-                  "(in Mb), number of biological samples, and" +
-                  "number of observations (number of ASVs, OTUs, Contigs, etc.)."+
-                  "This information will be calculated by Phinch during file"+
-                  "upload. The saved project is only saved locally on the user’s" +
-                  "hard drive (never uploaded to the cloud)."}
+    overlayStyle={{ maxWidth: '380px'}}
+    toolTipTitle={<div>
+      Each saved project will be displayed with file size{' '}
+      (in Mb), number of biological samples, and{' '}
+      number of observations (number of ASVs, OTUs, Contigs, etc.).{' '}
+      This information will be calculated by Phinch during file upload.
+      <br /><br />
+      The saved project is only saved locally on the user’s hard drive (never uploaded to the cloud).
+      </div>}
     >
       <div
         key={`${props.project.slug}-${props.index}`}
