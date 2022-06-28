@@ -35,7 +35,7 @@
       <g transform="matrix(1, 0, 0, 1, 141.84, 211.54)" filter="url(#Rectangle_70)">
         <rect id="Rectangle_70-2" data-name="Rectangle 70" width="195.535" height="17.828" rx="3" transform="translate(1 39.46)" fill="#fff"/>
       </g>
-      <text id="Edit_lename_Delete_project" data-name="Edit ﬁle name / Delete project" transform="translate(149.358 264.433)" font-size="13" font-family="OpenSans-Semibold, Open Sans" font-weight="600"><tspan x="0" y="0">Edit ﬁlename / Delete project</tspan></text>
+      <text id="Edit_lename_Delete_project" data-name="Edit ﬁle name / Delete project" transform="translate(147 264.433)" font-size="13" font-family="OpenSans-Semibold, Open Sans" font-weight="600"><tspan x="0" y="0">Edit file name / Delete project</tspan></text>
     </g>
   </g>
 </svg>
