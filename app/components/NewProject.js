@@ -390,15 +390,9 @@ export default class NewProject extends Component {
         r: 0, g: 0, b: 0, a: 0.25
       };
     } else if (this.state.valid !== null) {
-      if (this.state.valid === 'Yes') {
-        microbeColor = {
-          r: 0, g: 255, b: 0, a: 0.5
-        };
-      } else {
-        microbeColor = {
-          r: 255, g: 0, b: 0, a: 0.25
-        };
-      }
+      microbeColor = {
+        r: 0, g: 0, b: 0, a: 0.25
+      };
     }
     return (
       <div className={gstyle.container}>
