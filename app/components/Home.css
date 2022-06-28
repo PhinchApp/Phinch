@@ -20,8 +20,8 @@
   vertical-align: top;
   margin: 12px 6px;
   padding: 0;
-  width: calc(100vw - 660px);
-  height: 1.5px;
+  width: calc(100vw - 640px);
+  height: 1px;
   background: #001226;
 }
 
@@ -31,7 +31,7 @@
   margin: 12px 6px;
   padding: 0;
   width: calc(100vw - 791.99px);
-  height: 1.5px;
+  height: 1px;
   background: #001226;
 }
 
