@@ -26,7 +26,7 @@ export default function SpotlightWithToolTip({ isActive, toolTipPlacement="left"
             }}
             overlayInnerStyle={overlayInnerStyle}
         >
-            <Spotlight isActive={isActive} style={{boxShadow: "0 0 10px #9ecaed", borderRadius: '0.5em'}} {...rest}>
+            <Spotlight isActive={isActive} backdropOpacity="0.7" backdropColor='#2D2F31' style={{boxShadow: "0 0 10px #9ecaed", borderRadius: '0.5em'}} {...rest}>
                 {children}
             </Spotlight>
         </Tooltip>
