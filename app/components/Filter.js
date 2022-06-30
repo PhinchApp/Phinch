@@ -6,6 +6,8 @@ import _debounce from 'lodash.debounce';
 import _cloneDeep from 'lodash.clonedeep';
 
 import stackedbar from 'images/stackedbar.svg';
+import bubblegraph from 'images/bubblegraph.svg';
+import sankeygraph from 'images/sankeygraph.svg';
 import logo from 'images/phinch.svg';
 import minus from 'images/minus.svg';
 import plus from 'images/plus.svg';
@@ -233,8 +235,8 @@ export default class Filter extends Component {
         name: 'Sample Name',
       },
       {
-        id: 'reads',
-        name: 'Sequence Reads',
+        id: 'observations',
+        name: 'Observations',
       },
     ];
     return columns.map(c => {
@@ -592,6 +594,9 @@ export default class Filter extends Component {
         if(this.state.helpButton === needHelp) {
           this.setState({helpButton: needHelpHover});
         }
+      case "viewViz":
+        const element = document.getElementById("stackedgraph");
+        element.style.backgroundColor = "#F09E6A";
     }
   }
 
@@ -603,6 +608,9 @@ export default class Filter extends Component {
         if(this.state.helpButton === needHelpHover) {
           this.setState({helpButton: needHelp});
         }
+      case "viewViz":
+        const element = document.getElementById("stackedgraph");
+        element.style.backgroundColor = "#001226";
     }
   }
 
@@ -680,7 +688,15 @@ export default class Filter extends Component {
             <div className={styles.visRowLabel}>Visualization Type</div>
             <div className={styles.visOption}>
               <img src={stackedbar} alt="Stacked bargraph" />
-              <div className={styles.visOptionLabel}>Stacked bargraph</div>
+              <div className={styles.visOptionLabel} id="stackedgraph" >Stacked Bargraph</div>
+            </div>
+            <div className={styles.futureVis}>
+              <img src={bubblegraph} alt="Bubble Graph" id="bubblegraph" />
+              <div className={styles.visOptionLabel}>Bubble Graph</div>
+            </div>
+            <div className={styles.futureVis}>
+              <img src={sankeygraph} alt="Sankey bargraph" id="sankeygraph" />
+              <div className={styles.visOptionLabel}>Sankey graph</div>
             </div>
             <div
               role="button"
@@ -688,6 +704,8 @@ export default class Filter extends Component {
               className={`${gstyle.button} ${styles.button}`}
               onClick={viewVisualization}
               onKeyPress={e => (e.key === ' ' ? viewVisualization() : null)}
+              onMouseEnter={() => this.handleMouseOver("viewViz")}
+              onMouseLeave={() => this.handleMouseLeave("viewViz")}
             >
               View Visualization
             </div>

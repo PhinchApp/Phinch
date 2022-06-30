@@ -1,1 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="139.71" height="25.18" viewBox="0 0 139.71 25.18"><title>Asset 7</title><g id="Layer_2" data-name="Layer 2"><g id="content"><rect id="Salmonella" x="0.5" y="0.5" width="71.35" height="24.18" style="fill:gray;stroke:#333"/><rect id="Salmonella-2" data-name="Salmonella" x="71.85" y="0.5" width="34.75" height="24.18" style="fill:#999;stroke:#333"/><rect id="Salmonella-3" data-name="Salmonella" x="106.6" y="0.5" width="13.17" height="24.18" style="fill:#666;stroke:#333"/><rect id="Salmonella-4" data-name="Salmonella" x="119.77" y="0.5" width="10.97" height="24.18" style="fill:#b2b2b2;stroke:#333"/><rect id="Salmonella-5" data-name="Salmonella" x="130.73" y="0.5" width="8.47" height="24.18" style="fill:#ccc;stroke:#333"/></g></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="139.707" height="25.181" viewBox="0 0 139.707 25.181">
+  <g id="Component_39_1" data-name="Component 39 – 1" transform="translate(0.5 0.5)">
+    <rect id="Rectangle_783" data-name="Rectangle 783" width="71.348" height="24.178" fill="gray" stroke="#575a5c" stroke-width="1"/>
+    <rect id="Rectangle_785" data-name="Rectangle 785" width="34.755" height="24.178" transform="translate(71.349 0.001)" fill="#999" stroke="#575a5c" stroke-width="1"/>
+    <rect id="Rectangle_787" data-name="Rectangle 787" width="13.168" height="24.178" transform="translate(106.101 0.001)" fill="#888e8d" stroke="#575a5c" stroke-width="1"/>
+    <rect id="Rectangle_789" data-name="Rectangle 789" width="10.967" height="24.178" transform="translate(119.265 0.003)" fill="#b2b2b2" stroke="#575a5c" stroke-width="1"/>
+    <rect id="Rectangle_791" data-name="Rectangle 791" width="8.475" height="24.178" transform="translate(130.232 0.002)" fill="#ccc" stroke="#575a5c" stroke-width="1"/>
+  </g>
+</svg>

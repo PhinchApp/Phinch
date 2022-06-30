@@ -74,7 +74,7 @@
   vertical-align: top;
   background: #575a5c;
   width: calc(100% - 100px);
-  height: 130px;
+  /* height: 130px; */
   overflow-y: hidden;
   z-index: 20;
 }

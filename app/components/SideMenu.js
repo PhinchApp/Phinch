@@ -64,41 +64,41 @@ export default class SideMenu extends Component {
 
   constructItem = (l) => {
     return (l.id == "back") ? (
-      <div
-      key={l.id}
-      role="button"
-      tabIndex={0}
-      className={styles.menuItem}
-      onClick={l.action}
-      onKeyDown={e => (e.key === ' ' ? l.action() : null)}
-      >
+    <div
+    key={l.id}
+    role="button"
+    tabIndex={0}
+    className={styles.menuItem}
+    onClick={l.action}
+    onKeyDown={e => (e.key === ' ' ? l.action() : null)}
+    >
         <div
         className={`${styles.menuBox} ${styles.newProject}`}>
-          {l.icon}
-        </div>
-        <span className={styles.menuItemLabel}>
-          {l.name}
-        </span>
+        {l.icon}
       </div>
-    ) : (
-      <div
-      key={l.id}
-      role="button"
-      tabIndex={0}
-      className={styles.menuItem}
-      onClick={l.action}
-      onKeyDown={e => (e.key === ' ' ? l.action() : null)}
-      >
+      <span className={styles.menuItemLabel}>
+        {l.name}
+      </span>
+    </div>
+  ) : (
+    <div
+    key={l.id}
+    role="button"
+    tabIndex={0}
+    className={styles.menuItem}
+    onClick={l.action}
+    onKeyDown={e => (e.key === ' ' ? l.action() : null)}
+    >
         <div
         className={`${styles.menuBox}`}>
-          {l.icon}
-        </div>
-        <span className={styles.menuItemLabel}>
-          {l.name}
-        </span>
+        {l.icon}
       </div>
-    );
-  }
+      <span className={styles.menuItemLabel}>
+        {l.name}
+      </span>
+    </div>
+  );
+}
 
   /*This function deals with when the mouse hovers over the edit icon on top right of
   the home screen and changes img src accordingly to correct svg file */
