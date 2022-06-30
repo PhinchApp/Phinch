@@ -58,7 +58,9 @@ export default function SideBar(props) {
   //       break;
   //   }
   // }
+  console.log(props.context)
 
+  const hideStep4 = props.context.state.projects.length === 1
   let helpButtons = null;
   if(props.context.state.helping) {
     helpButtons = (
@@ -104,24 +106,25 @@ export default function SideBar(props) {
         >
           <img src={props.context.state.help3 ? help3Hover : help3} alt="help3" />
         </div>
-        <div
-          role="button"
-          tabIndex={0}
-          className={styles.helpIcons}
-          onClick={() => props.context.setState({
-            help1: false,
-            help2: false,
-            help3: false,
-            help4: !props.context.state.help4})}
-          //onMouseEnter={() => handleMouseOver("help4")}
-          //onMouseLeave={() => handleMouseLeave("help4")}
-        >
-          <img src={props.context.state.help4 ? help4Hover : help4} alt="help4" />
-        </div>
+        {hideStep4 ? null :
+          <div
+            role="button"
+            tabIndex={0}
+            className={styles.helpIcons}
+            onClick={() => props.context.setState({
+              help1: false,
+              help2: false,
+              help3: false,
+              help4: !props.context.state.help4})}
+            //onMouseEnter={() => handleMouseOver("help4")}
+            //onMouseLeave={() => handleMouseLeave("help4")}
+          >
+            <img src={props.context.state.help4 ? help4Hover : help4} alt="help4" />
+          </div>
+        }
       </div>
     );
   }
-
   return (
     <div className={`${styles.section} ${styles.left}`}>
       <div className={`${styles.area} ${styles.info}`}>
