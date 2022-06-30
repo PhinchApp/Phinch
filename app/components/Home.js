@@ -324,7 +324,6 @@ export default class Home extends Component {
       view: this.view,
       type: 'projects',
     });
-    const hideStep4 = this.state.projects.length === 1
     return (
       <div>
         <div className={styles.container} data-tid="container">
@@ -332,7 +331,7 @@ export default class Home extends Component {
           <SideBar context={this} />
           <div className={`${styles.section} ${styles.right}`}>
             <SpotlightWithToolTip
-              isActive = {hideStep4 ? this.state.help3 : this.state.help4}
+              isActive = {this.state.help4}
               inheritParentBackgroundColor={false}
               toolTipPlacement="leftTop"
               toolTipTitle={"Click the edit button to edit the project name or delete the file from the Phinch app."}
