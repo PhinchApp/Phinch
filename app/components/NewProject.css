@@ -45,6 +45,8 @@ h1.flagshipHeading {
   padding: 2rem 6rem;
   background: transparent;
   color: #808080;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .flagshipLink {
@@ -91,7 +93,7 @@ h1.flagshipHeading {
 input.wide,
 .textarea,
 .warning {
-  width: 440px;
+  width: 400px;
   margin: 1rem 4rem 1rem 0;
   padding: 3rem 0.25rem 0.5rem;
   resize: none;
