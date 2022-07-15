@@ -204,6 +204,7 @@
   background: white;
   color: #001226;
   padding: .5rem 1.5rem;
+  overflow-y: auto;
 }
 
 .about h2 {

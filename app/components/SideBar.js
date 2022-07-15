@@ -60,7 +60,7 @@ export default function SideBar(props) {
   // }
   console.log(props.context)
 
-  const hideStep4 = props.context.state.projects.length === 1
+  const hideStep4 = props.context.state.projects ? props.context.state.projects.length === 1 : false
   let helpButtons = null;
   if(props.context.state.helping) {
     helpButtons = (
