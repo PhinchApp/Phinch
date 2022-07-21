@@ -4,6 +4,7 @@ import _clonedeep from 'lodash.clonedeep';
 import Spotlight from "rc-spotlight";
 import 'antd/dist/antd.css';
 import { Tooltip } from 'antd';
+import ReactTooltip from 'react-tooltip';
 
 import editOff from 'images/edit-off.svg';
 import editOn from 'images/edit-on.svg';
@@ -238,6 +239,7 @@ export default class Home extends Component {
   }
 
   render() {
+    console.log("render() method");
     if (this.state.redirect !== null && this.state.redirect !== '/') {
       return <Redirect push to={this.state.redirect} />;
     }
@@ -308,23 +310,23 @@ export default class Home extends Component {
         data={[modalContent]}
       />
     ) : null;
-    const projects = ProjectList({
-      projectList: this.state.projects,
-      view: this.view,
-      updateName: this.updateName,
-      remove: this.remove,
-      editing: this.state.editing,
-      help2: this.state.help2,
-      help3: this.state.help3,
-      iconSRC: this.state.iconSRC,
-      type: 'projects',
-    });
+    const projects = <ProjectList
+      projectList= { this.state.projects }
+      view= { this.view }
+      updateName= { this.updateName }
+      remove= { this.remove }
+      editing= { this.state.editing }
+      help2= { this.state.help2 }
+      help3= { this.state.help3 }
+      iconSRC= { this.state.iconSRC }
+      type= 'projects'
+      />;
     const flagshipProjects = FSProjectList({
       projectList: this.state.fsProjects,
       view: this.view,
       type: 'projects',
     });
-    const hideStep4 = this.state.projects.length === 1
+    const hideStep4 = this.state.projects.length === 1;
     return (
       <div>
         <div className={styles.container} data-tid="container">

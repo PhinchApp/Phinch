@@ -173,7 +173,6 @@
   width: 16px;
   height: 16px;
   border-radius: 2px;
-  background-color: #666;
 }
 
 .checkmark:hover {
@@ -201,4 +200,5 @@
 
 .checkbox input:checked ~ .checkmark::after {
   display: block;
+  background-color: red;
 }

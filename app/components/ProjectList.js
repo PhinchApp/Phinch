@@ -1,4 +1,4 @@
-import React, { Component, useEffect } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import Spotlight from 'rc-spotlight';
 
 import SpotlightWithToolTip from './SpotlightWithToolTip';
@@ -149,6 +149,7 @@ function fsThumb(props) {
 }
 
 export function ProjectList(props) {
+  const [newProjectTT, setNewProjectTT] = useState(false)
   const editClass = props.editing ? styles.edit : '';
   const projects = props.projectList.map((p, i) => ProjectThumb({
     project: p,
@@ -160,8 +161,13 @@ export function ProjectList(props) {
     update: props.updateName,
     remove: props.remove,
   }));
+
   return (
-    <div className={`${styles.projects} ${editClass}`}>
+    <div 
+    className={`${styles.projects} ${editClass}`}
+    onMouseOver={() => ReactTooltip.rebuild()}
+    onMouseLeave={() => setNewProjectTT(false)}
+    >
       {projects}
     </div>
   );

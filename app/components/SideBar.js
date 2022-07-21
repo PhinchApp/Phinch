@@ -37,7 +37,7 @@ export default function SideBar(props) {
   const help3Icon = null;
   const help4Icon = null;
 
-  const [helpHovered, setHelpHovered] = useState(false)
+  const [helpHovered, setHelpHovered] = useState(false);
 
   // /*This function deals with when the mouse hovers over the edit icon on top right of
   // the home screen and changes img src accordingly to correct svg file */
@@ -58,9 +58,10 @@ export default function SideBar(props) {
   //       break;
   //   }
   // }
-  console.log(props.context)
+  console.log(props.context);
 
-  const hideStep4 = props.context.state.projects ? props.context.state.projects.length === 1 : false
+  const projects = [props.context.state.projects];
+  const hideStep4 = projects.length === 1;
   let helpButtons = null;
   if(props.context.state.helping) {
     helpButtons = (

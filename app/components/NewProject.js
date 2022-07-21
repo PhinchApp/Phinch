@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { remote, shell } from 'electron';
+import ReactTooltip from 'react-tooltip';
 
 import logo from 'images/phinch.svg';
 import back from 'images/back.svg';
@@ -125,6 +126,7 @@ export default class NewProject extends Component {
         name: 'Back',
         action: () => {
           this.setState({ redirect: '/Home' });
+          this.rebuildTooltip();
         },
         icon: <img src={this.state.backArrow} alt="back-arrow"/>,
       },
@@ -169,6 +171,10 @@ export default class NewProject extends Component {
     this.metrics.leftSidebar = showLeftSidebar ?
       this.metrics.left.max : this.metrics.left.min;
     this.setState({ showLeftSidebar });
+  }
+
+  rebuildTooltip() {
+    console.log("render() method");
   }
 
   updateSummary(project) {
