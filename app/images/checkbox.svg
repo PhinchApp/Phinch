@@ -1,0 +1,7 @@
+<svg id="check_box" data-name="check box" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12">
+  <rect id="Rectangle_972" data-name="Rectangle 972" width="12" height="12" rx="2" fill="#f09e6a"/>
+  <g id="Group_1535" data-name="Group 1535" transform="translate(-25 -3144.629)">
+    <path id="Path_574" data-name="Path 574" d="M.812,0A.813.813,0,0,0,0,.812L-.025,4.838a.812.812,0,0,0,1.624,0L1.624.812A.813.813,0,0,0,.812,0" transform="translate(31.034 3153.672) rotate(-135)" fill="#fdfdfa"/>
+    <path id="Path_659" data-name="Path 659" d="M.837,5.649a.813.813,0,0,1-.812-.812L0,.811a.812.812,0,0,1,1.624,0l.025,4.026a.813.813,0,0,1-.812.812" transform="translate(26.953 3149.695) rotate(-45)" fill="#fdfdfa"/>
+  </g>
+</svg>
