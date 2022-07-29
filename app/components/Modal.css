@@ -11,6 +11,10 @@
   z-index: 5;
 }
 
+.toggle:hover {
+  background-color: #F09E6A !important;
+}
+
 .toggle.shown {
   background-color: #F09E6A !important;
 }
@@ -41,7 +45,6 @@
   border: 2px solid #333;
   background: #1a1a1a;
   color: #808080;
-  z-index: 5;
 }
 
 .modal .title {

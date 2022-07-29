@@ -154,6 +154,7 @@ export default function SideBar(props) {
             inheritParentBackgroundColor
             toolTipPlacement="right"
             toolTipTitle={"Find a software bug or need help?\r\n Click these links to access our tutorials,\r\n community resources, and Github issue tracker."}
+            overlayStyle={{zIndex: '1001'}}
             >
             {links}
           </SpotlightWithToolTip>

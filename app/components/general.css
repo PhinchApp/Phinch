@@ -20,6 +20,7 @@
   box-sizing: border-box;
   display: inline-block;
   font-size: 0.75rem;
+  font-weight: 600;
   width: 100%;
   margin: 0;
   padding: 0;
@@ -76,7 +77,6 @@
   width: calc(100% - 100px);
   /* height: 130px; */
   overflow-y: hidden;
-  z-index: 20;
 }
 
 .heading {
@@ -113,19 +113,34 @@
 }
 
 .close {
-  display: inline-block;
-  cursor: pointer;
-  font-weight: 200;
-  color: #b3b2b3;
-  background: #666;
-  width: 1rem;
-  height: 1rem;
-  border-radius: 2px;
-  text-align: center;
   float: right;
-  font-size: 14px;
-  line-height: 14px;
-  vertical-align: middle;
+  cursor: pointer;
+  margin: auto;
+  width: 22px;
+  height: 22px;
+  border-color: #F09E6A;
+  border-style: solid;
+  border-width: 1px;
+  font-size: 24px;
+  text-align: center;
+  border-radius: 100px;
+}
+
+.close img {
+  width: 64% !important;
+  padding-bottom: 22px !important;
+}
+
+.close:hover img {
+  visibility: hidden;
+}
+
+.close:hover {
+  border-color: #fff;
+  background-position: center;
+  background-color: #F09E6A;
+  background-image: url("images/whiteX.svg");
+  background-repeat: no-repeat;
 }
 
 .grey {
@@ -195,7 +210,6 @@
   background-position: center;
   background-image: url("images/checkbox.svg");
   background-repeat: no-repeat;
-  opacity: 70%;
 }
 
 /* .checkmark:after {

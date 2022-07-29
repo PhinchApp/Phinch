@@ -2,6 +2,12 @@ import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { FixedSizeList as List } from 'react-window';
 
+import Spotlight from "rc-spotlight";
+import 'antd/dist/antd.css';
+import { Tooltip } from 'antd';
+import ReactTooltip from 'react-tooltip';
+import SpotlightWithToolTip from './SpotlightWithToolTip';
+
 import _debounce from 'lodash.debounce';
 import _cloneDeep from 'lodash.clonedeep';
 
@@ -15,6 +21,25 @@ import back from 'images/back.svg';
 import save from 'images/save.svg';
 import needHelp from 'images/needHelp.svg';
 import needHelpHover from 'images/needHelpHover.svg';
+import closeHelp from 'images/closeHelpHP.svg';
+
+import help1 from 'images/help1.svg';
+import help1Hover from 'images/help1Hover.svg';
+import help2 from 'images/help2.svg';
+import help2Hover from 'images/help2Hover.svg';
+import help3 from 'images/help3.svg';
+import help3Hover from 'images/help3Hover.svg';
+import help4 from 'images/help4.svg';
+import help4Hover from 'images/help4Hover.svg';
+import help5 from 'images/help5.svg';
+import help5Hover from 'images/help5Hover.svg';
+import help6 from 'images/help6.svg';
+import help6Hover from 'images/help6Hover.svg';
+import help7 from 'images/help7.svg';
+import help7Hover from 'images/help7Hover.svg';
+import help8 from 'images/help8.svg';
+import help8Hover from 'images/help8Hover.svg';
+
 
 import {
   updateFilters,
@@ -68,10 +93,19 @@ export default class Filter extends Component {
       result: null,
       loading: false,
       redirect: null,
-      showLeftSidebar: false,
+      showLeftSidebar: true,
       sortReverse: false,
       sortKey: 'biomid',
       helpButton: needHelp,
+      helping: false,
+      help1: false,
+      help2: false,
+      help3: false,
+      help4: false,
+      help5: false,
+      help6: false,
+      help7: false,
+      help8: false,
     };
 
     this.filters = DataContainer.getFilters();
@@ -93,9 +127,9 @@ export default class Filter extends Component {
 
     this.columnWidths = {
       order: 0.04,
-      phinchName: 0.25,
+      phinchName: 0.20,
       biomid: 0.09,
-      sampleName: 0.30,
+      sampleName: 0.20,
       reads: 0.20,
     };
 
@@ -173,6 +207,7 @@ export default class Filter extends Component {
     this.redirectToVis = this.redirectToVis.bind(this);
     this.updatePhinchName = this.updatePhinchName.bind(this);
     this.updateDimensions = this.updateDimensions.bind(this);
+    this.helpButtonManager = this.helpButtonManager.bind(this);
   }
 
   componentDidMount() {
@@ -461,6 +496,33 @@ export default class Filter extends Component {
     });
   }
 
+  renderModal() {
+    return (
+      <Modal
+        show={this.state.help7}
+        spotlight={this.state.help7 && (this.state.deleted.length > 0)}
+        buttonTitle="Archived Samples"
+        modalTitle="Archived Samples"
+        buttonPosition={{
+          position: 'absolute',
+          bottom: 0,
+          left: this.state.width - (this.metrics.tableWidth + (this.metrics.padding / 2)),
+        }}
+        modalPosition={{
+          position: 'absolute',
+          bottom: this.metrics.padding * 2,
+          left: this.state.width - (this.metrics.tableWidth + (this.metrics.padding / 2)),
+          width: this.metrics.tableWidth,
+        }}
+        useList
+        data={this.state.deleted}
+        row={this.row}
+        dataKey="sampleName"
+        itemHeight={28}
+        badge
+        />);
+  }
+
   updatePhinchName(e, r) {
     const names = _cloneDeep(this.state.names);
     const data = this.state.data.map((d) => {
@@ -586,6 +648,115 @@ export default class Filter extends Component {
     }
   }
 
+  helpButtonManager = (button) => {
+    (button == "help1" ? this.setState({ help1: !this.state.help1 }) : this.setState({ help1: false }));
+    (button == "help2" ? this.setState({ help2: !this.state.help2 }) : this.setState({ help2: false }));
+    (button == "help3" ? this.setState({ help3: !this.state.help3 }) : this.setState({ help3: false }));
+    (button == "help4" ? this.setState({ help4: !this.state.help4 }) : this.setState({ help4: false }));
+    (button == "help5" ? this.setState({ help5: !this.state.help5 }) : this.setState({ help5: false }));
+    (button == "help6" ? this.setState({ help6: !this.state.help6 }) : this.setState({ help6: false }));
+    (button == "help7" ? this.setState({ help7: !this.state.help7 }) : this.setState({ help7: false }));
+    (button == "help8" ? this.setState({ help8: !this.state.help8 }) : this.setState({ help8: false }));
+    (button == "closeHelp" ? this.setState({ helping: false }) : '');
+  }
+
+  makeHelpButtons() {
+    return (
+      <div className={styles.helpIcons}>
+        <div
+        role="button"
+        className={styles.helpIcons}
+        onClick={() => {this.helpButtonManager("closeHelp"); this.forceUpdate();} }
+        >
+          <img src={closeHelp} alt="close-walkthrough" />
+        </div>
+
+        <div 
+        role="button"
+        tabIndex={0}
+        className={styles.helpIcons}
+        onClick={() => this.helpButtonManager("help1")}
+        >
+          <img src={this.state.help1 ? help1Hover : help1} />
+        </div>
+
+        <div 
+        role="button"
+        tabIndex={0}
+        className={styles.helpIcons}
+        onClick={() => this.helpButtonManager("help2")}
+        >
+          <img src={this.state.help2 ? help2Hover : help2} />
+        </div>
+
+        <div 
+        role="button"
+        tabIndex={0}
+        className={styles.helpIcons}
+        onClick={() => this.helpButtonManager("help3")}
+        >
+          <img src={this.state.help3 ? help3Hover : help3} />
+        </div>
+
+        <div 
+        role="button"
+        tabIndex={0}
+        className={styles.helpIcons}
+        onClick={() => this.helpButtonManager("help4")}
+        >
+          <img src={this.state.help4 ? help4Hover : help4} />
+        </div>
+
+        <div 
+        role="button"
+        tabIndex={0}
+        className={styles.helpIcons}
+        onClick={() => this.helpButtonManager("help5")}
+        
+        >
+          <img src={this.state.help5 ? help5Hover : help5} />
+        </div>
+
+        <div 
+        role="button"
+        tabIndex={0}
+        className={styles.helpIcons}
+        onClick={() => this.helpButtonManager("help6")}
+        >
+          <img src={this.state.help6 ? help6Hover : help6} />
+        </div>
+
+        <SpotlightWithToolTip
+          isActive={this.state.help7 && (this.state.deleted.length == 0)} 
+          toolTipPlacement="top"
+          toolTipTitle={<div>
+            To explore the 'Archived Samples' feature more, please use the{' '}
+            navigation bar in the bottom left to go back to feature 6. {' '}
+            Once there delete at least 1 sample row by clicking the 'X' on the far right{' '}
+            of the rows that is visible when the row is hovered. Then return to feature 7. </div>}
+          >
+          <div 
+          role="button"
+          tabIndex={0}
+          className={styles.helpIcons}
+          onClick={() => {this.helpButtonManager("help7"); this.renderModal();}}
+          >
+            <img src={this.state.help7 ? help7Hover : help7} />
+          </div>
+        </SpotlightWithToolTip>
+
+        <div 
+        role="button"
+        tabIndex={0}
+        className={styles.helpIcons}
+        onClick={() => {this.helpButtonManager("help8"); this.forceUpdate();}}
+        >
+          <img src={this.state.help8 ? help8Hover : help8} />
+        </div>
+      </div>
+    );
+  }
+
   /*This function deals with when the mouse hovers over the browse icon on top right of
    and changes img src accordingly to correct svg file */
    handleMouseOver (button) {
@@ -594,6 +765,7 @@ export default class Filter extends Component {
         if(this.state.helpButton === needHelp) {
           this.setState({helpButton: needHelpHover});
         }
+        break;
       case "viewViz":
         const element = document.getElementById("stackedgraph");
         element.style.backgroundColor = "#F09E6A";
@@ -608,6 +780,7 @@ export default class Filter extends Component {
         if(this.state.helpButton === needHelpHover) {
           this.setState({helpButton: needHelp});
         }
+        break;
       case "viewViz":
         const element = document.getElementById("stackedgraph");
         element.style.backgroundColor = "#001226";
@@ -616,6 +789,7 @@ export default class Filter extends Component {
 
   render() {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
+    const helpButtons = this.state.helping ? this.makeHelpButtons() : '';
 
     if (redirect) {
       return redirect;
@@ -672,127 +846,200 @@ export default class Filter extends Component {
             <button
               className={styles.help}
               // on click command is still undefined outside of home page, set to issues page for now until later
-              onClick={() => shell.openExternal('https://github.com/PhinchApp/Phinch/issues')} 
-                  onMouseEnter={() => this.handleMouseOver("help")}
-                  onMouseLeave={() => this.handleMouseLeave("help")}
-                >
+              onClick={() => this.setState({ showLeftSidebar: true, helping: true, help1: true})} 
+              onMouseEnter={() => this.handleMouseOver("help")}
+              onMouseLeave={() => this.handleMouseLeave("help")}
+              >
                 <img src={this.state.helpButton} alt="needHelp" />
             </button>
           </div>
-          <div className={gstyle.header}>
-            <Summary
-              summary={this.state.summary}
-              observations={this.state.observations}
-              datalength={this.state.data.length}
-            />
-            <div className={styles.visRowLabel}>Visualization Type</div>
-            <div className={styles.visOption}>
-              <img src={stackedbar} alt="Stacked bargraph" />
-              <div className={styles.visOptionLabel} id="stackedgraph" >Stacked Bargraph</div>
-            </div>
-            <div className={styles.futureVis}>
-              <img src={bubblegraph} alt="Bubble Graph" id="bubblegraph" />
-              <div className={styles.visOptionLabel}>Bubble Graph</div>
-            </div>
-            <div className={styles.futureVis}>
-              <img src={sankeygraph} alt="Sankey bargraph" id="sankeygraph" />
-              <div className={styles.visOptionLabel}>Sankey graph</div>
-            </div>
-            <div
-              role="button"
-              tabIndex={0}
-              className={`${gstyle.button} ${styles.button}`}
-              onClick={viewVisualization}
-              onKeyPress={e => (e.key === ' ' ? viewVisualization() : null)}
-              onMouseEnter={() => this.handleMouseOver("viewViz")}
-              onMouseLeave={() => this.handleMouseLeave("viewViz")}
+          <SpotlightWithToolTip
+            isActive={this.state.help3}
+            inheritParentBackgroundColor={false}
+            toolTipPlacement="bottomRight"
+            toolTipTitle={<div>
+              The uploaded data file can be explored through a number{' '} 
+              of distinct visualization types. 
+              <br /><br />
+              Click on one of the listed options to select that visualization type,{' '}
+              and then click “View Visualization” to see the graphs made by the option{' '}
+              you choose.
+            </div>}
             >
-              View Visualization
-            </div>
-            <div className={styles.headingRow}>
+            <div className={gstyle.header}>
+              <Summary
+                summary={this.state.summary}
+                observations={this.state.observations}
+                datalength={this.state.data.length}
+                helping={this.state.help2}
+                />
+              <div className={styles.visRowLabel}>Visualization Type</div>
+              <div className={styles.visOption}>
+                <img src={stackedbar} alt="Stacked bargraph" />
+                <div className={styles.visOptionLabel} id="stackedgraph" >Stacked Bargraph</div>
+              </div>
+              <div className={styles.futureVis}>
+                <img src={bubblegraph} alt="Bubble Graph" id="bubblegraph" />
+                <div className={styles.visOptionLabel}>Bubble Graph</div>
+              </div>
+              <div className={styles.futureVis}>
+                <img src={sankeygraph} alt="Sankey bargraph" id="sankeygraph" />
+                <div className={styles.visOptionLabel}>Sankey graph</div>
+              </div>
               <div
-                className={styles.spacer}
-                style={{
-                  width: (
-                    this.metrics.leftSidebar + this.metrics.filterWidth + (
-                      this.metrics.padding * 4
-                    )
-                  ) - 100,
-                }}
-              />
-              {this.renderHeader()}
+                role="button"
+                tabIndex={0}
+                className={`${gstyle.button} ${styles.button}`}
+                onClick={viewVisualization}
+                onKeyPress={e => (e.key === ' ' ? viewVisualization() : null)}
+                onMouseEnter={() => this.handleMouseOver("viewViz")}
+                onMouseLeave={() => this.handleMouseLeave("viewViz")}
+                >
+                View Visualization
+              </div>
+              <SpotlightWithToolTip
+                isActive={this.state.help6}
+                toolTipPlacement="bottomRight"
+                  >
+                  <div className={styles.headingRow}>
+                    <div
+                      className={styles.spacer}
+                      style={{
+                        width: (
+                          this.metrics.leftSidebar + this.metrics.filterWidth + (
+                            this.metrics.padding * 4
+                            )
+                            ) - 100,
+                          }}
+                          />
+                    {this.renderHeader()}
+                  </div>
+                </SpotlightWithToolTip>
             </div>
-          </div>
+          </SpotlightWithToolTip>  
         </div>
-        <div style={{ position: 'relative', backgroundColor: '#ffffff', color: '#808080' }}>
+        <div style={{ position: 'inherit', backgroundColor: '#ffffff', color: '#808080' }}>
           <SideMenu
             showLeftSidebar={this.state.showLeftSidebar}
             leftSidebar={this.metrics.leftSidebar}
             leftMin={this.metrics.left.min}
-            chartHeight={(this.state.height - 130)}
+            chartHeight={(this.state.height - 155)}
             items={this.menuItems}
             toggleMenu={this.toggleMenu}
-          />
-          <div
-            className={`${styles.section} ${styles.left}`}
-            style={{
-              display: 'inline-block',
-              height: (this.state.height - 130),
-              overflowY: 'overlay',
-            }}
-          >
-            {this.displayFilters()}
-            <div
-              role="button"
-              tabIndex={0}
-              className={`${gstyle.button} ${styles.reset}`}
-              onClick={this.resetFilters}
-              onKeyPress={e => (e.key === ' ' ? this.resetFilters() : null)}
-            >
-              Reset Filters
-            </div>
-          </div>
-          <div
-            className={`${styles.section} ${styles.right}`}
-            style={{
-              width: this.metrics.tableWidth,
-              height: this.state.height - 130,
-            }}
-            onDragStart={this.dragStart}
-            onDrop={this.dragEnd}
-          >
-            <List
-              className={`${styles.divlist}`}
-              width={this.metrics.tableWidth}
-              height={this.state.height - 130}
-              itemSize={28}
-              itemCount={this.state.data.length}
-              itemKey={index => this.state.data[index].sampleName}
-            >
-              {this.tableRow}
-            </List>
-            <Modal
-              buttonTitle="Archived Samples"
-              modalTitle="Archived Samples"
-              buttonPosition={{
-                position: 'absolute',
-                bottom: 0,
-                left: this.state.width - (this.metrics.tableWidth + (this.metrics.padding / 2)),
-              }}
-              modalPosition={{
-                position: 'absolute',
-                bottom: this.metrics.padding * 2,
-                left: this.state.width - (this.metrics.tableWidth + (this.metrics.padding / 2)),
-                width: this.metrics.tableWidth,
-              }}
-              useList
-              data={this.state.deleted}
-              row={this.row}
-              dataKey="sampleName"
-              itemHeight={28}
-              badge
+            spotlight={this.state.help8}
             />
-          </div>
+          <SpotlightWithToolTip
+            isActive = {this.state.help1}
+            inheritParentBackgroundColor={false}
+            toolTipPlacement="topLeft"
+            toolTipTitle={"All metadata (left column) and sample info (right columns) are loaded FROM THE FILE ITSELF, and the app dynamically populates all this information after file upload. "}
+            overlayStyle={{zIndex: '1001'}}
+          >
+
+            <div
+              className={`${styles.section} ${styles.left}`}
+              style={{
+                display: 'inline-block',
+                height: (this.state.height - 155),
+                overflowY: 'overlay',
+              }}
+            >
+              <SpotlightWithToolTip
+                isActive={this.state.help4 || this.state.help5}
+                toolTipPlacement="rightBottom"
+                toolTipTitle={this.state.help4 ? <div>
+                  On the left panel, click the arrow button to view filtering{' '} 
+                  options for file metadata. There are three categories for{' '} 
+                  filtering: “Date Range” (to filter by time/date),{' '} 
+                  “Numerical Range” (for metadata categories that are exclusively{' '}
+                  numerical, such as pH, temperature, etc), and “Categories”{' '} 
+                  (For metadata categories that are text only or alphanumeric{' '} 
+                  combinations).
+                  <br /><br />
+                  “Date Range” and “Numerical Range” display the file data as histograms,{' '}
+                  while “Categories” show the metadata values with associated checkboxes.{' '} 
+                  Histograms can be filtered using slider bars, while Categorical data can{' '} 
+                  be filtered by selecting or unselecting each checkbox.
+                  <br /><br />
+                  All metadata populated in this panel is generated FROM THE FILE ITSELF,{' '} 
+                  and the app dynamically populates all this information after file upload.
+                  <br /><br />
+                  Changing filter selections in this panel will cause the sample list{' '} 
+                  to automatically update, displaying only those samples that meet the{' '} 
+                  chosen filtering selections.
+                  </div> 
+                  : 
+                  <div>
+                    If you would like to reset the filters, scroll all the way down{' '}
+                    on the left column to find the “Reset Filters” button.
+                  </div>}
+                overlayStyle={{maxWidth: '600px'}}
+                  >
+                {this.displayFilters()}
+                <div
+                  role="button"
+                  id="reset"
+                  tabIndex={0}
+                  className={`${gstyle.button} ${styles.reset}`}
+                  onClick={this.resetFilters}
+                  onKeyPress={e => (e.key === ' ' ? this.resetFilters() : null)}
+                >
+                  Reset Filters
+                </div>
+              </SpotlightWithToolTip>
+            </div>
+            <div
+              className={`${styles.section} ${styles.right}`}
+              style={{
+                width: this.metrics.tableWidth - 6,
+                height: this.state.height - 155,
+              }}
+              onDragStart={this.dragStart}
+              onDrop={this.dragEnd}
+            >
+              <SpotlightWithToolTip
+                isActive={this.state.help6 || this.state.help8}
+                toolTipPlacement="leftTop"
+                toolTipTitle={this.state.help6 ? <div>
+                  In the sample info panel, the graph shows the distribution of samples{' '} 
+                  (e.g. range of sequencing depth across samples in the uploaded file).{' '} 
+                  The red line indicates the position of the present sample row in the{' '} 
+                  overall dataset.
+                  <br /><br />
+                  There will be icons appear for only one row at a time, on mouse over in{' '} 
+                  the filter page window. You can change the order of the samples by using{' '} 
+                  a long press of the mouse on the “up/down arrow” button on the left, or{' '} 
+                  remove the sample from the pool by the “delete” button on the right{' '} 
+                  (After the sample is manually removed, it will be listed under{' '} 
+                  “Archived Sample” at the bottom). </div> : ''}
+                  overlayStyle={{width: '250px'}}
+                  style={this.state.help8 ? {zIndex: 0} : ''}
+                  >
+                <List
+                  className={`${styles.divlist}`}
+                  width={this.metrics.tableWidth}
+                  height={this.state.height - 155}
+                  itemSize={28}
+                  itemCount={this.state.data.length}
+                  itemKey={index => this.state.data[index].sampleName}
+                  >
+                  {this.tableRow}
+                </List>
+                {this.renderModal()}
+              </SpotlightWithToolTip>  
+            </div>
+          </SpotlightWithToolTip>
+          <SpotlightWithToolTip
+            isActive = {this.state.helping}
+            inheritParentBackgroundColor={false}
+            toolTipTitle={"*mouse click anywhere to advance"}
+            overlayStyle={{zIndex: '1001'}}
+            innerStyle={{color: '#F09E6A'}}
+          >
+            <div className={styles.helpButtons}>
+              {helpButtons}
+            </div>
+          </SpotlightWithToolTip>
         </div>
       </div>
     );

@@ -24,10 +24,14 @@
   pointer-events: none;
 }
 
+.drag img {
+  padding-bottom: 2px;
+}
+
 .row {
   background: white;
   cursor: move;
-  max-width: calc(100vw - 342px);
+  width: calc(100vw - 200px);
 }
 
 .row:hover .delete {
@@ -43,8 +47,8 @@
 }
 
 .cell {
-  font-family: 'IBM Plex Sans Condensed', Verdana, Sans-serif;
-  font-weight: 300;
+  font-family: 'Open Sans';
+  font-weight: 600;
   color: black;
   padding: 0.25rem 0.5rem;
   line-height: 1rem;

@@ -1,7 +1,7 @@
 .menuToggle {
   position: relative;
   color: #fff;
-  background: #f0946a;
+  background: #575A5C;
   width: 24px;
   height: 24px;
   border-radius: 12px;
@@ -17,13 +17,23 @@
   transition: transform 0.5s ease-in-out;
 }
 
+.menuToggle :hover {
+  background-color: #F09E6A;
+}
+
 .menuToggle.rotated {
   transform: rotate(-180deg);
 }
 
+.menuToggle img {
+  width: max-content;
+  height: max-content;
+  border-radius: 12px;
+}
+
 .toggleSquare {
   position: absolute;
-  background: #333;
+  background: #575A5C;
   width: 9px;
   height: 24px;
   margin: 0;
@@ -32,6 +42,7 @@
 }
 
 .menu {
+  min-width: 100px;
   color: #fff;
   background: #575A5C;
   font-weight: 400;
@@ -40,8 +51,7 @@
 }
 
 .menuItem {
-  position: absolute;
-  width: 100%;
+  position: center;
   margin: 1rem 0;
   text-align: center;
   cursor: pointer;
@@ -74,6 +84,20 @@
   background-image: url("images/backArrowW.svg");
   background-color: #F09E6A;
   background-repeat: no-repeat;
+}
+
+.menuItem .menuBox.Filter {
+  border-color: #fff;
+  background-position: center;
+  background-image: url("images/saveHover.svg");
+  background-color: #F09E6A;
+  background-repeat: no-repeat;
+}
+
+/* gives glow affect to menu buttons on hover, mostly helps with save button. */
+.menuItem:hover .menuBox {
+  color: white;
+  box-shadow: 0 0 10px white;
 }
 
 .menuBox img {

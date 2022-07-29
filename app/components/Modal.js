@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { FixedSizeList as List } from 'react-window';
+import SpotlightWithToolTip from './SpotlightWithToolTip';
 
-import close from 'images/close.svg';
+import close from 'images/orangeX.svg';
 
 import styles from './Modal.css';
 import gstyle from './general.css';
@@ -9,7 +10,7 @@ import gstyle from './general.css';
 export default class Modal extends Component {
   constructor(props) {
     super(props);
-    const showHidden = props.show ? props.show : false;
+    const showHidden = props.show || props.spotlight ? props.show : false;
     this.state = { showHidden };
     this.toggleHidden = this.toggleHidden.bind(this);
   }
@@ -78,7 +79,7 @@ export default class Modal extends Component {
               itemSize={this.props.itemHeight}
               itemCount={this.props.data.length}
               itemKey={index => this.props.data[index][this.props.dataKey]}
-            >
+              >
               {this.stackRow}
             </List>
           ) : (
@@ -96,15 +97,34 @@ export default class Modal extends Component {
       </div>
     ) : '';
     return (
-      <div
+    <div
         style={{
           display: 'inline-block',
           verticalAlign: 'top',
         }}
       >
-        {modal}
-        {button}
-        {badge}
+        <SpotlightWithToolTip
+          isActive={this.props.spotlight && this.state.showHidden}
+          toolTipPlacement="topLeft"
+          toolTipTitle={<div>
+            “Archived Samples” show a list of samples that have been manually{' '}
+            removed by the user. These samples will not be carried through to the{' '} 
+            visualization galleries. 
+            <br /><br />
+            To add these samples back to the main filter page list{' '}
+            (and regain the ability to visualize these data), hover on a{' '} 
+            sample and click the “rejoin” button on the right hand side. 
+            <br /><br />
+            The “Archived Samples” tab not be visible in the filter page{' '} 
+            window unless you choose to remove samples from the main list{' '} 
+            using the “X” button. </div>
+            }
+          overlayStyle={{maxWidth: "700px",}}
+            >
+          {modal}
+          {badge}
+          {button}
+        </SpotlightWithToolTip>
       </div>
     );
   }
