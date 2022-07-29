@@ -82,7 +82,7 @@ export default class About extends Component {
     return (
       <div>
         <div className={styles.container} data-tid="container">
-          <SideBar context={this} />
+          <SideBar context={this} inAboutPage />
           <div className={`${styles.section} ${styles.right} ${styles.about} ${styles.center}`}>
 
             <div

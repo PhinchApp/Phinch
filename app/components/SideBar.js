@@ -29,6 +29,7 @@ import { stackOffsetSilhouette } from 'd3';
 import { findLastKey } from 'lodash-es';
 
 export default function SideBar(props) {
+  const {inAboutPage} = props
   const version = remote.app.getVersion();
   const links = LinkList(props.context);
   const helpIcon = props.context.state.helpIcon;
@@ -59,7 +60,9 @@ export default function SideBar(props) {
   //   }
   // }
 
-  const hideStep4 = props.context.state.projects && props.context.state.projects.length === 1
+  const hideStep2 = inAboutPage
+  const hideStep3 = inAboutPage
+  const hideStep4 = inAboutPage || (props.context.state.projects && props.context.state.projects.length === 1)
 
   let helpButtons = null;
   if(props.context.state.helping) {
@@ -78,7 +81,7 @@ export default function SideBar(props) {
         >
           <img src={props.context.state.help1 ? help1Hover : help1} alt="help1" />
         </div>
-        <div
+        {hideStep2 ? null : <div
           role="button"
           tabIndex={0}
           className={styles.helpIcons}
@@ -91,8 +94,8 @@ export default function SideBar(props) {
           //onMouseLeave={() => handleMouseLeave("help2")}
         >
           <img src={props.context.state.help2 ? help2Hover : help2} alt="help2" />
-        </div>
-        <div
+        </div>}
+        {hideStep3 ? null : <div
           role="button"
           tabIndex={0}
           className={styles.helpIcons}
@@ -105,7 +108,7 @@ export default function SideBar(props) {
           //onMouseLeave={() => handleMouseLeave("help3")}
         >
           <img src={props.context.state.help3 ? help3Hover : help3} alt="help3" />
-        </div>
+        </div>}
         {hideStep4 ? null :
           <div
             role="button"
