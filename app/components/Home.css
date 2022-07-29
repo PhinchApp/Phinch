@@ -255,7 +255,7 @@ p.first::first-letter {
 .about .logos {
   width: 100%;
   vertical-align: middle;
-  padding: 3rem 1rem;
+  padding: 1rem 1rem;
   display: flex;
   align-items: center;
 }
