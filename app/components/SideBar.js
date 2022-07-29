@@ -58,10 +58,9 @@ export default function SideBar(props) {
   //       break;
   //   }
   // }
-  console.log(props.context);
 
-  const projects = [props.context.state.projects];
-  const hideStep4 = projects.length === 1;
+  const hideStep4 = props.context.state.projects && props.context.state.projects.length === 1
+
   let helpButtons = null;
   if(props.context.state.helping) {
     helpButtons = (
