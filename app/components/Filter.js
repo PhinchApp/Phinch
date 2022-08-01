@@ -230,7 +230,7 @@ export default class Filter extends Component {
         sortReverse: this.state.sortReverse,
         sortKey: this.state.sortKey,
       },
-      showLeftSidebar: this.state.showLeftSidebar,
+      showLeftSidebar: true,
     };
     setProjectFilters(
       this.state.summary.path,
