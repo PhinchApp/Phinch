@@ -4,6 +4,7 @@ import 'antd/dist/antd.css';
 import { Tooltip } from 'antd';
 import styles from './Home.css';
 import gstyle from './general.css';
+import ReactTooltip from 'react-tooltip';
 
 
 export default function SpotlightWithToolTip({ isActive, toolTipPlacement="left", toolTipTitle, children, overlayStyle, innerStyle={}, ...rest }) {
@@ -31,9 +32,16 @@ export default function SpotlightWithToolTip({ isActive, toolTipPlacement="left"
             overlayStyle={overlayStyleMerged}
             overlayInnerStyle={overlayInnerStyle}
         >
-            <Spotlight isActive={isActive} width='fit-content' backdropOpacity="0.7" backdropColor='#2D2F31' style={{boxShadow: "0 0 10px #9ecaed", borderRadius: '0.5em'}} {...rest}>
+
+            {/* <div 
+                visible={isActive}
+                onClick={() => (document.getElementsByClassName("backdrop") ? console.log("working") : console.log("nowork"))}
+                >
+            </div> */}
+            <Spotlight isActive={isActive} width='fit-content' backdropOpacity="0.7" backdropColor='#2D2F31' style={{boxShadow: "0 0 10px #9ecaed", borderRadius: '0.5em'}} dataTip="Click anywhere to advance" {...rest}>
                 {children}
             </Spotlight>
+            {/* <ReactTooltip/> */}
         </Tooltip>
     );
 }

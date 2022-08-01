@@ -7,6 +7,7 @@ import 'antd/dist/antd.css';
 import { Tooltip } from 'antd';
 import ReactTooltip from 'react-tooltip';
 import SpotlightWithToolTip from './SpotlightWithToolTip';
+import OutsideClickHandler from 'react-outside-click-handler';
 
 import _debounce from 'lodash.debounce';
 import _cloneDeep from 'lodash.clonedeep';
@@ -846,7 +847,7 @@ export default class Filter extends Component {
             <button
               className={styles.help}
               // on click command is still undefined outside of home page, set to issues page for now until later
-              onClick={() => this.setState({ showLeftSidebar: true, helping: true, help1: true})} 
+              onClick={() => this.setState({ helping: true, help1: true})} 
               onMouseEnter={() => this.handleMouseOver("help")}
               onMouseLeave={() => this.handleMouseLeave("help")}
               >
@@ -1034,7 +1035,7 @@ export default class Filter extends Component {
             inheritParentBackgroundColor={false}
             toolTipTitle={"*mouse click anywhere to advance"}
             overlayStyle={{zIndex: '1001'}}
-            innerStyle={{color: '#F09E6A'}}
+            innerStyle={{color: 'white', fontWeight: '600', fontSize: '10px'}}
           >
             <div className={styles.helpButtons}>
               {helpButtons}
