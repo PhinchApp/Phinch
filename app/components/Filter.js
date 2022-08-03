@@ -854,70 +854,74 @@ export default class Filter extends Component {
                 <img src={this.state.helpButton} alt="needHelp" />
             </button>
           </div>
-          <SpotlightWithToolTip
-            isActive={this.state.help3}
-            inheritParentBackgroundColor={false}
-            toolTipPlacement="bottomRight"
-            toolTipTitle={<div>
-              The uploaded data file can be explored through a number{' '}
-              of distinct visualization types.
-              <br /><br />
-              Click on one of the listed options to select that visualization type,{' '}
-              and then click “View Visualization” to see the graphs made by the option{' '}
-              you choose.
-            </div>}
+          <div className={gstyle.header}>
+            <Summary
+              summary={this.state.summary}
+              observations={this.state.observations}
+              datalength={this.state.data.length}
+              helping={this.state.help2}
+              />
+
+            <SpotlightWithToolTip
+              isActive={this.state.help3}
+              inheritParentBackgroundColor={false}
+              toolTipPlacement="bottomRight"
+              toolTipTitle={<div>
+                The uploaded data file can be explored through a number{' '}
+                of distinct visualization types.
+                <br /><br />
+                Click on one of the listed options to select that visualization type,{' '}
+                and then click “View Visualization” to see the graphs made by the option{' '}
+                you choose.
+              </div>}
+              style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', boxShadow: 'inset rgba(255, 255, 255, 0.5) 0px 0px 10px'}}
             >
-            <div className={gstyle.header}>
-              <Summary
-                summary={this.state.summary}
-                observations={this.state.observations}
-                datalength={this.state.data.length}
-                helping={this.state.help2}
-                />
-              <div className={styles.visRowLabel}>Visualization Type</div>
-              <div className={styles.visOption}>
-                <img src={stackedbar} alt="Stacked bargraph" />
-                <div className={styles.visOptionLabel} id="stackedgraph" >Stacked Bargraph</div>
-              </div>
-              <div className={styles.futureVis}>
-                <img src={bubblegraph} alt="Bubble Graph" id="bubblegraph" />
-                <div className={styles.visOptionLabel}>Bubble Graph</div>
-              </div>
-              <div className={styles.futureVis}>
-                <img src={sankeygraph} alt="Sankey bargraph" id="sankeygraph" />
-                <div className={styles.visOptionLabel}>Sankey graph</div>
-              </div>
-              <div
-                role="button"
-                tabIndex={0}
-                className={`${gstyle.button} ${styles.button}`}
-                onClick={viewVisualization}
-                onKeyPress={e => (e.key === ' ' ? viewVisualization() : null)}
-                onMouseEnter={() => this.handleMouseOver("viewViz")}
-                onMouseLeave={() => this.handleMouseLeave("viewViz")}
-                >
-                View Visualization
-              </div>
-              <SpotlightWithToolTip
-                isActive={this.state.help6}
-                toolTipPlacement="bottomRight"
+              <div>
+                <div className={styles.visRowLabel}>Visualization Type</div>
+                <div className={styles.visOption}>
+                  <img src={stackedbar} alt="Stacked bargraph" />
+                  <div className={styles.visOptionLabel} id="stackedgraph" >Stacked Bargraph</div>
+                </div>
+                <div className={styles.futureVis}>
+                  <img src={bubblegraph} alt="Bubble Graph" id="bubblegraph" />
+                  <div className={styles.visOptionLabel}>Bubble Graph</div>
+                </div>
+                <div className={styles.futureVis}>
+                  <img src={sankeygraph} alt="Sankey bargraph" id="sankeygraph" />
+                  <div className={styles.visOptionLabel}>Sankey graph</div>
+                </div>
+                <div
+                  role="button"
+                  tabIndex={0}
+                  className={`${gstyle.button} ${styles.button}`}
+                  onClick={viewVisualization}
+                  onKeyPress={e => (e.key === ' ' ? viewVisualization() : null)}
+                  onMouseEnter={() => this.handleMouseOver("viewViz")}
+                  onMouseLeave={() => this.handleMouseLeave("viewViz")}
                   >
-                  <div className={styles.headingRow}>
-                    <div
-                      className={styles.spacer}
-                      style={{
-                        width: (
-                          this.metrics.leftSidebar + this.metrics.filterWidth + (
-                            this.metrics.padding * 4
-                            )
-                            ) - 100,
-                          }}
-                          />
-                    {this.renderHeader()}
-                  </div>
-                </SpotlightWithToolTip>
-            </div>
-          </SpotlightWithToolTip>
+                  View Visualization
+                </div>
+              </div>
+            </SpotlightWithToolTip>
+            <SpotlightWithToolTip
+              isActive={this.state.help6}
+              toolTipPlacement="bottomRight"
+                >
+                <div className={styles.headingRow}>
+                  <div
+                    className={styles.spacer}
+                    style={{
+                      width: (
+                        this.metrics.leftSidebar + this.metrics.filterWidth + (
+                          this.metrics.padding * 4
+                          )
+                          ) - 100,
+                        }}
+                        />
+                  {this.renderHeader()}
+                </div>
+              </SpotlightWithToolTip>
+          </div>
         </div>
         <div style={{ position: 'inherit', backgroundColor: '#ffffff', color: '#808080' }}>
           <SideMenu
