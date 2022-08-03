@@ -15,7 +15,7 @@ const linkList = [
   {
     name: 'View our Flagship Datasets',
     icon: (context) => (<div className={styles.arrow}><img src={context.state.link2} alt="right facing arrow" /></div>),
-    action: () => { shell.openExternal('https://github.com/PhinchApp/Phinch/wiki/Tutorials'); },
+    action: () => { shell.openExternal('https://github.com/PhinchApp/datasets'); },
     info: 'Download and explore datasets from published research studies.',
     handleMouseOver: (context) => { context.handleMouseOver('View our Flagship Datasets'); },
     handleMouseLeave: (context) => { context.handleMouseLeave('View our Flagship Datasets'); },

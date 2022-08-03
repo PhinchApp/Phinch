@@ -162,7 +162,7 @@
 
 .helpButtons {
   position: fixed;
-  bottom: 24px;
+  bottom: 35px;
   left: 0;
   width: fit-content;
   background: rgba(45, 47, 49, .7);
