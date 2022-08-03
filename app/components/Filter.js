@@ -981,17 +981,22 @@ export default class Filter extends Component {
                   </div>}
                 overlayStyle={{maxWidth: '600px'}}
                   >
-                {this.displayFilters()}
-                <div
-                  role="button"
-                  id="reset"
-                  tabIndex={0}
-                  className={`${gstyle.button} ${styles.reset}`}
-                  onClick={this.resetFilters}
-                  onKeyPress={e => (e.key === ' ' ? this.resetFilters() : null)}
-                >
-                  Reset Filters
-                </div>
+                  <div style={{
+                    height: (this.state.help4 || this.state.help5 ? this.state.height - 240 : 'auto'),
+                    overflowY: 'overlay',
+                  }}>
+                    {this.displayFilters()}
+                    <div
+                      role="button"
+                      id="reset"
+                      tabIndex={0}
+                      className={`${gstyle.button} ${styles.reset}`}
+                      onClick={this.resetFilters}
+                      onKeyPress={e => (e.key === ' ' ? this.resetFilters() : null)}
+                    >
+                      Reset Filters
+                    </div>
+                  </div>
               </SpotlightWithToolTip>
             </div>
             <div
