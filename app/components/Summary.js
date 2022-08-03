@@ -25,6 +25,7 @@ export default class StackedBar extends Component {
             reflects the original counts in the uploaded file, and this number{' '}
             will not change during filtering.
             </div>}
+        style={{ boxShadow: 'inset rgba(255, 255, 255, 0.5) 0px 0px 10px'}}
       >
         <div className={styles.info}>
           <div className={styles.segment}>
