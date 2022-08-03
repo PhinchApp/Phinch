@@ -16,14 +16,14 @@ export default class StackedBar extends Component {
           On the top right corner, there is an overview information about the data file uploaded.
           <br /><br />
           ‘Observations’ refer to the data points in the uploaded sample matrix.{' '}
-           These will vary by file, but typically represent data such as{' '} 
-           OTUs/ASVs or gene contigs. The ‘observation’ number reflects the{' '}  
-           overall count in the filter page window after the end user has{' '}  
-           manipulated the list of samples and applied any filters in the left{' '}  
-           hand pane. Only the ‘Observations’ remaining in the filter page will{' '} 
-            be carried through to the Phinch data visualizations. ‘Total’{' '}  
-            reflects the original counts in the uploaded file, and this number{' '}  
-            will not change during filtering. 
+           These will vary by file, but typically represent data such as{' '}
+           OTUs/ASVs or gene contigs. The ‘observation’ number reflects the{' '}
+           overall count in the filter page window after the end user has{' '}
+           manipulated the list of samples and applied any filters in the left{' '}
+           hand pane. Only the ‘Observations’ remaining in the filter page will{' '}
+            be carried through to the Phinch data visualizations. ‘Total’{' '}
+            reflects the original counts in the uploaded file, and this number{' '}
+            will not change during filtering.
             </div>}
       >
         <div className={styles.info}>

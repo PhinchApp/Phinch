@@ -672,7 +672,7 @@ export default class Filter extends Component {
           <img src={closeHelp} alt="close-walkthrough" />
         </div>
 
-        <div 
+        <div
         role="button"
         tabIndex={0}
         className={styles.helpIcons}
@@ -681,7 +681,7 @@ export default class Filter extends Component {
           <img src={this.state.help1 ? help1Hover : help1} />
         </div>
 
-        <div 
+        <div
         role="button"
         tabIndex={0}
         className={styles.helpIcons}
@@ -690,7 +690,7 @@ export default class Filter extends Component {
           <img src={this.state.help2 ? help2Hover : help2} />
         </div>
 
-        <div 
+        <div
         role="button"
         tabIndex={0}
         className={styles.helpIcons}
@@ -699,7 +699,7 @@ export default class Filter extends Component {
           <img src={this.state.help3 ? help3Hover : help3} />
         </div>
 
-        <div 
+        <div
         role="button"
         tabIndex={0}
         className={styles.helpIcons}
@@ -708,17 +708,17 @@ export default class Filter extends Component {
           <img src={this.state.help4 ? help4Hover : help4} />
         </div>
 
-        <div 
+        <div
         role="button"
         tabIndex={0}
         className={styles.helpIcons}
         onClick={() => this.helpButtonManager("help5")}
-        
+
         >
           <img src={this.state.help5 ? help5Hover : help5} />
         </div>
 
-        <div 
+        <div
         role="button"
         tabIndex={0}
         className={styles.helpIcons}
@@ -728,7 +728,7 @@ export default class Filter extends Component {
         </div>
 
         <SpotlightWithToolTip
-          isActive={this.state.help7 && (this.state.deleted.length == 0)} 
+          isActive={this.state.help7 && (this.state.deleted.length == 0)}
           toolTipPlacement="top"
           toolTipTitle={<div>
             To explore the 'Archived Samples' feature more, please use the{' '}
@@ -736,7 +736,7 @@ export default class Filter extends Component {
             Once there delete at least 1 sample row by clicking the 'X' on the far right{' '}
             of the rows that is visible when the row is hovered. Then return to feature 7. </div>}
           >
-          <div 
+          <div
           role="button"
           tabIndex={0}
           className={styles.helpIcons}
@@ -746,7 +746,7 @@ export default class Filter extends Component {
           </div>
         </SpotlightWithToolTip>
 
-        <div 
+        <div
         role="button"
         tabIndex={0}
         className={styles.helpIcons}
@@ -773,7 +773,7 @@ export default class Filter extends Component {
     }
   }
 
-  /*This function deals with the mouse leaving an icon (no longer hovering) and 
+  /*This function deals with the mouse leaving an icon (no longer hovering) and
   changed img src to correct svg file */
   handleMouseLeave (button) {
     switch(button) {
@@ -847,7 +847,7 @@ export default class Filter extends Component {
             <button
               className={styles.help}
               // on click command is still undefined outside of home page, set to issues page for now until later
-              onClick={() => this.setState({ helping: true, help1: true})} 
+              onClick={() => this.setState({ helping: true, help1: true})}
               onMouseEnter={() => this.handleMouseOver("help")}
               onMouseLeave={() => this.handleMouseLeave("help")}
               >
@@ -859,8 +859,8 @@ export default class Filter extends Component {
             inheritParentBackgroundColor={false}
             toolTipPlacement="bottomRight"
             toolTipTitle={<div>
-              The uploaded data file can be explored through a number{' '} 
-              of distinct visualization types. 
+              The uploaded data file can be explored through a number{' '}
+              of distinct visualization types.
               <br /><br />
               Click on one of the listed options to select that visualization type,{' '}
               and then click “View Visualization” to see the graphs made by the option{' '}
@@ -917,7 +917,7 @@ export default class Filter extends Component {
                   </div>
                 </SpotlightWithToolTip>
             </div>
-          </SpotlightWithToolTip>  
+          </SpotlightWithToolTip>
         </div>
         <div style={{ position: 'inherit', backgroundColor: '#ffffff', color: '#808080' }}>
           <SideMenu
@@ -949,27 +949,27 @@ export default class Filter extends Component {
                 isActive={this.state.help4 || this.state.help5}
                 toolTipPlacement="rightBottom"
                 toolTipTitle={this.state.help4 ? <div>
-                  On the left panel, click the arrow button to view filtering{' '} 
-                  options for file metadata. There are three categories for{' '} 
-                  filtering: “Date Range” (to filter by time/date),{' '} 
+                  On the left panel, click the arrow button to view filtering{' '}
+                  options for file metadata. There are three categories for{' '}
+                  filtering: “Date Range” (to filter by time/date),{' '}
                   “Numerical Range” (for metadata categories that are exclusively{' '}
-                  numerical, such as pH, temperature, etc), and “Categories”{' '} 
-                  (For metadata categories that are text only or alphanumeric{' '} 
+                  numerical, such as pH, temperature, etc), and “Categories”{' '}
+                  (For metadata categories that are text only or alphanumeric{' '}
                   combinations).
                   <br /><br />
                   “Date Range” and “Numerical Range” display the file data as histograms,{' '}
-                  while “Categories” show the metadata values with associated checkboxes.{' '} 
-                  Histograms can be filtered using slider bars, while Categorical data can{' '} 
+                  while “Categories” show the metadata values with associated checkboxes.{' '}
+                  Histograms can be filtered using slider bars, while Categorical data can{' '}
                   be filtered by selecting or unselecting each checkbox.
                   <br /><br />
-                  All metadata populated in this panel is generated FROM THE FILE ITSELF,{' '} 
+                  All metadata populated in this panel is generated FROM THE FILE ITSELF,{' '}
                   and the app dynamically populates all this information after file upload.
                   <br /><br />
-                  Changing filter selections in this panel will cause the sample list{' '} 
-                  to automatically update, displaying only those samples that meet the{' '} 
+                  Changing filter selections in this panel will cause the sample list{' '}
+                  to automatically update, displaying only those samples that meet the{' '}
                   chosen filtering selections.
-                  </div> 
-                  : 
+                  </div>
+                  :
                   <div>
                     If you would like to reset the filters, scroll all the way down{' '}
                     on the left column to find the “Reset Filters” button.
@@ -1002,16 +1002,16 @@ export default class Filter extends Component {
                 isActive={this.state.help6 || this.state.help8}
                 toolTipPlacement="leftTop"
                 toolTipTitle={this.state.help6 ? <div>
-                  In the sample info panel, the graph shows the distribution of samples{' '} 
-                  (e.g. range of sequencing depth across samples in the uploaded file).{' '} 
-                  The red line indicates the position of the present sample row in the{' '} 
+                  In the sample info panel, the graph shows the distribution of samples{' '}
+                  (e.g. range of sequencing depth across samples in the uploaded file).{' '}
+                  The red line indicates the position of the present sample row in the{' '}
                   overall dataset.
                   <br /><br />
-                  There will be icons appear for only one row at a time, on mouse over in{' '} 
-                  the filter page window. You can change the order of the samples by using{' '} 
-                  a long press of the mouse on the “up/down arrow” button on the left, or{' '} 
-                  remove the sample from the pool by the “delete” button on the right{' '} 
-                  (After the sample is manually removed, it will be listed under{' '} 
+                  There will be icons appear for only one row at a time, on mouse over in{' '}
+                  the filter page window. You can change the order of the samples by using{' '}
+                  a long press of the mouse on the “up/down arrow” button on the left, or{' '}
+                  remove the sample from the pool by the “delete” button on the right{' '}
+                  (After the sample is manually removed, it will be listed under{' '}
                   “Archived Sample” at the bottom). </div> : ''}
                   overlayStyle={{width: '250px'}}
                   style={this.state.help8 ? {zIndex: 0} : ''}
@@ -1027,7 +1027,7 @@ export default class Filter extends Component {
                   {this.tableRow}
                 </List>
                 {this.renderModal()}
-              </SpotlightWithToolTip>  
+              </SpotlightWithToolTip>
             </div>
           </SpotlightWithToolTip>
           <SpotlightWithToolTip
