@@ -935,13 +935,14 @@ export default class Filter extends Component {
             toolTipPlacement="topLeft"
             toolTipTitle={"All metadata (left column) and sample info (right columns) are loaded FROM THE FILE ITSELF, and the app dynamically populates all this information after file upload. "}
             overlayStyle={{zIndex: '1001'}}
+            style={{backgroundColor: '#ffffff', boxShadow: 'none'}}
           >
 
             <div
               className={`${styles.section} ${styles.left}`}
               style={{
                 display: 'inline-block',
-                height: (this.state.height - 155),
+                height: (this.state.height - (this.state.help1 ? 240 : 155)),
                 overflowY: 'overlay',
               }}
             >
@@ -993,7 +994,8 @@ export default class Filter extends Component {
               className={`${styles.section} ${styles.right}`}
               style={{
                 width: this.metrics.tableWidth - 6,
-                height: this.state.height - 155,
+                height: (this.state.height - (this.state.help1 ? 240 : 155)),
+                overflowY: 'overlay',
               }}
               onDragStart={this.dragStart}
               onDrop={this.dragEnd}
@@ -1036,6 +1038,7 @@ export default class Filter extends Component {
             toolTipTitle={"*mouse click anywhere to advance"}
             overlayStyle={{zIndex: '1001'}}
             innerStyle={{color: 'white', fontWeight: '600', fontSize: '10px'}}
+            style={{boxShadow: 'none'}}
           >
             <div className={styles.helpButtons}>
               {helpButtons}

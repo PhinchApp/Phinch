@@ -7,7 +7,7 @@ import gstyle from './general.css';
 import ReactTooltip from 'react-tooltip';
 
 
-export default function SpotlightWithToolTip({ isActive, toolTipPlacement="left", toolTipTitle, children, overlayStyle, innerStyle={}, ...rest }) {
+export default function SpotlightWithToolTip({ isActive, toolTipPlacement="left", toolTipTitle, children, overlayStyle, innerStyle={}, style, ...rest }) {
     const overlayInnerStyle = innerStyle
     if (toolTipPlacement === 'right') {
         overlayInnerStyle.transform = 'translateX(2em)'
@@ -23,6 +23,12 @@ export default function SpotlightWithToolTip({ isActive, toolTipPlacement="left"
         ...overlayStyle,
     }
 
+    const spotlightStyle = {
+        boxShadow: "0 0 10px #9ecaed",
+        borderRadius: '0.5em',
+        ...style,
+    }
+
     return(
         <Tooltip
             visible={isActive}
@@ -33,12 +39,12 @@ export default function SpotlightWithToolTip({ isActive, toolTipPlacement="left"
             overlayInnerStyle={overlayInnerStyle}
         >
 
-            {/* <div 
+            {/* <div
                 visible={isActive}
                 onClick={() => (document.getElementsByClassName("backdrop") ? console.log("working") : console.log("nowork"))}
                 >
             </div> */}
-            <Spotlight isActive={isActive} width='fit-content' backdropOpacity="0.7" backdropColor='#2D2F31' style={{boxShadow: "0 0 10px #9ecaed", borderRadius: '0.5em'}} dataTip="Click anywhere to advance" {...rest}>
+            <Spotlight isActive={isActive} width='fit-content' backdropOpacity="0.8" backdropColor='#2D2F31' style={spotlightStyle} dataTip="Click anywhere to advance" {...rest}>
                 {children}
             </Spotlight>
             {/* <ReactTooltip/> */}
