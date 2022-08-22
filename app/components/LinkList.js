@@ -7,7 +7,7 @@ const linkList = [
   {
     name: 'New to Phinch?',
     icon: (context) => (<div className={styles.arrow}><img src={context.state.link1} alt="right facing arrow" /></div> ),
-    action: () => { shell.openExternal('http://phinch.org/Tutorials'); },
+    action: () => { shell.openExternal('https://phinch.org/Tutorials'); },
     info: 'Click here for data formatting instructions and visualization tutorials.',
     handleMouseOver: (context) => { context.handleMouseOver('New to Phinch?'); },
     handleMouseLeave: (context) => { context.handleMouseLeave('New to Phinch?'); },
@@ -15,7 +15,7 @@ const linkList = [
   {
     name: 'View our Flagship Datasets',
     icon: (context) => (<div className={styles.arrow}><img src={context.state.link2} alt="right facing arrow" /></div>),
-    action: () => { shell.openExternal('https://github.com/PhinchApp/datasets'); },
+    action: () => { shell.openExternal('https://www.phinch.org/Flagship-Datasets'); },
     info: 'Download and explore datasets from published research studies.',
     handleMouseOver: (context) => { context.handleMouseOver('View our Flagship Datasets'); },
     handleMouseLeave: (context) => { context.handleMouseLeave('View our Flagship Datasets'); },
@@ -23,7 +23,7 @@ const linkList = [
   {
     name: 'Join the Community',
     icon: (context) => (<div className={styles.arrow}><img src={context.state.link3} alt="right facing arrow" /></div>),
-    action: () => { shell.openExternal('http://phinch.org/Community'); },
+    action: () => { shell.openExternal('https://phinch.org/Community'); },
     info: 'Join our Slack channel to discuss features and get help.',
     handleMouseOver: (context) => { context.handleMouseOver('Join the Community'); },
     handleMouseLeave: (context) => { context.handleMouseLeave('Join the Community'); },
