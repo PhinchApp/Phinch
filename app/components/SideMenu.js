@@ -24,7 +24,7 @@ export default class SideMenu extends Component {
       closeMenu: sideMenuToggleClose,
     };
   }
-  
+
   // This function is in need of work to get hover features working.
   // Issues seem to be revoliving around the constructItem function not being
   // able to read mouse position or having access to that info in the rendering of
@@ -119,7 +119,7 @@ export default class SideMenu extends Component {
       >
         {items}
       </div>
-    ) : '';
+    ) : <div />;
     return (
       <div
         className={`${gstyle.panel} ${gstyle.noscrollbar}`}
@@ -145,11 +145,11 @@ export default class SideMenu extends Component {
               isActive={this.props.spotlight}
               toolTipPlacement="rightTop"
               toolTipTitle={<div>
-                Expand the side panel by clicking the menu button.{' '} 
+                Expand the side panel by clicking the menu button.{' '}
                 After expanding the panel, you will see a button to{' '}
                 save the data and another button to go back to the app homepage.
                 </div>}
-              >  
+              >
               <div
                 role="button"
                 tabIndex={0}
@@ -159,7 +159,7 @@ export default class SideMenu extends Component {
                 onMouseEnter={() => this.handleMouseOver()}
                 onMouseLeave={() => this.handleMouseLeave()}
               >
-                {this.props.showLeftSidebar ? <img src={this.state.closeMenu} alt="arrow-toggle-menu-hover" /> 
+                {this.props.showLeftSidebar ? <img src={this.state.closeMenu} alt="arrow-toggle-menu-hover" />
                 : <img src={this.state.sideMenuToggle} alt="arrow-toggle-menu" />}
               </div>
             </SpotlightWithToolTip>
