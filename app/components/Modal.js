@@ -37,7 +37,7 @@ export default class Modal extends Component {
       >
         {this.props.buttonTitle}
       </div>
-    ) : '';
+    ) : <div />;
     const badge = (this.props.badge && this.props.data.length) ? (
       <div
         className={styles.badge}
@@ -47,7 +47,7 @@ export default class Modal extends Component {
       >
         {this.props.data.length}
       </div>
-    ) : '';
+    ) : <div />;
     const modal = (this.state.showHidden && this.props.data.length) ? (
       <div
         className={styles.modal}
@@ -95,7 +95,7 @@ export default class Modal extends Component {
           )
         }
       </div>
-    ) : '';
+    ) : <div />;
     return (
     <div
         style={{
@@ -108,15 +108,15 @@ export default class Modal extends Component {
           toolTipPlacement="topLeft"
           toolTipTitle={<div>
             “Archived Samples” show a list of samples that have been manually{' '}
-            removed by the user. These samples will not be carried through to the{' '} 
-            visualization galleries. 
+            removed by the user. These samples will not be carried through to the{' '}
+            visualization galleries.
             <br /><br />
             To add these samples back to the main filter page list{' '}
-            (and regain the ability to visualize these data), hover on a{' '} 
-            sample and click the “rejoin” button on the right hand side. 
+            (and regain the ability to visualize these data), hover on a{' '}
+            sample and click the “rejoin” button on the right hand side.
             <br /><br />
-            The “Archived Samples” tab not be visible in the filter page{' '} 
-            window unless you choose to remove samples from the main list{' '} 
+            The “Archived Samples” tab not be visible in the filter page{' '}
+            window unless you choose to remove samples from the main list{' '}
             using the “X” button. </div>
             }
           overlayStyle={{maxWidth: "700px",}}

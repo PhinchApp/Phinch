@@ -7,7 +7,6 @@ import 'antd/dist/antd.css';
 import { Tooltip } from 'antd';
 import ReactTooltip from 'react-tooltip';
 import SpotlightWithToolTip from './SpotlightWithToolTip';
-import OutsideClickHandler from 'react-outside-click-handler';
 
 import _debounce from 'lodash.debounce';
 import _cloneDeep from 'lodash.clonedeep';
@@ -98,15 +97,7 @@ export default class Filter extends Component {
       sortReverse: false,
       sortKey: 'biomid',
       helpButton: needHelp,
-      helping: false,
-      help1: false,
-      help2: false,
-      help3: false,
-      help4: false,
-      help5: false,
-      help6: false,
-      help7: false,
-      help8: false,
+      counter: 0, //tracks what help step we are on to allow global click advance
     };
 
     this.filters = DataContainer.getFilters();
@@ -128,10 +119,10 @@ export default class Filter extends Component {
 
     this.columnWidths = {
       order: 0.04,
-      phinchName: 0.20,
-      biomid: 0.09,
-      sampleName: 0.20,
-      reads: 0.20,
+      phinchName: 0.25,
+      biomid: 0.1,
+      sampleName: 0.32,
+      reads: .06,
     };
 
     this.menuItems = [
@@ -208,17 +199,28 @@ export default class Filter extends Component {
     this.redirectToVis = this.redirectToVis.bind(this);
     this.updatePhinchName = this.updatePhinchName.bind(this);
     this.updateDimensions = this.updateDimensions.bind(this);
-    this.helpButtonManager = this.helpButtonManager.bind(this);
+    this.countUp = this.countUp.bind(this);
   }
 
   componentDidMount() {
     window.addEventListener('resize', this.updateDimensions);
     this.applyFilters(this.state.filters);
+    window.addEventListener('click', this.countUp);
   }
 
   componentWillUnmount() {
     clearTimeout(this.timeout);
     window.removeEventListener('resize', this.updateDimensions);
+    window.removeEventListener('click', this.countUp);
+  }
+
+  countUp() {
+    if(this.state.counter > 0) {
+      const currCount = this.state.counter;
+      const newCount = currCount + 1;
+      newCount > 8 ? this.setState({ counter: 1, }) : this.setState({ counter: newCount, });
+      console.log(this.state.counter);
+    }
   }
 
   save = (callback) => {
@@ -500,20 +502,18 @@ export default class Filter extends Component {
   renderModal() {
     return (
       <Modal
-        show={this.state.help7}
-        spotlight={this.state.help7 && (this.state.deleted.length > 0)}
+        show={this.state.counter == 7}
+        spotlight={this.state.counter == 7 && (this.state.deleted.length > 0)}
         buttonTitle="Archived Samples"
         modalTitle="Archived Samples"
         buttonPosition={{
           position: 'absolute',
           bottom: 0,
-          left: this.state.width - (this.metrics.tableWidth + (this.metrics.padding / 2)),
         }}
         modalPosition={{
           position: 'absolute',
           bottom: this.metrics.padding * 2,
-          left: this.state.width - (this.metrics.tableWidth + (this.metrics.padding / 2)),
-          width: this.metrics.tableWidth,
+          width: this.metrics.tableWidth - 15,
         }}
         useList
         data={this.state.deleted}
@@ -636,9 +636,7 @@ export default class Filter extends Component {
     this.metrics.tableWidth = this.state.width - (
       this.metrics.leftSidebar + this.metrics.filterWidth + (this.metrics.padding * 4)
     );
-    this.setState({ showLeftSidebar }, () => {
-      this.save(this.setResult);
-    });
+    this.setState({ showLeftSidebar });
   }
 
   redirectToVis(result) {
@@ -649,25 +647,13 @@ export default class Filter extends Component {
     }
   }
 
-  helpButtonManager = (button) => {
-    (button == "help1" ? this.setState({ help1: !this.state.help1 }) : this.setState({ help1: false }));
-    (button == "help2" ? this.setState({ help2: !this.state.help2 }) : this.setState({ help2: false }));
-    (button == "help3" ? this.setState({ help3: !this.state.help3 }) : this.setState({ help3: false }));
-    (button == "help4" ? this.setState({ help4: !this.state.help4 }) : this.setState({ help4: false }));
-    (button == "help5" ? this.setState({ help5: !this.state.help5 }) : this.setState({ help5: false }));
-    (button == "help6" ? this.setState({ help6: !this.state.help6 }) : this.setState({ help6: false }));
-    (button == "help7" ? this.setState({ help7: !this.state.help7 }) : this.setState({ help7: false }));
-    (button == "help8" ? this.setState({ help8: !this.state.help8 }) : this.setState({ help8: false }));
-    (button == "closeHelp" ? this.setState({ helping: false }) : '');
-  }
-
   makeHelpButtons() {
     return (
       <div className={styles.helpIcons}>
         <div
         role="button"
         className={styles.helpIcons}
-        onClick={() => {this.helpButtonManager("closeHelp"); this.forceUpdate();} }
+        onClick={() => {this.setState({ counter: 0 }); this.forceUpdate(); this.deleteBackdropTooltip()} }
         >
           <img src={closeHelp} alt="close-walkthrough" />
         </div>
@@ -676,73 +662,73 @@ export default class Filter extends Component {
         role="button"
         tabIndex={0}
         className={styles.helpIcons}
-        onClick={() => this.helpButtonManager("help1")}
+        onClick={() => this.setState({ counter: 8 })}
         >
-          <img src={this.state.help1 ? help1Hover : help1} />
+          <img src={this.state.counter == 1 ? help1Hover : help1} />
         </div>
 
         <div
         role="button"
         tabIndex={0}
         className={styles.helpIcons}
-        onClick={() => this.helpButtonManager("help2")}
+        onClick={() => this.setState({ counter: 1 })}
         >
-          <img src={this.state.help2 ? help2Hover : help2} />
+          <img src={this.state.counter == 2 ? help2Hover : help2} />
         </div>
 
         <div
         role="button"
         tabIndex={0}
         className={styles.helpIcons}
-        onClick={() => this.helpButtonManager("help3")}
+        onClick={() => this.setState({ counter: 2 })}
         >
-          <img src={this.state.help3 ? help3Hover : help3} />
+          <img src={this.state.counter == 3 ? help3Hover : help3} />
         </div>
 
         <div
         role="button"
         tabIndex={0}
         className={styles.helpIcons}
-        onClick={() => this.helpButtonManager("help4")}
+        onClick={() => this.setState({ counter: 3 })}
         >
-          <img src={this.state.help4 ? help4Hover : help4} />
+          <img src={this.state.counter == 4 ? help4Hover : help4} />
         </div>
 
         <div
         role="button"
         tabIndex={0}
         className={styles.helpIcons}
-        onClick={() => this.helpButtonManager("help5")}
+        onClick={() => this.setState({ counter: 4 })}
 
         >
-          <img src={this.state.help5 ? help5Hover : help5} />
+          <img src={this.state.counter == 5 ? help5Hover : help5} />
         </div>
 
         <div
         role="button"
         tabIndex={0}
         className={styles.helpIcons}
-        onClick={() => this.helpButtonManager("help6")}
+        onClick={() => this.setState({ counter: 5 })}
         >
-          <img src={this.state.help6 ? help6Hover : help6} />
+          <img src={this.state.counter == 6 ? help6Hover : help6} />
         </div>
 
         <SpotlightWithToolTip
-          isActive={this.state.help7 && (this.state.deleted.length == 0)}
+          isActive={this.state.counter == 7 && (this.state.deleted.length == 0)}
           toolTipPlacement="top"
           toolTipTitle={<div>
             To explore the 'Archived Samples' feature more, please use the{' '}
-            navigation bar in the bottom left to go back to feature 6. {' '}
-            Once there delete at least 1 sample row by clicking the 'X' on the far right{' '}
+            navigation bar in the bottom left to close the walkthrough. {' '}
+            Once closed, delete at least 1 sample row by clicking the 'X' on the far right{' '}
             of the rows that is visible when the row is hovered. Then return to feature 7. </div>}
           >
           <div
           role="button"
           tabIndex={0}
           className={styles.helpIcons}
-          onClick={() => {this.helpButtonManager("help7"); this.renderModal();}}
+          onClick={() => {this.setState({ counter: 6 }); this.renderModal();}}
           >
-            <img src={this.state.help7 ? help7Hover : help7} />
+            <img src={this.state.counter == 7 ? help7Hover : help7} />
           </div>
         </SpotlightWithToolTip>
 
@@ -750,9 +736,9 @@ export default class Filter extends Component {
         role="button"
         tabIndex={0}
         className={styles.helpIcons}
-        onClick={() => {this.helpButtonManager("help8"); this.forceUpdate();}}
+        onClick={() => {this.setState({ counter: 7 }); this.forceUpdate();}}
         >
-          <img src={this.state.help8 ? help8Hover : help8} />
+          <img src={this.state.counter == 8 ? help8Hover : help8} />
         </div>
       </div>
     );
@@ -788,9 +774,18 @@ export default class Filter extends Component {
     }
   }
 
+  deleteBackdropTooltip () {
+    let element = document.querySelector('body');
+    element.removeAttribute("data-tip");
+    element.removeAttribute("data-text-color");
+    element.removeAttribute("data-background-color");
+    element.removeAttribute("data-place", "right");
+    element.removeAttribute("data-offset");
+  }
+
   render() {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
-    const helpButtons = this.state.helping ? this.makeHelpButtons() : '';
+    const helpButtons = this.state.counter > 0 ? this.makeHelpButtons() : '';
 
     if (redirect) {
       return redirect;
@@ -803,8 +798,8 @@ export default class Filter extends Component {
         className={gstyle.button}
         style={{
           position: 'absolute',
-          top: '96px',
-          left: '16px',
+          top: 'calc(100vh - 40px)',
+          right: '16px',
           width: '68px',
           textAlign: 'center',
           zIndex: 10,
@@ -831,11 +826,36 @@ export default class Filter extends Component {
       });
     };
 
+    const getBackDrop = () => {
+      if(this.state.counter > 0) {
+        ReactTooltip.rebuild();
+        let element = document.querySelector('body');
+        element.setAttribute("data-tip", "Click anywhere to advance");
+        element.setAttribute("data-text-color", "#F09E6A");
+        element.setAttribute("data-background-color", "none");
+        element.setAttribute("data-place", "right");
+        element.setAttribute("data-offset", "{'bottom': 30}");
+      }
+      else {
+        let element = document.querySelector('body');
+        element.removeAttribute("data-tip");
+        element.removeAttribute("data-text-color");
+        element.removeAttribute("data-background-color");
+        element.removeAttribute("data-place", "right");
+        element.removeAttribute("data-offset");
+      }
+    }
+
     this.allData = this.state.data.concat(this.state.deleted);
 
     const notMac = isMac() ? '' : gstyle.notMac;
     return (
-      <div className={`${gstyle.container} ${notMac}`}>
+      <div className={`${gstyle.container} ${notMac}`}
+        data-tip={this.state.counter > 0 ? "Click anywhere to advance" : null}
+        data-text-color={this.state.counter > 0 ? "#F09E6A" : 'none'}
+        data-background-color={this.state.counter > 0 ? 'none' : ''}
+        data-place={this.state.counter > 0 ? "right" : ''}
+        data-offset={this.state.counter > 0 ? "{'bottom': 30}" : ''}>
         <Loader loading={this.state.loading} />
         {redirect}
         {result}
@@ -847,7 +867,7 @@ export default class Filter extends Component {
             <button
               className={styles.help}
               // on click command is still undefined outside of home page, set to issues page for now until later
-              onClick={() => this.setState({ helping: true, help1: true})}
+              onClick={() => this.setState({ counter: 8 })}
               onMouseEnter={() => this.handleMouseOver("help")}
               onMouseLeave={() => this.handleMouseLeave("help")}
               >
@@ -859,11 +879,11 @@ export default class Filter extends Component {
               summary={this.state.summary}
               observations={this.state.observations}
               datalength={this.state.data.length}
-              helping={this.state.help2}
+              helping={this.state.counter == 2}
               />
 
             <SpotlightWithToolTip
-              isActive={this.state.help3}
+              isActive={this.state.counter == 3}
               inheritParentBackgroundColor={false}
               toolTipPlacement="bottomRight"
               toolTipTitle={<div>
@@ -904,7 +924,7 @@ export default class Filter extends Component {
               </div>
             </SpotlightWithToolTip>
             <SpotlightWithToolTip
-              isActive={this.state.help6}
+              isActive={this.state.counter == 6}
               toolTipPlacement="bottomRight"
                 >
                 <div className={styles.headingRow}>
@@ -931,10 +951,10 @@ export default class Filter extends Component {
             chartHeight={(this.state.height - 155)}
             items={this.menuItems}
             toggleMenu={this.toggleMenu}
-            spotlight={this.state.help8}
+            spotlight={this.state.counter == 8}
             />
           <SpotlightWithToolTip
-            isActive = {this.state.help1}
+            isActive = {this.state.counter == 1}
             inheritParentBackgroundColor={false}
             toolTipPlacement="topLeft"
             toolTipTitle={"All metadata (left column) and sample info (right columns) are loaded FROM THE FILE ITSELF, and the app dynamically populates all this information after file upload. "}
@@ -946,14 +966,14 @@ export default class Filter extends Component {
               className={`${styles.section} ${styles.left}`}
               style={{
                 display: 'inline-block',
-                height: (this.state.height - (this.state.help1 ? 240 : 155)),
+                height: (this.state.height - (this.state.counter == 1 ? 240 : 155)),
                 overflowY: 'overlay',
               }}
             >
               <SpotlightWithToolTip
-                isActive={this.state.help4 || this.state.help5}
+                isActive={this.state.counter == 4 || this.state.counter == 5}
                 toolTipPlacement="rightBottom"
-                toolTipTitle={this.state.help4 ? <div>
+                toolTipTitle={this.state.counter == 4 ? <div>
                   On the left panel, click the arrow button to view filtering{' '}
                   options for file metadata. There are three categories for{' '}
                   filtering: “Date Range” (to filter by time/date),{' '}
@@ -982,7 +1002,7 @@ export default class Filter extends Component {
                 overlayStyle={{maxWidth: '600px'}}
                   >
                   <div style={{
-                    height: (this.state.help4 || this.state.help5 ? this.state.height - 240 : 'auto'),
+                    height: (this.state.counter == 4 || this.state.counter == 5 ? this.state.height - 240 : 'auto'),
                     overflowY: 'overlay',
                   }}>
                     {this.displayFilters()}
@@ -1003,16 +1023,16 @@ export default class Filter extends Component {
               className={`${styles.section} ${styles.right}`}
               style={{
                 width: this.metrics.tableWidth - 6,
-                height: (this.state.height - (this.state.help1 ? 240 : 155)),
+                height: (this.state.height - (this.state.counter == 1 ? 240 : 155)),
                 overflowY: 'overlay',
               }}
               onDragStart={this.dragStart}
               onDrop={this.dragEnd}
             >
               <SpotlightWithToolTip
-                isActive={this.state.help6 || this.state.help8}
+                isActive={this.state.counter == 6 || this.state.counter == 8}
                 toolTipPlacement="leftTop"
-                toolTipTitle={this.state.help6 ? <div>
+                toolTipTitle={this.state.counter == 6 ? <div>
                   In the sample info panel, the graph shows the distribution of samples{' '}
                   (e.g. range of sequencing depth across samples in the uploaded file).{' '}
                   The red line indicates the position of the present sample row in the{' '}
@@ -1025,7 +1045,7 @@ export default class Filter extends Component {
                   (After the sample is manually removed, it will be listed under{' '}
                   “Archived Sample” at the bottom). </div> : ''}
                   overlayStyle={{width: '250px'}}
-                  style={this.state.help8 ? {zIndex: 0} : ''}
+                  style={this.state.counter == 8 ? {zIndex: 0} : ''}
                   >
                 <List
                   className={`${styles.divlist}`}
@@ -1042,7 +1062,7 @@ export default class Filter extends Component {
             </div>
           </SpotlightWithToolTip>
           <SpotlightWithToolTip
-            isActive = {this.state.helping}
+            isActive = {this.state.counter > 0}
             inheritParentBackgroundColor={false}
             toolTipTitle={"*mouse click anywhere to advance"}
             overlayStyle={{zIndex: '1001'}}
@@ -1051,6 +1071,7 @@ export default class Filter extends Component {
           >
             <div className={styles.helpButtons}>
               {helpButtons}
+              {this.state.counter > 0 ? getBackDrop() : ''}
             </div>
           </SpotlightWithToolTip>
         </div>

@@ -110,8 +110,9 @@ button:focus {
 .__react_component_tooltip {
   padding: 2px 6px !important;
   font-weight: 600;
+  z-index: 9999999 !important;
 }
 .__react_component_tooltip.show {
   opacity: 1 !important;
-
+  z-index: 9999999 !important;
 }

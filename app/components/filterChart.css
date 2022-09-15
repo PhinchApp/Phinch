@@ -16,16 +16,16 @@
 }
 
 .filterChart {
-  font-family: 'IBM Plex Sans Condensed', Verdana, Sans-serif;
+  font-family: 'Open Sans';
   vertical-align: top;
   font-size: 16px;
-  font-weight: 300;
+  font-weight: 400;
   color: #000000;
 }
 
 .name {
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 600;
   vertical-align: top;
   margin-right: 1rem;
   overflow-wrap: break-word;

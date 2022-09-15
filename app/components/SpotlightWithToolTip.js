@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { Component, useEffect, useState } from 'react';
+import { Switch, Route } from 'react-router';
+
 import Spotlight from "rc-spotlight";
 import 'antd/dist/antd.css';
 import { Tooltip } from 'antd';
@@ -31,23 +33,16 @@ export default function SpotlightWithToolTip({ isActive, toolTipPlacement="left"
 
     return(
         <Tooltip
-            visible={isActive}
+            open={isActive}
             placement={toolTipPlacement}
             title={isActive ? toolTipTitle : ""}
-            zIndex={1000}
+            zIndex={1001}
             overlayStyle={overlayStyleMerged}
             overlayInnerStyle={overlayInnerStyle}
         >
-
-            {/* <div
-                visible={isActive}
-                onClick={() => (document.getElementsByClassName("backdrop") ? console.log("working") : console.log("nowork"))}
-                >
-            </div> */}
-            <Spotlight isActive={isActive} width='fit-content' backdropOpacity="0.8" backdropColor='#2D2F31' style={spotlightStyle} dataTip="Click anywhere to advance" {...rest}>
+            <Spotlight isActive={isActive} width='fit-content' backdropOpacity="0.8" backdropColor='#2D2F31' style={spotlightStyle} {...rest}>
                 {children}
             </Spotlight>
-            {/* <ReactTooltip/> */}
         </Tooltip>
     );
 }

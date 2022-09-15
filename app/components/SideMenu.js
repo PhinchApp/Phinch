@@ -134,6 +134,7 @@ export default class SideMenu extends Component {
           className={`${gstyle.panel} ${gstyle.noscrollbar}`}
           style={{
             backgroundColor: '#ffffff',
+            borderLeft: '6px solid #575A5C',
             width: this.props.leftMin,
             height: this.props.chartHeight,
             overflowY: 'hidden',

@@ -4,13 +4,13 @@
 
 .header {
   background: #2D2F31;
-  height: 155px !important;
+  height: 156px !important;
 }
 
 .filterLogo {
   background: #001226;
   width: 100px;
-  height: 134px;
+  height: 136px;
   /* padding: 1.5rem 1rem; */
   display: inline-block;
   vertical-align: top;
@@ -42,9 +42,9 @@
 }
 
 .filterHeading {
-  font-family: 'IBM Plex Sans Condensed', Verdana, Sans-serif;
-  font-size: 14px;
-  font-weight: 400;
+  font-family: 'Open Sans';
+  font-size: 17px;
+  font-weight: 600;
   display: inline-block;
   padding: 0.25rem 0.5rem;
   margin: 0;
@@ -53,6 +53,7 @@
 
 .divlist {
   will-change: auto !important;
+  overflow-x: hidden !important;
 }
 
 .visRowLabel {
@@ -121,6 +122,7 @@
 .section {
   display: inline-block;
   vertical-align: top;
+  overflow-x: hidden !important;
 }
 
 .left {
@@ -155,7 +157,7 @@
   color: #b2b2b2;
   vertical-align: top;
   font-family: 'Open Sans';
-  font-weight: 400;
+  font-weight: 600;
   cursor: pointer;
   z-index: 10;
 }

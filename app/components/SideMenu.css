@@ -29,6 +29,7 @@
   width: max-content;
   height: max-content;
   border-radius: 12px;
+  padding-bottom: 2px;
 }
 
 .toggleSquare {
@@ -42,7 +43,7 @@
 }
 
 .menu {
-  min-width: 100px;
+  min-width: 94px; /*This if offsetting for the 6px wide border, but whole sideMenu should always be 100px wide*/
   color: #fff;
   background: #575A5C;
   font-weight: 400;
@@ -53,6 +54,7 @@
 .menuItem {
   position: center;
   margin: 1rem 0;
+  margin-left: 6px; /*To center them properly with the now 6px wide border on left*/
   text-align: center;
   cursor: pointer;
 }

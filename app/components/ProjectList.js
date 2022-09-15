@@ -82,6 +82,7 @@ function ProjectThumb(props) {
     inheritParentBackgroundColor
     toolTipPlacement="bottomLeft"
     toolTipTitle={"Click “New Project” to load a new BIOM-formatted data file and start a new project."}
+    key={-1} //this is to give the children unique keys for react hot loader
     >
       <div
         key={`${props.project.slug}-${props.index}`}
@@ -109,6 +110,7 @@ function ProjectThumb(props) {
       <br /><br />
       The saved project is only saved locally on the user’s hard drive (never uploaded to the cloud).
       </div>}
+    key={-1}
     >
       <div
         key={`${props.project.slug}-${props.index}`}
@@ -163,7 +165,7 @@ export function ProjectList(props) {
   }));
 
   return (
-    <div 
+    <div
     className={`${styles.projects} ${editClass}`}
     onMouseOver={() => ReactTooltip.rebuild()}
     onMouseLeave={() => setNewProjectTT(false)}

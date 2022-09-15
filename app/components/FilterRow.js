@@ -92,7 +92,7 @@ export default class FilterRow extends Component {
         <div
           className={styles.cell}
           style={{
-            width: (this.props.tableWidth * this.props.columnWidths.reads) / 2,
+            width: (this.props.tableWidth * this.props.columnWidths.reads),
             textAlign: 'right',
           }}
         >
