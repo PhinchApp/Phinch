@@ -1,6 +1,7 @@
 .group {
   color: #000;
-  font-weight: 300;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .row {
@@ -21,7 +22,7 @@
 
 .name {
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 600;
   vertical-align: top;
   margin-right: 1rem;
   overflow-wrap: break-word;

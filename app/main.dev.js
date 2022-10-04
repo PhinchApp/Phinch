@@ -63,8 +63,8 @@ app.on('ready', async () => {
     show: false,
     width: 1150,
     height: 768,
-    minWidth: 1150,
-    minHeight: 600,
+    minWidth: 900,
+    minHeight: 620,
     webPreferences: {
       nodeIntegrationInWorker: true,
     },

@@ -17,11 +17,13 @@ export default function SpotlightWithToolTip({ isActive, toolTipPlacement="left"
         overlayInnerStyle.transform = 'translateY(1em)'
     }
     const overlayStyleMerged = {
-        maxWidth: "300px",
+        maxWidth: "400px",
         fontSize: "16px",
         fontFamily: "Open Sans",
         fontWeight: "600",
         lineHeight: '1.35em',
+        padding: '1rem',
+        overflow: 'hidden',
         ...overlayStyle,
     }
 

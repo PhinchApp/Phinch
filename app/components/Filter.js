@@ -97,6 +97,7 @@ export default class Filter extends Component {
       sortReverse: false,
       sortKey: 'biomid',
       helpButton: needHelp,
+      deleting: false,
       counter: 0, //tracks what help step we are on to allow global click advance
     };
 
@@ -118,11 +119,11 @@ export default class Filter extends Component {
     };
 
     this.columnWidths = {
-      order: 0.04,
-      phinchName: 0.25,
-      biomid: 0.1,
-      sampleName: 0.32,
-      reads: .06,
+      order: 0.06,
+      phinchName: 0.325,
+      biomid: 0.15,
+      sampleName: 0.325,
+      reads: 0.14,
     };
 
     this.menuItems = [
@@ -252,6 +253,7 @@ export default class Filter extends Component {
       width: window.innerWidth,
       height: window.innerHeight,
     });
+    console.log(this.metrics.tableWidth);
   }
 
   renderHeader() {
@@ -273,7 +275,7 @@ export default class Filter extends Component {
         name: 'Sample Name',
       },
       {
-        id: 'observations',
+        id: 'reads',
         name: 'Observations',
       },
     ];
@@ -298,7 +300,8 @@ export default class Filter extends Component {
           role="button"
           tabIndex={0}
           className={styles.columnHeading}
-          style={{ width: this.metrics.tableWidth * this.columnWidths[c.id],
+          // This -250 from the width is so drag and close buttons are always visible
+          style={{ width: (this.metrics.tableWidth - 250) * this.columnWidths[c.id],
                    textAlign: c.id === 'biomid' ? 'right':'left', }}
           onClick={onClick}
           onKeyPress={e => (e.key === ' ' ? onClick() : null)}
@@ -324,6 +327,9 @@ export default class Filter extends Component {
       updatePhinchName={this.updatePhinchName}
       removeDatum={() => { removeRows(this, [datum]); }}
       restoreDatum={() => { restoreRows(this, [datum]); }}
+      deleting={this.state.deleting}
+      delete={() => this.setState({ deleting: true })}
+      cancel={() => this.setState({ deleting: false })}
     />
   );
 
@@ -510,7 +516,11 @@ export default class Filter extends Component {
           position: 'absolute',
           bottom: 0,
         }}
-        modalPosition={{
+        modalPosition={this.state.counter == 7 ? {
+          position: 'absolute',
+          bottom: '5rem',
+          width: this.metrics.tableWidth - 15,
+        } : {
           position: 'absolute',
           bottom: this.metrics.padding * 2,
           width: this.metrics.tableWidth - 15,
@@ -774,15 +784,6 @@ export default class Filter extends Component {
     }
   }
 
-  deleteBackdropTooltip () {
-    let element = document.querySelector('body');
-    element.removeAttribute("data-tip");
-    element.removeAttribute("data-text-color");
-    element.removeAttribute("data-background-color");
-    element.removeAttribute("data-place", "right");
-    element.removeAttribute("data-offset");
-  }
-
   render() {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
     const helpButtons = this.state.counter > 0 ? this.makeHelpButtons() : '';
@@ -826,36 +827,11 @@ export default class Filter extends Component {
       });
     };
 
-    const getBackDrop = () => {
-      if(this.state.counter > 0) {
-        ReactTooltip.rebuild();
-        let element = document.querySelector('body');
-        element.setAttribute("data-tip", "Click anywhere to advance");
-        element.setAttribute("data-text-color", "#F09E6A");
-        element.setAttribute("data-background-color", "none");
-        element.setAttribute("data-place", "right");
-        element.setAttribute("data-offset", "{'bottom': 30}");
-      }
-      else {
-        let element = document.querySelector('body');
-        element.removeAttribute("data-tip");
-        element.removeAttribute("data-text-color");
-        element.removeAttribute("data-background-color");
-        element.removeAttribute("data-place", "right");
-        element.removeAttribute("data-offset");
-      }
-    }
-
     this.allData = this.state.data.concat(this.state.deleted);
 
     const notMac = isMac() ? '' : gstyle.notMac;
     return (
-      <div className={`${gstyle.container} ${notMac}`}
-        data-tip={this.state.counter > 0 ? "Click anywhere to advance" : null}
-        data-text-color={this.state.counter > 0 ? "#F09E6A" : 'none'}
-        data-background-color={this.state.counter > 0 ? 'none' : ''}
-        data-place={this.state.counter > 0 ? "right" : ''}
-        data-offset={this.state.counter > 0 ? "{'bottom': 30}" : ''}>
+      <div className={`${gstyle.container} ${notMac}`}>
         <Loader loading={this.state.loading} />
         {redirect}
         {result}
@@ -943,7 +919,7 @@ export default class Filter extends Component {
               </SpotlightWithToolTip>
           </div>
         </div>
-        <div style={{ position: 'inherit', backgroundColor: '#ffffff', color: '#808080' }}>
+        <div style={{ position: 'inherit', backgroundColor: '#fdfdfa', color: '#808080' }}>
           <SideMenu
             showLeftSidebar={this.state.showLeftSidebar}
             leftSidebar={this.metrics.leftSidebar}
@@ -1023,7 +999,7 @@ export default class Filter extends Component {
               className={`${styles.section} ${styles.right}`}
               style={{
                 width: this.metrics.tableWidth - 6,
-                height: (this.state.height - (this.state.counter == 1 ? 240 : 155)),
+                height: (this.state.height - (this.state.counter >= 1 ? 240 : 155)),
                 overflowY: 'overlay',
               }}
               onDragStart={this.dragStart}
@@ -1044,7 +1020,7 @@ export default class Filter extends Component {
                   remove the sample from the pool by the “delete” button on the right{' '}
                   (After the sample is manually removed, it will be listed under{' '}
                   “Archived Sample” at the bottom). </div> : ''}
-                  overlayStyle={{width: '250px'}}
+                  overlayStyle={{width: '250px', paddingBottom: '5rem'}}
                   style={this.state.counter == 8 ? {zIndex: 0} : ''}
                   >
                 <List
@@ -1071,7 +1047,6 @@ export default class Filter extends Component {
           >
             <div className={styles.helpButtons}>
               {helpButtons}
-              {this.state.counter > 0 ? getBackDrop() : ''}
             </div>
           </SpotlightWithToolTip>
         </div>

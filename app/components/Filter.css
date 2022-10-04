@@ -8,10 +8,9 @@
 }
 
 .filterLogo {
-  background: #001226;
+  background: #000000;
   width: 100px;
-  height: 136px;
-  /* padding: 1.5rem 1rem; */
+  height: 155px;
   display: inline-block;
   vertical-align: top;
   position: relative;
@@ -23,9 +22,9 @@
 }
 
 .filterLogo button {
-  max-width: 150px !important;
+  max-width: 133px !important;
   max-height: 29px !important;
-  padding: 1rem .5rem;
+  padding: 1.5rem .5rem;
 }
 
 .help img{
@@ -37,16 +36,17 @@
 
 .filter {
   position: relative;
-  padding: 0.25rem 0.5rem;
+  padding: 0 0.5rem 1rem;
   font-size: 0.75rem;
 }
 
 .filterHeading {
   font-family: 'Open Sans';
-  font-size: 17px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 800;
   display: inline-block;
   padding: 0.25rem 0.5rem;
+  padding-bottom: 0;
   margin: 0;
   color: #F09E6A;
 }
@@ -61,8 +61,8 @@
   vertical-align: top;
   margin: 2.3rem 2rem;
   line-height: 20px;
-  font-size: 12px;
-  font-weight: 400;
+  font-size: 13px;
+  font-weight: 600;
   color: #B2B2B2;
 }
 
@@ -84,8 +84,8 @@
   background: #001226;
   padding: 0.25rem 0.5rem;
   border-radius: 1rem;
-  font-weight: 400;
-  font-size: 12px;
+  font-weight: 600;
+  font-size: 13px;
 }
 
 .visOption img,
@@ -164,7 +164,7 @@
 
 .helpButtons {
   position: fixed;
-  bottom: 35px;
+  bottom: 50px;
   left: 0;
   width: fit-content;
 }

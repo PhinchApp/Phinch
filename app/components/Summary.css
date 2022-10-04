@@ -15,7 +15,7 @@
   vertical-align: top;
   height: 100%;
   padding: calc(0.5rem - 2px) 0.5rem;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .right {
@@ -32,13 +32,13 @@
 }
 
 .label {
-  font-weight: 400;
-  color: #999;
+  font-weight: 600;
+  color: #b2b2b2;
 }
 
 .number {
   color: #F09E6A;
-  font-weight: 400;
+  font-weight: 600;
 }
 
 .summary {

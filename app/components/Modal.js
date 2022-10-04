@@ -98,10 +98,10 @@ export default class Modal extends Component {
     ) : <div />;
     return (
     <div
-        style={{
-          display: 'inline-block',
-          verticalAlign: 'top',
-        }}
+      style={{
+        display: 'inline-block',
+        verticalAlign: 'top',
+      }}
       >
         <SpotlightWithToolTip
           isActive={this.props.spotlight && this.state.showHidden}
@@ -119,12 +119,12 @@ export default class Modal extends Component {
             window unless you choose to remove samples from the main list{' '}
             using the “X” button. </div>
             }
-          overlayStyle={{maxWidth: "700px",}}
-            >
+          overlayStyle={{maxWidth: "700px"}}
+          >
           {modal}
+        </SpotlightWithToolTip>
           {badge}
           {button}
-        </SpotlightWithToolTip>
       </div>
     );
   }

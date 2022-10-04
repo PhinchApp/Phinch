@@ -194,6 +194,7 @@
 }
 
 .checkbox input:checked ~ .checkmark {
+  background-size: 16px;
   background-position: center;
   background-image: url("images/checkbox.svg");
   background-repeat: no-repeat;
@@ -206,6 +207,7 @@
 }
 
 .checkmark:hover {
+  background-size: 16px;
   background-color: #F09E6A;
   background-position: center;
   background-image: url("images/checkbox.svg");
