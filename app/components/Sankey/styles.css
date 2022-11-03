@@ -12,6 +12,7 @@
 }
 .list > div {
   scroll-snap-align: start;
+  white-space: nowrap;
 }
 
 .error {
