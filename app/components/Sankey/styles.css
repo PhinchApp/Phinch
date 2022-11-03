@@ -1,0 +1,23 @@
+.sankey {
+  color: #000;
+  position: relative;
+}
+
+.list {
+  position: absolute;
+  top: 0;
+  right: 0;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+}
+.list > div {
+  scroll-snap-align: start;
+}
+
+.error {
+  position: absolute;
+  top: 1em;
+  left: 1em;
+  color: red;
+  font-weight: bold;
+}

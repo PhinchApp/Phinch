@@ -15,7 +15,7 @@ export default () => (
       <Route path="/newproject" component={NewProject} />
       <Route path="/filter" component={Filter} />
       <Route path="/about" component={About} />
-      <Route path="/vis" component={Vis} />
+      <Route path="/vis/:visType" component={Vis} />
       <Route path="/" component={HomePage} />
     </Switch>
     <ReactTooltip className='customReactTooltip' place='bottom' effect='float' globalEventOff='click' type='light' arrowColor='transparent' />

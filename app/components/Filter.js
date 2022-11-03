@@ -10,7 +10,7 @@ import SpotlightWithToolTip from './SpotlightWithToolTip';
 
 import _debounce from 'lodash.debounce';
 import _cloneDeep from 'lodash.clonedeep';
-
+import classNames from 'classnames'
 import stackedbar from 'images/stackedbar.svg';
 import bubblegraph from 'images/bubblegraph.svg';
 import sankeygraph from 'images/sankeygraph.svg';
@@ -99,6 +99,7 @@ export default class Filter extends Component {
       helpButton: needHelp,
       deleting: false,
       counter: 0, //tracks what help step we are on to allow global click advance
+      selectedVisualization: 'stackedbar',
     };
 
     this.filters = DataContainer.getFilters();
@@ -653,7 +654,7 @@ export default class Filter extends Component {
     if (result === 'error') {
       this.setResult(result);
     } else {
-      this.setState({ redirect: '/vis' });
+      this.setState({ redirect: `/vis/${this.state.selectedVisualization}` });
     }
   }
 
@@ -763,9 +764,9 @@ export default class Filter extends Component {
           this.setState({helpButton: needHelpHover});
         }
         break;
-      case "viewViz":
-        const element = document.getElementById("stackedgraph");
-        element.style.backgroundColor = "#F09E6A";
+      // case "viewViz":
+      //   const element = document.getElementById("stackedgraph");
+      //   element.style.backgroundColor = "#F09E6A";
     }
   }
 
@@ -778,9 +779,9 @@ export default class Filter extends Component {
           this.setState({helpButton: needHelp});
         }
         break;
-      case "viewViz":
-        const element = document.getElementById("stackedgraph");
-        element.style.backgroundColor = "#001226";
+      // case "viewViz":
+      //   const element = document.getElementById("stackedgraph");
+      //   element.style.backgroundColor = "#001226";
     }
   }
 
@@ -874,17 +875,20 @@ export default class Filter extends Component {
             >
               <div>
                 <div className={styles.visRowLabel}>Visualization Type</div>
-                <div className={styles.visOption}>
+                <div className={styles.visOption} onClick={() => this.setState({ selectedVisualization: 'stackedbar' })}>
                   <img src={stackedbar} alt="Stacked bargraph" />
-                  <div className={styles.visOptionLabel} id="stackedgraph" >Stacked Bargraph</div>
+                  <div className={classNames(styles.visOptionLabel, { [styles.selected]: this.state.selectedVisualization === 'stackedbar'})}
+                    id="stackedgraph" >Stacked Bargraph</div>
                 </div>
                 <div className={styles.futureVis}>
                   <img src={bubblegraph} alt="Bubble Graph" id="bubblegraph" />
                   <div className={styles.visOptionLabel}>Bubble Graph</div>
                 </div>
-                <div className={styles.futureVis}>
+                <div className={styles.futureVis} onClick={() => this.setState({ selectedVisualization: 'sankey' })}>
                   <img src={sankeygraph} alt="Sankey bargraph" id="sankeygraph" />
-                  <div className={styles.visOptionLabel}>Sankey graph</div>
+                  <div
+                    className={classNames(styles.visOptionLabel, { [styles.selected]: this.state.selectedVisualization === 'sankey'})}
+                  >Sankey graph</div>
                 </div>
                 <div
                   role="button"

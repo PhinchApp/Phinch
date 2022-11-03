@@ -35,14 +35,15 @@ import StackedBarsSVG from './StackedBarsSVG';
 import FilterChart from './FilterChart';
 import Summary from './Summary';
 import Modal from './Modal';
-
+import Sankey from './Sankey/'
 import styles from './Vis.css';
 import gstyle from './general.css';
+import classNames from 'classnames';
 
 export default class Vis extends Component {
   constructor(props) {
     super(props);
-
+    console.log(props)
     pageView('/vis');
 
     this.state = {
@@ -1055,6 +1056,7 @@ export default class Vis extends Component {
 
   renderLevelSelector(levels, dataLength) {
     const modalLevel = (this.state.width - 580) < ((800 / 12) * this.levels.length);
+    console.log(levels, this.levels)
     const levelButtons = levels.map((l, i) => {
       const selected = (l.order <= this.state.level) ? styles.selected : '';
       return (
@@ -1315,6 +1317,8 @@ export default class Vis extends Component {
       />
     );
 
+    const visType = this.props.match.params.visType || 'stackedbar';
+
     return (
       <div className={gstyle.container}>
         {redirect}
@@ -1361,53 +1365,57 @@ export default class Vis extends Component {
           toggleMenu={this.toggleMenu}
         />
         <div
-          className={`${gstyle.panel} ${gstyle.noscrollbar}`}
+          className={classNames(gstyle.panel,  gstyle.noscrollbar)}
           style={{
             width: this.metrics.chartWidth + this.metrics.nonbarWidth,
           }}
         >
-          <div
-            className={styles.axis}
-            style={{
-              width: this.metrics.chartWidth + (this.metrics.nonbarWidth - this.metrics.padding),
-              height: this.metrics.lineHeight * 2,
-            }}
-          >
-            <svg
-              fontFamily="IBM Plex Sans Condensed"
-              fontWeight="200"
-              fontSize="12px"
+          { visType === 'stackedbar' ? (
+            <div
+              className={styles.axis}
               style={{
-                position: 'absolute',
-                left: 0,
-                pointerEvents: 'none',
-                width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
-                height: this.metrics.chartHeight,
+                width: this.metrics.chartWidth + (this.metrics.nonbarWidth - this.metrics.padding),
+                height: this.metrics.lineHeight * 2,
               }}
             >
-              {ticks}
-            </svg>
-            {
-              isAttribute ? (
-                <div className={styles.attrInfo}>
-                  <div className={styles.attrLabel}>
-                    {this.attribute.key} {this.attribute.unit ? `(${this.attribute.unit})` : ''}
+              <svg
+                fontFamily="IBM Plex Sans Condensed"
+                fontWeight="200"
+                fontSize="12px"
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  pointerEvents: 'none',
+                  width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
+                  height: this.metrics.chartHeight,
+                }}
+              >
+                {ticks}
+              </svg>
+              {
+                isAttribute ? (
+                  <div className={styles.attrInfo}>
+                    <div className={styles.attrLabel}>
+                      {this.attribute.key} {this.attribute.unit ? `(${this.attribute.unit})` : ''}
+                    </div>
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      className={styles.attrToggle}
+                      onClick={this.toggleEmptyAttrs}
+                      onKeyPress={e => (e.key === ' ' ? this.toggleEmptyAttrs() : null)}
+                    >
+                      {`${this.state.showEmptyAttrs ? 'Hide' : 'Show'} Empty`}
+                    </div>
                   </div>
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    className={styles.attrToggle}
-                    onClick={this.toggleEmptyAttrs}
-                    onKeyPress={e => (e.key === ' ' ? this.toggleEmptyAttrs() : null)}
-                  >
-                    {`${this.state.showEmptyAttrs ? 'Hide' : 'Show'} Empty`}
-                  </div>
-                </div>
-              ) : ''
-            }
-          </div>
+                ) : ''
+              }
+            </div>
+          ) : null }
           <div
-            className={`${gstyle.panel} ${gstyle.noscrollbar}`}
+            className={classNames(gstyle.panel,  gstyle.noscrollbar, {
+              [gstyle.panelNoYScroll]: visType === 'sankey'
+            })}
             style={{
               backgroundColor: '#ffffff',
               width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
@@ -1432,22 +1440,31 @@ export default class Vis extends Component {
                   topSequences={this.renderTopSequences()}
                 />
               ) : (
-                <List
-                  className={`${styles.svglist}`}
-                  innerElementType="svg"
-                  width={this.metrics.chartWidth + this.metrics.nonbarWidth}
-                  height={this.metrics.chartHeight - (this.metrics.padding * 4)}
-                  itemSize={this.metrics.barContainerHeight + (
-                    this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
-                  )}
-                  itemCount={dataLength}
-                  itemKey={index => (isAttribute
-                    ? this.attribute.displayValues[index].name : this.state.data[index].sampleName
-                  )}
-                >
-                  {isAttribute ? this.attrRow : this.stackRow}
-                </List>
+                visType === 'stackedbar' ?
+                  <List
+                    className={`${styles.svglist}`}
+                    innerElementType="svg"
+                    width={this.metrics.chartWidth + this.metrics.nonbarWidth}
+                    height={this.metrics.chartHeight - (this.metrics.padding * 4)}
+                    itemSize={this.metrics.barContainerHeight + (
+                      this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
+                    )}
+                    itemCount={dataLength}
+                    itemKey={index => (isAttribute
+                      ? this.attribute.displayValues[index].name : this.state.data[index].sampleName
+                    )}
+                  >
+                    {isAttribute ? this.attrRow : this.stackRow}
+                  </List>
+                : visType === 'sankey' ?
+                  <Sankey data={this.state.data} preData={this.state.preData}
+                    width={this.metrics.chartWidth + this.metrics.nonbarWidth}
+                    height={this.metrics.chartHeight}
+
+                  />
+                : null
               )
+
             }
           </div>
         </div>

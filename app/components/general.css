@@ -15,6 +15,10 @@
   overflow-y: scroll;
   overflow-x: hidden;
 }
+.panelNoYScroll {
+  overflow-y: hidden;
+}
+
 
 .input {
   box-sizing: border-box;
