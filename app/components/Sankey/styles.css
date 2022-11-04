@@ -7,12 +7,45 @@
   position: absolute;
   top: 0;
   right: 0;
+  font-size: 0.8em;
+}
+.listTitle {
+  text-transform: uppercase;
+}
+.listHeader {
+  display: flex;
+  justify-content: space-between;
+  overflow-y: scroll;
+  padding: 0.1em 0.5em;
+  border-bottom: 1px solid #000;
+  font-weight: bold;
+}
+.listScroll {
   overflow-y: scroll;
   scroll-snap-type: y mandatory;
 }
-.list > div {
+.listScroll > div {
   scroll-snap-align: start;
   white-space: nowrap;
+  display: flex;
+  justify-content: space-between;
+  background-color: rgba(178, 178, 178, 0.2);
+  padding: 0.1em 0.5em;
+  margin-bottom: 1px;
+}
+.listScroll > div:nth-child(even) {
+  background-color: rgba(178, 178, 178, 0.5);
+}
+.listScroll .dot {
+  width: 0.75em;
+  height: 0.75em;
+  display: inline-block;
+  border-radius: 50%;
+
+}
+.listNumber {
+  text-align: right;
+  display: inline-block;
 }
 
 .error {

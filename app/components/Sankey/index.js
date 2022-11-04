@@ -4,6 +4,7 @@ import { sankey, sankeyJustify, sankeyLinkHorizontal } from 'd3-sankey';
 import { scaleOrdinal } from 'd3';
 import palette from '../../palette';
 import { debounce } from 'lodash';
+import datacontainer from '../../datacontainer';
 const nodeWidth = 15 // width of node rects
 const nodePadding = 0 // vertical separation between adjacent nodes
 
@@ -11,6 +12,9 @@ export default function Sankey(props) {
   console.log(props)
 
   let { data, width, height } = props
+  console.log(data)
+  const levels = datacontainer.getLevels()
+  console.log(levels)
   // width -= 27
   // height *= 4
   const listRef = useRef()
@@ -81,9 +85,9 @@ export default function Sankey(props) {
   const colorScale = scaleOrdinal(palette)
   console.log(palette)
   const maxDepth = Math.max(...sankeyData.nodes.map(n => n.depth))
-
+  const maxLayerName = isFinite(maxDepth) && levels[maxDepth] ? levels[maxDepth].name  : ''
   const listHeight = height - marginTop - marginBottom
-  const listItemHeight = 22
+  const listItemHeight = 20
   const listItemsVisible = Math.floor(listHeight / listItemHeight)
   console.log(listItemsVisible)
   const [scrollOffset, setScrollOffset] = useState(0)
@@ -123,19 +127,6 @@ export default function Sankey(props) {
   }
   const checkLinkVisibility = (_link) => {
     let visibility = _link.target.hasFinalNodeVisible
-    // const recurseLink = (link) => {
-    //   if (link.listItemVisible) {
-    //     visibility = true
-    //     return
-    //   }
-    //   if (link.source.sourceLinks) { // source links are to the right of this node
-    //     link.source.sourceLinks.forEach(link => {
-    //       // target goes to the next item in the chain
-    //       recurseLink(link)
-    //     })
-    //   }
-    // }
-    // recurseLink(_link)
 
     return visibility
   }
@@ -185,13 +176,19 @@ export default function Sankey(props) {
     </g>
   )
 
+  const maxNumberLength = `${listItems.length}`.length
+  const listNumberWidth = `${maxNumberLength}ch`
+
   const list = listItems.map((node, i) => {
     if (node.depth !== maxDepth) {
       return null
     }
-    const color = colorScale(i)
+    const color = colorScale(node.name)
     return (
-      <div key={node.name}>{node.name}</div>
+      <div key={node.name} >
+        <span><span style={{ width: listNumberWidth}} className={styles.listNumber}>{i + 1}</span> <div className={styles.dot} style={{backgroundColor: color}} /> {node.name}</span>
+        <span>{node.value.toLocaleString()}</span>
+      </div>
     )
   })
 
@@ -206,13 +203,27 @@ export default function Sankey(props) {
       </svg>
       <div className={styles.list} style={{
         width: marginRight - connecingPathPadding * 2 - connectingPathWidth,
-        height: listHeight,
         marginTop
-      }}
-        ref={listRef}
-        onScroll={onListScroll}
-      >
-        {list}
+      }}>
+        <div className={styles.listTitle}>
+          <strong>{maxLayerName} Layer</strong> shown by scrolling:
+        </div>
+        <div className={styles.listHeader}>
+          <span>
+            <span style={{ width: listNumberWidth}} className={styles.listNumber} />
+            Sequences
+          </span>
+          <span>Counts</span>
+        </div>
+
+        <div
+          className={styles.listScroll}
+          style={{ height: `calc(${listHeight}px - 2em)` }}
+          ref={listRef}
+          onScroll={onListScroll}
+        >
+          {list}
+        </div>
       </div>
       <div className={styles.error}>
         {sankeyData.maxNamePartsLength === 1 ? 'Sankey requires at least a Phylum level selection' : null}
