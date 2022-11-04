@@ -192,13 +192,29 @@ export default function Sankey(props) {
     )
   })
 
+  const listConnectingLines = listItems.filter(d => d.listItemVisible)
+    .map((node, nodeIndex) => {
+      const x1 = node.x1 + connecingPathPadding
+      const y1 = node.y0 + (node.y1 - node.y0) / 2
+
+      const x2 = width - marginRight + connectingPathWidth
+      const y2 = nodeIndex * listItemHeight + listItemHeight / 2 + (listItemHeight * 2)
+
+      // construct a bezier between the two points
+      const path = `M ${x1} ${y1} C ${x1 + connectingPathWidth * 0.5} ${y1} ${x2 - connectingPathWidth * 0.5} ${y2} ${x2} ${y2}`
+
+      return (
+        <path d={path} key={node.name} style={{ stroke: '#001226', fill: 'none', strokeOpacity: '0.5' }} />
+      )
+    })
+
   return (
     <div className={styles.sankey} style={{ height }}>
       <svg width={width} height={height}>
         <g transform={`translate(${marginLeft}, ${marginTop})`}>
           {paths}
           {nodes}
-
+          <g>{listConnectingLines}</g>
         </g>
       </svg>
       <div className={styles.list} style={{
