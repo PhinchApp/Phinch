@@ -102,17 +102,7 @@
   box-shadow: 0 0 10px white;
 }
 
-.menuBox img {
-  width: 30px;
-  height: 30px;
-  margin: 0;
-  padding: 0;
-  border-color: white;
-  border-style: inherit;
-  border-width:0px;
-}
-
-.menuItem .menuBox.newProject img {
+.menuItem .menuBox img {
   width: 14px;
   height: 11px;
   margin: 0;

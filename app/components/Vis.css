@@ -10,7 +10,7 @@
 .menuToggle {
   position: relative;
   color: #fff;
-  background: #1fbbd8;
+  background: #F09E6A;
   width: 22px;
   height: 22px;
   border-radius: 11px;
@@ -51,7 +51,7 @@
   margin-bottom: 0.5rem;
   width: 45px;
   height: 45px;
-  background: #1fbbd8;
+  background: #F09E6A;
   padding: 9px;
   font-size: 24px;
   text-align: center;
@@ -89,7 +89,7 @@
 }
 
 .selector:hover {
-  background: #1fbbd8;
+  background: #F09E6A;
   color: white;
 }
 
@@ -151,7 +151,7 @@
   height: 12px;
   border-radius: 12px;
   top: -3px;
-  left: -4px;
+  left: -1px;
   position: relative;
   content: '';
   display: inline-block;
@@ -165,13 +165,13 @@
   height: 12px;
   border-radius: 12px;
   top: -3px;
-  left: -4px;
+  left: -1px;
   position: relative;
   content: '';
   display: inline-block;
   visibility: visible;
   border: 3px solid #4d4d4d;
-  background: #1fbbd8;
+  background: #F09E6A;
 }
 
 .inlineControl select {
@@ -197,7 +197,7 @@
 }
 
 .inlineControl select.selected {
-  background: #1fbbd8;
+  background: #F09E6A;
 }
 
 .dash {
@@ -211,12 +211,12 @@
 }
 
 .dash.selected {
-  color: #1fbbd8;
+  color: #F09E6A;
 }
 
 .selector.selected {
-  border: 1px solid #1fbbd8;
-  background: #1fbbd8;
+  border: 1px solid #F09E6A;
+  background: #F09E6A;
 }
 
 .tagFilter {
