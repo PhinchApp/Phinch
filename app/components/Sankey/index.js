@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import styles from './styles.css';
 import { sankey, sankeyJustify, sankeyLinkHorizontal } from 'd3-sankey';
 import { scaleOrdinal } from 'd3';
@@ -7,6 +7,40 @@ import { debounce } from 'lodash';
 import datacontainer from '../../datacontainer';
 const nodeWidth = 15 // width of node rects
 const nodePadding = 0 // vertical separation between adjacent nodes
+
+function TextWithBackground(props) {
+  const { children, ...restOfProps } = props;
+  const ref = useRef(null);
+  const [width, setWidth] = useState(0);
+  const [height, setHeight] = useState(0);
+
+  useEffect(() => {
+    if (ref.current) {
+      const dimensions = ref.current.getBBox();
+      setWidth(dimensions.width);
+      setHeight(dimensions.height);
+    }
+  }, [children])
+  const lrPadding = 5;
+  const tbPadding = 2;
+  return (
+    <g>
+      {width && height ?
+        <rect
+          filter={`url(#dropshadow)`}
+          x={props.x - lrPadding}
+          rx={10}
+          y={props.y - height * 0.7 - tbPadding}
+          width={width + (lrPadding * 2)}
+          height={height + (tbPadding * 2)}
+          fill="white"
+          opacity='0.2'
+        />
+      : null}
+      <text {...restOfProps} ref={ref}>{children}</text>
+    </g>
+  );
+}
 
 export default function Sankey(props) {
   console.log(props)
@@ -175,6 +209,27 @@ export default function Sankey(props) {
       )})}
     </g>
   )
+  const nodeLabels = (
+    <g>
+      {sankeyData && sankeyData.nodes.map(node => {
+        const tryToShowLabel = node.depth !== maxDepth && node.hasFinalNodeVisible
+        const nodeHeight = node.y1 - node.y0
+        if (!tryToShowLabel || nodeHeight < 10) {
+          return null
+        }
+        return (
+          <TextWithBackground
+            key={node.name}
+            x={node.x1 + 10}
+            style={{ fontSize: '0.8em'}}
+            y={node.y0 + (node.y1 - node.y0) / 2}
+          >
+            {node.name}
+          </TextWithBackground>
+        )
+      })}
+    </g>
+  )
 
   const maxNumberLength = `${listItems.length}`.length
   const listNumberWidth = `${maxNumberLength}ch`
@@ -211,10 +266,25 @@ export default function Sankey(props) {
   return (
     <div className={styles.sankey} style={{ height }}>
       <svg width={width} height={height}>
+        <defs>
+          <filter id="dropshadow" height="130%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="1"/>
+            <feOffset dx="0" dy="1" result="offsetblur"/>
+            <feComponentTransfer>
+              <feFuncA type="linear" slope="0.5"/>
+            </feComponentTransfer>
+            <feMerge>
+              <feMergeNode/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+
+        </defs>
         <g transform={`translate(${marginLeft}, ${marginTop})`}>
           {paths}
           {nodes}
           <g>{listConnectingLines}</g>
+          {nodeLabels}
         </g>
       </svg>
       <div className={styles.list} style={{
