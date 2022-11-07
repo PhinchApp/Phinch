@@ -1,0 +1,46 @@
+.SankeyTooltip {
+  font-family: 'IBM Plex Sans Condensed', Verdana, Sans-serif;
+  position: absolute;
+  font-size: 12px;
+  top: 0;
+  left: 0;
+  width: 316px;
+  color: #fff;
+  background-color: #000;
+  pointer-events: none;
+  padding: 1em;
+  border: 1px solid #333;
+  border-radius: 8px;
+  z-index: 10;
+  opacity: 0.8;
+}
+
+.label {
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+.value {
+  font-weight: 400;
+  font-size: 13px;
+  overflow-wrap: break-word;
+  margin-bottom: 0.5em;
+}
+
+.small {
+  font-size: 11px;
+  font-weight: normal;
+  text-transform: initial;
+}
+
+.bar {
+  margin: 0.25rem 0;
+}
+
+.click {
+  display: inline-block;
+  width: 100%;
+  font-size: 11px;
+  font-weight: 300;
+  text-align: center;
+}

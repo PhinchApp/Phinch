@@ -5,6 +5,7 @@ import { scaleOrdinal } from 'd3';
 import palette from '../../palette';
 import { debounce } from 'lodash';
 import datacontainer from '../../datacontainer';
+import SankeyTooltip from './SankeyTooltip';
 const nodeWidth = 15 // width of node rects
 const nodePadding = 0 // vertical separation between adjacent nodes
 
@@ -43,15 +44,13 @@ function TextWithBackground(props) {
 }
 
 export default function Sankey(props) {
-  console.log(props)
 
   let { data, width, height } = props
-  console.log(data)
   const levels = datacontainer.getLevels()
-  console.log(levels)
   // width -= 27
   // height *= 4
   const listRef = useRef()
+  const containerRef = useRef()
 
   const marginLeft = 5
   const marginRight = Math.max(300, width * 0.2)
@@ -87,8 +86,6 @@ export default function Sankey(props) {
         }
       })
     })
-    console.log(nodes)
-    console.log(links)
     if (!nodes.length && !links.length) {
 
       return { nodes, links, maxNamePartsLength }
@@ -114,23 +111,38 @@ export default function Sankey(props) {
     }
     return graph
   }, [data, width, height])
-  console.log(sankeyData)
+
+  const depthOneSum = useMemo(() => {
+    const depthOneNodes = sankeyData.nodes.filter(n => n.depth === 1)
+    return depthOneNodes.reduce((sum, node) => sum + node.value, 0)
+  }, [sankeyData])
+
 
   const colorScale = scaleOrdinal(palette)
-  console.log(palette)
   const maxDepth = Math.max(...sankeyData.nodes.map(n => n.depth))
   const maxLayerName = isFinite(maxDepth) && levels[maxDepth] ? levels[maxDepth].name  : ''
   const listHeight = height - marginTop - marginBottom
   const listItemHeight = 20
   const listItemsVisible = Math.floor(listHeight / listItemHeight)
-  console.log(listItemsVisible)
   const [scrollOffset, setScrollOffset] = useState(0)
+  const [hoveredListItem, setHoveredListItem] = useState(null)
 
-
+  const hoverListItem = (node) => (e) => {
+    if (!node) {
+      setHoveredListItem(null)
+      return
+    }
+    const { name, value } = node
+    const containerPosition = containerRef.current.getBoundingClientRect()
+    const position = {
+      x: e.clientX - containerPosition.left,
+      y: e.clientY - containerPosition.top,
+    }
+    const color = colorScale(name)
+    setHoveredListItem({position, name, counts: value, totalCounts: depthOneSum, color})
+  }
   const onListScroll = debounce(() => {
-    console.log('list scroll')
     const listScroll = listRef.current.scrollTop
-    console.log(listScroll)
     const listScrollAlignedToListItemHeight = Math.floor(listScroll / listItemHeight) * listItemHeight
     const newOffset = listScrollAlignedToListItemHeight / listItemHeight
     setScrollOffset(newOffset)
@@ -170,7 +182,6 @@ export default function Sankey(props) {
   sankeyData.links.forEach(link => {
     link.hasFinalNodeVisible = checkLinkVisibility(link)
   })
-  console.log(sankeyData.nodes)
 
   const paths = (
     <g>
@@ -240,7 +251,7 @@ export default function Sankey(props) {
     }
     const color = colorScale(node.name)
     return (
-      <div key={node.name} >
+      <div key={node.name} onMouseMove={hoverListItem(node)} onMouseOver={hoverListItem(node)} onMouseOut={hoverListItem(null)}>
         <span><span style={{ width: listNumberWidth}} className={styles.listNumber}>{i + 1}</span> <div className={styles.dot} style={{backgroundColor: color}} /> {node.name}</span>
         <span>{node.value.toLocaleString()}</span>
       </div>
@@ -287,8 +298,14 @@ export default function Sankey(props) {
     )
   }) : null
 
+  const tooltip = hoveredListItem ? (
+    <SankeyTooltip
+      {...hoveredListItem}
+
+    />
+  ) : null
   return (
-    <div className={styles.sankey} style={{ height }}>
+    <div className={styles.sankey} style={{ height }} ref={containerRef}>
       <svg width={width} height={height}>
         <defs>
           <filter id="dropshadow" height="130%">
@@ -339,7 +356,7 @@ export default function Sankey(props) {
       <div className={styles.error}>
         {sankeyData.maxNamePartsLength === 1 ? 'Sankey requires at least a Phylum level selection' : null}
       </div>
-
+      {tooltip}
     </div>
   )
 }
