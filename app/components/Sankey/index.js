@@ -55,7 +55,7 @@ export default function Sankey(props) {
 
   const marginLeft = 5
   const marginRight = Math.max(300, width * 0.2)
-  const marginTop = 10
+  const marginTop = 30
   const marginBottom = 28
   const connectingPathWidth = 50
   const connecingPathPadding = 5
@@ -263,6 +263,30 @@ export default function Sankey(props) {
       )
     })
 
+  const levelLabels = levels ? levels.map((level, i) => {
+    if (i > maxDepth) {
+      return null
+    }
+    const matchingNode = sankeyData.nodes.find(node => node.depth === i)
+    let x = 0
+    if (matchingNode) {
+      x = i === 0 ? matchingNode.x0 : (matchingNode.x1 + matchingNode.x0) / 2
+    }
+    const nameCapitalized = level.name.charAt(0).toUpperCase() + level.name.slice(1)
+    const textAnchor = i === 0 ? 'start' : i === levels.length - 1 ? 'end' : 'middle'
+    return (
+      <text
+        key={level.name}
+        x={x}
+        y={-5}
+        style={{ fontSize: '0.8em', textAnchor, fontWeight: 'bold'}}
+      >
+        {nameCapitalized}
+      </text>
+
+    )
+  }) : null
+
   return (
     <div className={styles.sankey} style={{ height }}>
       <svg width={width} height={height}>
@@ -285,6 +309,7 @@ export default function Sankey(props) {
           {nodes}
           <g>{listConnectingLines}</g>
           {nodeLabels}
+          {levelLabels}
         </g>
       </svg>
       <div className={styles.list} style={{
