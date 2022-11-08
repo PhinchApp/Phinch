@@ -142,6 +142,7 @@ export default function Sankey(props) {
     setHoveredListItem({position, name, counts: value, totalCounts: depthOneSum, color})
   }
   const onListScroll = debounce(() => {
+    setHoveredListItem(null)
     const listScroll = listRef.current.scrollTop
     const listScrollAlignedToListItemHeight = Math.floor(listScroll / listItemHeight) * listItemHeight
     const newOffset = listScrollAlignedToListItemHeight / listItemHeight
@@ -176,33 +177,66 @@ export default function Sankey(props) {
 
     return visibility
   }
+  const checkNodeHoverVisibility = (_node) => {
+    let visibility = false
+    const recurseNode = (node) => {
+      if (hoveredListItem && node.name === hoveredListItem.name) {
+        visibility = true
+        return
+      }
+      if (node.sourceLinks) { // source links are to the right of this node
+        node.sourceLinks.forEach(link => {
+          // target goes to the next item in the chain
+          recurseNode(link.target)
+        })
+      }
+    }
+    recurseNode(_node)
+    return visibility
+  }
+
   sankeyData.nodes.forEach(node => {
     node.hasFinalNodeVisible = checkNodeVisibility(node)
+    node.hasHoveredNodeVisible = checkNodeHoverVisibility(node)
   })
   sankeyData.links.forEach(link => {
     link.hasFinalNodeVisible = checkLinkVisibility(link)
+    link.hasHoveredNodeVisible = link.target.hasHoveredNodeVisible
   })
 
   const paths = (
     <g>
-      {sankeyData && sankeyData.links.map(link => (
-        <path
-          key={`${link.source.name}-${link.target.name}`}
-          d={sankeyLinkHorizontal()(link)}
-          style={{
-            fill: 'none',
-            stroke: colorScale(link.target.name),
-            strokeOpacity: link.hasFinalNodeVisible ? 0.5 : 0,
-            strokeWidth: Math.max(1,link.width)
-          }}
-        />
-      ))}
+      {sankeyData && sankeyData.links.map(link => {
+        let strokeOpacity = link.hasFinalNodeVisible ? 0.5 : 0
+        if (hoveredListItem) {
+
+          if (!link.hasHoveredNodeVisible) {
+            strokeOpacity = strokeOpacity * 0.2
+          }
+        }
+        return (
+
+          <path
+            key={`${link.source.name}-${link.target.name}`}
+            d={sankeyLinkHorizontal()(link)}
+            style={{
+              fill: 'none',
+              stroke: colorScale(link.target.name),
+              strokeOpacity: strokeOpacity,
+              strokeWidth: Math.max(1,link.width)
+            }}
+          />
+        )
+      })}
     </g>
   )
   const nodes = (
     <g>
       {sankeyData && sankeyData.nodes.map(node => {
-        const opacity = node.listItemVisible || node.hasFinalNodeVisible ? 1 : 0.2
+        let opacity = node.listItemVisible || node.hasFinalNodeVisible ? 1 : 0.2
+        if (hoveredListItem && !node.hasHoveredNodeVisible) {
+          opacity = 0.1
+        }
         return (
           <rect
             key={node.name}
@@ -225,8 +259,16 @@ export default function Sankey(props) {
       {sankeyData && sankeyData.nodes.map(node => {
         const tryToShowLabel = node.depth !== maxDepth && node.hasFinalNodeVisible
         const nodeHeight = node.y1 - node.y0
-        if (!tryToShowLabel || nodeHeight < 10) {
+        if (!hoveredListItem && (!tryToShowLabel || nodeHeight < 10)) {
           return null
+        } else if (hoveredListItem) {
+          if (node.depth === maxDepth) {
+            return null
+          }
+          if (!node.hasHoveredNodeVisible) {
+            return null
+          }
+
         }
         return (
           <TextWithBackground
@@ -249,9 +291,18 @@ export default function Sankey(props) {
     if (node.depth !== maxDepth) {
       return null
     }
+    let opacity = 1
+    if (hoveredListItem && hoveredListItem.name !== node.name) {
+      opacity = 0.2
+    }
     const color = colorScale(node.name)
     return (
-      <div key={node.name} onMouseMove={hoverListItem(node)} onMouseOver={hoverListItem(node)} onMouseOut={hoverListItem(null)}>
+      <div
+        style={{ opacity }}
+        key={node.name}
+        onMouseMove={hoverListItem(node)}
+        onMouseOut={hoverListItem(null)}
+      >
         <span><span style={{ width: listNumberWidth}} className={styles.listNumber}>{i + 1}</span> <div className={styles.dot} style={{backgroundColor: color}} /> {node.name}</span>
         <span>{node.value.toLocaleString()}</span>
       </div>
@@ -260,6 +311,9 @@ export default function Sankey(props) {
 
   const listConnectingLines = listItems.filter(d => d.listItemVisible)
     .map((node, nodeIndex) => {
+      if (hoveredListItem && hoveredListItem.name !== node.name) {
+        return null
+      }
       const x1 = node.x1 + connecingPathPadding
       const y1 = node.y0 + (node.y1 - node.y0) / 2
 
