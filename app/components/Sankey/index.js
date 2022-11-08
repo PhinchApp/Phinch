@@ -2,10 +2,12 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import styles from './styles.css';
 import { sankey, sankeyJustify, sankeyLinkHorizontal } from 'd3-sankey';
 import { scaleOrdinal } from 'd3';
-import palette from '../../palette';
+// import palette from '../../palette';
+
 import { debounce } from 'lodash';
 import datacontainer from '../../datacontainer';
 import SankeyTooltip from './SankeyTooltip';
+const palette = ['#449acd', '#fee889', '#d7473e', '#7f759e', '#d77440', '#3e61c2', '#f15e76', '#5a598f', '#f69f4b', '#b07c83', '#ab80b6', '#47b8b7', '#ee7051', '#5f3a87', '#8ddba0', '#953884', '#349a74', '#8c3c9c', '#583c9e', '#547f86'];
 const nodeWidth = 15 // width of node rects
 const nodePadding = 0 // vertical separation between adjacent nodes
 
@@ -203,10 +205,25 @@ export default function Sankey(props) {
     link.hasFinalNodeVisible = checkLinkVisibility(link)
     link.hasHoveredNodeVisible = link.target.hasHoveredNodeVisible
   })
+  const pathGradients = sankeyData && sankeyData.links.map((link, i) => {
+    const { source, target } = link
+    const gradientId = `gradient-${i}`
+    const sourceColor = colorScale(source.name)
+    const targetColor = colorScale(target.name)
+    const gradient = (
+      <linearGradient key={gradientId} id={gradientId} x1={source.x1} x2={target.x0}
+        gradientUnits='userSpaceOnUse'>
+      >
+        <stop offset='0%' stopColor={sourceColor} />
+        <stop offset='100%' stopColor={targetColor} />
+      </linearGradient>
+    )
+    return gradient
+  })
 
   const paths = (
     <g>
-      {sankeyData && sankeyData.links.map(link => {
+      {sankeyData && sankeyData.links.map((link, linkIndex) => {
         let strokeOpacity = link.hasFinalNodeVisible ? 0.5 : 0
         if (hoveredListItem) {
 
@@ -221,7 +238,8 @@ export default function Sankey(props) {
             d={sankeyLinkHorizontal()(link)}
             style={{
               fill: 'none',
-              stroke: colorScale(link.target.name),
+              // stroke: colorScale(link.target.name),
+              stroke: `url(#gradient-${linkIndex})`,
               strokeOpacity: strokeOpacity,
               strokeWidth: Math.max(1,link.width)
             }}
@@ -373,7 +391,9 @@ export default function Sankey(props) {
               <feMergeNode in="SourceGraphic"/>
             </feMerge>
           </filter>
-
+          <g>
+            {pathGradients}
+          </g>
         </defs>
         <g transform={`translate(${marginLeft}, ${marginTop})`}>
           {paths}

@@ -764,9 +764,6 @@ export default class Filter extends Component {
           this.setState({helpButton: needHelpHover});
         }
         break;
-      // case "viewViz":
-      //   const element = document.getElementById("stackedgraph");
-      //   element.style.backgroundColor = "#F09E6A";
     }
   }
 
@@ -779,9 +776,6 @@ export default class Filter extends Component {
           this.setState({helpButton: needHelp});
         }
         break;
-      // case "viewViz":
-      //   const element = document.getElementById("stackedgraph");
-      //   element.style.backgroundColor = "#001226";
     }
   }
 
