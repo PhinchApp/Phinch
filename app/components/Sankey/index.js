@@ -47,7 +47,7 @@ function TextWithBackground(props) {
 
 export default function Sankey(props) {
 
-  let { data, width, height } = props
+  let { data, width, height, colors } = props
   const levels = datacontainer.getLevels()
   // width -= 27
   // height *= 4
@@ -205,7 +205,7 @@ export default function Sankey(props) {
     link.hasFinalNodeVisible = checkLinkVisibility(link)
     link.hasHoveredNodeVisible = link.target.hasHoveredNodeVisible
   })
-  const pathGradients = sankeyData && sankeyData.links.map((link, i) => {
+  const pathGradients = colors === 'mix' && sankeyData && sankeyData.links.map((link, i) => {
     const { source, target } = link
     const gradientId = `gradient-${i}`
     const sourceColor = colorScale(source.name)
@@ -221,33 +221,6 @@ export default function Sankey(props) {
     return gradient
   })
 
-  const paths = (
-    <g>
-      {sankeyData && sankeyData.links.map((link, linkIndex) => {
-        let strokeOpacity = link.hasFinalNodeVisible ? 0.5 : 0
-        if (hoveredListItem) {
-
-          if (!link.hasHoveredNodeVisible) {
-            strokeOpacity = strokeOpacity * 0.2
-          }
-        }
-        return (
-
-          <path
-            key={`${link.source.name}-${link.target.name}`}
-            d={sankeyLinkHorizontal()(link)}
-            style={{
-              fill: 'none',
-              // stroke: colorScale(link.target.name),
-              stroke: `url(#gradient-${linkIndex})`,
-              strokeOpacity: strokeOpacity,
-              strokeWidth: Math.max(1,link.width)
-            }}
-          />
-        )
-      })}
-    </g>
-  )
   const nodes = (
     <g>
       {sankeyData && sankeyData.nodes.map(node => {
@@ -270,6 +243,40 @@ export default function Sankey(props) {
             data-name={node.name}
           />
       )})}
+    </g>
+  )
+  const paths = (
+    <g>
+      {sankeyData && sankeyData.links.map((link, linkIndex) => {
+        let strokeOpacity = link.hasFinalNodeVisible ? 0.5 : 0
+        if (hoveredListItem) {
+
+          if (!link.hasHoveredNodeVisible) {
+            strokeOpacity = strokeOpacity * 0.2
+          }
+        }
+        let stroke = null
+        if (colors === 'mix') {
+          stroke = `url(#gradient-${linkIndex})`
+        } else if (colors === 'left') {
+          stroke = colorScale(link.source.name)
+        } else if (colors === 'right') {
+          stroke = colorScale(link.target.name)
+        }
+        return (
+
+          <path
+            key={`${link.source.name}-${link.target.name}`}
+            d={sankeyLinkHorizontal()(link)}
+            style={{
+              fill: 'none',
+              stroke,
+              strokeOpacity: strokeOpacity,
+              strokeWidth: Math.max(1,link.width)
+            }}
+          />
+        )
+      })}
     </g>
   )
   const nodeLabels = (

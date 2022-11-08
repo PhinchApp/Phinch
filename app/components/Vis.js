@@ -74,6 +74,7 @@ export default class Vis extends Component {
       result: null,
       renderSVG: false,
       dialogVisible: false,
+      sankeyColors: 'mix',
     };
 
     this._inputs = {};
@@ -1336,16 +1337,37 @@ export default class Vis extends Component {
           />
           <div className={styles.controls}>
             <div className={styles.controlRow}>
-              <Search
-                options={this.sequences}
-                onValueCleared={this.onValueCleared}
-                onSuggestionSelected={this.onSuggestionSelected}
-                onSuggestionHighlighted={this.onSuggestionHighlighted}
-              />
-              {this.renderShow()}
-              {this.renderSort()}
-              {spacer}
-              {this.renderToggle()}
+              {
+                visType === 'stackedbar' ? <React.Fragment>
+                <Search
+                  options={this.sequences}
+                  onValueCleared={this.onValueCleared}
+                  onSuggestionSelected={this.onSuggestionSelected}
+                  onSuggestionHighlighted={this.onSuggestionHighlighted}
+                />
+                {this.renderShow()}
+                {this.renderSort()}
+                {spacer}
+                {this.renderToggle()}
+              </React.Fragment> : visType === 'sankey' ? <React.Fragment>
+                <div className={styles.inlineControl}>
+                  <label for='sankeyColors'>
+                    Link Colors:{' '}
+                    <select
+                      id='sankeyColors'
+                      value={this.state.sankeyColors}
+                      onChange={e => this.setState({ sankeyColors: e.target.value })}
+                    >
+                      <option value="mix">mix</option>
+                      <option value="left">left</option>
+                      <option value="right">right</option>
+                    </select>
+                  </label>
+
+                </div>
+
+              </React.Fragment> : null
+            }
             </div>
             <div className={styles.controlRow}>
               {this.renderLevelSelector(this.levels, dataLength)}
@@ -1460,6 +1482,7 @@ export default class Vis extends Component {
                   <Sankey data={this.state.data} preData={this.state.preData}
                     width={this.metrics.chartWidth + this.metrics.nonbarWidth}
                     height={this.metrics.chartHeight}
+                    colors={this.state.sankeyColors}
 
                   />
                 : null
