@@ -33,7 +33,12 @@
   background-color: rgba(178, 178, 178, 0.2);
   padding: 0.1em 0.5em;
   margin-bottom: 1px;
+  transition: opacity 0.3s ease-in-out
 }
+svg rect, svg path {
+  transition: opacity 0.3s ease-in-out;
+}
+
 .listScroll > div:nth-child(even) {
   background-color: rgba(178, 178, 178, 0.5);
 }
