@@ -12,7 +12,7 @@ const nodeWidth = 15 // width of node rects
 const nodePadding = 0 // vertical separation between adjacent nodes
 
 function TextWithBackground(props) {
-  const { children, ...restOfProps } = props;
+  const { children, renderSVG, ...restOfProps } = props;
   const ref = useRef(null);
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
@@ -28,7 +28,7 @@ function TextWithBackground(props) {
   const tbPadding = 2;
   return (
     <g>
-      {width && height ?
+      {width && height && !renderSVG ?
         <rect
           filter={`url(#dropshadow)`}
           x={props.x - lrPadding}
@@ -47,7 +47,7 @@ function TextWithBackground(props) {
 
 export default function Sankey(props) {
 
-  let { data, width, height, colors } = props
+  let { data, width, height, colors, setRef, renderSVG } = props
   const levels = datacontainer.getLevels()
   // width -= 27
   // height *= 4
@@ -301,6 +301,7 @@ export default function Sankey(props) {
             x={node.x1 + 10}
             style={{ fontSize: '0.8em'}}
             y={node.y0 + (node.y1 - node.y0) / 2}
+            renderSVG={renderSVG}
           >
             {node.name}
           </TextWithBackground>
@@ -352,6 +353,73 @@ export default function Sankey(props) {
         <path d={path} key={node.name} style={{ stroke: '#001226', fill: 'none', strokeOpacity: '0.5' }} />
       )
     })
+  const listWidth = marginRight - connecingPathPadding * 2 - connectingPathWidth
+  const svgList = renderSVG ? (
+    <g transform={`translate(${width - listWidth}, ${listItemHeight * 0.5})`} fontSize={'0.8em'}
+      >
+
+      <g className={styles.listTitle} style={{ textTransform: 'uppercase'}}>
+        <text style={{ fontWeight: 'bold' }} x={listWidth / 2} textAnchor='middle'>{maxLayerName} Layer</text>
+      </g>
+      <g className={styles.listHeader} transform={`translate(0, ${listItemHeight})`}>
+        <text x={listNumberWidth}>
+          Sequences
+        </text>
+        <text x={listWidth - 20} textAnchor='end'>Counts</text>
+      </g>
+      <line x1={0} x2={listWidth} y1={listItemHeight * 1.2} y2={listItemHeight * 1.2} style={{ stroke: '#001226', strokeWidth: 1 }} />
+      {listItems.filter(d => d.listItemVisible)
+        .map((node, nodeIndex) => {
+          const rectFill = `rgba(178, 178, 178, ${nodeIndex % 2 === 0 ? '0.2' : '0.5'})`
+          return (
+            <g
+              key={node.name}
+              transform={`translate(0, ${(nodeIndex + 1.5) * (listItemHeight)})`}
+              fontSize='0.9em'
+            >
+              <rect
+                x={0}
+                y={0}
+                width={marginRight}
+                height={listItemHeight}
+                fill={rectFill}
+              />
+              <circle
+                cx={listItemHeight / 2}
+                cy={listItemHeight / 2}
+                r={listItemHeight / 4}
+                fill={colorScale(node.name)}
+              />
+              <text
+                x={listItemHeight}
+                y={listItemHeight / 2}
+                dy='0.35em'
+              >
+                {nodeIndex + scrollOffset}
+              </text>
+              <text
+                x={listItemHeight + 20}
+                dx={listNumberWidth}
+                y={listItemHeight / 2}
+                dy={'.35em'}
+              >
+                {node.name}
+              </text>
+              <text
+                x={listWidth - 20}
+                y={listItemHeight / 2}
+                dy={'.35em'}
+                textAnchor='end'
+              >
+                {node.value.toLocaleString()}
+              </text>
+
+            </g>
+          )
+        })
+      }
+    </g>
+    ) : null
 
   const levelLabels = levels ? levels.map((level, i) => {
     if (i > maxDepth) {
@@ -385,7 +453,10 @@ export default function Sankey(props) {
   ) : null
   return (
     <div className={styles.sankey} style={{ height }} ref={containerRef}>
-      <svg width={width} height={height}>
+      <svg
+        ref={setRef} width={width} height={height}
+        fontFamily='"Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"'
+      >
         <defs>
           <filter id="dropshadow" height="130%">
             <feGaussianBlur in="SourceAlpha" stdDeviation="1"/>
@@ -408,11 +479,13 @@ export default function Sankey(props) {
           <g>{listConnectingLines}</g>
           {nodeLabels}
           {levelLabels}
+          {svgList}
         </g>
       </svg>
       <div className={styles.list} style={{
-        width: marginRight - connecingPathPadding * 2 - connectingPathWidth,
-        marginTop
+        width: listWidth,
+        marginTop,
+        opacity: renderSVG ? 0 : 1,
       }}>
         <div className={styles.listTitle}>
           <strong>{maxLayerName} Layer</strong> shown by scrolling:

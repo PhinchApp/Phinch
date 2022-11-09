@@ -5,9 +5,12 @@ import fs from 'fs';
 const { dialog } = remote;
 const serializer = new XMLSerializer();
 
-export default function handleExportButton(path, svg, callback) {
+export default function handleExportButton(path, svg, callback, visType) {
+  const filename = path.split('/').pop();
+  const name = filename.split('.').shift();
+  const pathWithoutFilename = path.replace(filename, '');
   dialog.showSaveDialog({
-    defaultPath: join(...path, `${path.slice(-1)}.svg`),
+    defaultPath: join(pathWithoutFilename, `${name}-${visType}.svg`),
   }, (filepath) => {
     if (filepath) {
       const serializedSVG = serializer.serializeToString(svg);

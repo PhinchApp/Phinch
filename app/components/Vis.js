@@ -259,7 +259,9 @@ export default class Vis extends Component {
   componentDidUpdate() {
     if (this.state.renderSVG && !this.state.dialogVisible) {
       this.setDialogVisible();
-      handleExportButton(_cloneDeep(this.state.summary.path), this._svg, this.exportComplete);
+      console.log(this.state.summary.path)
+      console.log(this._svg)
+      handleExportButton(_cloneDeep(this.state.summary.path), this._svg, this.exportComplete, this._visType);
     }
   }
 
@@ -1319,7 +1321,7 @@ export default class Vis extends Component {
     );
 
     const visType = this.props.match.params.visType || 'stackedbar';
-
+    this._visType = visType;
     return (
       <div className={gstyle.container}>
         {redirect}
@@ -1445,7 +1447,7 @@ export default class Vis extends Component {
             }}
           >
             {
-              this.state.renderSVG ? (
+              this.state.renderSVG && visType === 'stackedbar' ? (
                 <StackedBarsSVG
                   setRef={r => { this._svg = r; }}
                   id={this.state.summary.path.slice(-1)}
@@ -1479,11 +1481,14 @@ export default class Vis extends Component {
                     {isAttribute ? this.attrRow : this.stackRow}
                   </List>
                 : visType === 'sankey' ?
-                  <Sankey data={this.state.data} preData={this.state.preData}
+                  <Sankey
+                    setRef={r => { this._svg = r; }}
+
+                    data={this.state.data} preData={this.state.preData}
                     width={this.metrics.chartWidth + this.metrics.nonbarWidth}
                     height={this.metrics.chartHeight}
                     colors={this.state.sankeyColors}
-
+                    renderSVG={this.state.renderSVG}
                   />
                 : null
               )
