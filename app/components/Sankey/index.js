@@ -454,6 +454,7 @@ export default function Sankey(props) {
   return (
     <div className={styles.sankey} style={{ height }} ref={containerRef}>
       <svg
+        xmlns="http://www.w3.org/2000/svg"
         ref={setRef} width={width} height={height}
         fontFamily='"Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"'
       >
