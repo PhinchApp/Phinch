@@ -84,7 +84,7 @@ export default class Vis extends Component {
       result: null,
       renderSVG: false,
       dialogVisible: false,
-      sankeyColors: 'mix',
+      sankeyColors: 'right',
     };
 
     this._inputs = {};
@@ -1372,7 +1372,7 @@ export default class Vis extends Component {
                       value={this.state.sankeyColors}
                       onChange={e => this.setState({ sankeyColors: e.target.value })}
                     >
-                      <option value="mix">mix</option>
+                      {/* <option value="mix">mix</option> */}
                       <option value="left">left</option>
                       <option value="right">right</option>
                     </select>
