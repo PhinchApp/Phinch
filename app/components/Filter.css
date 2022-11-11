@@ -77,6 +77,11 @@
   cursor: pointer;
 }
 
+.futureVis {
+  pointer-events: none;
+  opacity: 0.3;
+}
+
 .visOptionLabel {
   display: inline-block;
   width: auto;

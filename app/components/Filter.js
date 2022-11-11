@@ -874,16 +874,17 @@ export default class Filter extends Component {
                   <div className={classNames(styles.visOptionLabel, { [styles.selected]: this.state.selectedVisualization === 'stackedbar'})}
                     id="stackedgraph" >Stacked Bargraph</div>
                 </div>
-                <div className={styles.futureVis}>
-                  <img src={bubblegraph} alt="Bubble Graph" id="bubblegraph" />
-                  <div className={styles.visOptionLabel}>Bubble Graph</div>
-                </div>
-                <div className={styles.futureVis} onClick={() => this.setState({ selectedVisualization: 'sankey' })}>
+                <div className={styles.visOption} onClick={() => this.setState({ selectedVisualization: 'sankey' })}>
                   <img src={sankeygraph} alt="Sankey bargraph" id="sankeygraph" />
                   <div
                     className={classNames(styles.visOptionLabel, { [styles.selected]: this.state.selectedVisualization === 'sankey'})}
                   >Sankey graph</div>
                 </div>
+                <div className={styles.futureVis}>
+                  <img src={bubblegraph} alt="Bubble Graph" id="bubblegraph" />
+                  <div className={styles.visOptionLabel}>Bubble Graph</div>
+                </div>
+
                 <div
                   role="button"
                   tabIndex={0}
