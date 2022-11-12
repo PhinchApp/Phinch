@@ -12,7 +12,7 @@ const size = {
 const percentFormatter = (value) => `${Math.round(value * 10000) / 100}%`;
 
 function Datum(props) {
-  const { name, counts, totalCounts, color } = props;
+  const { name, counts, totalCounts, color, maxWidth } = props;
 
   return (
     <div
@@ -23,7 +23,7 @@ function Datum(props) {
           }
         }
       }}
-      style={props.style}
+      style={{...props.style, maxWidth}}
       className={styles.SankeyTooltip}
     >
       <div className={styles.label}>Taxonomy:</div>
@@ -39,7 +39,7 @@ function Datum(props) {
         </span>
 
         <div className={styles.bar}>
-          <PercentageBarGraph percent={counts / totalCounts} color={color} width="284px" />
+          <PercentageBarGraph percent={counts / totalCounts} color={color} width={maxWidth} />
         </div>
       </div>
 
@@ -95,13 +95,13 @@ export default function SankeyTooltip(props) {
   //   position.y = Math.max(position.y -= size.y, 8);
   // }
   const style = {
-    transform: `translate(${position.x}px, ${position.y}px) translateX(-100%) translateX(-5px)`,
+    transform: `translate(${0}px, ${position.y}px)`,
   };
 
   if (position.y > window.innerHeight / 2) {
-    style.transform += ' translateY(-100%) translateY(-5px)';
+    style.transform += ' translateY(-100%) translateY(-0.5em)';
   } else {
-    style.transform += ' translateY(5px)';
+    style.transform += ' translateY(2em)';
   }
 
 

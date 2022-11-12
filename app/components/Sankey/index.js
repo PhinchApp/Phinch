@@ -134,11 +134,15 @@ export default function Sankey(props) {
       setHoveredListItem(null)
       return
     }
+
     const { name, value } = node
+    // const listX = listRef.current.getBoundingClientRect().x
     const containerPosition = containerRef.current.getBoundingClientRect()
+
+    const y = e.target.getBoundingClientRect().y
     const position = {
-      x: e.clientX - containerPosition.left,
-      y: e.clientY - containerPosition.top,
+      // x: 0,
+      y: y - containerPosition.top,
     }
     const color = colorScale(name)
     setHoveredListItem({position, name, counts: value, totalCounts: depthOneSum, color})
@@ -448,7 +452,7 @@ export default function Sankey(props) {
   const tooltip = hoveredListItem ? (
     <SankeyTooltip
       {...hoveredListItem}
-
+      maxWidth={listWidth}
     />
   ) : null
   return (

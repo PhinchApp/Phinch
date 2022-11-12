@@ -3,7 +3,6 @@
   position: absolute;
   font-size: 12px;
   top: 0;
-  left: 0;
   width: 316px;
   color: #fff;
   background-color: #000;
@@ -13,6 +12,7 @@
   border-radius: 8px;
   z-index: 10;
   opacity: 0.8;
+  right: 0;
 }
 
 .label {
