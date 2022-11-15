@@ -8,6 +8,7 @@ export default class StackedBar extends Component {
     this.props.summary.size = this.props.summary.size || 0;
     this.props.summary.samples = this.props.summary.samples || 0;
     this.props.summary.observations = this.props.summary.observations || 0;
+    const opacity = this.props.opacity || 1
     return (
       <SpotlightWithToolTip
         isActive={this.props.helping}
@@ -27,7 +28,7 @@ export default class StackedBar extends Component {
             </div>}
         style={{ boxShadow: 'inset rgba(255, 255, 255, 0.5) 0px 0px 10px'}}
       >
-        <div className={styles.info}>
+        <div className={styles.info} style={{ opacity }}>
           <div className={styles.segment}>
             <div className={`${styles.file} ${styles.summary}`}>
               {this.props.summary.name} ({this.props.summary.size})

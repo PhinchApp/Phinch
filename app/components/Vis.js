@@ -39,6 +39,28 @@ import Sankey from './Sankey/'
 import styles from './Vis.css';
 import gstyle from './general.css';
 import classNames from 'classnames';
+import SpotlightWithToolTip from './SpotlightWithToolTip';
+
+import needHelp from 'images/needHelp.svg';
+import needHelpHover from 'images/needHelpHover.svg';
+import closeHelp from 'images/closeHelpHP.svg';
+
+import help1 from 'images/help1.svg';
+import help1Hover from 'images/help1Hover.svg';
+import help2 from 'images/help2.svg';
+import help2Hover from 'images/help2Hover.svg';
+import help3 from 'images/help3.svg';
+import help3Hover from 'images/help3Hover.svg';
+import help4 from 'images/help4.svg';
+import help4Hover from 'images/help4Hover.svg';
+import help5 from 'images/help5.svg';
+import help5Hover from 'images/help5Hover.svg';
+import help6 from 'images/help6.svg';
+import help6Hover from 'images/help6Hover.svg';
+import help7 from 'images/help7.svg';
+import help7Hover from 'images/help7Hover.svg';
+import help8 from 'images/help8.svg';
+import help8Hover from 'images/help8Hover.svg';
 
 const defaultLevels = [
   {name: "kingdom", number: null, order: 0},
@@ -85,6 +107,9 @@ export default class Vis extends Component {
       renderSVG: false,
       dialogVisible: false,
       sankeyColors: 'right',
+      helpCounter: 0,
+      helpButton: needHelp,
+
     };
 
     this._inputs = {};
@@ -200,7 +225,9 @@ export default class Vis extends Component {
       this.init = getProjectFilters(this.state.summary.path, this.state.summary.dataKey, 'vis');
       //
       this.state.names = this.init.names;
+      console.log('initial level', this.state.level)
       this.state.level = (this.init.level !== undefined) ? this.init.level : this.state.level;
+      console.log(this.init, this.state.level)
       this.filters = this.init.filters ? this.init.filters : {};
       this.state.deleted = this.init.deleted ? this.init.deleted : [];
       this.state.tags = this.init.tags ? this.init.tags : this.state.tags;
@@ -254,6 +281,7 @@ export default class Vis extends Component {
     this.removeFilter = this.removeFilter.bind(this);
     this.toggleMenu = this.toggleMenu.bind(this);
     this.toggleLog = this.toggleLog.bind(this);
+    this.countUpHelp = this.countUpHelp.bind(this);
   }
 
   componentDidMount() {
@@ -266,6 +294,8 @@ export default class Vis extends Component {
         });
       });
     }
+    window.addEventListener('click', this.countUpHelp);
+
   }
 
   componentDidUpdate() {
@@ -281,6 +311,16 @@ export default class Vis extends Component {
     clearTimeout(this.tooltip.handle);
     clearTimeout(this.timeout);
     window.removeEventListener('resize', this.updateDimensions);
+    window.removeEventListener('click', this.countUpHelp);
+
+  }
+  countUpHelp() {
+
+    if(this.state.helpCounter > 0) {
+      const currCount = this.state.helpCounter;
+      const newCount = currCount + 1;
+      newCount > 6 ? this.setState({ helpCounter: 2, }) : this.setState({ helpCounter: newCount, });
+    }
   }
 
   exportComplete = () => {
@@ -1071,7 +1111,6 @@ export default class Vis extends Component {
 
   renderLevelSelector(levels, dataLength) {
     const modalLevel = (this.state.width - 580) < ((800 / 12) * this.levels.length);
-    console.log(levels, this.levels)
     const levelButtons = levels.map((l, i) => {
       const selected = (l.order <= this.state.level) ? styles.selected : '';
       return (
@@ -1254,6 +1293,129 @@ export default class Vis extends Component {
     );
   }
 
+  /*This function deals with when the mouse hovers over the browse icon on top right of
+   and changes img src accordingly to correct svg file */
+   handleMouseOver (button) {
+    switch(button) {
+      case "help":
+        if(this.state.helpButton === needHelp) {
+          this.setState({helpButton: needHelpHover});
+        }
+        break;
+    }
+  }
+
+  /*This function deals with the mouse leaving an icon (no longer hovering) and
+  changed img src to correct svg file */
+  handleMouseLeave (button) {
+    switch(button) {
+      case "help":
+        if(this.state.helpButton === needHelpHover) {
+          this.setState({helpButton: needHelp});
+        }
+        break;
+    }
+  }
+
+  makeHelpButtons() {
+    console.log(this.state.helpCounter)
+    return (
+      <div className={gstyle.helpIcons}>
+        <div
+        role="button"
+        className={gstyle.helpIcons}
+        onClick={() => {this.setState({ helpCounter: 0 }); this.forceUpdate();} }
+        >
+          <img src={closeHelp} alt="close-walkthrough" />
+        </div>
+
+        <div
+        role="button"
+        tabIndex={0}
+        className={gstyle.helpIcons}
+        onClick={() => this.setState({ helpCounter: 1 })}
+        >
+          <img src={this.state.helpCounter == 2 ? help1Hover : help1} />
+        </div>
+
+        <div
+        role="button"
+        tabIndex={0}
+        className={gstyle.helpIcons}
+        onClick={() => this.setState({ helpCounter: 2 })}
+        >
+          <img src={this.state.helpCounter == 3 ? help2Hover : help2} />
+        </div>
+
+        <div
+        role="button"
+        tabIndex={0}
+        className={gstyle.helpIcons}
+        onClick={() => this.setState({ helpCounter: 3 })}
+        >
+          <img src={this.state.helpCounter == 4 ? help3Hover : help3} />
+        </div>
+
+        <div
+        role="button"
+        tabIndex={0}
+        className={gstyle.helpIcons}
+        onClick={() => this.setState({ helpCounter: 4 })}
+        >
+          <img src={this.state.helpCounter == 5 ? help4Hover : help4} />
+        </div>
+
+        <div
+        role="button"
+        tabIndex={0}
+        className={gstyle.helpIcons}
+        onClick={() => this.setState({ helpCounter: 5 })}
+
+        >
+          <img src={this.state.helpCounter == 6 ? help5Hover : help5} />
+        </div>
+
+        {/* <div
+        role="button"
+        tabIndex={0}
+        className={gstyle.helpIcons}
+        onClick={() => this.setState({ helpCounter: 5 })}
+        >
+          <img src={this.state.helpCounter == 6 ? help6Hover : help6} />
+        </div>
+
+        <SpotlightWithToolTip
+          isActive={this.state.helpCounter == 7 && (this.state.deleted.length == 0)}
+          toolTipPlacement="top"
+          toolTipTitle={<div>
+            To explore the 'Archived Samples' feature more, please use the{' '}
+            navigation bar in the bottom left to close the walkthrough. {' '}
+            Once closed, delete at least 1 sample row by clicking the 'X' on the far right{' '}
+            of the rows that is visible when the row is hovered. Then return to feature 7. </div>}
+          >
+          <div
+          role="button"
+          tabIndex={0}
+          className={gstyle.helpIcons}
+          onClick={() => {this.setState({ helpCounter: 6 }); this.renderModal();}}
+          >
+            <img src={this.state.helpCounter == 7 ? help7Hover : help7} />
+          </div>
+        </SpotlightWithToolTip>
+
+        <div
+        role="button"
+        tabIndex={0}
+        className={gstyle.helpIcons}
+        onClick={() => {this.setState({ helpCounter: 7 }); this.forceUpdate();}}
+        >
+          <img src={this.state.helpCounter == 8 ? help8Hover : help8} />
+        </div> */}
+      </div>
+    );
+  }
+
+
   render() {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
 
@@ -1342,15 +1504,31 @@ export default class Vis extends Component {
           <Link to="/">
             <img src={logo} alt="Phinch" />
           </Link>
+          {
+            visType === 'sankey' ?
+            <button
+              className={gstyle.help}
+              // on click command is still undefined outside of home page, set to issues page for now until later
+              onClick={() => this.setState({ helpCounter: 1 })}
+              onMouseEnter={() => this.handleMouseOver("help")}
+              onMouseLeave={() => this.handleMouseLeave("help")}
+              >
+                <img src={this.state.helpButton} alt="needHelp" />
+            </button>
+            : null
+          }
         </div>
-        <div className={gstyle.header} style={{ zIndex: dataLength + 1 }}>
+        <div className={gstyle.header} style={{ zIndex: visType === 'stackedbar' ? dataLength + 1: this.state.helpCounter === 0 ? 1000 : 2000 }}>
           <Summary
             summary={this.state.summary}
             observations={this.state.observations}
             datalength={this.state.data.length}
+            opacity={this.state.helpCounter === 0 ? 1 : 0.2}
           />
           <div className={styles.controls}>
-            <div className={styles.controlRow}>
+            <div className={styles.controlRow} style={{
+              opacity: this.state.helpCounter === 0 ? 1 : 0.2
+            }}>
               {
                 visType === 'stackedbar' ? <React.Fragment>
                 <Search
@@ -1365,7 +1543,7 @@ export default class Vis extends Component {
                 {this.renderToggle()}
               </React.Fragment> : visType === 'sankey' ? <React.Fragment>
                 <div className={styles.inlineControl}>
-                  <label for='sankeyColors'>
+                  <label htmlFor='sankeyColors'>
                     Link Colors:{' '}
                     <select
                       id='sankeyColors'
@@ -1383,13 +1561,21 @@ export default class Vis extends Component {
               </React.Fragment> : null
             }
             </div>
-            <div className={styles.controlRow}>
-              {this.renderLevelSelector(this.levels, dataLength)}
-              {this.levels.length ? spacer : null}
-              {this.renderAttributesSelect()}
-              {spacer}
-              {this.renderTagFilter()}
-            </div>
+            <SpotlightWithToolTip
+              isActive={this.state.helpCounter === 2}
+              style={{ boxShadow: 'rgba(255, 255, 255, 0.4) 0 0 10px 3px',
+                borderBottomLeftRadius: '0',
+                borderBottomRightRadius: '0',
+              }}
+            >
+              <div className={styles.controlRow}>
+                {this.renderLevelSelector(this.levels, dataLength)}
+                {this.levels.length ? spacer : null}
+                {this.renderAttributesSelect()}
+                {spacer}
+                {this.renderTagFilter()}
+              </div>
+            </SpotlightWithToolTip>
           </div>
         </div>
         <SideMenu
@@ -1399,6 +1585,7 @@ export default class Vis extends Component {
           chartHeight={this.metrics.chartHeight + (this.metrics.lineHeight * 2)}
           items={this.menuItems}
           toggleMenu={this.toggleMenu}
+
         />
         <div
           className={classNames(gstyle.panel,  gstyle.noscrollbar)}
@@ -1501,6 +1688,7 @@ export default class Vis extends Component {
                     height={this.metrics.chartHeight}
                     colors={this.state.sankeyColors}
                     renderSVG={this.state.renderSVG}
+                    helpCounter={this.state.helpCounter}
                   />
                 : null
               )
@@ -1558,6 +1746,19 @@ export default class Vis extends Component {
           svgContainer
           badge
         />
+
+          <SpotlightWithToolTip
+            isActive = {this.state.helpCounter > 0}
+            inheritParentBackgroundColor={false}
+            toolTipTitle={"*mouse click anywhere to advance"}
+            overlayStyle={{zIndex: '1001'}}
+            innerStyle={{color: 'white', fontWeight: '600', fontSize: '10px'}}
+            style={{boxShadow: 'none'}}
+          >
+            <div className={gstyle.helpButtons}>
+              {this.state.helpCounter > 0 ? this.makeHelpButtons() : null}
+            </div>
+          </SpotlightWithToolTip>
       </div>
     );
   }

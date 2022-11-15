@@ -660,10 +660,10 @@ export default class Filter extends Component {
 
   makeHelpButtons() {
     return (
-      <div className={styles.helpIcons}>
+      <div className={gstyle.helpIcons}>
         <div
         role="button"
-        className={styles.helpIcons}
+        className={gstyle.helpIcons}
         onClick={() => {this.setState({ counter: 0 }); this.forceUpdate(); this.deleteBackdropTooltip()} }
         >
           <img src={closeHelp} alt="close-walkthrough" />
@@ -672,7 +672,7 @@ export default class Filter extends Component {
         <div
         role="button"
         tabIndex={0}
-        className={styles.helpIcons}
+        className={gstyle.helpIcons}
         onClick={() => this.setState({ counter: 8 })}
         >
           <img src={this.state.counter == 1 ? help1Hover : help1} />
@@ -681,7 +681,7 @@ export default class Filter extends Component {
         <div
         role="button"
         tabIndex={0}
-        className={styles.helpIcons}
+        className={gstyle.helpIcons}
         onClick={() => this.setState({ counter: 1 })}
         >
           <img src={this.state.counter == 2 ? help2Hover : help2} />
@@ -690,7 +690,7 @@ export default class Filter extends Component {
         <div
         role="button"
         tabIndex={0}
-        className={styles.helpIcons}
+        className={gstyle.helpIcons}
         onClick={() => this.setState({ counter: 2 })}
         >
           <img src={this.state.counter == 3 ? help3Hover : help3} />
@@ -699,7 +699,7 @@ export default class Filter extends Component {
         <div
         role="button"
         tabIndex={0}
-        className={styles.helpIcons}
+        className={gstyle.helpIcons}
         onClick={() => this.setState({ counter: 3 })}
         >
           <img src={this.state.counter == 4 ? help4Hover : help4} />
@@ -708,7 +708,7 @@ export default class Filter extends Component {
         <div
         role="button"
         tabIndex={0}
-        className={styles.helpIcons}
+        className={gstyle.helpIcons}
         onClick={() => this.setState({ counter: 4 })}
 
         >
@@ -718,7 +718,7 @@ export default class Filter extends Component {
         <div
         role="button"
         tabIndex={0}
-        className={styles.helpIcons}
+        className={gstyle.helpIcons}
         onClick={() => this.setState({ counter: 5 })}
         >
           <img src={this.state.counter == 6 ? help6Hover : help6} />
@@ -736,7 +736,7 @@ export default class Filter extends Component {
           <div
           role="button"
           tabIndex={0}
-          className={styles.helpIcons}
+          className={gstyle.helpIcons}
           onClick={() => {this.setState({ counter: 6 }); this.renderModal();}}
           >
             <img src={this.state.counter == 7 ? help7Hover : help7} />
@@ -746,7 +746,7 @@ export default class Filter extends Component {
         <div
         role="button"
         tabIndex={0}
-        className={styles.helpIcons}
+        className={gstyle.helpIcons}
         onClick={() => {this.setState({ counter: 7 }); this.forceUpdate();}}
         >
           <img src={this.state.counter == 8 ? help8Hover : help8} />
@@ -836,7 +836,7 @@ export default class Filter extends Component {
               <img src={logo} alt="Phinch" />
             </Link>
             <button
-              className={styles.help}
+              className={gstyle.help}
               // on click command is still undefined outside of home page, set to issues page for now until later
               onClick={() => this.setState({ counter: 8 })}
               onMouseEnter={() => this.handleMouseOver("help")}
@@ -1044,7 +1044,7 @@ export default class Filter extends Component {
             innerStyle={{color: 'white', fontWeight: '600', fontSize: '10px'}}
             style={{boxShadow: 'none'}}
           >
-            <div className={styles.helpButtons}>
+            <div className={gstyle.helpButtons}>
               {helpButtons}
             </div>
           </SpotlightWithToolTip>

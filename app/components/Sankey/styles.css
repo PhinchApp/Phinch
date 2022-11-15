@@ -1,6 +1,7 @@
 .sankey {
   color: #000;
   position: relative;
+  overflow-y: hidden;
 }
 
 .list {

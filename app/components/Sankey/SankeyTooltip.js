@@ -11,6 +11,7 @@ const size = {
 
 const percentFormatter = (value) => `${Math.round(value * 10000) / 100}%`;
 
+
 function Datum(props) {
   const { name, counts, totalCounts, color, maxWidth } = props;
 

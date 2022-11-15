@@ -7,6 +7,7 @@ import { scaleOrdinal } from 'd3';
 import { debounce } from 'lodash';
 import datacontainer from '../../datacontainer';
 import SankeyTooltip from './SankeyTooltip';
+import SpotlightWithToolTip from '../SpotlightWithToolTip';
 const palette = ['#449acd', '#fee889', '#d7473e', '#7f759e', '#d77440', '#3e61c2', '#f15e76', '#5a598f', '#f69f4b', '#b07c83', '#ab80b6', '#47b8b7', '#ee7051', '#5f3a87', '#8ddba0', '#953884', '#349a74', '#8c3c9c', '#583c9e', '#547f86'];
 const nodeWidth = 15 // width of node rects
 const nodePadding = 0 // vertical separation between adjacent nodes
@@ -47,7 +48,7 @@ function TextWithBackground(props) {
 
 export default function Sankey(props) {
 
-  let { data, width, height, colors, setRef, renderSVG } = props
+  let { data, width, height, colors, setRef, renderSVG, helpCounter } = props
   const levels = datacontainer.getLevels()
   // width -= 27
   // height *= 4
@@ -455,67 +456,96 @@ export default function Sankey(props) {
       maxWidth={listWidth}
     />
   ) : null
-  return (
-    <div className={styles.sankey} style={{ height }} ref={containerRef}>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        ref={setRef} width={width} height={height}
-        fontFamily='"Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"'
-      >
-        <defs>
-          <filter id="dropshadow" height="130%">
-            <feGaussianBlur in="SourceAlpha" stdDeviation="1"/>
-            <feOffset dx="0" dy="1" result="offsetblur"/>
-            <feComponentTransfer>
-              <feFuncA type="linear" slope="0.5"/>
-            </feComponentTransfer>
-            <feMerge>
-              <feMergeNode/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
-          <g>
-            {pathGradients}
-          </g>
-        </defs>
-        <g transform={`translate(${marginLeft}, ${marginTop})`}>
-          {paths}
-          {nodes}
-          <g>{listConnectingLines}</g>
-          {nodeLabels}
-          {levelLabels}
-          {svgList}
-        </g>
-      </svg>
-      <div className={styles.list} style={{
-        width: listWidth,
-        marginTop,
-        opacity: renderSVG ? 0 : 1,
-      }}>
-        <div className={styles.listTitle}>
-          <strong>{maxLayerName} Layer</strong> shown by scrolling:
-        </div>
-        <div className={styles.listHeader}>
-          <span>
-            <span style={{ width: listNumberWidth}} className={styles.listNumber} />
-            Sequences
-          </span>
-          <span>Counts</span>
-        </div>
+  const helpOpen = helpCounter !== 0
+  const containerStyle = {
+    height: helpOpen ? height - 90 : height,
+    borderRadius: helpOpen ? '0.5em' : null,
 
-        <div
-          className={styles.listScroll}
-          style={{ height: `calc(${listHeight}px - 2em)` }}
-          ref={listRef}
-          onScroll={onListScroll}
-        >
-          {list}
+  }
+  return (
+    <div className={styles.sankey} style={containerStyle} ref={containerRef}>
+      <SpotlightWithToolTip
+        isActive={helpCounter == 2}
+        inheritParentBackgroundColor={false}
+        toolTipPlacement="topLeft"
+        overlayStyle={{
+          // backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          zIndex: 20000,
+          overflow: 'visible',
+
+        }}
+        toolTipTitle={<div style={{
+          // position: 'relative',
+          // zIndex: 200002,
+
+          transform: 'translateY(-3em)',
+          }}>
+          Paragraph to introduce what this graph is and how it works.
+        </div>}
+        style={{ backgroundColor: 'rgba(255, 255, 255, 1)', boxShadow: 'inset rgba(255, 255, 255, 0.5) 0px 0px 10px'}}
+      >
+          <div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            ref={setRef} width={width} height={height}
+            fontFamily='"Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"'
+          >
+            <defs>
+              <filter id="dropshadow" height="130%">
+                <feGaussianBlur in="SourceAlpha" stdDeviation="1"/>
+                <feOffset dx="0" dy="1" result="offsetblur"/>
+                <feComponentTransfer>
+                  <feFuncA type="linear" slope="0.5"/>
+                </feComponentTransfer>
+                <feMerge>
+                  <feMergeNode/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+              <g>
+                {pathGradients}
+              </g>
+            </defs>
+            <g transform={`translate(${marginLeft}, ${marginTop})`}>
+              {paths}
+              {nodes}
+              <g>{listConnectingLines}</g>
+              {nodeLabels}
+              {levelLabels}
+              {svgList}
+            </g>
+          </svg>
+          <div className={styles.list} style={{
+            width: listWidth,
+            marginTop,
+            opacity: renderSVG ? 0 : 1,
+          }}>
+            <div className={styles.listTitle}>
+              <strong>{maxLayerName} Layer</strong> shown by scrolling:
+            </div>
+            <div className={styles.listHeader}>
+              <span>
+                <span style={{ width: listNumberWidth}} className={styles.listNumber} />
+                Sequences
+              </span>
+              <span>Counts</span>
+            </div>
+
+            <div
+              className={styles.listScroll}
+              style={{ height: `calc(${listHeight}px - 2em)` }}
+              ref={listRef}
+              onScroll={onListScroll}
+            >
+              {list}
+            </div>
+          </div>
+          <div className={styles.error}>
+            {sankeyData.maxNamePartsLength === 1 ? 'Sankey requires at least a Phylum level selection' : null}
+          </div>
+          {tooltip}
         </div>
-      </div>
-      <div className={styles.error}>
-        {sankeyData.maxNamePartsLength === 1 ? 'Sankey requires at least a Phylum level selection' : null}
-      </div>
-      {tooltip}
+      </SpotlightWithToolTip>
     </div>
   )
 }

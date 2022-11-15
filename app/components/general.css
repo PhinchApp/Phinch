@@ -240,3 +240,26 @@
 .checkbox input:checked ~ .checkmark::after {
   display: block;
 }
+
+
+
+.help img{
+  width: 151.75px !important;
+  border: none;
+  background: none;
+  padding: 0 !important;
+}
+
+
+.helpButtons {
+  position: fixed;
+  bottom: 50px;
+  left: 0;
+  width: fit-content;
+}
+
+.helpIcons {
+  display: inline-block;
+  margin-left: .5rem;
+  cursor: pointer;
+}
