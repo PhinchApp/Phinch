@@ -460,12 +460,13 @@ export default function Sankey(props) {
   const containerStyle = {
     height: helpOpen ? height - 90 : height,
     borderRadius: helpOpen ? '0.5em' : null,
+    pointerEvents: helpOpen ? 'none' : null,
 
   }
   return (
     <div className={styles.sankey} style={containerStyle} ref={containerRef}>
       <SpotlightWithToolTip
-        isActive={helpCounter == 2}
+        isActive={helpCounter === 2 || helpCounter === 4 || helpCounter === 5}
         inheritParentBackgroundColor={false}
         toolTipPlacement="topLeft"
         overlayStyle={{
@@ -474,14 +475,24 @@ export default function Sankey(props) {
           overflow: 'visible',
 
         }}
-        toolTipTitle={<div style={{
+        toolTipTitle={helpCounter === 2 ? <div style={{
           // position: 'relative',
           // zIndex: 200002,
 
           transform: 'translateY(-3em)',
           }}>
           Paragraph to introduce what this graph is and how it works.
-        </div>}
+        </div>
+        : helpCounter === 4 ?
+          <div>
+            Praesent pulvinar blandit turpis, scelerisque eleifend velit laoreet eu. Nullam molestie elit nibh, nec viverra nibh porttitor ut. Nulla sit amet risus massa.
+          </div>
+        : helpCounter === 5 ?
+          <div>
+            Aliquam ut orci ultrices, viverra magna vitae, ultrices erat. Ut quis convallis dolor, at finibus quam. Sed et ultrices justo, fermentum sodales lectus.
+          </div>
+        : null
+      }
         style={{ backgroundColor: 'rgba(255, 255, 255, 1)', boxShadow: 'inset rgba(255, 255, 255, 0.5) 0px 0px 10px'}}
       >
           <div>
@@ -515,31 +526,48 @@ export default function Sankey(props) {
               {svgList}
             </g>
           </svg>
-          <div className={styles.list} style={{
-            width: listWidth,
-            marginTop,
-            opacity: renderSVG ? 0 : 1,
-          }}>
-            <div className={styles.listTitle}>
-              <strong>{maxLayerName} Layer</strong> shown by scrolling:
-            </div>
-            <div className={styles.listHeader}>
-              <span>
-                <span style={{ width: listNumberWidth}} className={styles.listNumber} />
-                Sequences
-              </span>
-              <span>Counts</span>
-            </div>
+          <SpotlightWithToolTip
+            isActive={helpCounter === 3}
+            inheritParentBackgroundColor={true}
+            toolTipPlacement="left"
+            overlayStyle={{
+              zIndex: 20000,
+              overflow: 'visible',
+            }}
+            toolTipTitle={<div style={{
 
-            <div
-              className={styles.listScroll}
-              style={{ height: `calc(${listHeight}px - 2em)` }}
-              ref={listRef}
-              onScroll={onListScroll}
-            >
-              {list}
+              }}>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sem libero, faucibus ac est eu, faucibus finibus felis. Quisque ut suscipit lectus, sit amet tempus urna.
+
+          </div>}
+          >
+            <div className={styles.list} style={{
+              width: listWidth,
+              marginTop,
+              opacity: renderSVG ? 0 : 1,
+              padding: helpCounter === 3 ? '1em 0 0 1em' : null,
+            }}>
+              <div className={styles.listTitle}>
+                <strong>{maxLayerName} Layer</strong> shown by scrolling:
+              </div>
+              <div className={styles.listHeader}>
+                <span>
+                  <span style={{ width: listNumberWidth}} className={styles.listNumber} />
+                  Sequences
+                </span>
+                <span>Counts</span>
+              </div>
+
+              <div
+                className={styles.listScroll}
+                style={{ height: `calc(${listHeight}px - 2em)` }}
+                ref={listRef}
+                onScroll={onListScroll}
+              >
+                {list}
+              </div>
             </div>
-          </div>
+          </SpotlightWithToolTip>
           <div className={styles.error}>
             {sankeyData.maxNamePartsLength === 1 ? 'Sankey requires at least a Phylum level selection' : null}
           </div>

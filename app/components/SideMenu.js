@@ -15,7 +15,11 @@ import { documentElement } from 'min-document';
 import { element } from 'prop-types';
 import { fix } from 'prelude-ls';
 
-
+const defaultHelpText = <>
+  Expand the side panel by clicking the menu button.{' '}
+  After expanding the panel, you will see a button to{' '}
+  save the data and another button to go back to the app homepage.
+</>
 export default class SideMenu extends Component {
   constructor(props) {
     super(props);
@@ -146,9 +150,7 @@ export default class SideMenu extends Component {
               isActive={this.props.spotlight}
               toolTipPlacement="rightTop"
               toolTipTitle={<div>
-                Expand the side panel by clicking the menu button.{' '}
-                After expanding the panel, you will see a button to{' '}
-                save the data and another button to go back to the app homepage.
+                {this.props.helpText || defaultHelpText}
                 </div>}
               >
               <div

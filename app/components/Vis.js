@@ -1375,42 +1375,6 @@ export default class Vis extends Component {
           <img src={this.state.helpCounter == 6 ? help5Hover : help5} />
         </div>
 
-        {/* <div
-        role="button"
-        tabIndex={0}
-        className={gstyle.helpIcons}
-        onClick={() => this.setState({ helpCounter: 5 })}
-        >
-          <img src={this.state.helpCounter == 6 ? help6Hover : help6} />
-        </div>
-
-        <SpotlightWithToolTip
-          isActive={this.state.helpCounter == 7 && (this.state.deleted.length == 0)}
-          toolTipPlacement="top"
-          toolTipTitle={<div>
-            To explore the 'Archived Samples' feature more, please use the{' '}
-            navigation bar in the bottom left to close the walkthrough. {' '}
-            Once closed, delete at least 1 sample row by clicking the 'X' on the far right{' '}
-            of the rows that is visible when the row is hovered. Then return to feature 7. </div>}
-          >
-          <div
-          role="button"
-          tabIndex={0}
-          className={gstyle.helpIcons}
-          onClick={() => {this.setState({ helpCounter: 6 }); this.renderModal();}}
-          >
-            <img src={this.state.helpCounter == 7 ? help7Hover : help7} />
-          </div>
-        </SpotlightWithToolTip>
-
-        <div
-        role="button"
-        tabIndex={0}
-        className={gstyle.helpIcons}
-        onClick={() => {this.setState({ helpCounter: 7 }); this.forceUpdate();}}
-        >
-          <img src={this.state.helpCounter == 8 ? help8Hover : help8} />
-        </div> */}
       </div>
     );
   }
@@ -1518,7 +1482,14 @@ export default class Vis extends Component {
             : null
           }
         </div>
-        <div className={gstyle.header} style={{ zIndex: visType === 'stackedbar' ? dataLength + 1: this.state.helpCounter === 0 ? 1000 : 2000 }}>
+        <div
+          className={gstyle.header}
+          style={{
+            zIndex: visType === 'stackedbar' ? dataLength + 1 :
+              visType === 'sankey' ?
+                this.state.helpCounter === 2 ? 2000 : 1000
+                : 2000
+              }}>
           <Summary
             summary={this.state.summary}
             observations={this.state.observations}
@@ -1527,7 +1498,7 @@ export default class Vis extends Component {
           />
           <div className={styles.controls}>
             <div className={styles.controlRow} style={{
-              opacity: this.state.helpCounter === 0 ? 1 : 0.2
+              opacity: this.state.helpCounter === 0? 1 : 0.2
             }}>
               {
                 visType === 'stackedbar' ? <React.Fragment>
@@ -1578,6 +1549,7 @@ export default class Vis extends Component {
             </SpotlightWithToolTip>
           </div>
         </div>
+
         <SideMenu
           showLeftSidebar={this.state.showLeftSidebar}
           leftSidebar={this.metrics.leftSidebar}
@@ -1585,7 +1557,8 @@ export default class Vis extends Component {
           chartHeight={this.metrics.chartHeight + (this.metrics.lineHeight * 2)}
           items={this.menuItems}
           toggleMenu={this.toggleMenu}
-
+          spotlight={this.state.helpCounter === 6}
+          helpText="Paragraph to mention about the save, back and export features again in sankey visualization."
         />
         <div
           className={classNames(gstyle.panel,  gstyle.noscrollbar)}
