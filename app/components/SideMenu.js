@@ -15,11 +15,11 @@ import { documentElement } from 'min-document';
 import { element } from 'prop-types';
 import { fix } from 'prelude-ls';
 
-const defaultHelpText = <>
+const defaultHelpText = <React.Fragment>
   Expand the side panel by clicking the menu button.{' '}
   After expanding the panel, you will see a button to{' '}
   save the data and another button to go back to the app homepage.
-</>
+</React.Fragment>
 export default class SideMenu extends Component {
   constructor(props) {
     super(props);
