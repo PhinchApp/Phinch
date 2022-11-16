@@ -8,6 +8,7 @@ import close from 'images/close.svg';
 
 import styles from './FilterChart.css';
 import gstyle from './general.css';
+import classNames from 'classnames'
 
 export default class FilterChart extends Component {
   constructor(props) {
@@ -143,7 +144,7 @@ export default class FilterChart extends Component {
       <div
         role="button"
         tabIndex={0}
-        className={gstyle.close}
+        className={classNames(gstyle.close, styles.close)}
         onClick={() => { this.props.remove(this.props.name); }}
         onKeyPress={e => (e.key === ' ' ? this.props.remove(this.props.name) : null)}
       >
@@ -203,6 +204,7 @@ export default class FilterChart extends Component {
           style={{
             color: this.props.color,
             display: this.props.showCircle ? 'inline-block' : 'block',
+            maxWidth: this.props.width,
           }}
         >
           {name}

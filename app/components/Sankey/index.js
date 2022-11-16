@@ -2,16 +2,30 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import styles from './styles.css';
 import { sankey, sankeyJustify, sankeyLinkHorizontal } from 'd3-sankey';
 import { scaleOrdinal } from 'd3';
-// import palette from '../../palette';
 
 import { debounce } from 'lodash';
 import datacontainer from '../../datacontainer';
 import SankeyTooltip from './SankeyTooltip';
 import SpotlightWithToolTip from '../SpotlightWithToolTip';
-const palette = ['#449acd', '#fee889', '#d7473e', '#7f759e', '#d77440', '#3e61c2', '#f15e76', '#5a598f', '#f69f4b', '#b07c83', '#ab80b6', '#47b8b7', '#ee7051', '#5f3a87', '#8ddba0', '#953884', '#349a74', '#8c3c9c', '#583c9e', '#547f86'];
 const nodeWidth = 15 // width of node rects
 const nodePadding = 0 // vertical separation between adjacent nodes
 
+const getNodeFullName = (node) => {
+
+  const nameParts = [node.name]
+  let currentNode = node
+  while (true) {
+    if (currentNode.targetLinks && currentNode.targetLinks.length) {
+      currentNode = currentNode.targetLinks[0].source
+      nameParts.push(currentNode.name)
+    } else {
+      break
+    }
+  }
+  nameParts.reverse()
+  const fullName = nameParts.join(',')
+  return fullName
+}
 function TextWithBackground(props) {
   const { children, renderSVG, ...restOfProps } = props;
   const ref = useRef(null);
@@ -48,8 +62,9 @@ function TextWithBackground(props) {
 
 export default function Sankey(props) {
 
-  let { data, width, height, colors, setRef, renderSVG, helpCounter } = props
+  let { data, width, height, colors, setRef, renderSVG, helpCounter, clickDatum, colorScale } = props
   const levels = datacontainer.getLevels()
+  // console.log(colorScale)
   // width -= 27
   // height *= 4
   const listRef = useRef()
@@ -112,6 +127,9 @@ export default function Sankey(props) {
     } catch (e) {
       console.error(e)
     }
+    graph.nodes.forEach(node => {
+      node.fullName = getNodeFullName(node)
+    })
     return graph
   }, [data, width, height])
 
@@ -121,7 +139,6 @@ export default function Sankey(props) {
   }, [sankeyData])
 
 
-  const colorScale = scaleOrdinal(palette)
   const maxDepth = Math.max(...sankeyData.nodes.map(n => n.depth))
   const maxLayerName = isFinite(maxDepth) && levels[maxDepth] ? levels[maxDepth].name  : ''
   const listHeight = height - marginTop - marginBottom
@@ -145,7 +162,7 @@ export default function Sankey(props) {
       // x: 0,
       y: y - containerPosition.top,
     }
-    const color = colorScale(name)
+    const color = colorScale(node.fullName)
     setHoveredListItem({position, name, counts: value, totalCounts: depthOneSum, color})
   }
   const onListScroll = debounce(() => {
@@ -162,6 +179,7 @@ export default function Sankey(props) {
   listItems.forEach((listItem, i) => {
     listItem.listItemVisible = i >= scrollOffset && i < scrollOffset + listItemsVisible
   })
+  // console.log(listItems)
   const checkNodeVisibility = (_node) => {
     let visibility = false
     const recurseNode = (node) => {
@@ -213,8 +231,8 @@ export default function Sankey(props) {
   const pathGradients = colors === 'mix' && sankeyData && sankeyData.links.map((link, i) => {
     const { source, target } = link
     const gradientId = `gradient-${i}`
-    const sourceColor = colorScale(source.name)
-    const targetColor = colorScale(target.name)
+    const sourceColor = colorScale(source.fullName)
+    const targetColor = colorScale(target.fullName)
     const gradient = (
       <linearGradient key={gradientId} id={gradientId} x1={source.x1} x2={target.x0}
         gradientUnits='userSpaceOnUse'>
@@ -242,7 +260,7 @@ export default function Sankey(props) {
             width={node.x1 - node.x0}
             height={Math.max(0.5, node.y1 - node.y0)}
             style={{
-              fill: colorScale(node.name),
+              fill: colorScale(node.fullName),
               stroke: 'none'
             }}
             data-name={node.name}
@@ -264,9 +282,9 @@ export default function Sankey(props) {
         if (colors === 'mix') {
           stroke = `url(#gradient-${linkIndex})`
         } else if (colors === 'left') {
-          stroke = colorScale(link.source.name)
+          stroke = colorScale(link.source.fullName)
         } else if (colors === 'right') {
-          stroke = colorScale(link.target.name)
+          stroke = colorScale(link.target.fullName)
         }
         return (
 
@@ -317,7 +335,11 @@ export default function Sankey(props) {
 
   const maxNumberLength = `${listItems.length}`.length
   const listNumberWidth = `${maxNumberLength}ch`
-
+  const clickListItem = (node) => () => {
+    clickDatum({
+      name: node.fullName,
+    })
+  }
   const list = listItems.map((node, i) => {
     if (node.depth !== maxDepth) {
       return null
@@ -326,13 +348,15 @@ export default function Sankey(props) {
     if (hoveredListItem && hoveredListItem.name !== node.name) {
       opacity = 0.2
     }
-    const color = colorScale(node.name)
+    // console.log(node)
+    const color = colorScale(node.fullName)
     return (
       <div
         style={{ opacity }}
         key={node.name}
         onMouseMove={hoverListItem(node)}
         onMouseOut={hoverListItem(null)}
+        onClick={clickListItem(node)}
       >
         <span><span style={{ width: listNumberWidth}} className={styles.listNumber}>{i + 1}</span> <div className={styles.dot} style={{backgroundColor: color}} /> {node.name}</span>
         <span>{node.value.toLocaleString()}</span>
@@ -393,7 +417,7 @@ export default function Sankey(props) {
                 cx={listItemHeight / 2}
                 cy={listItemHeight / 2}
                 r={listItemHeight / 4}
-                fill={colorScale(node.name)}
+                fill={colorScale(node.fullName)}
               />
               <text
                 x={listItemHeight}

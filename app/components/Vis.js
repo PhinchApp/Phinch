@@ -1307,7 +1307,6 @@ export default class Vis extends Component {
   }
 
   makeHelpButtons() {
-    console.log(this.state.helpCounter)
     return (
       <div className={gstyle.helpIcons}>
         <div
@@ -1651,6 +1650,8 @@ export default class Vis extends Component {
                     colors={this.state.sankeyColors}
                     renderSVG={this.state.renderSVG}
                     helpCounter={this.state.helpCounter}
+                    clickDatum={this._clickDatum}
+                    colorScale={this.scales.c || (() => {})}
                   />
                 : null
               )

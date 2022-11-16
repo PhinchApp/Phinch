@@ -24,14 +24,24 @@
   font-size: 13px;
   font-weight: 500;
   color: #000000;
+  position: relative;
 }
-
+.close {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
 .name {
   font-size: 15px;
   font-weight: 800;
   vertical-align: top;
   margin-right: 1rem;
   overflow-wrap: break-word;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  margin-top: 1.5em;
+  margin-left: -1em;
 }
 
 .toggleLabel {
