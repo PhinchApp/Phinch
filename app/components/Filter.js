@@ -99,7 +99,7 @@ export default class Filter extends Component {
       helpButton: needHelp,
       deleting: false,
       counter: 0, //tracks what help step we are on to allow global click advance
-      selectedVisualization: 'stackedbar',
+      selectedVisualization: null ,
     };
 
     this.filters = DataContainer.getFilters();
@@ -214,6 +214,10 @@ export default class Filter extends Component {
     clearTimeout(this.timeout);
     window.removeEventListener('resize', this.updateDimensions);
     window.removeEventListener('click', this.countUp);
+  }
+
+  componentDidUpdate() {
+    ReactTooltip.rebuild()
   }
 
   countUp() {
@@ -814,6 +818,9 @@ export default class Filter extends Component {
     ) : '';
 
     const viewVisualization = () => {
+      if (!this.state.selectedVisualization) {
+        return
+      }
       this.setState({ loading: true }, () => {
         setTimeout(() => {
           DataContainer.applyFiltersToData(this.state.data);
@@ -888,11 +895,12 @@ export default class Filter extends Component {
                 <div
                   role="button"
                   tabIndex={0}
-                  className={`${gstyle.button} ${styles.button}`}
+                  className={classNames(gstyle.button, styles.button, { [styles.buttonDisabled]: !this.state.selectedVisualization })}
                   onClick={viewVisualization}
                   onKeyPress={e => (e.key === ' ' ? viewVisualization() : null)}
-                  onMouseEnter={() => this.handleMouseOver("viewViz")}
-                  onMouseLeave={() => this.handleMouseLeave("viewViz")}
+                  onMouseEnter={this.state.selectedVisualization ? () =>  this.handleMouseOver("viewViz") : null}
+                  onMouseLeave={this.state.selectedVisualization ? () => this.handleMouseLeave("viewViz") : null}
+                  data-tip={this.state.selectedVisualization ? null : 'Please select a visualization type'}
                   >
                   View Visualization
                 </div>
