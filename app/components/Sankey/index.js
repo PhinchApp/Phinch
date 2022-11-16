@@ -62,11 +62,9 @@ function TextWithBackground(props) {
 
 export default function Sankey(props) {
 
-  let { data, width, height, colors, setRef, renderSVG, helpCounter, clickDatum, colorScale } = props
+  let { data, width, height, colors, setRef, renderSVG, helpCounter, clickDatum, colorScale, highlightedDatum } = props
   const levels = datacontainer.getLevels()
-  // console.log(colorScale)
-  // width -= 27
-  // height *= 4
+
   const listRef = useRef()
   const containerRef = useRef()
 
@@ -205,7 +203,10 @@ export default function Sankey(props) {
   const checkNodeHoverVisibility = (_node) => {
     let visibility = false
     const recurseNode = (node) => {
-      if (hoveredListItem && node.name === hoveredListItem.name) {
+      if (highlightedDatum && node.fullName === highlightedDatum.datum.name) {
+        visibility = true
+        return
+      } else if (hoveredListItem && node.name === hoveredListItem.name) {
         visibility = true
         return
       }
@@ -248,7 +249,7 @@ export default function Sankey(props) {
     <g>
       {sankeyData && sankeyData.nodes.map(node => {
         let opacity = node.listItemVisible || node.hasFinalNodeVisible ? 1 : 0.2
-        if (hoveredListItem && !node.hasHoveredNodeVisible) {
+        if ((hoveredListItem || highlightedDatum) && !node.hasHoveredNodeVisible) {
           opacity = 0.1
         }
         return (
@@ -272,7 +273,7 @@ export default function Sankey(props) {
     <g>
       {sankeyData && sankeyData.links.map((link, linkIndex) => {
         let strokeOpacity = link.hasFinalNodeVisible ? 0.5 : 0
-        if (hoveredListItem) {
+        if (hoveredListItem || highlightedDatum) {
 
           if (!link.hasHoveredNodeVisible) {
             strokeOpacity = strokeOpacity * 0.2
@@ -309,7 +310,7 @@ export default function Sankey(props) {
         const nodeHeight = node.y1 - node.y0
         if (!hoveredListItem && (!tryToShowLabel || nodeHeight < 10)) {
           return null
-        } else if (hoveredListItem) {
+        } else if (hoveredListItem || highlightedDatum) {
           if (node.depth === maxDepth) {
             return null
           }
@@ -340,12 +341,21 @@ export default function Sankey(props) {
       name: node.fullName,
     })
   }
+  useEffect(() => {
+    if (highlightedDatum && highlightedDatum.datum) {
+      const node = document.querySelector(`[data-fullname="${highlightedDatum.datum.name}"]`)
+      if (node) {
+        node.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' })
+      }
+    }
+  }, [highlightedDatum])
+
   const list = listItems.map((node, i) => {
     if (node.depth !== maxDepth) {
       return null
     }
     let opacity = 1
-    if (hoveredListItem && hoveredListItem.name !== node.name) {
+    if ((hoveredListItem && hoveredListItem.name !== node.name) || (highlightedDatum && highlightedDatum.datum.name !== node.fullName)) {
       opacity = 0.2
     }
     // console.log(node)
@@ -357,6 +367,7 @@ export default function Sankey(props) {
         onMouseMove={hoverListItem(node)}
         onMouseOut={hoverListItem(null)}
         onClick={clickListItem(node)}
+        data-fullname={node.fullName}
       >
         <span><span style={{ width: listNumberWidth}} className={styles.listNumber}>{i + 1}</span> <div className={styles.dot} style={{backgroundColor: color}} /> {node.name}</span>
         <span>{node.value.toLocaleString()}</span>
@@ -366,7 +377,7 @@ export default function Sankey(props) {
 
   const listConnectingLines = listItems.filter(d => d.listItemVisible)
     .map((node, nodeIndex) => {
-      if (hoveredListItem && hoveredListItem.name !== node.name) {
+      if ((hoveredListItem && hoveredListItem.name !== node.name) || (highlightedDatum && highlightedDatum.datum.name !== node.fullName)) {
         return null
       }
       const x1 = node.x1 + connecingPathPadding

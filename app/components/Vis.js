@@ -651,6 +651,14 @@ export default class Vis extends Component {
     }), this.metrics.debounce, { leading: false, trailing: true });
   }
 
+  renderSearch() {
+    return <Search
+      options={this.sequences}
+      onValueCleared={this.onValueCleared}
+      onSuggestionSelected={this.onSuggestionSelected}
+      onSuggestionHighlighted={this.onSuggestionHighlighted}
+    />
+  }
   renderFilters() {
     if (Object.keys(this.state.filters).length) {
       const segments = Object.keys(this.state.filters).map(k => (
@@ -716,6 +724,9 @@ export default class Vis extends Component {
 
   onSuggestionHighlighted({ suggestion }) {
     if (suggestion === null) {
+      this.setState({
+        highlightedDatum: null,
+      })
       return;
     }
     const highlightedDatum = {
@@ -1490,17 +1501,13 @@ export default class Vis extends Component {
             }}>
               {
                 visType === 'stackedbar' ? <React.Fragment>
-                <Search
-                  options={this.sequences}
-                  onValueCleared={this.onValueCleared}
-                  onSuggestionSelected={this.onSuggestionSelected}
-                  onSuggestionHighlighted={this.onSuggestionHighlighted}
-                />
+                {this.renderSearch()}
                 {this.renderShow()}
                 {this.renderSort()}
                 {spacer}
                 {this.renderToggle()}
               </React.Fragment> : visType === 'sankey' ? <React.Fragment>
+                {this.renderSearch()}
                 <div className={styles.inlineControl}>
                   <label htmlFor='sankeyColors'>
                     Link Colors:{' '}
@@ -1652,6 +1659,7 @@ export default class Vis extends Component {
                     helpCounter={this.state.helpCounter}
                     clickDatum={this._clickDatum}
                     colorScale={this.scales.c || (() => {})}
+                    highlightedDatum={this.state.highlightedDatum}
                   />
                 : null
               )

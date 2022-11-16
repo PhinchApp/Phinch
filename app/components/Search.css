@@ -30,7 +30,7 @@
   border: 1px solid #333;
   border-radius: 8px;
   color: #fff;
-  z-index: 10;
+  z-index: 10000;
 }
 
 .suggestionsContainer::-webkit-scrollbar-thumb {
