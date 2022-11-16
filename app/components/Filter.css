@@ -62,10 +62,10 @@
 .visOption,
 .futureVis {
   display: inline-block;
-  width: 134px;
+  width: auto;
   max-height: 57px;
   margin: 0.75rem 0;
-  margin-right: 1rem;
+  margin-right: 2rem;
   text-align: center;
   cursor: pointer;
 }
@@ -76,7 +76,6 @@
 }
 
 .visOptionLabel {
-  display: inline-block;
   width: auto;
   color: white;
   background: #001226;
