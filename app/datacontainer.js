@@ -18,6 +18,17 @@ function formatFileSize(bytes) {
   return `${(bytes / (interval ** i)).toFixed(1)} ${units[i]}`;
 }
 
+
+const defaultLevels = [
+  {name: "kingdom", number: null, order: 0},
+  {name: "phylum", number: null, order: 1},
+  {name: "class", number: null, order: 2},
+  {name: "order", number: null, order: 3},
+  {name: "family", number: null, order: 4},
+  {name: "genus", number: null, order: 5},
+  {name: "species", number: null, order: 6},
+]
+
 class DataContainer {
   constructor() {
     this.summary = {
@@ -88,6 +99,9 @@ class DataContainer {
           this.attributes = data.stateFilters;
           this.filters = data.filters;
           this.levels = data.levels;
+          if (!this.levels || this.levels.length === 0) {
+            this.levels = defaultLevels;
+          }
           success();
         }
       } else {

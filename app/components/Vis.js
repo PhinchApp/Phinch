@@ -62,15 +62,6 @@ import help7Hover from 'images/help7Hover.svg';
 import help8 from 'images/help8.svg';
 import help8Hover from 'images/help8Hover.svg';
 
-const defaultLevels = [
-  {name: "kingdom", number: null, order: 0},
-  {name: "phylum", number: null, order: 1},
-  {name: "class", number: null, order: 2},
-  {name: "order", number: null, order: 3},
-  {name: "family", number: null, order: 4},
-  {name: "genus", number: null, order: 5},
-  {name: "species", number: null, order: 6},
-]
 
 export default class Vis extends Component {
   constructor(props) {
@@ -117,9 +108,7 @@ export default class Vis extends Component {
     this.initdata = DataContainer.getFilteredData();
     this.attributes = DataContainer.getAttributes();
     this.levels = DataContainer.getLevels() || [];
-    if (!this.levels.length) {
-      this.levels = defaultLevels;
-    }
+
     // move to config or own file
     this.menuItems = [
       {
