@@ -33,12 +33,12 @@ function TextWithBackground(props) {
         <rect
           filter={`url(#dropshadow)`}
           x={props.x - lrPadding}
-          rx={10}
+          rx={5}
           y={props.y - height * 0.7 - tbPadding}
           width={width + (lrPadding * 2)}
           height={height + (tbPadding * 2)}
           fill="white"
-          opacity='0.2'
+          opacity='0.5'
         />
       : null}
       <text {...restOfProps} ref={ref}>{children}</text>
