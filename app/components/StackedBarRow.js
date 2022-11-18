@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 
 import _sortBy from 'lodash.sortby';
 
-import minus from 'images/minus.svg';
-import plus from 'images/plus.svg';
+import minus from 'images/add.svg';
+import plus from 'images/minusSymbol.svg';
 
 import StackedBar from './StackedBar';
 import Modal from './Modal';
@@ -132,7 +132,7 @@ export default class StackedBarRow extends Component {
     );
     const samples = (this.state.hovered && this.props.isAttribute) ? (
       <Modal
-        buttonTitle="Samples"
+        buttonTitle="See Samples"
         modalTitle={`${this.props.data[this.props.labelKey]} ${this.props.unit}`}
         buttonPosition={{
           position: 'relative',
@@ -149,11 +149,11 @@ export default class StackedBarRow extends Component {
         modalPosition={{
           position: 'absolute',
           marginTop: this.props.isLast
-            ? -216 + (this.props.metrics.padding * 2)
-            : this.props.metrics.padding,
-          marginLeft: this.props.metrics.idWidth + (this.props.metrics.nameWidth / 2),
-          width: '316px',
-          height: '216px',
+            ? -322 + (this.props.metrics.padding * 2)
+            : this.props.metrics.padding*2.5,
+          marginLeft: this.props.metrics.idWidth + (6),
+          width: '321px',
+          height: '322px',
           color: 'white',
           zIndex: 20,
         }}
@@ -162,7 +162,7 @@ export default class StackedBarRow extends Component {
             <div
               key={s.phinchName}
               className={styles.sampleRow}
-              style={{ backgroundColor: (i % 2 === 0) ? '#121212' : '#000000' }}
+              style={{ backgroundColor: (i % 2 === 0) ? 'RGBA(87, 90, 92, .5)' : '#000000', }}
             >
               <div className={`${this.props.styles.cell} ${this.props.styles.name} ${styles.name}`}>
                 {s.phinchName}
@@ -192,17 +192,20 @@ export default class StackedBarRow extends Component {
         tabIndex={0}
         className={styles.button}
         style={{
-          marginTop: (this.props.metrics.lineHeight * 2) + 1,
+          marginTop: (this.props.metrics.lineHeight * 2) + 10,
           marginLeft: this.props.metrics.padding / 4,
           paddingLeft: '6px',
+          paddingTop: '3px',
           lineHeight: '7px',
-          fontWeight: 800,
-          letterSpacing: '2px',
+          font: 'Open Sans',
+          fontSize: "9px",
+          fontWeight: 600,
+          letterSpacing: '1px',
         }}
         onClick={this._toggleTagMenu}
         onKeyPress={e => (e.key === ' ' ? this._toggleTagMenu() : null)}
       >
-      ...
+      Edit Tag
       </div>
     ) : '';
     const tagMenu = this.state.showTags ? (
@@ -215,7 +218,7 @@ export default class StackedBarRow extends Component {
         {
           this.props.tags.map(t => {
             const selected = this.props.data.tags[t.id];
-            const tagIcon = selected ? minus : plus;
+            const tagIcon = selected ? plus : minus;
             return (
               <div
                 role="button"
@@ -276,7 +279,12 @@ export default class StackedBarRow extends Component {
         style={{
           position: 'absolute',
           right: 0,
-          marginTop: (this.props.metrics.lineHeight * 2) + 1,
+          marginTop: (this.props.metrics.lineHeight * 2) + 10,
+          font: 'Open Sans',
+          fontSize: "9px",
+          fontWeight: 600,
+          letterSpacing: '1px',
+
         }}
         onClick={
           this.props.isRemoved ? this.props.restoreDatum : this.props.removeDatum

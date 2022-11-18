@@ -2,6 +2,12 @@ import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { FixedSizeList as List } from 'react-window';
 
+import Spotlight from "rc-spotlight";
+import 'antd/dist/antd.css';
+import { Tooltip } from 'antd';
+import ReactTooltip from 'react-tooltip';
+import SpotlightWithToolTip from './SpotlightWithToolTip';
+
 import _sortBy from 'lodash.sortby';
 import _debounce from 'lodash.debounce';
 import _cloneDeep from 'lodash.clonedeep';
@@ -11,6 +17,29 @@ import { scaleLinear, scaleOrdinal } from 'd3-scale';
 import logo from 'images/phinch.svg';
 import back from 'images/back.svg';
 import save from 'images/save.svg';
+import exportButton from 'images/export.svg';
+import dropDownArrow from 'images/dropDownArrow.svg';
+
+import needHelp from 'images/needHelp.svg';
+import needHelpHover from 'images/needHelpHover.svg';
+import closeHelp from 'images/closeHelpHP.svg';
+
+import help1 from 'images/help1.svg';
+import help1Hover from 'images/help1Hover.svg';
+import help2 from 'images/help2.svg';
+import help2Hover from 'images/help2Hover.svg';
+import help3 from 'images/help3.svg';
+import help3Hover from 'images/help3Hover.svg';
+import help4 from 'images/help4.svg';
+import help4Hover from 'images/help4Hover.svg';
+import help5 from 'images/help5.svg';
+import help5Hover from 'images/help5Hover.svg';
+import help6 from 'images/help6.svg';
+import help6Hover from 'images/help6Hover.svg';
+import help7 from 'images/help7.svg';
+import help7Hover from 'images/help7Hover.svg';
+import help8 from 'images/help8.svg';
+import help8Hover from 'images/help8Hover.svg';
 
 import {
   updateFilters,
@@ -39,29 +68,8 @@ import Sankey from './Sankey/'
 import styles from './Vis.css';
 import gstyle from './general.css';
 import classNames from 'classnames';
-import SpotlightWithToolTip from './SpotlightWithToolTip';
 
-import needHelp from 'images/needHelp.svg';
-import needHelpHover from 'images/needHelpHover.svg';
-import closeHelp from 'images/closeHelpHP.svg';
-
-import help1 from 'images/help1.svg';
-import help1Hover from 'images/help1Hover.svg';
-import help2 from 'images/help2.svg';
-import help2Hover from 'images/help2Hover.svg';
-import help3 from 'images/help3.svg';
-import help3Hover from 'images/help3Hover.svg';
-import help4 from 'images/help4.svg';
-import help4Hover from 'images/help4Hover.svg';
-import help5 from 'images/help5.svg';
-import help5Hover from 'images/help5Hover.svg';
-import help6 from 'images/help6.svg';
-import help6Hover from 'images/help6Hover.svg';
-import help7 from 'images/help7.svg';
-import help7Hover from 'images/help7Hover.svg';
-import help8 from 'images/help8.svg';
-import help8Hover from 'images/help8Hover.svg';
-
+import { style } from 'd3';
 
 export default class Vis extends Component {
   constructor(props) {
@@ -123,7 +131,8 @@ export default class Vis extends Component {
         id: 'filter',
         name: 'Back',
         action: () => {
-          this.save(() => (this.setState({ redirect: '/Filter' })));
+          this.save(() => (
+            this.setState({ redirect: '/Filter' })));
         },
         icon: <img src={back} alt="back" />,
       },
@@ -133,7 +142,7 @@ export default class Vis extends Component {
         action: () => {
           this.setState({ renderSVG: true });
         },
-        icon: <img src={save} alt="save" />,
+        icon: <img src={exportButton} alt="export" />,
       }
     ];
 
@@ -146,17 +155,17 @@ export default class Vis extends Component {
 
     // Move this to data
     const tagColors = [
-      '#ff0000',
+      '#ff4a14',
       '#ffc400',
       '#00adff',
-      '#00ffc4',
+      '#2bfec3',
     ];
     this.state.tags = [
       {
         id: 'none',
         color: null,
         name: 'No Tags',
-        selected: true
+        selected: false
       }, ...tagColors.map((c, i) => ({
         id: `tag-${i}`,
         name: `Tag ${i}`,
@@ -171,10 +180,10 @@ export default class Vis extends Component {
 
     this.metrics = {
       padding: 16,
-      lineHeight: 14,
+      lineHeight: 20,
       sequenceRowHeight: 24,
-      barContainerHeight: 56,
-      barHeight: 44,
+      barContainerHeight: 65,
+      barHeight: 56,
       attrBarContainerHeight: 40,
       attrBarHeight: 28,
       miniBarContainerHeight: 8,
@@ -228,6 +237,17 @@ export default class Vis extends Component {
         }
         return t;
       });
+      //
+      //this is to allow the programmer to track if all tags are unselected or or least one
+      //is for styling purposes. Likely a better way to do this using data but the function of
+      //all state variables need to be identified first which will take time.
+      // this.state.tagTracker = this.state.tags.map(t => {
+      //   if (t.selected === 'true') {
+      //     return true;
+      //     break;
+      //   }
+      //   return false;
+      // });
       //
       this.state.rowTags = this.init.rowTags ? this.init.rowTags : this.state.rowTags;
       this.state.selectedAttribute = this.init.selectedAttribute ? (
@@ -308,6 +328,7 @@ export default class Vis extends Component {
     if(this.state.helpCounter > 0) {
       const currCount = this.state.helpCounter;
       const newCount = currCount + 1;
+      // 6 for sankey, 8 for bargraph
       newCount > 6 ? this.setState({ helpCounter: 2, }) : this.setState({ helpCounter: newCount, });
     }
   }
@@ -695,6 +716,7 @@ export default class Vis extends Component {
             position: 'fixed',
             width: this.state.showRightSidebar ? this.metrics.rightSidebar : 0,
             height: this.metrics.chartHeight + (this.metrics.lineHeight * 2),
+            background: "#2d2f21",
           }}
         >
           {segments}
@@ -922,7 +944,7 @@ export default class Vis extends Component {
             id="attributesSelect"
             onChange={onSelectChange}
             className={`${active}`}
-            style={{ marginRight: 0 }}
+            style={{ marginRight: 0, width: '200px' }}
             value={this.state.selectedAttribute}
           >
             {options}
@@ -943,7 +965,7 @@ export default class Vis extends Component {
         name: 'Sample Name',
       },
     ];
-    const options = showOptions.map(o => <option key={o.id} value={o.id}>{o.name}</option>);
+    const options = showOptions.map(o => <option key={o.id} value={o.id} style={styles.selectItems}>{o.name}</option>);
     const onSelectChange = (event) => {
       const labelKey = event.target.value;
       this.setState({ labelKey }, () => {
@@ -1196,19 +1218,9 @@ export default class Vis extends Component {
   renderTagFilter() {
     const tagFilter = this.state.showTags ? (
       <div key="tagFilter" className={styles.tagFilter}>
-        <div
-          role="button"
-          tabIndex={0}
-          className={gstyle.close}
-          style={{ marginTop: '4px' }}
-          onClick={this._toggleTags}
-          onKeyPress={e => (e.key === ' ' ? this._toggleTags() : null)}
-        >
-          x
-        </div>
         {
           this.state.tags.map(t => {
-            const tagClass = t.id === 'none' ? '' : styles.tag;
+            const tagClass = styles.tag;
             return (
               <div
                 key={`tf-${t.id}`}
@@ -1222,7 +1234,7 @@ export default class Vis extends Component {
                     id={`c-${t.id}`}
                     type="checkbox"
                     checked={t.selected}
-                    onChange={(e) => this.filterByTag(e, t)}
+                    onChange={(e) => {this.filterByTag(e, t), this.setActiveTags}}
                     style={{ top: 0, left: '-3px' }}
                   />
                   <span className={gstyle.checkmark} />
@@ -1233,8 +1245,8 @@ export default class Vis extends Component {
                       className={gstyle.circle}
                       style={{
                         backgroundColor: t.color,
-                        borderColor: '#333333',
-                        marginLeft: '4px',
+                        border: 'none',
+                        margin: "0 .25rem 5px",
                         opacity: t.selected ? 1 : 0.5,
                       }}
                     />
@@ -1272,6 +1284,7 @@ export default class Vis extends Component {
           className={styles.inlineControl}
           onClick={this._toggleTags}
           onKeyPress={e => (e.key === ' ' ? this._toggleTags() : null)}
+          style={{ backgroundColor: '#2d2f31', borderRadius: '3px', }}
         >
           <div key="tags" className={`${styles.selector} ${styles.button} ${showTags}`}>Tags</div>
           {
@@ -1287,6 +1300,7 @@ export default class Vis extends Component {
               />
             ) : ''))
           }
+          <img style={{marginRight: '6px', width: "10px"}} src={dropDownArrow} />
         </div>
         {tagFilter}
       </div>
@@ -1381,6 +1395,7 @@ export default class Vis extends Component {
 
   render() {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
+    const helpButtons = this.state.counter > 0 ? this.makeHelpButtons() : '';
 
     const isAttribute = (
       this.state.selectedAttribute !== ''
@@ -1420,8 +1435,8 @@ export default class Vis extends Component {
         className={gstyle.button}
         style={{
           position: 'absolute',
-          top: '96px',
-          left: '16px',
+          top: 'calc(100vh - 40px)',
+          right: '16px',
           width: '68px',
           textAlign: 'center',
           zIndex: 10,
@@ -1463,26 +1478,22 @@ export default class Vis extends Component {
       <div className={gstyle.container}>
         {redirect}
         {result}
-        <div className={gstyle.logo}>
+        <div className={styles.sbgLogo}>
           <Link to="/">
             <img src={logo} alt="Phinch" />
           </Link>
-          {
-            visType === 'sankey' ?
-            <button
-              className={gstyle.help}
-              // on click command is still undefined outside of home page, set to issues page for now until later
-              onClick={() => this.setState({ helpCounter: 1 })}
-              onMouseEnter={() => this.handleMouseOver("help")}
-              onMouseLeave={() => this.handleMouseLeave("help")}
-              >
-                <img src={this.state.helpButton} alt="needHelp" />
-            </button>
-            : null
-          }
+          <button
+            className={gstyle.help}
+            // on click command is still undefined outside of home page, set to issues page for now until later
+            onClick={() => this.setState({ helpCounter: 1 })}
+            onMouseEnter={() => this.handleMouseOver("help")}
+            onMouseLeave={() => this.handleMouseLeave("help")}
+            >
+              <img src={this.state.helpButton} alt="needHelp" />
+          </button>
         </div>
         <div
-          className={gstyle.header}
+          className={`${gstyle.header} ${gstyle.darkbgscrollbar}`}
           style={{
             zIndex: visType === 'stackedbar' ? dataLength + 1 :
               visType === 'sankey' ?
@@ -1570,7 +1581,7 @@ export default class Vis extends Component {
               }}
             >
               <svg
-                fontFamily="IBM Plex Sans Condensed"
+                fontFamily="Open Sans"
                 fontWeight="200"
                 fontSize="12px"
                 style={{
@@ -1718,19 +1729,20 @@ export default class Vis extends Component {
           badge
         />
 
-          <SpotlightWithToolTip
-            isActive = {this.state.helpCounter > 0}
-            inheritParentBackgroundColor={false}
-            toolTipTitle={"*mouse click anywhere to advance"}
-            overlayStyle={{zIndex: '1001'}}
-            innerStyle={{color: 'white', fontWeight: '600', fontSize: '10px'}}
-            style={{boxShadow: 'none'}}
-          >
-            <div className={gstyle.helpButtons}>
-              {this.state.helpCounter > 0 ? this.makeHelpButtons() : null}
-            </div>
-          </SpotlightWithToolTip>
+        <SpotlightWithToolTip
+          isActive = {this.state.helpCounter > 0}
+          inheritParentBackgroundColor={false}
+          toolTipTitle={"*mouse click anywhere to advance"}
+          overlayStyle={{zIndex: '1001'}}
+          innerStyle={{color: 'white', fontWeight: '600', fontSize: '10px'}}
+          style={{boxShadow: 'none'}}
+        >
+          <div className={gstyle.helpButtons}>
+            {this.state.helpCounter > 0 ? this.makeHelpButtons() : null}
+          </div>
+        </SpotlightWithToolTip>
       </div>
+
     );
   }
 }

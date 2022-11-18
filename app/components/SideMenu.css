@@ -60,6 +60,7 @@
 }
 
 .menuItemLabel {
+  display: inline-flex;
   font-size: 12px;
   font-weight: bold;
   padding-left: 2px;
@@ -80,11 +81,21 @@
     border-radius: 100px;
 }
 
+
 .menuItem:hover .menuBox.newProject {
   border-color: #fff;
   background-position: center;
   background-image: url("images/backArrowW.svg");
   background-color: #F09E6A;
+  background-repeat: no-repeat;
+}
+
+.menuItem:hover .menuBox.stackedBar {
+  border-color: #fff;
+  background-position: center;
+  background-image: url("images/exportHover.svg");
+  background-color: #F09E6A;
+  background-size: 12px;
   background-repeat: no-repeat;
 }
 
@@ -95,6 +106,7 @@
   background-color: #F09E6A;
   background-repeat: no-repeat;
 }
+
 
 /* gives glow affect to menu buttons on hover, mostly helps with save button. */
 .menuItem:hover .menuBox {
@@ -113,6 +125,18 @@
   border-width: 0px;
 }
 
-.menuItem:hover .menuBox.newProject img {
+.menuItem .menuBox.stackedBar img,
+.menuItem:hover .menuBox.stackedBar img {
+  width: 20px;
+  height: 20px;
+  margin: 0 0 16px 0;
+  padding: 0;
+  border-color: white;
+  border-style: inherit;
+  border-width: 0px;
+}
+
+.menuItem:hover .menuBox.newProject img,
+.menuItem:hover .menuBox.stackedBar img {
   display: none !important;
 }

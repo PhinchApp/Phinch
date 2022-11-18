@@ -65,7 +65,7 @@ export default function StackedBarTicks(props) {
                 id={`Marker ${t}`}
                 transform={`translate(${props.scale(t)}, ${(props.metrics.lineHeight)})`}
               >
-                <text id={label} fontSize={10} dy={-4} dx={-1}>
+                <text id={label} fontSize={12} dy={-4} dx={-1}>
                   {label}
                 </text>
                 <line
@@ -74,7 +74,8 @@ export default function StackedBarTicks(props) {
                   y1={0}
                   x2={-1}
                   y2={props.svgHeight}
-                  stroke="#808080"
+                  stroke="#b2b2b2"
+                  strokeOpacity={.85}
                   strokeWidth={0.5}
                 />
               </g>

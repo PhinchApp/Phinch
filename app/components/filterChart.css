@@ -23,13 +23,16 @@
   vertical-align: top;
   font-size: 13px;
   font-weight: 500;
+  color: white;
   color: #000000;
   position: relative;
 }
+
 .close {
   position: absolute;
   top: 0;
   right: 0;
+
 }
 .name {
   font-size: 15px;
