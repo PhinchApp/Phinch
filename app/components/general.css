@@ -32,7 +32,7 @@
 }
 
 .logo {
-  background: #001226;
+  background: #000000;
   width: 100px;
   height: 130px;
   display: inline-block;
@@ -75,7 +75,7 @@
   vertical-align: top;
   background: #575a5c;
   width: calc(100% - 100px);
-  /* height: 130px; */
+  min-width: 947px;
   overflow-y: hidden;
 }
 

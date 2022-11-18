@@ -5,9 +5,37 @@
 .controls {
   display: inline-block;
   vertical-align: top;
+  min-width: 1182px;
 }
 
-.menuToggle {
+.sbgLogo {
+  background: #000000;
+  width: 100px;
+  height: 136px;
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+  z-index: 2;
+}
+
+.sbgLogo img {
+  padding: 1.5rem 1rem .5rem;
+}
+
+.sbgLogo button {
+  max-width: 133px !important;
+  max-height: 29px !important;
+  padding: 1.5rem .5rem;
+}
+
+.help img{
+  width: 151.75px !important;
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+/* .menuToggle {
   position: relative;
   color: #fff;
   background: #1fbbd8;
@@ -56,7 +84,7 @@
   font-size: 24px;
   text-align: center;
   border-radius: 8px;
-}
+} */
 
 .axis {
   position: absolute;
@@ -65,6 +93,7 @@
   background-color: white;
   vertical-align: top;
   z-index: 2;
+  top: 8.5rem;
 }
 
 .controlRow {
@@ -72,38 +101,49 @@
   vertical-align: top;
   display: inline-block;
   padding: 1rem;
-  font-size: 13px;
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(178, 178, 178, .7);
   padding-bottom: 0;
 }
 
 .selector {
   display: inline-block;
+  width: 79px;
   padding: 0.125rem 0.5rem;
   border-radius: 16px;
   text-align: center;
   line-height: 16px;
-  font-size: 13px;
+  font-size: 14px;
   cursor: pointer;
-  border: 1px solid #999;
+  border: 1.3px solid #b2b2b2;
+  color: #b2b2b2;
+  opacity: .7;
   text-transform: capitalize;
 }
 
 .selector:hover {
-  background: #1fbbd8;
+  background: #F09E6A;
   color: white;
+  opacity: 1;
 }
 
 .button {
-  background-color: #4d4d4d;
-  border: 1px solid #4d4d4d;
-  border-radius: 4px;
+  width: 50px;
+  height: 25px;
+  background-color: #F09E6A;
+  border: 2px solid #F09E6A;
+  border-radius: 3px;
+  color: #FFFFFF;
+  opacity: 1;
   margin: 0 8px;
   margin-left: 0;
-  font-weight: 400;
+  font-weight: 600;
 }
 
 .editTag {
   display: none;
+  width: 30px;
   position: absolute;
   pointer-events: none;
   right: 0;
@@ -114,7 +154,7 @@
   height: 14px;
   line-height: 12px;
   font-size: 9px;
-  background: #666;
+  background: #F09E6A;
   border-radius: 6px;
   text-align: center;
   text-transform: uppercase;
@@ -124,7 +164,9 @@
 }
 
 .tag:hover .editTag {
-  display: block;
+  display: inline-block;
+  position: absolute;
+  margin-top: 6px;
 }
 
 .inlineControl {
@@ -147,49 +189,55 @@
 }
 
 .inlineControl input[type='radio']::after {
-  width: 12px;
-  height: 12px;
-  border-radius: 12px;
-  top: -3px;
-  left: -4px;
+  width: 14px;
+  height: 14px;
+  border-radius: 14px;
+  top: -4px;
+  left: -2px;
   position: relative;
   content: '';
   display: inline-block;
   visibility: visible;
-  border: 3px solid #4d4d4d;
-  background: #4d4d4d;
+  border: 3px solid #2d2f31;
+  background: #2d2f31;
 }
 
 .inlineControl input[type='radio']:checked::after {
-  width: 12px;
-  height: 12px;
-  border-radius: 12px;
-  top: -3px;
-  left: -4px;
+  width: 14px;
+  height: 14px;
+  border-radius: 14px;
+  top: -4px;
+  left: -2px;
   position: relative;
   content: '';
   display: inline-block;
   visibility: visible;
-  border: 3px solid #4d4d4d;
-  background: #1fbbd8;
+  border: 2px solid #2d2f31;
+  background: #F09E6A;
+}
+
+.inlineControl input[type=text]:focus {
+  background-color: #b2b2b2;
 }
 
 .inlineControl select {
-  font-family: 'IBM Plex Sans Condensed', Verdana, Sans-serif;
-  font-weight: 300;
-  font-size: 14px;
-  background: #4d4d4d;
-  color: #fff;
+  font-family: 'Open Sans';
+  font-weight: 600;
+  font-size: 15px;
+  background: #2d2f31;
+  color: #F09E6A;
   border-radius: 4px;
   border: none;
   height: 24px;
+  width: 140px;
   padding: 0.25rem;
   margin-right: 0.5rem;
   cursor: pointer;
 }
 
 .inlineControl select option {
-  background: #4d4d4d;
+  background-color: red !important;
+  z-index: 999999999999;
 }
 
 .inlineControl select[disabled] {
@@ -197,8 +245,9 @@
 }
 
 .inlineControl select.selected {
-  background: #1fbbd8;
+  opacity: 1;
 }
+
 
 .dash {
   display: inline-block;
@@ -207,33 +256,35 @@
 }
 
 .selected {
-  font-weight: 400;
+  color: white;
 }
 
 .dash.selected {
-  color: #1fbbd8;
+  color: #F09E6A;
 }
 
 .selector.selected {
-  border: 1px solid #1fbbd8;
-  background: #1fbbd8;
+  border: 1px solid #F09E6A;
+  background: #F09E6A;
+  opacity: 1;
 }
 
 .tagFilter {
   position: fixed;
-  background: #333;
-  width: 192px;
-  padding: 6px 12px;
-  border-radius: 8px;
+  background: #2d2f31;
+  opacity: .85;
+  width: 138px;
+  padding: 6px 6px;
+  border-radius: 6px;
   z-index: 10;
-  margin-top: 16px;
-  margin-left: -72px;
+  margin-top: 2px;
 }
 
 .tagName {
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 600px;
   color: #999;
-  width: 116px;
+  width: 70px;
 }
 
 .tagName.selected {
@@ -246,22 +297,24 @@
   width: 144px;
   padding: 0 1rem;
   z-index: 3;
-  font-family: 'IBM Plex Sans Condensed', Verdana, Sans-serif;
+  line-height: .5rem;
+  font-family: 'Open Sans';
+  font-weight: 700;
   text-align: left;
   color: #2b2b2b;
 }
 
 .attrLabel {
   margin-top: 4px;
-  font-weight: 400;
-  font-size: 15px;
+  font-weight: 700;
+  font-size: 16px;
   line-height: 15px;
 }
 
 .attrToggle {
-  font-weight: 300;
-  font-size: 12px;
-  line-height: 12px;
+  font-weight: 500;
+  font-size: 10px;
+  line-height: 20px;
   cursor: pointer;
 }
 
@@ -325,7 +378,7 @@
 }
 
 .svglist {
-  margin-top: 42px;
+  margin-top: 60px;
   will-change: auto !important;
 }
 
@@ -335,4 +388,17 @@
   font-size: 12px;
   padding-top: 6px;
   overflow: visible;
+}
+
+.helpButtons {
+  position: fixed;
+  bottom: 50px;
+  left: 0;
+  width: fit-content;
+}
+
+.helpIcons {
+  display: inline-block;
+  margin-left: .5rem;
+  cursor: pointer;
 }

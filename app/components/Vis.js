@@ -2,6 +2,12 @@ import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { FixedSizeList as List } from 'react-window';
 
+import Spotlight from "rc-spotlight";
+import 'antd/dist/antd.css';
+import { Tooltip } from 'antd';
+import ReactTooltip from 'react-tooltip';
+import SpotlightWithToolTip from './SpotlightWithToolTip';
+
 import _sortBy from 'lodash.sortby';
 import _debounce from 'lodash.debounce';
 import _cloneDeep from 'lodash.clonedeep';
@@ -11,6 +17,29 @@ import { scaleLinear, scaleOrdinal } from 'd3-scale';
 import logo from 'images/phinch.svg';
 import back from 'images/back.svg';
 import save from 'images/save.svg';
+import exportButton from 'images/export.svg';
+import dropDownArrow from 'images/dropDownArrow.svg';
+
+import needHelp from 'images/needHelp.svg';
+import needHelpHover from 'images/needHelpHover.svg';
+import closeHelp from 'images/closeHelpHP.svg';
+
+import help1 from 'images/help1.svg';
+import help1Hover from 'images/help1Hover.svg';
+import help2 from 'images/help2.svg';
+import help2Hover from 'images/help2Hover.svg';
+import help3 from 'images/help3.svg';
+import help3Hover from 'images/help3Hover.svg';
+import help4 from 'images/help4.svg';
+import help4Hover from 'images/help4Hover.svg';
+import help5 from 'images/help5.svg';
+import help5Hover from 'images/help5Hover.svg';
+import help6 from 'images/help6.svg';
+import help6Hover from 'images/help6Hover.svg';
+import help7 from 'images/help7.svg';
+import help7Hover from 'images/help7Hover.svg';
+import help8 from 'images/help8.svg';
+import help8Hover from 'images/help8Hover.svg';
 
 import {
   updateFilters,
@@ -38,6 +67,7 @@ import Modal from './Modal';
 
 import styles from './Vis.css';
 import gstyle from './general.css';
+import { style } from 'd3';
 
 export default class Vis extends Component {
   constructor(props) {
@@ -73,6 +103,8 @@ export default class Vis extends Component {
       result: null,
       renderSVG: false,
       dialogVisible: false,
+      helpButton: needHelp,
+      counter: 0, //tracks what help step we are on to allow global click advance
     };
 
     this._inputs = {};
@@ -95,7 +127,8 @@ export default class Vis extends Component {
         id: 'filter',
         name: 'Back',
         action: () => {
-          this.save(() => (this.setState({ redirect: '/Filter' })));
+          this.save(() => (
+            this.setState({ redirect: '/Filter' })));
         },
         icon: <img src={back} alt="back" />,
       },
@@ -105,7 +138,7 @@ export default class Vis extends Component {
         action: () => {
           this.setState({ renderSVG: true });
         },
-        icon: <img src={save} alt="save" />,
+        icon: <img src={exportButton} alt="export" />,
       }
     ];
 
@@ -118,17 +151,17 @@ export default class Vis extends Component {
 
     // Move this to data
     const tagColors = [
-      '#ff0000',
+      '#ff4a14',
       '#ffc400',
       '#00adff',
-      '#00ffc4',
+      '#2bfec3',
     ];
     this.state.tags = [
       {
         id: 'none',
         color: null,
         name: 'No Tags',
-        selected: true
+        selected: false
       }, ...tagColors.map((c, i) => ({
         id: `tag-${i}`,
         name: `Tag ${i}`,
@@ -143,10 +176,10 @@ export default class Vis extends Component {
 
     this.metrics = {
       padding: 16,
-      lineHeight: 14,
+      lineHeight: 20,
       sequenceRowHeight: 24,
-      barContainerHeight: 56,
-      barHeight: 44,
+      barContainerHeight: 65,
+      barHeight: 56,
       attrBarContainerHeight: 40,
       attrBarHeight: 28,
       miniBarContainerHeight: 8,
@@ -199,6 +232,17 @@ export default class Vis extends Component {
         return t;
       });
       //
+      //this is to allow the programmer to track if all tags are unselected or or least one
+      //is for styling purposes. Likely a better way to do this using data but the function of
+      //all state variables need to be identified first which will take time.
+      // this.state.tagTracker = this.state.tags.map(t => {
+      //   if (t.selected === 'true') {
+      //     return true;
+      //     break;
+      //   }
+      //   return false;
+      // });
+      //
       this.state.rowTags = this.init.rowTags ? this.init.rowTags : this.state.rowTags;
       this.state.selectedAttribute = this.init.selectedAttribute ? (
         this.init.selectedAttribute
@@ -240,10 +284,12 @@ export default class Vis extends Component {
     this.removeFilter = this.removeFilter.bind(this);
     this.toggleMenu = this.toggleMenu.bind(this);
     this.toggleLog = this.toggleLog.bind(this);
+    this.countUp = this.countUp.bind(this);
   }
 
   componentDidMount() {
     window.addEventListener('resize', this.updateDimensions);
+    window.addEventListener('click', this.countUp);
     if (this.initdata) {
       this.formatTaxonomyData(this.initdata, this.state.level, (data) => {
         this.setState({ data, preData: data }, () => {
@@ -265,6 +311,16 @@ export default class Vis extends Component {
     clearTimeout(this.tooltip.handle);
     clearTimeout(this.timeout);
     window.removeEventListener('resize', this.updateDimensions);
+    window.removeEventListener('click', this.countUp);
+  }
+
+  countUp() {
+    if(this.state.counter > 0) {
+      const currCount = this.state.counter;
+      const newCount = currCount + 1;
+      newCount > 8 ? this.setState({ counter: 1, }) : this.setState({ counter: newCount, });
+      console.log(this.state.counter);
+    }
   }
 
   exportComplete = () => {
@@ -642,6 +698,7 @@ export default class Vis extends Component {
             position: 'fixed',
             width: this.state.showRightSidebar ? this.metrics.rightSidebar : 0,
             height: this.metrics.chartHeight + (this.metrics.lineHeight * 2),
+            background: "#2d2f21",
           }}
         >
           {segments}
@@ -866,7 +923,7 @@ export default class Vis extends Component {
             id="attributesSelect"
             onChange={onSelectChange}
             className={`${active}`}
-            style={{ marginRight: 0 }}
+            style={{ marginRight: 0, width: '200px' }}
             value={this.state.selectedAttribute}
           >
             {options}
@@ -887,7 +944,7 @@ export default class Vis extends Component {
         name: 'Sample Name',
       },
     ];
-    const options = showOptions.map(o => <option key={o.id} value={o.id}>{o.name}</option>);
+    const options = showOptions.map(o => <option key={o.id} value={o.id} style={styles.selectItems}>{o.name}</option>);
     const onSelectChange = (event) => {
       const labelKey = event.target.value;
       this.setState({ labelKey }, () => {
@@ -1140,19 +1197,9 @@ export default class Vis extends Component {
   renderTagFilter() {
     const tagFilter = this.state.showTags ? (
       <div key="tagFilter" className={styles.tagFilter}>
-        <div
-          role="button"
-          tabIndex={0}
-          className={gstyle.close}
-          style={{ marginTop: '4px' }}
-          onClick={this._toggleTags}
-          onKeyPress={e => (e.key === ' ' ? this._toggleTags() : null)}
-        >
-          x
-        </div>
         {
           this.state.tags.map(t => {
-            const tagClass = t.id === 'none' ? '' : styles.tag;
+            const tagClass = styles.tag;
             return (
               <div
                 key={`tf-${t.id}`}
@@ -1166,7 +1213,7 @@ export default class Vis extends Component {
                     id={`c-${t.id}`}
                     type="checkbox"
                     checked={t.selected}
-                    onChange={(e) => this.filterByTag(e, t)}
+                    onChange={(e) => {this.filterByTag(e, t), this.setActiveTags}}
                     style={{ top: 0, left: '-3px' }}
                   />
                   <span className={gstyle.checkmark} />
@@ -1177,8 +1224,8 @@ export default class Vis extends Component {
                       className={gstyle.circle}
                       style={{
                         backgroundColor: t.color,
-                        borderColor: '#333333',
-                        marginLeft: '4px',
+                        border: 'none',
+                        margin: "0 .25rem 5px",
                         opacity: t.selected ? 1 : 0.5,
                       }}
                     />
@@ -1216,6 +1263,7 @@ export default class Vis extends Component {
           className={styles.inlineControl}
           onClick={this._toggleTags}
           onKeyPress={e => (e.key === ' ' ? this._toggleTags() : null)}
+          style={{ backgroundColor: '#2d2f31', borderRadius: '3px', }}
         >
           <div key="tags" className={`${styles.selector} ${styles.button} ${showTags}`}>Tags</div>
           {
@@ -1231,14 +1279,127 @@ export default class Vis extends Component {
               />
             ) : ''))
           }
+          <img style={{marginRight: '6px', width: "10px"}} src={dropDownArrow} />
         </div>
         {tagFilter}
       </div>
     );
   }
 
+  makeHelpButtons() {
+    return (
+      <div className={styles.helpIcons}>
+        <div
+        role="button"
+        className={styles.helpIcons}
+        onClick={() => {this.setState({ counter: 0 }); this.forceUpdate();} }
+        >
+          <img src={closeHelp} alt="close-walkthrough" />
+        </div>
+
+        <div
+        role="button"
+        tabIndex={0}
+        className={styles.helpIcons}
+        onClick={() => this.setState({ counter: 8 })}
+        >
+          <img src={this.state.counter == 1 ? help1Hover : help1} />
+        </div>
+
+        <div
+        role="button"
+        tabIndex={0}
+        className={styles.helpIcons}
+        onClick={() => this.setState({ counter: 1 })}
+        >
+          <img src={this.state.counter == 2 ? help2Hover : help2} />
+        </div>
+
+        <div
+        role="button"
+        tabIndex={0}
+        className={styles.helpIcons}
+        onClick={() => this.setState({ counter: 2 })}
+        >
+          <img src={this.state.counter == 3 ? help3Hover : help3} />
+        </div>
+
+        <div
+        role="button"
+        tabIndex={0}
+        className={styles.helpIcons}
+        onClick={() => this.setState({ counter: 3 })}
+        >
+          <img src={this.state.counter == 4 ? help4Hover : help4} />
+        </div>
+
+        <div
+        role="button"
+        tabIndex={0}
+        className={styles.helpIcons}
+        onClick={() => this.setState({ counter: 4 })}
+
+        >
+          <img src={this.state.counter == 5 ? help5Hover : help5} />
+        </div>
+
+        <div
+        role="button"
+        tabIndex={0}
+        className={styles.helpIcons}
+        onClick={() => this.setState({ counter: 5 })}
+        >
+          <img src={this.state.counter == 6 ? help6Hover : help6} />
+        </div>
+
+        <div
+        role="button"
+        tabIndex={0}
+        className={styles.helpIcons}
+        onClick={() => {this.setState({ counter: 6 }); this.renderModal();}}
+        >
+          <img src={this.state.counter == 7 ? help7Hover : help7} />
+        </div>
+
+        <div
+        role="button"
+        tabIndex={0}
+        className={styles.helpIcons}
+        onClick={() => {this.setState({ counter: 7 }); this.forceUpdate();}}
+        >
+          <img src={this.state.counter == 8 ? help8Hover : help8} />
+        </div>
+      </div>
+    );
+  }
+
+  /*This function deals with when the mouse hovers over the browse icon on top left of
+ and changes img src accordingly to correct svg file */
+ handleMouseOver (button) {
+  switch(button) {
+    case "help":
+      if(this.state.helpButton === needHelp) {
+        this.setState({helpButton: needHelpHover});
+      }
+      break;
+  }
+}
+
+/*This function deals with the mouse leaving an icon (no longer hovering) and
+changed img src to correct svg file */
+handleMouseLeave (button) {
+  switch(button) {
+    case "help":
+      if(this.state.helpButton === needHelpHover) {
+        this.setState({helpButton: needHelp});
+      }
+      break;
+  }
+}
+
   render() {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
+    const helpButtons = this.state.counter > 0 ? this.makeHelpButtons() : '';
 
     const isAttribute = (
       this.state.selectedAttribute !== ''
@@ -1278,8 +1439,8 @@ export default class Vis extends Component {
         className={gstyle.button}
         style={{
           position: 'absolute',
-          top: '96px',
-          left: '16px',
+          top: 'calc(100vh - 40px)',
+          right: '16px',
           width: '68px',
           textAlign: 'center',
           zIndex: 10,
@@ -1317,190 +1478,211 @@ export default class Vis extends Component {
 
     return (
       <div className={gstyle.container}>
-        {redirect}
-        {result}
-        <div className={gstyle.logo}>
-          <Link to="/">
-            <img src={logo} alt="Phinch" />
-          </Link>
-        </div>
-        <div className={gstyle.header} style={{ zIndex: dataLength + 1 }}>
-          <Summary
-            summary={this.state.summary}
-            observations={this.state.observations}
-            datalength={this.state.data.length}
-          />
-          <div className={styles.controls}>
-            <div className={styles.controlRow}>
-              <Search
-                options={this.sequences}
-                onValueCleared={this.onValueCleared}
-                onSuggestionSelected={this.onSuggestionSelected}
-                onSuggestionHighlighted={this.onSuggestionHighlighted}
-              />
-              {this.renderShow()}
-              {this.renderSort()}
-              {spacer}
-              {this.renderToggle()}
-            </div>
-            <div className={styles.controlRow}>
-              {this.renderLevelSelector(this.levels, dataLength)}
-              {this.levels.length ? spacer : null}
-              {this.renderAttributesSelect()}
-              {spacer}
-              {this.renderTagFilter()}
+          {redirect}
+          {result}
+          <div className={styles.sbgLogo}>
+            <Link to="/">
+              <img src={logo} alt="Phinch" />
+            </Link>
+            <button
+              className={styles.help}
+              // on click command is still undefined outside of home page, set to issues page for now until later
+              onClick={() => this.setState({ counter: 8 })}
+              onMouseEnter={() => this.handleMouseOver("help")}
+              onMouseLeave={() => this.handleMouseLeave("help")}
+            >
+                <img src={this.state.helpButton} alt="needHelp" />
+            </button>
+          </div>
+          <div className={`${gstyle.header} ${gstyle.darkbgscrollbar}`} style={{ zIndex: dataLength + 1 }}>
+            <Summary
+              summary={this.state.summary}
+              observations={this.state.observations}
+              datalength={this.state.data.length}
+            />
+            <div className={styles.controls}>
+              <div className={styles.controlRow}>
+                <Search
+                  options={this.sequences}
+                  onValueCleared={this.onValueCleared}
+                  onSuggestionSelected={this.onSuggestionSelected}
+                  onSuggestionHighlighted={this.onSuggestionHighlighted}
+                />
+                {this.renderShow()}
+                {this.renderSort()}
+                {spacer}
+                {this.renderToggle()}
+              </div>
+              <div className={styles.controlRow}>
+                {this.renderLevelSelector(this.levels, dataLength)}
+                {this.levels.length ? spacer : null}
+                {this.renderAttributesSelect()}
+                {spacer}
+                {this.renderTagFilter()}
+              </div>
             </div>
           </div>
-        </div>
-        <SideMenu
-          showLeftSidebar={this.state.showLeftSidebar}
-          leftSidebar={this.metrics.leftSidebar}
-          leftMin={this.metrics.left.min}
-          chartHeight={this.metrics.chartHeight + (this.metrics.lineHeight * 2)}
-          items={this.menuItems}
-          toggleMenu={this.toggleMenu}
-        />
-        <div
-          className={`${gstyle.panel} ${gstyle.noscrollbar}`}
-          style={{
-            width: this.metrics.chartWidth + this.metrics.nonbarWidth,
-          }}
-        >
+          <SideMenu
+            showLeftSidebar={this.state.showLeftSidebar}
+            leftSidebar={this.metrics.leftSidebar}
+            leftMin={this.metrics.left.min}
+            chartHeight={this.metrics.chartHeight + (this.metrics.lineHeight * 2)}
+            items={this.menuItems}
+            toggleMenu={this.toggleMenu}
+          />
           <div
-            className={styles.axis}
+            className={`${gstyle.panel} ${gstyle.noscrollbar}`}
             style={{
-              width: this.metrics.chartWidth + (this.metrics.nonbarWidth - this.metrics.padding),
-              height: this.metrics.lineHeight * 2,
+              width: this.metrics.chartWidth + this.metrics.nonbarWidth,
             }}
           >
-            <svg
-              fontFamily="IBM Plex Sans Condensed"
-              fontWeight="200"
-              fontSize="12px"
+            <div
+              className={styles.axis}
               style={{
-                position: 'absolute',
-                left: 0,
-                pointerEvents: 'none',
+                width: this.metrics.chartWidth + (this.metrics.nonbarWidth - this.metrics.padding),
+                height: this.metrics.lineHeight * 2,
+              }}
+            >
+              <svg
+                fontFamily="Open Sans"
+                fontWeight="200"
+                fontSize="12px"
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  pointerEvents: 'none',
+                  width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
+                  height: this.metrics.chartHeight,
+                }}
+              >
+                {ticks}
+              </svg>
+              {
+                isAttribute ? (
+                  <div className={styles.attrInfo}>
+                    <div className={styles.attrLabel}>
+                      {this.attribute.key} {this.attribute.unit ? `(${this.attribute.unit})` : ''}
+                    </div>
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      className={styles.attrToggle}
+                      onClick={this.toggleEmptyAttrs}
+                      onKeyPress={e => (e.key === ' ' ? this.toggleEmptyAttrs() : null)}
+                    >
+                      {`${this.state.showEmptyAttrs ? 'Hide' : 'Show'} Empty`}
+                    </div>
+                  </div>
+                ) : ''
+              }
+            </div>
+            <div
+              className={`${gstyle.panel} ${gstyle.noscrollbar}`}
+              style={{
+                backgroundColor: '#ffffff',
                 width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
                 height: this.metrics.chartHeight,
               }}
             >
-              {ticks}
-            </svg>
-            {
-              isAttribute ? (
-                <div className={styles.attrInfo}>
-                  <div className={styles.attrLabel}>
-                    {this.attribute.key} {this.attribute.unit ? `(${this.attribute.unit})` : ''}
-                  </div>
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    className={styles.attrToggle}
-                    onClick={this.toggleEmptyAttrs}
-                    onKeyPress={e => (e.key === ' ' ? this.toggleEmptyAttrs() : null)}
+              {
+                this.state.renderSVG ? (
+                  <StackedBarsSVG
+                    setRef={r => { this._svg = r; }}
+                    id={this.state.summary.path.slice(-1)}
+                    svgWidth={this.metrics.chartWidth + this.metrics.nonbarWidth}
+                    svgHeight={svgHeight}
+                    seqHeight={this.metrics.sequenceRowHeight * this.topSequences.length}
+                    data={isAttribute ? this.attribute.displayValues : this.state.data}
+                    row={isAttribute ? this.attrRow : this.stackRow}
+                    itemSize={this.metrics.barContainerHeight + (
+                      this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
+                    )}
+                    padding={this.metrics.padding}
+                    ticks={ticks}
+                    topSequences={this.renderTopSequences()}
+                  />
+                ) : (
+                  <List
+                    className={`${styles.svglist}`}
+                    innerElementType="svg"
+                    width={this.metrics.chartWidth + this.metrics.nonbarWidth}
+                    height={this.metrics.chartHeight - (this.metrics.padding * 4)}
+                    itemSize={this.metrics.barContainerHeight + (
+                      this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
+                    )}
+                    itemCount={dataLength}
+                    itemKey={index => (isAttribute
+                      ? this.attribute.displayValues[index].name : this.state.data[index].sampleName
+                    )}
                   >
-                    {`${this.state.showEmptyAttrs ? 'Hide' : 'Show'} Empty`}
-                  </div>
-                </div>
-              ) : ''
-            }
+                    {isAttribute ? this.attrRow : this.stackRow}
+                  </List>
+                )
+              }
+            </div>
           </div>
-          <div
-            className={`${gstyle.panel} ${gstyle.noscrollbar}`}
-            style={{
-              backgroundColor: '#ffffff',
-              width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
-              height: this.metrics.chartHeight,
+          {this.renderFilters()}
+          {tooltip}
+          <Modal
+            buttonTitle="Top Sequences"
+            modalTitle="Top Sequences"
+            buttonPosition={{
+              position: 'absolute',
+              bottom: 0,
+              left: (
+                this.metrics.leftSidebar + this.metrics.barInfoWidth + (this.metrics.padding / 2) + 2
+              ),
             }}
-          >
-            {
-              this.state.renderSVG ? (
-                <StackedBarsSVG
-                  setRef={r => { this._svg = r; }}
-                  id={this.state.summary.path.slice(-1)}
-                  svgWidth={this.metrics.chartWidth + this.metrics.nonbarWidth}
-                  svgHeight={svgHeight}
-                  seqHeight={this.metrics.sequenceRowHeight * this.topSequences.length}
-                  data={isAttribute ? this.attribute.displayValues : this.state.data}
-                  row={isAttribute ? this.attrRow : this.stackRow}
-                  itemSize={this.metrics.barContainerHeight + (
-                    this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
-                  )}
-                  padding={this.metrics.padding}
-                  ticks={ticks}
-                  topSequences={this.renderTopSequences()}
-                />
-              ) : (
-                <List
-                  className={`${styles.svglist}`}
-                  innerElementType="svg"
-                  width={this.metrics.chartWidth + this.metrics.nonbarWidth}
-                  height={this.metrics.chartHeight - (this.metrics.padding * 4)}
-                  itemSize={this.metrics.barContainerHeight + (
-                    this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
-                  )}
-                  itemCount={dataLength}
-                  itemKey={index => (isAttribute
-                    ? this.attribute.displayValues[index].name : this.state.data[index].sampleName
-                  )}
-                >
-                  {isAttribute ? this.attrRow : this.stackRow}
-                </List>
-              )
+            modalPosition={{
+              position: 'absolute',
+              zIndex: dataLength + 1,
+              bottom: this.metrics.padding * 2,
+              left: this.metrics.leftSidebar,
+              width: this.metrics.chartWidth + (this.metrics.nonbarWidth - 4),
+            }}
+            data={this.topSequences}
+            svgContainer
+            svgHeight={this.metrics.sequenceRowHeight * this.topSequences.length}
+          />
+          <Modal
+            buttonTitle="Archived Samples"
+            modalTitle="Archived Samples"
+            buttonPosition={{
+              position: 'absolute',
+              bottom: 0,
+              left: (
+                this.metrics.leftSidebar + this.metrics.barInfoWidth + this.metrics.padding + 2 + 130
+              ),
+            }}
+            modalPosition={{
+              position: 'absolute',
+              zIndex: dataLength + 1,
+              bottom: this.metrics.padding * 2,
+              left: this.metrics.leftSidebar,
+              width: this.metrics.chartWidth + (this.metrics.nonbarWidth - 4),
+            }}
+            useList
+            data={this.state.deleted}
+            row={this.stack}
+            dataKey="sampleName"
+            itemHeight={this.metrics.barContainerHeight +
+              (this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length)
             }
+            svgContainer
+            badge
+          />
+        <SpotlightWithToolTip
+          isActive = {this.state.counter > 0}
+          inheritParentBackgroundColor={false}
+          toolTipTitle={"*mouse click anywhere to advance"}
+          overlayStyle={{zIndex: '1001'}}
+          innerStyle={{color: 'white', fontWeight: '600', fontSize: '10px'}}
+          style={{boxShadow: 'none'}}
+        >
+          <div className={styles.helpButtons}>
+            {helpButtons}
           </div>
-        </div>
-        {this.renderFilters()}
-        {tooltip}
-        <Modal
-          buttonTitle="Top Sequences"
-          modalTitle="Top Sequences"
-          buttonPosition={{
-            position: 'absolute',
-            bottom: 0,
-            left: (
-              this.metrics.leftSidebar + this.metrics.barInfoWidth + (this.metrics.padding / 2) + 2
-            ),
-          }}
-          modalPosition={{
-            position: 'absolute',
-            zIndex: dataLength + 1,
-            bottom: this.metrics.padding * 2,
-            left: this.metrics.leftSidebar,
-            width: this.metrics.chartWidth + (this.metrics.nonbarWidth - 4),
-          }}
-          data={this.topSequences}
-          svgContainer
-          svgHeight={this.metrics.sequenceRowHeight * this.topSequences.length}
-        />
-        <Modal
-          buttonTitle="Archived Samples"
-          modalTitle="Archived Samples"
-          buttonPosition={{
-            position: 'absolute',
-            bottom: 0,
-            left: (
-              this.metrics.leftSidebar + this.metrics.barInfoWidth + this.metrics.padding + 2 + 130
-            ),
-          }}
-          modalPosition={{
-            position: 'absolute',
-            zIndex: dataLength + 1,
-            bottom: this.metrics.padding * 2,
-            left: this.metrics.leftSidebar,
-            width: this.metrics.chartWidth + (this.metrics.nonbarWidth - 4),
-          }}
-          useList
-          data={this.state.deleted}
-          row={this.stack}
-          dataKey="sampleName"
-          itemHeight={this.metrics.barContainerHeight +
-            (this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length)
-          }
-          svgContainer
-          badge
-        />
+        </SpotlightWithToolTip>
       </div>
     );
   }

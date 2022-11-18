@@ -52,7 +52,28 @@ export default class SideMenu extends Component {
       );
     }
 
-    return (l.id == "back") ? (
+    if(l.id == "export") {
+      return (
+        <div
+        key={l.id}
+        role="button"
+        tabIndex={0}
+        className={styles.menuItem}
+        onClick={l.action}
+        onKeyDown={e => (e.key === ' ' ? l.action() : null)}
+        >
+          <div
+          className={`${styles.menuBox} ${styles.stackedBar}`}>
+            {l.icon}
+          </div>
+          <span className={styles.menuItemLabel}>
+            {l.name}
+          </span>
+        </div>
+      );
+    }
+
+    return (l.id == "back" || 'filter') ? (
     <div
     key={l.id}
     role="button"
@@ -61,8 +82,7 @@ export default class SideMenu extends Component {
     onClick={l.action}
     onKeyDown={e => (e.key === ' ' ? l.action() : null)}
     >
-        <div
-        className={`${styles.menuBox} ${styles.newProject}`}>
+        <div className={`${styles.menuBox} ${styles.newProject}`}>
         {l.icon}
       </div>
       <span className={styles.menuItemLabel}>
