@@ -7,6 +7,7 @@ import NewProject from './components/NewProject';
 import Filter from './components/Filter';
 import About from './components/About';
 import Vis from './components/Vis';
+import ReactTooltip from 'react-tooltip';
 
 export default () => (
   <App>
@@ -17,5 +18,7 @@ export default () => (
       <Route path="/vis" component={Vis} />
       <Route path="/" component={HomePage} />
     </Switch>
+    <ReactTooltip className='customReactTooltip' place='bottom' effect='float' globalEventOff='click' type='light' arrowColor='transparent' />
+
   </App>
 );

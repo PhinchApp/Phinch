@@ -10,6 +10,12 @@
   -webkit-box-sizing: border-box;
 }
 
+/* This gets rid of the blue border around different elements, might need to reimplement in future to
+to accomodate keyboard only users or find another way to visually replace it */
+*:focus {
+  outline: 0 !important;
+}
+
 ::-webkit-scrollbar {
   -webkit-appearance: none;
   cursor: pointer;
@@ -21,9 +27,10 @@
   border: 2px solid white;
 }
 
-::-webkit-scrollbar-track {
-  background-color: inherit;
-}
+/* This can later be used to add the line to show scroll bar range */
+/* ::-webkit-scrollbar-track {
+
+} */
 
 ::-webkit-scrollbar:vertical {
   width: 10px;
@@ -41,30 +48,30 @@ html {
 body {
   position: relative;
   height: 100vh;
-  font-weight: 200;
-  background-color: #333;
+  font-weight: 400;
+  background-color: #575A5C;
   color: #eee;
-  font-family: 'IBM Plex Sans', Verdana, Sans-serif;
+  font-family: 'Open Sans';
   margin: 0;
   overflow: hidden;
 }
 
 h1 {
-  font-weight: 200;
+  font-weight: 400;
   font-size: 1.5rem;
   margin: 0;
   padding: 0;
 }
 
 h2 {
-  font-weight: 200;
+  font-weight: 400;
   font-size: 1.2rem;
   margin: 0;
   padding: 0;
 }
 
 p {
-  font-weight: 200;
+  font-weight: 400;
 }
 
 li {
@@ -73,6 +80,7 @@ li {
 
 a {
   text-decoration: none;
+  text-underline-offset: auto;
 }
 
 a:hover {
@@ -86,4 +94,25 @@ img {
 
 button {
   cursor: pointer;
+  background: none;
+  border: none;
+  outline: none !important;
+}
+
+button:hover {
+  fill:#F09E6A;
+}
+
+button:focus {
+  outline: none;
+}
+
+.__react_component_tooltip {
+  padding: 2px 6px !important;
+  font-weight: 600;
+  z-index: 9999999 !important;
+}
+.__react_component_tooltip.show {
+  opacity: 1 !important;
+  z-index: 9999999 !important;
 }

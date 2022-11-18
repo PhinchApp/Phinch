@@ -1,10 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-    <title>Asset 11</title>
-    <g id="Layer_2" data-name="Layer 2">
-        <g id="content">
-            <path d="M6.22,12a1.17,1.17,0,0,1,1.17-1.17h9.22a1.17,1.17,0,1,1,0,2.34H7.39A1.17,1.17,0,0,1,6.22,12Z" style="fill:#fff" />
-            <path d="M9.23,16,6.49,12.75a1.17,1.17,0,1,1,1.8-1.5L11,14.52A1.17,1.17,0,1,1,9.23,16Z" style="fill:#fff" />
-            <path d="M9.23,8,6.49,11.25a1.17,1.17,0,1,0,1.8,1.5L11,9.48A1.17,1.17,0,1,0,9.23,8Z" style="fill:#fff" />
-        </g>
-    </g>
+<svg id="Group_1522" data-name="Group 1522" xmlns="http://www.w3.org/2000/svg" width="13.668" height="10.494" viewBox="0 0 13.668 10.494">
+  <path id="Path_649" data-name="Path 649" d="M8.166,176.638a1.384,1.384,0,0,0,1.384,1.384h10.9a1.384,1.384,0,0,0,0-2.768H9.55a1.384,1.384,0,0,0-1.384,1.384" transform="translate(-8.165 -171.391)" fill="#f09e6a"/>
+  <path id="Path_650" data-name="Path 650" d="M19.389,171.886l-3.241,3.862a1.384,1.384,0,0,0,2.121,1.78l3.24-3.863a1.384,1.384,0,1,0-2.12-1.779" transform="translate(-15.825 -171.391)" fill="#f09e6a"/>
+  <path id="Path_651" data-name="Path 651" d="M19.389,181.391l-3.241-3.862a1.384,1.384,0,0,1,2.121-1.78l3.24,3.863a1.384,1.384,0,1,1-2.12,1.779" transform="translate(-15.825 -171.391)" fill="#f09e6a"/>
 </svg>

@@ -47,7 +47,7 @@ function Datum(props) {
           {` (${props.datum.reads.toLocaleString()} out of ${props.sample.reads.toLocaleString()})`}
         </span>
         <div className={styles.bar}>
-          <PercentageBarGraph percent={samplePercent} color={props.color} width="284px" />
+          <PercentageBarGraph percent={samplePercent} color={props.color} width="324px" />
         </div>
       </div>
 
@@ -58,11 +58,11 @@ function Datum(props) {
           {` (${props.datum.reads.toLocaleString()} out of ${props.totalDataReads.toLocaleString()})`}
         </span>
         <div className={styles.bar}>
-          <PercentageBarGraph percent={totalPercentReads} color={props.color} width="284px" />
+          <PercentageBarGraph percent={totalPercentReads} color={props.color} width="324px" />
         </div>
       </div>
 
-      <div className={styles.click}>Click to show histogram</div>
+      <div className={styles.click}>Click the taxonomy fraction to show its histogram on left panel</div>
     </div>
   );
 }

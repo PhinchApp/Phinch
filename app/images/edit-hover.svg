@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="211.047" height="62.293" viewBox="0 0 211.047 62.293">
+  <defs>
+    <filter id="Path_628">
+      <feOffset input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-color="#fdfdfa" flood-opacity="0.502" result="color"/>
+      <feComposite operator="out" in="SourceGraphic" in2="blur"/>
+      <feComposite operator="in" in="color"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+    <filter id="Rectangle_70" x="0" y="38.465" width="201.535" height="23.828" filterUnits="userSpaceOnUse">
+      <feOffset dx="2" dy="2" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="1" result="blur-2"/>
+      <feFlood flood-opacity="0.502"/>
+      <feComposite operator="in" in2="blur-2"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Edit_button" data-name="Edit button" transform="translate(1 0.375)">
+    <g id="Group_1471" data-name="Group 1471" transform="translate(-965.971 -34.534)">
+      <g data-type="innerShadowGroup">
+        <path id="Path_628-2" data-name="Path 628" d="M1068.781,15.922a15,15,0,1,0,15-15,15.044,15.044,0,0,0-15,15" transform="translate(76.862 33.612)" fill="#f09e6a"/>
+        <g transform="matrix(1, 0, 0, 1, 964.97, 34.16)" filter="url(#Path_628)">
+          <path id="Path_628-3" data-name="Path 628" d="M1068.781,15.922a15,15,0,1,0,15-15,15.044,15.044,0,0,0-15,15" transform="translate(-888.11 -0.55)" fill="#fff"/>
+        </g>
+        <path id="Path_628-4" data-name="Path 628" d="M1068.781,15.922a15,15,0,1,0,15-15,15.044,15.044,0,0,0-15,15" transform="translate(76.862 33.612)" fill="none" stroke="#fdfdfa" stroke-width="0.75"/>
+      </g>
+      <g id="Group_1456" data-name="Group 1456" transform="translate(1151.847 40.636)">
+        <rect id="Rectangle_959" data-name="Rectangle 959" width="14.739" height="6.5" transform="translate(1.409 11.562) rotate(-44.999)" fill="#fdfdfa" stroke="rgba(0,0,0,0)" stroke-width="1"/>
+        <path id="Rectangle_960" data-name="Rectangle 960" d="M0,0H1.594a.5.5,0,0,1,.5.5V6a.5.5,0,0,1-.5.5H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(12.409 0.481) rotate(-45)" fill="#fdfdfa" stroke="rgba(0,0,0,0)" stroke-width="1"/>
+        <path id="Path_630" data-name="Path 630" d="M1081.112,23.844l-5.088.556.556-5.088Z" transform="translate(-1075.718 -7.115)" fill="#fdfdfa" stroke="rgba(0,0,0,0)" stroke-width="1"/>
+      </g>
+    </g>
+    <g id="Group_100" data-name="Group 100" transform="translate(-142.845 -211.919)">
+      <g transform="matrix(1, 0, 0, 1, 141.84, 211.54)" filter="url(#Rectangle_70)">
+        <rect id="Rectangle_70-2" data-name="Rectangle 70" width="195.535" height="17.828" rx="3" transform="translate(1 39.46)" fill="#fff"/>
+      </g>
+      <text id="Edit_lename_Delete_project" data-name="Edit ﬁle name / Delete project" transform="translate(147 264.433)" font-size="13" font-family="OpenSans-Semibold, Open Sans" font-weight="600"><tspan x="0" y="0">Edit file name / Delete project</tspan></text>
+    </g>
+  </g>
+</svg>

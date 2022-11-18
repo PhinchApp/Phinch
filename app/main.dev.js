@@ -61,10 +61,10 @@ app.on('ready', async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
+    width: 1282,
     height: 768,
-    minWidth: 1024,
-    minHeight: 600,
+    minWidth: 1147,
+    minHeight: 620,
     webPreferences: {
       nodeIntegrationInWorker: true,
     },

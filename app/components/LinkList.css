@@ -1,40 +1,46 @@
 .link {
-  color: white;
-  margin: 24px 26px;
+  color: #FFFFFF;
+  margin: 0px 26px 12px 26px;
   vertical-align: top;
   cursor: pointer;
 }
 
 .arrow {
-  width: 14px;
-  height: 14px;
-  border-radius: 7px;
+  width: 22px;
+  height: 22px;
   margin: 8px 0;
-  margin-right: 8px;
+  margin-right: 4px;
+  margin-top: 4px;
   padding: 0;
-  background: #00bbda;
   display: inline-block;
   vertical-align: top;
 }
 
 .arrow img {
   display: inline-block;
-  width: 14px;
-  margin-bottom: 2px;
+  width: 20px;
+  transform: translateY(2px);
 }
+
 
 .link h2 {
   font-size: 22px;
-  font-weight: 300;
-  color: #00bbda;
+  font-weight: 400;
+  color: #F09E6A;
+}
+
+
+.link h2:hover {
+  border-bottom: 1px solid #F09E6A;
+  width: fit-content;
 }
 
 .link p {
   font-size: 16px;
-  font-weight: 200;
+  font-weight: 400;
   margin: 0;
-  margin-top: 4px;
   padding: 0;
+  line-height: 1.2em;
 }
 
 .info {

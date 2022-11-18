@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="19.912" height="19.912" viewBox="0 0 19.912 19.912">
+  <defs>
+    <filter id="Path_548">
+      <feOffset input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feFlood flood-color="#fdfdfa" flood-opacity="0.502" result="color"/>
+      <feComposite operator="out" in="SourceGraphic" in2="blur"/>
+      <feComposite operator="in" in="color"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Component_40" data-name="Component 40" transform="translate(0.25 0.25)">
+    <g data-type="innerShadowGroup">
+      <g transform="matrix(1, 0, 0, 1, -0.25, -0.25)" filter="url(#Path_548)">
+        <path id="Path_548-2" data-name="Path 548" d="M24.706,176.638A9.706,9.706,0,1,1,15,166.932a9.735,9.735,0,0,1,9.706,9.706" transform="translate(-5.04 -166.68)" fill="#fff"/>
+      </g>
+      <path id="Path_548-3" data-name="Path 548" d="M24.706,176.638A9.706,9.706,0,1,1,15,166.932a9.735,9.735,0,0,1,9.706,9.706" transform="translate(-5.294 -166.932)" fill="none" stroke="#fff" stroke-width="0.5"/>
+    </g>
+    <line id="Line_144" data-name="Line 144" x2="6" transform="translate(5.706 5.706)" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="2"/>
+    <path id="Path_673" data-name="Path 673" d="M0,0H3" transform="translate(5.706 9.706)" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="2"/>
+    <line id="Line_146" data-name="Line 146" x2="6" transform="translate(5.706 13.706)" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="2"/>
+    <path id="Path_674" data-name="Path 674" d="M0,0H3" transform="translate(12.255 9.706) rotate(-45)" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="2"/>
+    <path id="Path_675" data-name="Path 675" d="M0,0H3" transform="translate(12.255 9.706) rotate(45)" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="2"/>
+  </g>
+</svg>

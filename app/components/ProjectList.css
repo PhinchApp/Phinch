@@ -1,6 +1,7 @@
 .projects {
   margin-left: 6rem;
   margin-right: 2rem;
+  margin-top: 1em;
 }
 
 .project {
@@ -15,6 +16,24 @@
   cursor: pointer;
 }
 
+.fsProjects {
+  margin-left: 6rem;
+  margin-right: 2rem;
+}
+
+.fsProject {
+  position: relative;
+  width: 10rem;
+  padding: 1rem;
+  padding-bottom: 0;
+  margin: 0;
+  vertical-align: top;
+  text-align: center;
+  display: inline-block;
+  cursor: pointer;
+}
+
+
 .remove {
   position: absolute;
   top: 1rem;
@@ -22,7 +41,7 @@
   width: 1rem;
   height: 1rem;
   border-radius: 2px;
-  background: #666;
+  background: #888E8D;
   cursor: pointer;
 }
 
@@ -33,14 +52,14 @@
   background: black;
   border-radius: 8px;
   text-align: right;
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem .75rem;
   font-size: 12px;
   line-height: 12px;
 }
 
 img.new {
   transition: background 0.5s ease-in-out;
-  background: #00bbda;
+  background: #F09E6A;
 }
 
 .edit img.new {
@@ -59,7 +78,7 @@ p {
 
 p.number {
   font-weight: 400;
-  color: #00bbda;
+  color: #F09E6A;
 }
 
 p.label {
@@ -80,6 +99,7 @@ p.label {
 p.name {
   transition: color 0.5s ease-in-out;
   color: white;
+  font-weight: 600;
 }
 
 .edit p.name {

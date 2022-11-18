@@ -1,35 +1,54 @@
 import { shell } from 'electron';
-import React from 'react';
+import React, { MouseEventHandler, MouseEvent} from 'react';
 
-import arrow from 'images/arrow.svg';
 import styles from './LinkList.css';
 
 const linkList = [
   {
     name: 'New to Phinch?',
-    action: () => { shell.openExternal('http://phinch.org/Tutorials'); },
-    info: 'Get started with these tutorials',
+    icon: (context) => (<div className={styles.arrow}><img src={context.state.link1} alt="right facing arrow" /></div> ),
+    action: () => { shell.openExternal('https://phinch.org/Tutorials'); },
+    info: 'Click here for data formatting instructions and visualization tutorials.',
+    handleMouseOver: (context) => { context.handleMouseOver('New to Phinch?'); },
+    handleMouseLeave: (context) => { context.handleMouseLeave('New to Phinch?'); },
   },
   {
-    name: 'View our Gallery',
-    action: () => { shell.openExternal('https://github.com/PhinchApp/Phinch/wiki/Tutorials'); },
-    info: 'See what other researchers have created with Phinch.',
+    name: 'View our Flagship Datasets',
+    icon: (context) => (<div className={styles.arrow}><img src={context.state.link2} alt="right facing arrow" /></div>),
+    action: () => { shell.openExternal('https://www.phinch.org/Flagship-Datasets'); },
+    info: 'Download and explore datasets from published research studies.',
+    handleMouseOver: (context) => { context.handleMouseOver('View our Flagship Datasets'); },
+    handleMouseLeave: (context) => { context.handleMouseLeave('View our Flagship Datasets'); },
   },
   {
     name: 'Join the Community',
-    action: () => { shell.openExternal('http://phinch.org/Community'); },
-    info: 'Discuss features and get the latest update feeds.',
+    icon: (context) => (<div className={styles.arrow}><img src={context.state.link3} alt="right facing arrow" /></div>),
+    action: () => { shell.openExternal('https://phinch.org/Community'); },
+    info: 'Join our Slack channel to discuss features and get help.',
+    handleMouseOver: (context) => { context.handleMouseOver('Join the Community'); },
+    handleMouseLeave: (context) => { context.handleMouseLeave('Join the Community'); },
   },
   {
     name: 'About Phinch',
+    icon: (context) => (<div className={styles.arrow}><img src={context.state.link4} alt="right facing arrow" /></div>),
     action: (context) => { context.setState({ redirect: '/about' }); },
-    info: 'What is this all about anyway?',
+    info: 'Click here for more information about Phinch and our project team.',
+    handleMouseOver: (context) => { context.handleMouseOver('About Phinch'); },
+    handleMouseLeave: (context) => { context.handleMouseLeave('About Phinch'); },
+  },
+  {
+    name: 'Find a software issue?',
+    icon: (context) => (<div className={styles.arrow}><img src={context.state.link5} alt="right facing arrow" /></div>),
+    action: () => { shell.openExternal('https://github.com/PhinchApp/Phinch/issues' ); },
+    info: 'Report software bugs and errors on our Github issue tracker.',
+    handleMouseOver: (context) => { context.handleMouseOver('Find a software issue?'); },
+    handleMouseLeave: (context) => { context.handleMouseLeave('Find a software issue?'); },
   },
 ];
 
-const icon = (<div className={styles.arrow}><img src={arrow} alt="right facing arrow" /></div>);
 
 function InfoLink(l, i, context) {
+
   return (
     <div
       key={`${l.action}-${i}`}
@@ -38,8 +57,10 @@ function InfoLink(l, i, context) {
       className={styles.link}
       onClick={() => l.action(context)}
       onKeyPress={e => (e.key === ' ' ? l.action(context) : null)}
+      onMouseEnter={() => l.handleMouseOver(context)}
+      onMouseLeave={() => l.handleMouseLeave(context)}
     >
-      {icon}
+      {l.icon(context)}
       <div className={styles.info}>
         <h2>{l.name}</h2>
         <p>{l.info}</p>

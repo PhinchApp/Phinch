@@ -1,11 +1,26 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="19.41" height="19.41" viewBox="0 0 19.41 19.41">
-    <title>Asset 10</title>
-    <g id="Layer_2" data-name="Layer 2">
-        <g id="background">
-            <circle cx="9.71" cy="9.71" r="9.71" style="fill:none;" />
-            <path d="M16.54,9.71a1.38,1.38,0,0,1-1.38,1.38H4.26a1.39,1.39,0,1,1,0-2.77h10.9A1.38,1.38,0,0,1,16.54,9.71Z" style="fill:#fff" />
-            <path d="M13,5l3.25,3.87a1.39,1.39,0,0,1-2.13,1.78L10.85,6.73A1.38,1.38,0,0,1,13,5Z" style="fill:#fff" />
-            <path d="M13,14.46l3.25-3.86a1.39,1.39,0,0,0-2.13-1.78l-3.24,3.86A1.38,1.38,0,1,0,13,14.46Z" style="fill:#fff" />
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="22.552" height="22.552" viewBox="0 0 22.552 22.552">
+  <defs>
+    <filter id="Path_631">
+      <feOffset input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feFlood flood-color="#fdfdfa" flood-opacity="0.302" result="color"/>
+      <feComposite operator="out" in="SourceGraphic" in2="blur"/>
+      <feComposite operator="in" in="color"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Enter_button" data-name="Enter button" transform="translate(0.25 0.25)">
+    <g id="Group_1440" data-name="Group 1440" transform="translate(-134.009 -74.651)">
+      <g data-type="innerShadowGroup">
+        <path id="Path_631-2" data-name="Path 631" d="M1068.781,11.948A11.026,11.026,0,1,0,1079.807.922a11.058,11.058,0,0,0-11.026,11.026" transform="translate(-934.772 73.729)" fill="#001226"/>
+        <g transform="matrix(1, 0, 0, 1, 133.76, 74.4)" filter="url(#Path_631)">
+          <path id="Path_631-3" data-name="Path 631" d="M1068.781,11.948A11.026,11.026,0,1,0,1079.807.922a11.058,11.058,0,0,0-11.026,11.026" transform="translate(-1068.53 -0.67)" fill="#fff"/>
         </g>
+        <path id="Path_631-4" data-name="Path 631" d="M1068.781,11.948A11.026,11.026,0,1,0,1079.807.922a11.058,11.058,0,0,0-11.026,11.026" transform="translate(-934.772 73.729)" fill="none" stroke="#f09e6a" stroke-width="0.5"/>
+      </g>
+      <path id="Path_607" data-name="Path 607" d="M21.833,176.638a1.384,1.384,0,0,1-1.384,1.384H9.55a1.384,1.384,0,0,1,0-2.768h10.9a1.384,1.384,0,0,1,1.384,1.384" transform="translate(130.035 -90.962)" fill="#f09e6a"/>
+      <path id="Path_608" data-name="Path 608" d="M18.269,171.886l3.241,3.862a1.384,1.384,0,0,1-2.121,1.78l-3.24-3.863a1.384,1.384,0,1,1,2.12-1.779" transform="translate(130.035 -90.962)" fill="#f09e6a"/>
+      <path id="Path_609" data-name="Path 609" d="M18.269,181.391l3.241-3.862a1.384,1.384,0,0,0-2.121-1.78l-3.24,3.863a1.384,1.384,0,1,0,2.12,1.779" transform="translate(130.035 -90.962)" fill="#f09e6a"/>
     </g>
+  </g>
 </svg>

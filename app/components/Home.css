@@ -6,11 +6,11 @@
 .sectionTitle {
   display: inline-block;
   vertical-align: top;
-  color: #666;
-  font-size: 20px;
+  color: #888e8d;
+  font-size: 22px;
   height: 26px;
   line-height: 26px;
-  font-weight: 400;
+  font-weight: 600;
   letter-spacing: 4px;
   text-transform: uppercase;
 }
@@ -20,13 +20,23 @@
   vertical-align: top;
   margin: 12px 6px;
   padding: 0;
-  width: calc(100vw - 660px);
-  height: 2px;
-  background: #191919;
+  width: calc(100vw - 640px);
+  height: 1px;
+  background: #001226;
+}
+
+.sectionRuleFlagShip {
+  display: inline-block;
+  vertical-align: top;
+  margin: 12px 6px;
+  padding: 0;
+  width: calc(100vw - 791.99px);
+  height: 1px;
+  background: #001226;
 }
 
 .area {
-  padding: 1rem;
+  padding: 1rem 0 0 0;
 }
 
 .rightSpace {
@@ -36,23 +46,58 @@
 .left {
   width: 400px;
   vertical-align: top;
-  background: #191919;
+  background: #001226;
 }
+
+.left .bottomLeft {
+  position: absolute;
+  bottom: 1em;
+  left: 0;
+
+}
+
+.help {
+  display: inline-block;
+  margin: .5rem 2rem;
+  width: 152.47px;
+}
+
+.helpIcons {
+  display: inline-block;
+  margin-left: .5rem;
+}
+
+
 
 .right {
   width: calc(100vw - 400px);
   vertical-align: top;
 }
 
+.top {
+  height: 60vh;
+  width: 100%;
+}
+
+.bottom {
+  height: calc(100vh - 70vh);
+  width: 100%;
+  padding-top: 2rem;
+}
+
 .scroll {
-  height: 100vh;
+  height: 200vh;
   overflow-y: scroll;
 }
 
 .edit {
   position: absolute;
-  top: 3rem;
-  right: 2rem;
+  max-width: fit-content;
+  font-size: 13px;
+  font-family: 'Open Sans';
+  font-weight: 600;
+  top:3.5em;
+  right: 1rem;
   cursor: pointer;
 }
 
@@ -68,7 +113,7 @@
 
 .modal p {
   font-size: 16px;
-  font-weight: 300;
+  font-weight: 400;
   margin: 1rem 0;
 }
 
@@ -82,38 +127,63 @@
   word-wrap: break-word;
 }
 
+/* This is the Delete button on confirm delete pop up */
 .modal .button {
   position: absolute;
   bottom: 0.75rem;
-  right: 6.25rem;
+  right: 7.25rem;
+  border-radius: 15px;
 }
 
+.modal .button:hover {
+  background: #F09E6A;
+  border: none;
+  color: white;
+}
+
+/* This is the Cancel button on confirm delete pop up */
 .modal .button.cancel {
   right: 0;
-  background: #00bbda;
+  background: none;
+}
+
+.modal .button.cancel:hover {
+  background: #F09E6A;
+  border: none;
   color: white;
 }
 
 .info {
   text-align: center;
-  padding: 50px;
-  padding-bottom: 40px;
-  height: 238px;
+  margin: 20px 20px 4px;
+  height: 195px;
 }
-
+/* Controls font for version and letters below logo on side bar */
 .info p {
   font-size: 16px;
-  margin: 38px;
-  margin-bottom: 0;
+  margin: 1.5rem 0 0 0;
+}
+
+.info a {
+  color: #FF4A14;
+  text-decoration: underline;
+}
+
+.info p.vUpdate {
+  font-size: 13px;
+  font-weight: 700;
+  margin: .5rem 0 0 0;
+  color: #FF4A14;
 }
 
 .logo {
   width: 130px;
+  height: 84px;
   cursor: pointer;
 }
 
 .links {
-  height: calc(100vh - 238px);
+  height: calc(100vh - 300px);
   overflow-y: scroll;
 }
 
@@ -123,67 +193,106 @@
 
 .projectType.top {
   padding-top: 2rem;
+  overflow-y: scroll;
+}
+
+.projectType.bottom {
+  padding-bottom: 4rem;
 }
 
 .about {
   background: white;
-  color: #191919;
+  color: #001226;
+  padding: .5rem 1.5rem;
+  overflow-y: auto;
 }
 
 .about h2 {
   text-transform: uppercase;
-  font-size: 13px;
-  font-weight: 300;
-  letter-spacing: 4px;
+  color: #888e8d;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: .15rem;
   margin-bottom: 2rem;
+  margin-top: 1rem;
+  margin-left: 1rem;
+}
+
+.about .bottom {
+  height: calc(100vh - 400px);
+  width: 100%;
+  padding: 3rem;
 }
 
 .about .center {
-  width: calc(100vw - 700px);
+  width: calc(100vw - 425px);
   padding: 3rem;
 }
 
 .about .center p {
-  font-weight: 300;
+  font-weight: 400;
   margin-bottom: 1rem;
 }
 
+.about p {
+  margin: 1rem;
+  margin-right: 2.5rem;
+  margin-left: 1rem;
+  font-size: 16px;
+  font-weight: 400;
+}
+
 p.first::first-letter {
-  vertical-align: top;
-  color: #00bbda;
+  vertical-align: left;
+  color: #F09E6A;
   font-size: 800%;
   font-weight: 100;
   float: left;
-  margin: 0;
-  margin-top: -2.5rem;
-  margin-bottom: -2.5rem;
-  margin-right: 0.5rem;
-  margin-left: -0.75rem;
-  padding: 0;
+  margin: -3rem 0;
+  margin-left: -0.08em;
 }
 
 .about .logos {
-  width: 300px;
-  vertical-align: top;
-  padding: 3rem 1rem;
+  width: 100%;
+  vertical-align: middle;
+  padding: 1rem 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.about .logos img {
+  width: 33%;
+  padding: 0 3%;
 }
 
 .alogo {
-  width: 100%;
-  vertical-align: top;
-  padding: 1rem 2rem;
+}
+
+.ugalogo {
+}
+
+.pitchlogo {
 }
 
 .about .close {
   float: right;
-  width: 2rem;
-  height: 2rem;
-  background: #00bbda;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 1rem;
+
+  background: white;
+  border-color: #F09E6A;
   border-radius: 1rem;
+  border-bottom: #f8f8f8 1px solid;
+  transition: border 0.5s ease-in-out;
   color: white;
   font-weight: 400;
-  vertical-align: middle;
   text-align: center;
   font-size: 1.5rem;
   line-height: 1.75rem;
+}
+
+.about .close:hover {
+  background: #F09E6A;
+  border-color: white;
 }

@@ -4,7 +4,7 @@ import Toggle from 'react-toggle';
 import { Range } from 'rc-slider';
 import { scaleLinear, scaleLog } from 'd3-scale';
 
-import close from 'images/close.svg';
+import close from 'images/orangeX.svg';
 
 import styles from './FilterChart.css';
 import gstyle from './general.css';
@@ -60,7 +60,7 @@ export default class FilterChart extends Component {
     }
 
     const barWidth = (this.xscale(1) - this.xscale(0));
-    const strokeWidth = barWidth > 2 ? 0.5 : 0;
+    const strokeWidth = barWidth > 2 ? 2 : 1;
     const filter = this.props.filters[this.props.name];
 
     const bars = this.props.data.values.map((d, i) => {
@@ -156,7 +156,7 @@ export default class FilterChart extends Component {
         {range}
       </div>
     ) : <div />;
-    const style = { width: (this.props.width - (this.padding * 2)), margin: '0 16px' };
+    const style = { width: (this.props.width - (this.padding * 2)), margin: '0 16px', };
     const brush = filter.expanded ? (
       <div style={style}>
         <Range
@@ -183,6 +183,7 @@ export default class FilterChart extends Component {
           icons={false}
           defaultChecked={this.props.data.log}
           onChange={() => this.props.toggleLog(this.props.name)}
+          style={{backgroundColor: "#b2b2b2 !important", height: "12px !important", }}
         />
         <div className={styles.toggleLabel}>
           Log Scale

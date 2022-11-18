@@ -1,7 +1,7 @@
 .menuToggle {
   position: relative;
   color: #fff;
-  background: #1fbbd8;
+  background: #575A5C;
   width: 24px;
   height: 24px;
   border-radius: 12px;
@@ -13,56 +13,105 @@
   padding: 0;
   text-align: center;
   cursor: pointer;
-  border: 3px solid #333;
+  border: 3px solid #575A5C;
   transition: transform 0.5s ease-in-out;
+}
+
+.menuToggle :hover {
+  background-color: #F09E6A;
 }
 
 .menuToggle.rotated {
   transform: rotate(-180deg);
 }
 
+.menuToggle img {
+  width: max-content;
+  height: max-content;
+  border-radius: 12px;
+  padding-bottom: 2px;
+}
+
 .toggleSquare {
   position: absolute;
-  background: #333;
+  background: #575A5C;
   width: 9px;
   height: 24px;
   margin: 0;
-  margin-top: 0.5rem;
+  margin-top: .5rem;
   padding: 0;
 }
 
 .menu {
+  min-width: 94px; /*This if offsetting for the 6px wide border, but whole sideMenu should always be 100px wide*/
   color: #fff;
-  background: #333;
+  background: #575A5C;
   font-weight: 400;
   font-size: 18px;
   text-transform: uppercase;
 }
 
 .menuItem {
-  width: 100%;
-  margin: 1rem 0.5rem;
-  color: #fff;
+  position: center;
+  margin: 1rem 0;
+  margin-left: 6px; /*To center them properly with the now 6px wide border on left*/
   text-align: center;
   cursor: pointer;
 }
 
 .menuItemLabel {
+  display: inline-flex;
   font-size: 12px;
   font-weight: bold;
   padding-left: 2px;
   letter-spacing: 2px;
   text-transform: uppercase;
+  color:#F09E6A;
 }
 
 .menuBox {
   margin: auto;
-  width: 30px;
-  height: 30px;
-  background: #1fbbd8;
-  font-size: 24px;
-  text-align: center;
-  border-radius: 8px;
+    width: 30px;
+    height: 30px;
+    border-color: #F09E6A;
+    border-style: solid;
+    border-width: 1px;
+    font-size: 24px;
+    text-align: center;
+    border-radius: 100px;
+}
+
+
+.menuItem:hover .menuBox.newProject {
+  border-color: #fff;
+  background-position: center;
+  background-image: url("images/backArrowW.svg");
+  background-color: #F09E6A;
+  background-repeat: no-repeat;
+}
+
+.menuItem:hover .menuBox.stackedBar {
+  border-color: #fff;
+  background-position: center;
+  background-image: url("images/exportHover.svg");
+  background-color: #F09E6A;
+  background-size: 12px;
+  background-repeat: no-repeat;
+}
+
+.menuItem .menuBox.Filter {
+  border-color: #fff;
+  background-position: center;
+  background-image: url("images/saveHover.svg");
+  background-color: #F09E6A;
+  background-repeat: no-repeat;
+}
+
+
+/* gives glow affect to menu buttons on hover, mostly helps with save button. */
+.menuItem:hover .menuBox {
+  color: white;
+  box-shadow: 0 0 10px white;
 }
 
 .menuBox img {
@@ -70,4 +119,34 @@
   height: 30px;
   margin: 0;
   padding: 0;
+  border-color: white;
+  border-style: inherit;
+  border-width:0px;
+}
+
+.menuItem .menuBox.newProject img {
+  width: 14px;
+  height: 11px;
+  margin: 0;
+  margin-bottom: .85rem;
+  padding: 0;
+  border-color: white;
+  border-style: inherit;
+  border-width: 0px;
+}
+
+.menuItem .menuBox.stackedBar img,
+.menuItem:hover .menuBox.stackedBar img {
+  width: 20px;
+  height: 20px;
+  margin: 0 0 16px 0;
+  padding: 0;
+  border-color: white;
+  border-style: inherit;
+  border-width: 0px;
+}
+
+.menuItem:hover .menuBox.newProject img,
+.menuItem:hover .menuBox.stackedBar img {
+  display: none !important;
 }

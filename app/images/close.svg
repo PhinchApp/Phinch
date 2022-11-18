@@ -1,10 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
-    <title>Asset 6</title>
-    <g id="Layer_2" data-name="Layer 2">
-        <g id="content">
-            <circle cx="15" cy="15" r="15" style="fill:none" />
-            <line x1="10.9" y1="10.94" x2="19.01" y2="19.06" style="fill:#fafafa; stroke:#fafafa; stroke-linecap:round; stroke-width:2.83464566929134px" />
-            <line x1="10.99" y1="19.06" x2="19.1" y2="10.94" style="fill:#fafafa; stroke:#fafafa; stroke-linecap:round; stroke-width:2.83464566929134px" />
-        </g>
-    </g>
+<svg id="Component_36_1" data-name="Component 36 – 1" xmlns="http://www.w3.org/2000/svg" width="7.785" height="7.911" viewBox="0 0 7.785 7.911">
+  <path id="Path_597" data-name="Path 597" d="M1143.277,165.708a.876.876,0,0,1-.62-1.5l6.031-6.158a.876.876,0,0,1,1.24,1.239l-6.031,6.158a.876.876,0,0,1-.62.257" transform="translate(-1142.4 -157.797)" fill="#fafafa"/>
+  <path id="Path_670" data-name="Path 670" d="M1149.308,165.708a.876.876,0,0,0,.62-1.5l-6.031-6.158a.876.876,0,1,0-1.24,1.239l6.031,6.158a.876.876,0,0,0,.62.257" transform="translate(-1142.4 -157.797)" fill="#fafafa"/>
 </svg>

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="29.412" height="29.74" viewBox="0 0 29.412 29.74">
+  <defs>
+    <filter id="Union_1">
+      <feOffset input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-color="#fdfdfa" flood-opacity="0.302" result="color"/>
+      <feComposite operator="out" in="SourceGraphic" in2="blur"/>
+      <feComposite operator="in" in="color"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="number_button" data-name="number button" transform="translate(0.375 0.375)">
+    <text id="_4" data-name="4" transform="translate(10 20)" fill="#f09e6a" font-size="16" font-family="OpenSans-Semibold, Open Sans" font-weight="600"><tspan x="0" y="0">4</tspan></text>
+    <g data-type="innerShadowGroup">
+      <g transform="matrix(1, 0, 0, 1, -0.37, -0.38)" filter="url(#Union_1)">
+        <path id="Union_1-2" data-name="Union 1" d="M2430.3,1774a14.332,14.332,0,1,0,14.331-14.495A14.456,14.456,0,0,0,2430.3,1774" transform="translate(-2429.93 -1759.13)" fill="#fff"/>
+      </g>
+      <path id="Union_1-3" data-name="Union 1" d="M2430.3,1774a14.332,14.332,0,1,0,14.331-14.495A14.456,14.456,0,0,0,2430.3,1774" transform="translate(-2430.302 -1759.5)" fill="none" stroke="#f09e6a" stroke-width="0.75"/>
+    </g>
+  </g>
+</svg>

@@ -123,13 +123,13 @@
 }
 
 .react-toggle--focus .react-toggle-thumb {
-  -webkit-box-shadow: 0 0 3px 2px #1fbbd8;
-  -moz-box-shadow: 0 0 3px 2px #1fbbd8;
-  box-shadow: 0 0 2px 3px #1fbbd8;
+  -webkit-box-shadow: 0 0 3px 2px #F09E6A;
+  -moz-box-shadow: 0 0 3px 2px #F09E6A;
+  box-shadow: 0 0 2px 3px #F09E6A;
 }
 
 .react-toggle:active:not(.react-toggle--disabled) .react-toggle-thumb {
-  -webkit-box-shadow: 0 0 5px 5px #1fbbd8;
-  -moz-box-shadow: 0 0 5px 5px #1fbbd8;
-  box-shadow: 0 0 5px 5px #1fbbd8;
+  -webkit-box-shadow: 0 0 5px 5px #F09E6A;
+  -moz-box-shadow: 0 0 5px 5px #F09E6A;
+  box-shadow: 0 0 5px 5px #F09E6A;
 }

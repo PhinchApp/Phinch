@@ -4,7 +4,7 @@ import styles from './CheckBoxes.css';
 import gstyle from './general.css';
 
 export default class CheckBoxes extends Component {
-  render() {
+  render() { 
     const buttons = this.props.filter.expanded ? (
       <div>
         <div

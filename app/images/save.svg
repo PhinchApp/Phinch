@@ -1,1 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><title>Asset 3</title><g id="Layer_2" data-name="Layer 2"><g id="visualization"><rect x="1" y="1" width="22" height="22" rx="5" ry="5" style="fill:#00bbda"/><rect x="1" y="1" width="22" height="22" rx="5" ry="5" style="fill:none;stroke:#00bbda;stroke-width:2px"/><path d="M12,15.05a1.17,1.17,0,0,1-1.17-1.17V4.66a1.17,1.17,0,0,1,2.34,0v9.22A1.17,1.17,0,0,1,12,15.05Z" style="fill:#fff"/><path d="M16,12l-3.27,2.74A1.17,1.17,0,1,1,11.25,13l3.27-2.75A1.17,1.17,0,0,1,16,12Z" style="fill:#fff"/><path d="M8,12l3.27,2.74A1.17,1.17,0,1,0,12.75,13L9.48,10.24A1.17,1.17,0,0,0,8,12Z" style="fill:#fff"/><line x1="7.15" y1="18.1" x2="16.85" y2="18.1" style="fill:#fafafa;stroke:#fafafa;stroke-width:2.3000000000000003px"/></g></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="11.606" height="19.189" viewBox="0 0 11.606 19.189">
+  <g id="Component_44_1" data-name="Component 44 – 1" transform="translate(0.012 0.5)">
+    <path id="Path_677" data-name="Path 677" d="M18.035,17.609a1.384,1.384,0,0,1-1.384-1.384V5.326a1.384,1.384,0,0,1,2.768,0v10.9a1.384,1.384,0,0,1-1.384,1.384" transform="translate(-12.3 -3.942)" fill="#f09e6a" stroke="rgba(0,0,0,0)" stroke-width="1"/>
+    <path id="Path_678" data-name="Path 678" d="M22.787,14.044l-3.862,3.241a1.384,1.384,0,0,1-1.78-2.121l3.863-3.24a1.384,1.384,0,1,1,1.779,2.12" transform="translate(-12.3 -3.942)" fill="#f09e6a" stroke="rgba(0,0,0,0)" stroke-width="1"/>
+    <path id="Path_679" data-name="Path 679" d="M13.283,14.044l3.862,3.241a1.384,1.384,0,0,0,1.78-2.121l-3.863-3.24a1.384,1.384,0,1,0-1.779,2.12" transform="translate(-12.3 -3.942)" fill="#f09e6a" stroke="rgba(0,0,0,0)" stroke-width="1"/>
+    <line id="Line_149" data-name="Line 149" x2="11.471" transform="translate(0 17.271)" fill="none" stroke="#f09e6a" stroke-width="2.835"/>
+  </g>
+</svg>

@@ -19,6 +19,18 @@ function checkFolders() {
     fs.mkdirSync(join(homedirectory, 'Documents', 'Phinch2.0'));
   }
 }
+//this is to look into preloaded flagship data folder
+function checkFSFolders() {
+  // check settings file - look somewhere other than home folder
+  const home = fs.readdirSync(join(homedirectory));
+  if (!home.includes('Documents')) { // weird but ok
+    fs.mkdirSync(join(homedirectory, 'Documents'));
+  }
+  const documents = fs.readdirSync(join(homedirectory, 'Documents'));
+  if (!documents.includes('FlagshipData')) {
+    fs.mkdirSync(join(homedirectory, 'Documents', 'FlagshipData'));
+  }
+}
 
 function getProjectInfo(path, dataKey) {
   let summary = {
@@ -180,6 +192,34 @@ export function getProjects() {
     slug: 'newproject',
     thumb: newicon
   };
-  projects.unshift(newproject);
-  return projects;
+  //this filters out any flagship datasets as they are located in the same location.
+  const nonFSProjects = [];
+  projects.forEach(proj => {
+    if(proj.summary.name != "Earth Microbiome Project" && proj.summary.name !=  "Showerhead Microbiome Project" && proj.summary.name !=  "Project MERCCURI") {
+      nonFSProjects.push(proj);
+    }
+  });
+
+  nonFSProjects.unshift(newproject);
+  return nonFSProjects;
 }
+// A better location for storing flagship data files still needs to be established. The names should also be changes if they do stay in current directory of "Phinch 2.0"
+export function getFSProjects() {
+  checkFSFolders();
+  const projects = fs.readdirSync(join(homedirectory, 'Documents', 'Phinch2.0'))
+    .filter(f => fs.lstatSync(join(homedirectory, 'Documents', 'Phinch2.0', f)).isDirectory())
+    .map((p) => {
+      // check for files inside phinch directory folders (data*, settings, thumbnails, etc)
+        const path = join(homedirectory, 'Documents', 'Phinch2.0', p);
+        return getProjectInfo(path, p);
+    });
+  // This exists to get only the flagship datasets from the main data storage files
+  const fsProjects = [];
+  projects.forEach(props => {
+    if(props.summary.name == "Earth Microbiome Project" || props.summary.name ==  "Showerhead Microbiome Project" || props.summary.name ==  "Project MERCCURI") {
+      fsProjects.push(props);
+    }
+  });
+  return fsProjects;
+}
+

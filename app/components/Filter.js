@@ -2,15 +2,44 @@ import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { FixedSizeList as List } from 'react-window';
 
+import Spotlight from "rc-spotlight";
+import 'antd/dist/antd.css';
+import { Tooltip } from 'antd';
+import ReactTooltip from 'react-tooltip';
+import SpotlightWithToolTip from './SpotlightWithToolTip';
+
 import _debounce from 'lodash.debounce';
 import _cloneDeep from 'lodash.clonedeep';
 
 import stackedbar from 'images/stackedbar.svg';
+import bubblegraph from 'images/bubblegraph.svg';
+import sankeygraph from 'images/sankeygraph.svg';
 import logo from 'images/phinch.svg';
 import minus from 'images/minus.svg';
 import plus from 'images/plus.svg';
 import back from 'images/back.svg';
 import save from 'images/save.svg';
+import needHelp from 'images/needHelp.svg';
+import needHelpHover from 'images/needHelpHover.svg';
+import closeHelp from 'images/closeHelpHP.svg';
+
+import help1 from 'images/help1.svg';
+import help1Hover from 'images/help1Hover.svg';
+import help2 from 'images/help2.svg';
+import help2Hover from 'images/help2Hover.svg';
+import help3 from 'images/help3.svg';
+import help3Hover from 'images/help3Hover.svg';
+import help4 from 'images/help4.svg';
+import help4Hover from 'images/help4Hover.svg';
+import help5 from 'images/help5.svg';
+import help5Hover from 'images/help5Hover.svg';
+import help6 from 'images/help6.svg';
+import help6Hover from 'images/help6Hover.svg';
+import help7 from 'images/help7.svg';
+import help7Hover from 'images/help7Hover.svg';
+import help8 from 'images/help8.svg';
+import help8Hover from 'images/help8Hover.svg';
+
 
 import {
   updateFilters,
@@ -64,9 +93,12 @@ export default class Filter extends Component {
       result: null,
       loading: false,
       redirect: null,
-      showLeftSidebar: false,
+      showLeftSidebar: true,
       sortReverse: false,
       sortKey: 'biomid',
+      helpButton: needHelp,
+      deleting: false,
+      counter: 0, //tracks what help step we are on to allow global click advance
     };
 
     this.filters = DataContainer.getFilters();
@@ -87,11 +119,11 @@ export default class Filter extends Component {
     };
 
     this.columnWidths = {
-      order: 0.08,
-      phinchName: 0.18,
-      biomid: 0.12,
-      sampleName: 0.18,
-      reads: 0.24,
+      order: 0.06,
+      phinchName: 0.325,
+      biomid: 0.15,
+      sampleName: 0.325,
+      reads: 0.14,
     };
 
     this.menuItems = [
@@ -168,16 +200,28 @@ export default class Filter extends Component {
     this.redirectToVis = this.redirectToVis.bind(this);
     this.updatePhinchName = this.updatePhinchName.bind(this);
     this.updateDimensions = this.updateDimensions.bind(this);
+    this.countUp = this.countUp.bind(this);
   }
 
   componentDidMount() {
     window.addEventListener('resize', this.updateDimensions);
     this.applyFilters(this.state.filters);
+    window.addEventListener('click', this.countUp);
   }
 
   componentWillUnmount() {
     clearTimeout(this.timeout);
     window.removeEventListener('resize', this.updateDimensions);
+    window.removeEventListener('click', this.countUp);
+  }
+
+  countUp() {
+    if(this.state.counter > 0) {
+      const currCount = this.state.counter;
+      const newCount = currCount + 1;
+      newCount > 8 ? this.setState({ counter: 1, }) : this.setState({ counter: newCount, });
+      console.log(this.state.counter);
+    }
   }
 
   save = (callback) => {
@@ -189,7 +233,7 @@ export default class Filter extends Component {
         sortReverse: this.state.sortReverse,
         sortKey: this.state.sortKey,
       },
-      showLeftSidebar: this.state.showLeftSidebar,
+      showLeftSidebar: true,
     };
     setProjectFilters(
       this.state.summary.path,
@@ -209,6 +253,7 @@ export default class Filter extends Component {
       width: window.innerWidth,
       height: window.innerHeight,
     });
+    console.log(this.metrics.tableWidth);
   }
 
   renderHeader() {
@@ -231,7 +276,7 @@ export default class Filter extends Component {
       },
       {
         id: 'reads',
-        name: 'Sequence Reads',
+        name: 'Observations',
       },
     ];
     return columns.map(c => {
@@ -255,7 +300,9 @@ export default class Filter extends Component {
           role="button"
           tabIndex={0}
           className={styles.columnHeading}
-          style={{ width: this.metrics.tableWidth * this.columnWidths[c.id] }}
+          // This -250 from the width is so drag and close buttons are always visible
+          style={{ width: (this.metrics.tableWidth - 250) * this.columnWidths[c.id],
+                   textAlign: c.id === 'biomid' ? 'right':'left', }}
           onClick={onClick}
           onKeyPress={e => (e.key === ' ' ? onClick() : null)}
         >
@@ -280,6 +327,9 @@ export default class Filter extends Component {
       updatePhinchName={this.updatePhinchName}
       removeDatum={() => { removeRows(this, [datum]); }}
       restoreDatum={() => { restoreRows(this, [datum]); }}
+      deleting={this.state.deleting}
+      delete={() => this.setState({ deleting: true })}
+      cancel={() => this.setState({ deleting: false })}
     />
   );
 
@@ -402,9 +452,9 @@ export default class Filter extends Component {
             name={g}
             showScale={false}
             showCircle={false}
-            fill="#4c4c4c"
+            fill="#4D4D4D"
             stroke="#ffffff"
-            handle="#00bbda"
+            handle="#F09E6A"
             color="#000000"
             data={this.filters[k][g]}
             width={this.metrics.filterWidth}
@@ -453,6 +503,35 @@ export default class Filter extends Component {
         </div>
       );
     });
+  }
+
+  renderModal() {
+    return (
+      <Modal
+        show={this.state.counter == 7}
+        spotlight={this.state.counter == 7 && (this.state.deleted.length > 0)}
+        buttonTitle="Archived Samples"
+        modalTitle="Archived Samples"
+        buttonPosition={{
+          position: 'absolute',
+          bottom: 0,
+        }}
+        modalPosition={this.state.counter == 7 ? {
+          position: 'absolute',
+          bottom: '5rem',
+          width: this.metrics.tableWidth - 15,
+        } : {
+          position: 'absolute',
+          bottom: this.metrics.padding * 2,
+          width: this.metrics.tableWidth - 15,
+        }}
+        useList
+        data={this.state.deleted}
+        row={this.row}
+        dataKey="sampleName"
+        itemHeight={28}
+        badge
+        />);
   }
 
   updatePhinchName(e, r) {
@@ -567,9 +646,7 @@ export default class Filter extends Component {
     this.metrics.tableWidth = this.state.width - (
       this.metrics.leftSidebar + this.metrics.filterWidth + (this.metrics.padding * 4)
     );
-    this.setState({ showLeftSidebar }, () => {
-      this.save(this.setResult);
-    });
+    this.setState({ showLeftSidebar });
   }
 
   redirectToVis(result) {
@@ -580,8 +657,136 @@ export default class Filter extends Component {
     }
   }
 
+  makeHelpButtons() {
+    return (
+      <div className={styles.helpIcons}>
+        <div
+        role="button"
+        className={styles.helpIcons}
+        onClick={() => {this.setState({ counter: 0 }); this.forceUpdate(); this.deleteBackdropTooltip()} }
+        >
+          <img src={closeHelp} alt="close-walkthrough" />
+        </div>
+
+        <div
+        role="button"
+        tabIndex={0}
+        className={styles.helpIcons}
+        onClick={() => this.setState({ counter: 8 })}
+        >
+          <img src={this.state.counter == 1 ? help1Hover : help1} />
+        </div>
+
+        <div
+        role="button"
+        tabIndex={0}
+        className={styles.helpIcons}
+        onClick={() => this.setState({ counter: 1 })}
+        >
+          <img src={this.state.counter == 2 ? help2Hover : help2} />
+        </div>
+
+        <div
+        role="button"
+        tabIndex={0}
+        className={styles.helpIcons}
+        onClick={() => this.setState({ counter: 2 })}
+        >
+          <img src={this.state.counter == 3 ? help3Hover : help3} />
+        </div>
+
+        <div
+        role="button"
+        tabIndex={0}
+        className={styles.helpIcons}
+        onClick={() => this.setState({ counter: 3 })}
+        >
+          <img src={this.state.counter == 4 ? help4Hover : help4} />
+        </div>
+
+        <div
+        role="button"
+        tabIndex={0}
+        className={styles.helpIcons}
+        onClick={() => this.setState({ counter: 4 })}
+
+        >
+          <img src={this.state.counter == 5 ? help5Hover : help5} />
+        </div>
+
+        <div
+        role="button"
+        tabIndex={0}
+        className={styles.helpIcons}
+        onClick={() => this.setState({ counter: 5 })}
+        >
+          <img src={this.state.counter == 6 ? help6Hover : help6} />
+        </div>
+
+        <SpotlightWithToolTip
+          isActive={this.state.counter == 7 && (this.state.deleted.length == 0)}
+          toolTipPlacement="top"
+          toolTipTitle={<div>
+            To explore the 'Archived Samples' feature more, please use the{' '}
+            navigation bar in the bottom left to close the walkthrough. {' '}
+            Once closed, delete at least 1 sample row by clicking the 'X' on the far right{' '}
+            of the rows that is visible when the row is hovered. Then return to feature 7. </div>}
+          >
+          <div
+          role="button"
+          tabIndex={0}
+          className={styles.helpIcons}
+          onClick={() => {this.setState({ counter: 6 }); this.renderModal();}}
+          >
+            <img src={this.state.counter == 7 ? help7Hover : help7} />
+          </div>
+        </SpotlightWithToolTip>
+
+        <div
+        role="button"
+        tabIndex={0}
+        className={styles.helpIcons}
+        onClick={() => {this.setState({ counter: 7 }); this.forceUpdate();}}
+        >
+          <img src={this.state.counter == 8 ? help8Hover : help8} />
+        </div>
+      </div>
+    );
+  }
+
+  /*This function deals with when the mouse hovers over the browse icon on top right of
+   and changes img src accordingly to correct svg file */
+   handleMouseOver (button) {
+    switch(button) {
+      case "help":
+        if(this.state.helpButton === needHelp) {
+          this.setState({helpButton: needHelpHover});
+        }
+        break;
+      case "viewViz":
+        const element = document.getElementById("stackedgraph");
+        element.style.backgroundColor = "#F09E6A";
+    }
+  }
+
+  /*This function deals with the mouse leaving an icon (no longer hovering) and
+  changed img src to correct svg file */
+  handleMouseLeave (button) {
+    switch(button) {
+      case "help":
+        if(this.state.helpButton === needHelpHover) {
+          this.setState({helpButton: needHelp});
+        }
+        break;
+      case "viewViz":
+        const element = document.getElementById("stackedgraph");
+        element.style.backgroundColor = "#001226";
+    }
+  }
+
   render() {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
+    const helpButtons = this.state.counter > 0 ? this.makeHelpButtons() : '';
 
     if (redirect) {
       return redirect;
@@ -594,8 +799,8 @@ export default class Filter extends Component {
         className={gstyle.button}
         style={{
           position: 'absolute',
-          top: '96px',
-          left: '16px',
+          top: 'calc(100vh - 40px)',
+          right: '16px',
           width: '68px',
           textAlign: 'center',
           zIndex: 10,
@@ -630,116 +835,220 @@ export default class Filter extends Component {
         <Loader loading={this.state.loading} />
         {redirect}
         {result}
-        <div className={styles.header}>
-          <div className={gstyle.logo}>
+        <div className={`${styles.header}`}>
+          <div className={`${styles.filterLogo}`}>
             <Link to="/">
               <img src={logo} alt="Phinch" />
             </Link>
+            <button
+              className={styles.help}
+              // on click command is still undefined outside of home page, set to issues page for now until later
+              onClick={() => this.setState({ counter: 8 })}
+              onMouseEnter={() => this.handleMouseOver("help")}
+              onMouseLeave={() => this.handleMouseLeave("help")}
+              >
+                <img src={this.state.helpButton} alt="needHelp" />
+            </button>
           </div>
           <div className={gstyle.header}>
             <Summary
               summary={this.state.summary}
               observations={this.state.observations}
               datalength={this.state.data.length}
-            />
-            <div className={styles.visRowLabel}>Visualization Type</div>
-            <div className={styles.visOption}>
-              <img src={stackedbar} alt="Stacked bargraph" />
-              <div className={styles.visOptionLabel}>Stacked bargraph</div>
-            </div>
-            <div
-              role="button"
-              tabIndex={0}
-              className={`${gstyle.button} ${styles.button}`}
-              onClick={viewVisualization}
-              onKeyPress={e => (e.key === ' ' ? viewVisualization() : null)}
-            >
-              View Visualization
-            </div>
-            <div className={styles.headingRow}>
-              <div
-                className={styles.spacer}
-                style={{
-                  width: (
-                    this.metrics.leftSidebar + this.metrics.filterWidth + (
-                      this.metrics.padding * 4
-                    )
-                  ) - 100,
-                }}
+              helping={this.state.counter == 2}
               />
-              {this.renderHeader()}
-            </div>
+
+            <SpotlightWithToolTip
+              isActive={this.state.counter == 3}
+              inheritParentBackgroundColor={false}
+              toolTipPlacement="bottomRight"
+              toolTipTitle={<div>
+                The uploaded data file can be explored through a number{' '}
+                of distinct visualization types.
+                <br /><br />
+                Click on one of the listed options to select that visualization type,{' '}
+                and then click “View Visualization” to see the graphs made by the option{' '}
+                you choose.
+              </div>}
+              style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', boxShadow: 'inset rgba(255, 255, 255, 0.5) 0px 0px 10px'}}
+            >
+              <div>
+                <div className={styles.visRowLabel}>Visualization Type</div>
+                <div className={styles.visOption}>
+                  <img src={stackedbar} alt="Stacked bargraph" />
+                  <div className={styles.visOptionLabel} id="stackedgraph" >Stacked Bargraph</div>
+                </div>
+                <div className={styles.futureVis}>
+                  <img src={bubblegraph} alt="Bubble Graph" id="bubblegraph" />
+                  <div className={styles.visOptionLabel}>Bubble Graph</div>
+                </div>
+                <div className={styles.futureVis}>
+                  <img src={sankeygraph} alt="Sankey bargraph" id="sankeygraph" />
+                  <div className={styles.visOptionLabel}>Sankey graph</div>
+                </div>
+                <div
+                  role="button"
+                  tabIndex={0}
+                  className={`${gstyle.button} ${styles.button}`}
+                  onClick={viewVisualization}
+                  onKeyPress={e => (e.key === ' ' ? viewVisualization() : null)}
+                  onMouseEnter={() => this.handleMouseOver("viewViz")}
+                  onMouseLeave={() => this.handleMouseLeave("viewViz")}
+                  >
+                  View Visualization
+                </div>
+              </div>
+            </SpotlightWithToolTip>
+            <SpotlightWithToolTip
+              isActive={this.state.counter == 6}
+              toolTipPlacement="bottomRight"
+                >
+                <div className={styles.headingRow}>
+                  <div
+                    className={styles.spacer}
+                    style={{
+                      width: (
+                        this.metrics.leftSidebar + this.metrics.filterWidth + (
+                          this.metrics.padding * 4
+                          )
+                          ) - 100,
+                        }}
+                        />
+                  {this.renderHeader()}
+                </div>
+              </SpotlightWithToolTip>
           </div>
         </div>
-        <div style={{ position: 'relative', backgroundColor: '#ffffff', color: '#808080' }}>
+        <div style={{ position: 'inherit', backgroundColor: '#fdfdfa', color: '#808080' }}>
           <SideMenu
             showLeftSidebar={this.state.showLeftSidebar}
             leftSidebar={this.metrics.leftSidebar}
             leftMin={this.metrics.left.min}
-            chartHeight={(this.state.height - 130)}
+            chartHeight={(this.state.height - 155)}
             items={this.menuItems}
             toggleMenu={this.toggleMenu}
-          />
-          <div
-            className={`${styles.section} ${styles.left}`}
-            style={{
-              display: 'inline-block',
-              height: (this.state.height - 130),
-              overflowY: 'overlay',
-            }}
-          >
-            {this.displayFilters()}
-            <div
-              role="button"
-              tabIndex={0}
-              className={`${gstyle.button} ${styles.reset}`}
-              onClick={this.resetFilters}
-              onKeyPress={e => (e.key === ' ' ? this.resetFilters() : null)}
-            >
-              Reset Filters
-            </div>
-          </div>
-          <div
-            className={`${styles.section} ${styles.right}`}
-            style={{
-              width: this.metrics.tableWidth,
-              height: this.state.height - 130,
-            }}
-            onDragStart={this.dragStart}
-            onDrop={this.dragEnd}
-          >
-            <List
-              className={`${styles.divlist}`}
-              width={this.metrics.tableWidth}
-              height={this.state.height - 130}
-              itemSize={28}
-              itemCount={this.state.data.length}
-              itemKey={index => this.state.data[index].sampleName}
-            >
-              {this.tableRow}
-            </List>
-            <Modal
-              buttonTitle="Archived Samples"
-              modalTitle="Archived Samples"
-              buttonPosition={{
-                position: 'absolute',
-                bottom: 0,
-                left: this.state.width - (this.metrics.tableWidth + (this.metrics.padding / 2)),
-              }}
-              modalPosition={{
-                position: 'absolute',
-                bottom: this.metrics.padding * 2,
-                left: this.state.width - (this.metrics.tableWidth + (this.metrics.padding / 2)),
-                width: this.metrics.tableWidth,
-              }}
-              useList
-              data={this.state.deleted}
-              row={this.row}
-              dataKey="sampleName"
-              itemHeight={28}
-              badge
+            spotlight={this.state.counter == 8}
             />
-          </div>
+          <SpotlightWithToolTip
+            isActive = {this.state.counter == 1}
+            inheritParentBackgroundColor={false}
+            toolTipPlacement="topLeft"
+            toolTipTitle={"All metadata (left column) and sample info (right columns) are loaded FROM THE FILE ITSELF, and the app dynamically populates all this information after file upload. "}
+            overlayStyle={{zIndex: '1001'}}
+            style={{backgroundColor: '#ffffff', boxShadow: 'none'}}
+          >
+
+            <div
+              className={`${styles.section} ${styles.left}`}
+              style={{
+                display: 'inline-block',
+                height: (this.state.height - (this.state.counter == 1 ? 240 : 155)),
+                overflowY: 'overlay',
+              }}
+            >
+              <SpotlightWithToolTip
+                isActive={this.state.counter == 4 || this.state.counter == 5}
+                toolTipPlacement="rightBottom"
+                toolTipTitle={this.state.counter == 4 ? <div>
+                  On the left panel, click the arrow button to view filtering{' '}
+                  options for file metadata. There are three categories for{' '}
+                  filtering: “Date Range” (to filter by time/date),{' '}
+                  “Numerical Range” (for metadata categories that are exclusively{' '}
+                  numerical, such as pH, temperature, etc), and “Categories”{' '}
+                  (For metadata categories that are text only or alphanumeric{' '}
+                  combinations).
+                  <br /><br />
+                  “Date Range” and “Numerical Range” display the file data as histograms,{' '}
+                  while “Categories” show the metadata values with associated checkboxes.{' '}
+                  Histograms can be filtered using slider bars, while Categorical data can{' '}
+                  be filtered by selecting or unselecting each checkbox.
+                  <br /><br />
+                  All metadata populated in this panel is generated FROM THE FILE ITSELF,{' '}
+                  and the app dynamically populates all this information after file upload.
+                  <br /><br />
+                  Changing filter selections in this panel will cause the sample list{' '}
+                  to automatically update, displaying only those samples that meet the{' '}
+                  chosen filtering selections.
+                  </div>
+                  :
+                  <div>
+                    If you would like to reset the filters, scroll all the way down{' '}
+                    on the left column to find the “Reset Filters” button.
+                  </div>}
+                overlayStyle={{maxWidth: '600px'}}
+                  >
+                  <div style={{
+                    height: (this.state.counter == 4 || this.state.counter == 5 ? this.state.height - 240 : 'auto'),
+                    overflowY: 'overlay',
+                  }}>
+                    {this.displayFilters()}
+                    <div
+                      role="button"
+                      id="reset"
+                      tabIndex={0}
+                      className={`${gstyle.button} ${styles.reset}`}
+                      onClick={this.resetFilters}
+                      onKeyPress={e => (e.key === ' ' ? this.resetFilters() : null)}
+                    >
+                      Reset Filters
+                    </div>
+                  </div>
+              </SpotlightWithToolTip>
+            </div>
+            <div
+              className={`${styles.section} ${styles.right}`}
+              style={{
+                width: this.metrics.tableWidth - 6,
+                height: (this.state.height - (this.state.counter >= 1 ? 240 : 155)),
+                overflowY: 'overlay',
+              }}
+              onDragStart={this.dragStart}
+              onDrop={this.dragEnd}
+            >
+              <SpotlightWithToolTip
+                isActive={this.state.counter == 6 || this.state.counter == 8}
+                toolTipPlacement="leftTop"
+                toolTipTitle={this.state.counter == 6 ? <div>
+                  In the sample info panel, the graph shows the distribution of samples{' '}
+                  (e.g. range of sequencing depth across samples in the uploaded file).{' '}
+                  The red line indicates the position of the present sample row in the{' '}
+                  overall dataset.
+                  <br /><br />
+                  There will be icons appear for only one row at a time, on mouse over in{' '}
+                  the filter page window. You can change the order of the samples by using{' '}
+                  a long press of the mouse on the “up/down arrow” button on the left, or{' '}
+                  remove the sample from the pool by the “delete” button on the right{' '}
+                  (After the sample is manually removed, it will be listed under{' '}
+                  “Archived Sample” at the bottom). </div> : ''}
+                  overlayStyle={{width: '250px', paddingBottom: '5rem'}}
+                  style={this.state.counter == 8 ? {zIndex: 0} : ''}
+                  >
+                <List
+                  className={`${styles.divlist}`}
+                  width={this.metrics.tableWidth}
+                  height={this.state.height - 155}
+                  itemSize={28}
+                  itemCount={this.state.data.length}
+                  itemKey={index => this.state.data[index].sampleName}
+                  >
+                  {this.tableRow}
+                </List>
+                {this.renderModal()}
+              </SpotlightWithToolTip>
+            </div>
+          </SpotlightWithToolTip>
+          <SpotlightWithToolTip
+            isActive = {this.state.counter > 0}
+            inheritParentBackgroundColor={false}
+            toolTipTitle={"*mouse click anywhere to advance"}
+            overlayStyle={{zIndex: '1001'}}
+            innerStyle={{color: 'white', fontWeight: '600', fontSize: '10px'}}
+            style={{boxShadow: 'none'}}
+          >
+            <div className={styles.helpButtons}>
+              {helpButtons}
+            </div>
+          </SpotlightWithToolTip>
         </div>
       </div>
     );

@@ -2,7 +2,7 @@
   cursor: pointer;
   width: 20px;
   height: 20px;
-  line-height: 1.25rem;
+  /* line-height: 1.25rem; */
   padding: 0;
   margin: 0;
   background: #b2b2b2;
@@ -15,8 +15,9 @@
 }
 
 .delete img {
-  width: 100%;
-  height: 100%;
+  width: 10px;
+  height: 10px;
+  margin-top: 3px;
 }
 
 .drag {
@@ -24,9 +25,17 @@
   pointer-events: none;
 }
 
+.drag img {
+  width: 100%;
+  height: 100%;
+  padding-bottom: 2px;
+  padding-top: 2px;
+  margin-top: 0px;
+}
+
 .row {
   background: white;
-  cursor: move;
+  cursor: -webkit-grab;
 }
 
 .row:hover .delete {
@@ -34,7 +43,7 @@
 }
 
 .row.grey {
-  background: #f4f4f4;
+  background: #f0efef;
 }
 
 .noLeft {
@@ -42,8 +51,8 @@
 }
 
 .cell {
-  font-family: 'IBM Plex Sans Condensed', Verdana, Sans-serif;
-  font-weight: 300;
+  font-family: 'Open Sans';
+  font-weight: 600;
   color: black;
   padding: 0.25rem 0.5rem;
   line-height: 1rem;
@@ -55,4 +64,61 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.cell:hover {
+  min-width: fit-content !important;
+}
+
+.modal {
+  display: block;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0.5rem 2rem;
+  z-index: 8;
+}
+
+.modal p {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 1rem 0;
+}
+
+.modal code {
+  word-break: break-all;
+}
+
+.modal .modalTitle {
+  font-weight: 800;
+  font-style: italic;
+  word-wrap: break-word;
+}
+
+/* This is the Delete button on confirm delete pop up */
+.modal .button {
+  position: absolute;
+  bottom: 0.75rem;
+  right: 7.25rem;
+  border-radius: 15px;
+}
+
+.modal .button:hover {
+  background: #F09E6A;
+  border: none;
+  color: white;
+}
+
+/* This is the Cancel button on confirm delete pop up */
+.modal .button.cancel {
+  right: 0;
+  background: none;
+}
+
+.modal .button.cancel:hover {
+  background: #F09E6A;
+  border: none;
+  color: white;
 }

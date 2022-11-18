@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="331.501" height="29.74" viewBox="0 0 331.501 29.74">
+  <defs>
+    <filter id="Union_1">
+      <feOffset input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feFlood flood-color="#fdfdfa" flood-opacity="0.4" result="color"/>
+      <feComposite operator="out" in="SourceGraphic" in2="blur"/>
+      <feComposite operator="in" in="color"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="download_smaple_dataset" data-name="download smaple dataset" transform="translate(0.375 0.375)">
+    <g data-type="innerShadowGroup">
+      <path id="Union_1-2" data-name="Union 1" d="M2746.364,1788.485H2444.99q-.178,0-.357,0t-.357,0h-.156v0a14.5,14.5,0,0,1,0-28.971v-.009h302.6a14.5,14.5,0,0,1,0,28.99Q2746.542,1788.49,2746.364,1788.485Z" transform="translate(-2430.302 -1759.5)" fill="#f09e6a"/>
+      <g transform="matrix(1, 0, 0, 1, -0.38, -0.38)" filter="url(#Union_1)">
+        <path id="Union_1-3" data-name="Union 1" d="M2746.364,1788.485H2444.99q-.178,0-.357,0t-.357,0h-.156v0a14.5,14.5,0,0,1,0-28.971v-.009h302.6a14.5,14.5,0,0,1,0,28.99Q2746.542,1788.49,2746.364,1788.485Z" transform="translate(-2429.93 -1759.13)" fill="#fff"/>
+      </g>
+      <path id="Union_1-4" data-name="Union 1" d="M2746.364,1788.485H2444.99q-.178,0-.357,0t-.357,0h-.156v0a14.5,14.5,0,0,1,0-28.971v-.009h302.6a14.5,14.5,0,0,1,0,28.99Q2746.542,1788.49,2746.364,1788.485Z" transform="translate(-2430.302 -1759.5)" fill="none" stroke="#fdfdfa" stroke-width="0.75"/>
+    </g>
+    <path id="Path_617" data-name="Path 617" d="M18.035,17.609a1.384,1.384,0,0,1-1.384-1.384V5.326a1.384,1.384,0,0,1,2.768,0v10.9a1.384,1.384,0,0,1-1.384,1.384" transform="translate(1.965 0.832)" fill="#fdfdfa"/>
+    <path id="Path_618" data-name="Path 618" d="M22.787,14.044l-3.862,3.241a1.384,1.384,0,0,1-1.78-2.121l3.863-3.24a1.384,1.384,0,1,1,1.779,2.12" transform="translate(1.965 0.832)" fill="#fdfdfa"/>
+    <path id="Path_619" data-name="Path 619" d="M13.283,14.044l3.862,3.241a1.384,1.384,0,0,0,1.78-2.121l-3.863-3.24a1.384,1.384,0,1,0-1.779,2.12" transform="translate(1.965 0.832)" fill="#fdfdfa"/>
+    <line id="Line_124" data-name="Line 124" x2="11.471" transform="translate(14.264 22.045)" fill="none" stroke="#fdfdfa" stroke-width="2.835"/>
+    <text id="Download_a_flagship_datasets" data-name="Download a flagship datasets" transform="translate(36.695 22.052)" fill="#fdfdfa" font-size="20" font-family="OpenSans-Semibold, Open Sans" font-weight="600"><tspan x="0" y="0">Download a flagship datasets</tspan></text>
+  </g>
+</svg>
