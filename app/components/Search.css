@@ -30,7 +30,7 @@
   background-color: #000;
   border: none;
   color: #fff;
-  z-index: 20;
+  z-index: 2000;
 }
 
 .suggestionsContainer::-webkit-scrollbar-thumb {
@@ -48,9 +48,9 @@
   padding: 0.5rem;
   border-radius: 4px;
   cursor: pointer;
+  overflow: hidden;
 }
 
 .suggestionHighlighted {
   background-color: #F09E6A;
-  font-weight: 400;
 }

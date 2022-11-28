@@ -24,7 +24,6 @@
   font-size: 13px;
   font-weight: 500;
   color: white;
-  color: #000000;
   position: relative;
 }
 
@@ -44,7 +43,6 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   margin-top: 1.5em;
-  margin-left: -1em;
 }
 
 .toggleLabel {
