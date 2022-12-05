@@ -5,6 +5,17 @@
 @import "~font-awesome/css/font-awesome.css";
 @import "~@ibm/plex/css/ibm-plex.css";
 
+@font-face {
+  font-family: 'Open Sans';
+  src: url('./fonts/OpenSans-Regular.woff2') format('woff2'),
+      url('./fonts/OpenSans-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+
 * {
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
