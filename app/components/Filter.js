@@ -19,8 +19,8 @@ import minus from 'images/minus.svg';
 import plus from 'images/plus.svg';
 import back from 'images/back.svg';
 import save from 'images/save.svg';
-import needHelp from 'images/needHelp.svg';
-import needHelpHover from 'images/needHelpHover.svg';
+import needHelp from 'images/needHelpDefault.png';
+import needHelpHover from 'images/needHelpHover.png';
 import closeHelp from 'images/closeHelpHP.svg';
 
 import help1 from 'images/help1.svg';

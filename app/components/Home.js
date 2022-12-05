@@ -10,7 +10,7 @@ import editOff from 'images/edit-off.svg';
 import editOn from 'images/edit-on.svg';
 import editHover from 'images/edit-hover.svg';
 import fsIcon from 'images/flagshipIcons.svg';
-import helpGo from 'images/needHelpHP.svg';
+import helpGo from 'images/needHelpDefault.png';
 import helpStop from 'images/needHelpHover.svg'
 import arrow from 'images/arrow.svg';
 import arrowHover from 'images/arrowHover.svg';

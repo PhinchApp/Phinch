@@ -6,8 +6,8 @@ import SpotlightWithToolTip from './SpotlightWithToolTip';
 
 import logo from 'images/phinch.svg';
 import arrow from 'images/arrow.svg';
-import helpGo from 'images/needHelpHP.svg';
-import helpHover from 'images/needHelpHover.svg';
+import helpGo from 'images/needHelpDefault.png';
+import helpHover from 'images/needHelpHover.png';
 import helpStop from 'images/needHelpStop.svg';
 
 import help1 from 'images/help1.svg';
@@ -18,8 +18,8 @@ import help3 from 'images/help3.svg';
 import help3Hover from 'images/help3Hover.svg';
 import help4 from 'images/help4.svg';
 import help4Hover from 'images/help4Hover.svg';
-import needHelpHP from 'images/needHelpHP.svg';
-import needHelpHover from 'images/needHelpHover.svg';
+import needHelpHP from 'images/needHelpDefault.png';
+import needHelpHover from 'images/needHelpHover.png';
 
 import LinkList from './LinkList';
 

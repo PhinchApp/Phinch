@@ -13,8 +13,8 @@ import filterOn from 'images/filterOn.svg';
 import filterOff from 'images/filterOff.svg';
 import flagshipOn from 'images/flagshipOn.svg';
 import flagshipOff from 'images/flagshipOff.svg';
-import needHelp from 'images/needHelp.svg';
-import needHelpHover from 'images/needHelpHover.svg';
+import needHelp from 'images/needHelpDefault.png';
+import needHelpHover from 'images/needHelpHover.png';
 
 import { createProject } from '../projects';
 import DataContainer from '../datacontainer';

@@ -20,8 +20,8 @@ import save from 'images/save.svg';
 import exportButton from 'images/export.svg';
 import dropDownArrow from 'images/dropDownArrow.svg';
 
-import needHelp from 'images/needHelp.svg';
-import needHelpHover from 'images/needHelpHover.svg';
+import needHelp from 'images/needHelpDefault.png';
+import needHelpHover from 'images/needHelpHover.png';
 import closeHelp from 'images/closeHelpHP.svg';
 
 import help1 from 'images/help1.svg';
