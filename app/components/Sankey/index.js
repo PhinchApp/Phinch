@@ -155,12 +155,15 @@ export default function Sankey(props) {
     // const listX = listRef.current.getBoundingClientRect().x
     const containerPosition = containerRef.current.getBoundingClientRect()
 
-    const y = e.target.getBoundingClientRect().y
+    const y = e.target.getBoundingClientRect().top
     const position = {
       // x: 0,
       y: y - containerPosition.top,
     }
     const color = colorScale(node.fullName)
+    if (isNaN(position.y)) {
+      debugger
+    }
     setHoveredListItem({position, name, counts: value, totalCounts: depthOneSum, color})
   }
   const onListScroll = debounce(() => {
