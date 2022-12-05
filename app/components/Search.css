@@ -21,7 +21,6 @@
 .suggestionsContainer {
   max-height: calc(100vh - 100px);
   max-width: calc(100vw - 128px);
-  width: 304px;
   overflow-y: scroll;
   overflow-x: hidden;
   position: fixed;
