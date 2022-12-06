@@ -1547,10 +1547,15 @@ export default class Vis extends Component {
             >
               <div className={styles.controlRow}>
                 {this.renderLevelSelector(this.levels, dataLength)}
-                {this.levels.length ? spacer : null}
-                {this.renderAttributesSelect()}
-                {spacer}
-                {this.renderTagFilter()}
+                {visType === 'sankey' ?
+                  null :
+                  <React.Fragment>
+                    {this.levels.length ? spacer : null}
+                    {this.renderAttributesSelect()}
+                    {spacer}
+                    {this.renderTagFilter()}
+                  </React.Fragment>
+                }
               </div>
             </SpotlightWithToolTip>
           </div>
