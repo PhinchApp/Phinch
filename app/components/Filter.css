@@ -113,6 +113,7 @@
   height: 16px;
   border-radius: 7px;
   cursor: pointer;
+  z-index: 100;
 }
 
 .expand img {
