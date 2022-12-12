@@ -8,7 +8,7 @@ import logo from 'images/phinch.svg';
 import arrow from 'images/arrow.svg';
 import helpGo from 'images/needHelpDefault.png';
 import helpHover from 'images/needHelpHover.png';
-import helpStop from 'images/needHelpStop.svg';
+import helpStop from 'images/closeHelp.png';
 
 import help1 from 'images/help1.svg';
 import help1Hover from 'images/help1Hover.svg';
