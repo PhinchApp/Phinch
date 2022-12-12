@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 
-import close from 'images/close.svg';
+import close from 'images/closeHover.svg';
 import closeDefault from 'images/closeDefault.svg';
 import aps from 'images/apsf-logo.png';
 import uga from 'images/uga-logo@2x.png';

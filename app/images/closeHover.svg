@@ -1,6 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="12.216" height="12.12" viewBox="0 0 12.216 12.12">
-  <g id="Component_25_1" data-name="Component 25 – 1" transform="translate(2.005 2.005)">
-    <line id="Line_140" data-name="Line 140" y1="8.111" x2="8.111" transform="translate(0.096)" fill="none" stroke="#f09e6a" stroke-linecap="round" stroke-width="2.835"/>
-    <line id="Line_144" data-name="Line 144" x2="8.111" y2="8.111" fill="none" stroke="#f09e6a" stroke-linecap="round" stroke-width="2.835"/>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30.75" height="30.75" viewBox="0 0 30.75 30.75">
+  <defs>
+    <filter id="Path_628">
+      <feOffset input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-color="#f09e6a" flood-opacity="0.502" result="color"/>
+      <feComposite operator="out" in="SourceGraphic" in2="blur"/>
+      <feComposite operator="in" in="color"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Close_page_button" data-name="Close page button" transform="translate(0.375 0.375)">
+    <g id="Group_1519" data-name="Group 1519" transform="translate(-1145.643 -34.534)">
+      <g data-type="innerShadowGroup">
+        <g transform="matrix(1, 0, 0, 1, 1145.27, 34.16)" filter="url(#Path_628)">
+          <path id="Path_628-2" data-name="Path 628" d="M1068.781,15.922a15,15,0,1,0,15-15,15.044,15.044,0,0,0-15,15" transform="translate(-1068.41 -0.55)" fill="#f09e6a"/>
+        </g>
+        <path id="Path_628-3" data-name="Path 628" d="M1068.781,15.922a15,15,0,1,0,15-15,15.044,15.044,0,0,0-15,15" transform="translate(76.862 33.612)" fill="#f09e6a" stroke="#fff" stroke-width="0.75"/>
+      </g>
+      <g id="Group_1456" data-name="Group 1456" transform="translate(1151.847 40.636)" opacity="0">
+        <rect id="Rectangle_959" data-name="Rectangle 959" width="14.739" height="6.5" transform="translate(1.409 11.562) rotate(-44.999)" fill="#fff" stroke="rgba(0,0,0,0)" stroke-width="1"/>
+        <path id="Rectangle_960" data-name="Rectangle 960" d="M0,0H1.594a.5.5,0,0,1,.5.5V6a.5.5,0,0,1-.5.5H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(12.409 0.481) rotate(-45)" fill="#fff" stroke="rgba(0,0,0,0)" stroke-width="1"/>
+        <path id="Path_630" data-name="Path 630" d="M1081.112,23.844l-5.088.556.556-5.088Z" transform="translate(-1075.718 -7.115)" fill="#fff" stroke="rgba(0,0,0,0)" stroke-width="1"/>
+      </g>
+      <line id="Line_139" data-name="Line 139" x2="8.111" y2="8.111" transform="translate(1156.756 45.479)" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="2.835"/>
+      <line id="Line_140" data-name="Line 140" y1="8.111" x2="8.111" transform="translate(1156.852 45.479)" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="2.835"/>
+    </g>
   </g>
 </svg>
