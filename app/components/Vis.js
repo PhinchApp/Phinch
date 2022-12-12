@@ -165,7 +165,7 @@ export default class Vis extends Component {
         id: 'none',
         color: null,
         name: 'No Tags',
-        selected: false
+        selected: true,
       }, ...tagColors.map((c, i) => ({
         id: `tag-${i}`,
         name: `Tag ${i}`,
@@ -1495,7 +1495,7 @@ export default class Vis extends Component {
         <div
           className={`${gstyle.header} ${gstyle.darkbgscrollbar}`}
           style={{
-            zIndex: visType === 'stackedbar' ? dataLength + 1 :
+            zIndex: visType === 'stackedbar' ? 2000 :
               visType === 'sankey' ?
                 this.state.helpCounter === 2 ? 2000 : 1000
                 : 2000
