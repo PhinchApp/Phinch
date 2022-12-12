@@ -93,7 +93,30 @@ export default class Home extends Component {
     this.remove = this.remove.bind(this);
     this.cancelRemove = this.cancelRemove.bind(this);
     this.completeRemove = this.completeRemove.bind(this);
+    this.countUpHelp = this.countUpHelp.bind(this);
+
   }
+
+  componentDidMount() {
+    window.addEventListener('click', this.countUpHelp);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('click', this.countUpHelp);
+  }
+
+
+  countUpHelp() {
+    if (this.state.help1) {
+      this.setState({help2: true, help1: false});
+    } else if (this.state.help2) {
+      this.setState({help3: true, help2: false});
+    } else if (this.state.help3) {
+      this.setState({help4: true, help3: false});
+    } else if (this.state.help4) {
+      this.setState({help4: false, help1: true});
+    }
+  }
+
   // this is to find if file up load for new project worked
   success() {
     this.setState({
@@ -338,7 +361,7 @@ export default class Home extends Component {
               inheritParentBackgroundColor={false}
               toolTipPlacement="leftTop"
               toolTipTitle={"Click the edit button to edit the project name or delete the file from the Phinch app."}
-              style={{position: "absolute"}}
+              style={{position: "absolute", pointerEvents: this.state.help4 ? 'none' : null}}
             >
               <div
                 role="button"
@@ -348,12 +371,15 @@ export default class Home extends Component {
                 onKeyPress={e => (e.key === ' ' ? this.edit() : null)}
                 onMouseEnter={() => this.handleMouseOver("edit")}
                 onMouseLeave={() => this.handleMouseLeave("edit")}
+                style={{ padding: this.state.help4 ? '0.5em' : null,
+                  transform: this.state.help4 ? 'translate(0.5em,  -0.5em)' : null
+              }}
               >
                 <img src={this.state.iconSRC} alt="edit" />
               </div>
             </SpotlightWithToolTip>
             <div className={`${styles.section} ${styles.top}`}>
-              <div className={`${styles.area} ${styles.rightSpace}`}>
+              <div>
                 <div className={`${styles.projectType} ${styles.top}`}>
                   <h2 className={styles.sectionTitle}>PROJECTS</h2>
                   <div className={styles.sectionRule} />

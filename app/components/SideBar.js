@@ -85,11 +85,13 @@ export default function SideBar(props) {
           role="button"
           tabIndex={0}
           className={styles.helpIcons}
-          onClick={() => props.context.setState({
+          onClick={(e) => {
+            e.stopPropagation()
+            props.context.setState({
             help1: false,
             help2: !props.context.state.help2,
             help3: false,
-            help4: false})}
+            help4: false})}}
           //onMouseEnter={() => handleMouseOver("help2")}
           //onMouseLeave={() => handleMouseLeave("help2")}
         >
@@ -99,11 +101,13 @@ export default function SideBar(props) {
           role="button"
           tabIndex={0}
           className={styles.helpIcons}
-          onClick={() => props.context.setState({
+          onClick={(e) => {
+            e.stopPropagation()
+            props.context.setState({
             help1: false,
             help2: false,
             help3: !props.context.state.help3,
-            help4: false})}
+            help4: false})}}
           //onMouseEnter={() => handleMouseOver("help3")}
           //onMouseLeave={() => handleMouseLeave("help3")}
         >
@@ -114,17 +118,20 @@ export default function SideBar(props) {
             role="button"
             tabIndex={0}
             className={styles.helpIcons}
-            onClick={() => props.context.setState({
+            onClick={(e) => {
+              e.stopPropagation()
+              props.context.setState({
               help1: false,
               help2: false,
               help3: false,
-              help4: !props.context.state.help4})}
+              help4: !props.context.state.help4})}}
             //onMouseEnter={() => handleMouseOver("help4")}
             //onMouseLeave={() => handleMouseLeave("help4")}
           >
             <img src={props.context.state.help4 ? help4Hover : help4} alt="help4" />
           </div>
         }
+        <span style={{ marginLeft: '1em'}}>* mouse click anywhere to advance</span>
       </div>
     );
   }
@@ -166,13 +173,17 @@ export default function SideBar(props) {
               role="button"
               tabIndex={0}
               className={styles.help}
-              onClick={() => props.context.setState({
-                helping: !props.context.state.helping,
-                help1: !props.context.state.helping,
-                help2: false,
-                help3: false,
-                help4: false})}
+              onClick={(e) => {
+                e.stopPropagation();
 
+                props.context.setState({
+                  helping: !props.context.state.helping,
+                  help1: !props.context.state.helping,
+                  help2: false,
+                  help3: false,
+                  help4: false
+                })
+              }}
             >
               <img
                 onMouseOver={() => setHelpHovered(true)}

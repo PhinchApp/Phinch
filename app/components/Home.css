@@ -20,7 +20,7 @@
   vertical-align: top;
   margin: 12px 6px;
   padding: 0;
-  width: calc(100vw - 640px);
+  width: calc(100vw - 660px);
   height: 1px;
   background: #001226;
 }
@@ -30,7 +30,7 @@
   vertical-align: top;
   margin: 12px 6px;
   padding: 0;
-  width: calc(100vw - 791.99px);
+  width: calc(100vw - 808px);
   height: 1px;
   background: #001226;
 }
@@ -96,8 +96,8 @@
   font-size: 13px;
   font-family: 'Open Sans';
   font-weight: 600;
-  top:3.5em;
-  right: 1rem;
+  top: 2.2em;
+  right: 2.5rem;
   cursor: pointer;
 }
 

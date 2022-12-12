@@ -1047,7 +1047,7 @@ export default class Filter extends Component {
           <SpotlightWithToolTip
             isActive = {this.state.counter > 0}
             inheritParentBackgroundColor={false}
-            toolTipTitle={"*mouse click anywhere to advance"}
+            toolTipTitle={" *mouse click anywhere to advance"}
             overlayStyle={{zIndex: '1001'}}
             innerStyle={{color: 'white', fontWeight: '600', fontSize: '10px'}}
             style={{boxShadow: 'none'}}

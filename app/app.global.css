@@ -109,6 +109,9 @@ button {
   border: none;
   outline: none !important;
 }
+div[role='button'] {
+  cursor: pointer;
+}
 
 button:hover {
   fill:#F09E6A;
