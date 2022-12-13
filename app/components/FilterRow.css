@@ -52,11 +52,11 @@
 
 .cell {
   font-family: 'Open Sans';
-  font-weight: 600;
+  font-weight: 400;
   color: black;
   padding: 0.25rem 0.5rem;
   line-height: 1rem;
-  font-size: 12px;
+  font-size: 14px;
   box-sizing: border-box;
   display: inline-block;
   width: auto;

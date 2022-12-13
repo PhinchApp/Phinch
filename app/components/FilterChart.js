@@ -157,7 +157,7 @@ export default class FilterChart extends Component {
         {range}
       </div>
     ) : <div />;
-    const style = { width: (this.props.width - (this.padding * 2)), margin: '0 16px', };
+    const style = { width: (this.props.width - (this.padding * 2)), margin: '0 24px', };
     const brush = filter.expanded ? (
       <div style={style}>
         <Range

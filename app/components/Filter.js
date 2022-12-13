@@ -106,7 +106,7 @@ export default class Filter extends Component {
 
     this.metrics = {
       padding: 16,
-      filterWidth: 175,
+      filterWidth: 225,
       filter: {
         min: 75,
         max: 175,
@@ -120,11 +120,11 @@ export default class Filter extends Component {
     };
 
     this.columnWidths = {
-      order: 0.06,
+      order: 0.08,
       phinchName: 0.325,
-      biomid: 0.15,
+      biomid: 0.13,
       sampleName: 0.325,
-      reads: 0.14,
+      reads: 0.20,
     };
 
     this.menuItems = [
@@ -307,7 +307,7 @@ export default class Filter extends Component {
           className={styles.columnHeading}
           // This -250 from the width is so drag and close buttons are always visible
           style={{ width: (this.metrics.tableWidth - 250) * this.columnWidths[c.id],
-                   textAlign: c.id === 'biomid' ? 'right':'left', }}
+                   textAlign: c.id === 'biomid' || c.id ==='reads' ? 'right':'left', }}
           onClick={onClick}
           onKeyPress={e => (e.key === ' ' ? onClick() : null)}
         >
@@ -481,12 +481,10 @@ export default class Filter extends Component {
             <div
               role="button"
               tabIndex={0}
-              className={styles.expand}
+              className={classNames(styles.expand, { [styles.expanded]: expanded })}
               onClick={toggleExpand}
               onKeyPress={e => (e.key === ' ' ? toggleExpand() : null)}
-            >
-              <img src={icon} alt={expanded ? 'minus' : 'plus'} />
-            </div>
+            />
             {filter}
           </div>
         );
@@ -496,7 +494,7 @@ export default class Filter extends Component {
           key={k}
           className={styles.bottom}
           style={{
-            width: this.metrics.filterWidth + (this.metrics.padding * 3),
+            width: this.metrics.filterWidth + (this.metrics.padding * 4),
           }}
         >
           <div className={styles.filterHeading}>
@@ -649,7 +647,7 @@ export default class Filter extends Component {
     this.metrics.leftSidebar = showLeftSidebar ?
       this.metrics.left.max : this.metrics.left.min;
     this.metrics.tableWidth = this.state.width - (
-      this.metrics.leftSidebar + this.metrics.filterWidth + (this.metrics.padding * 4)
+      this.metrics.leftSidebar + this.metrics.filterWidth + (this.metrics.padding * 6)
     );
     this.setState({ showLeftSidebar });
   }
@@ -916,7 +914,7 @@ export default class Filter extends Component {
                     style={{
                       width: (
                         this.metrics.leftSidebar + this.metrics.filterWidth + (
-                          this.metrics.padding * 4
+                          this.metrics.padding * 5
                           )
                           ) - 100,
                         }}
@@ -1005,7 +1003,7 @@ export default class Filter extends Component {
             <div
               className={`${styles.section} ${styles.right}`}
               style={{
-                width: this.metrics.tableWidth - 6,
+                width: this.metrics.tableWidth - 16,
                 height: (this.state.height - (this.state.counter >= 1 ? 240 : 155)),
                 overflowY: 'overlay',
               }}

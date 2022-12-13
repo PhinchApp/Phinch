@@ -11,8 +11,8 @@ import browseOn from 'images/browseOn.svg';
 import browseOff from 'images/browseOff.svg';
 import filterOn from 'images/filterOn.svg';
 import filterOff from 'images/filterOff.svg';
-import flagshipOn from 'images/flagshipOn.svg';
-import flagshipOff from 'images/flagshipOff.svg';
+import flagshipOn from 'images/flagshipOn.png';
+import flagshipOff from 'images/flagshipOff.png';
 import needHelp from 'images/needHelpDefault.png';
 import needHelpHover from 'images/needHelpHover.png';
 

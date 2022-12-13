@@ -99,7 +99,7 @@ p.label {
 p.name {
   transition: color 0.5s ease-in-out;
   color: white;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .edit p.name {

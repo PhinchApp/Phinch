@@ -1,6 +1,7 @@
 .range {
   font-size: 13px;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .mark {
@@ -14,7 +15,7 @@
 }
 
 .svg {
-  margin: 0 16px;
+  margin: 0 24px;
   margin-top: 8px;
 }
 
@@ -25,6 +26,8 @@
   font-weight: 500;
   color: white;
   position: relative;
+  pointer-events: none;
+  padding-bottom: 1rem;
 }
 
 .close {
@@ -35,14 +38,14 @@
 }
 .name {
   font-size: 15px;
-  font-weight: 800;
+  font-weight: 700;
   vertical-align: top;
   margin-right: 1rem;
   overflow-wrap: break-word;
 
   white-space: nowrap;
   text-overflow: ellipsis;
-  margin-top: 1.5em;
+  margin-top: 0em;
 }
 
 .toggleLabel {
