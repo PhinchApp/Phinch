@@ -28,7 +28,7 @@ export default function SpotlightWithToolTip({ isActive, toolTipPlacement="left"
     }
 
     const spotlightStyle = {
-        boxShadow: "0 0 10px #9ecaed",
+        boxShadow: "0 0 10px #fff",
         borderRadius: '0.5em',
         ...style,
     }
