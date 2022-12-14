@@ -65,23 +65,25 @@ export default class FilterRow extends Component {
             ?
           </p>
           <p>If yes, it can always be found and added back using the Archived Samples tab.</p>
-          <div
-            role="button"
-            tabIndex={0}
-            className={`${gstyle.button} ${styles.button} ${styles.cancel}`}
-            onClick={this.cancel}
-            onKeyPress={e => (e.key === ' ' ? this.cancel() : null)}
-          >
-            Cancel
-          </div>
-          <div
-            role="button"
-            tabIndex={0}
-            className={`${gstyle.button} ${styles.button}`}
-            onClick={this.props.removeDatum}
-            onKeyPress={e => (e.key === ' ' ? this.props.removeDatum() : null)}
-          >
-            Archive
+          <div className={styles.modalButtons}>
+            <div
+              role="button"
+              tabIndex={0}
+              className={`${gstyle.button} ${styles.button} ${styles.cancel}`}
+              onClick={this.cancel}
+              onKeyPress={e => (e.key === ' ' ? this.cancel() : null)}
+            >
+              Cancel
+            </div>
+            <div
+              role="button"
+              tabIndex={0}
+              className={`${gstyle.button} ${styles.button}`}
+              onClick={this.props.removeDatum}
+              onKeyPress={e => (e.key === ' ' ? this.props.removeDatum() : null)}
+            >
+              Archive
+            </div>
           </div>
           {this.cancel}
         </div>
@@ -98,7 +100,8 @@ export default class FilterRow extends Component {
           top: '33%',
           left: '33%',
           width: '410px',
-          height: '200px',
+          minHeight: '200px',
+          height: 'auto',
           background: 'white',
           boxShadow: '0px 0px 10px -2px',
           border: 'none',

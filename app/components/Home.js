@@ -278,23 +278,25 @@ export default class Home extends Component {
             ?
           </p>
           <p>You can&#39;t undo this action.</p>
-          <div
-            role="button"
-            tabIndex={0}
-            className={`${gstyle.button} ${styles.button} ${styles.cancel}`}
-            onClick={this.cancelRemove}
-            onKeyPress={e => (e.key === ' ' ? this.cancelRemove() : null)}
-          >
-            Cancel
-          </div>
-          <div
-            role="button"
-            tabIndex={0}
-            className={`${gstyle.button} ${styles.button}`}
-            onClick={this.completeRemove}
-            onKeyPress={e => (e.key === ' ' ? this.completeRemove() : null)}
-          >
-            Delete
+          <div className={styles.modalButtons}>
+            <div
+              role="button"
+              tabIndex={0}
+              className={`${gstyle.button} ${styles.button} ${styles.cancel}`}
+              onClick={this.cancelRemove}
+              onKeyPress={e => (e.key === ' ' ? this.cancelRemove() : null)}
+            >
+              Cancel
+            </div>
+            <div
+              role="button"
+              tabIndex={0}
+              className={`${gstyle.button} ${styles.button}`}
+              onClick={this.completeRemove}
+              onKeyPress={e => (e.key === ' ' ? this.completeRemove() : null)}
+            >
+              Delete
+            </div>
           </div>
         </div>
       );
@@ -326,7 +328,7 @@ export default class Home extends Component {
           top: '33%',
           left: '50%',
           width: '410px',
-          height: this.state.error.props.children.length > 2 ? '256px' : '192px',
+          height: 'auto',
           background: 'white',
           color: 'black',
         }}

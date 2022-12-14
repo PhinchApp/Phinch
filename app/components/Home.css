@@ -103,7 +103,7 @@
 
 .modal {
   display: block;
-  position: absolute;
+  /* position: absolute; */
   top: 0;
   bottom: 0;
   left: 0;
@@ -129,15 +129,12 @@
 
 /* This is the Delete button on confirm delete pop up */
 .modal .button {
-  position: absolute;
-  bottom: 0.75rem;
-  right: 7.25rem;
   border-radius: 15px;
 }
 
 .modal .button:hover {
   background: #F09E6A;
-  border: none;
+  border-color: transparent;
   color: white;
 }
 
@@ -149,8 +146,19 @@
 
 .modal .button.cancel:hover {
   background: #F09E6A;
-  border: none;
+  border-color: transparent;
   color: white;
+}
+
+.modal .modalButtons {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row-reverse;
+  margin-bottom: 1em;
+}
+
+.modal .modalButtons .button + .button {
+  margin-right: 1em;
 }
 
 .info {
