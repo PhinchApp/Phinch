@@ -114,6 +114,7 @@
   /* border-radius: 7px; */
   cursor: pointer;
   background: url('../images/arrowDown.png') 0 0 no-repeat;
+  z-index: 2;
 }
 .expand:hover {
   background: url('../images/arrowDownHover.png') 0 0px no-repeat;
