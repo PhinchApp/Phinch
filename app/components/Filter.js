@@ -883,7 +883,7 @@ export default class Filter extends Component {
                   <img src={sankeygraph} alt="Sankey bargraph" id="sankeygraph" />
                   <div
                     className={classNames(styles.visOptionLabel, { [styles.selected]: this.state.selectedVisualization === 'sankey'})}
-                  >Sankey graph</div>
+                  >Sankey Graph</div>
                 </div>
                 <div className={styles.futureVis}>
                   <img src={bubblegraph} alt="Bubble Graph" id="bubblegraph" />
