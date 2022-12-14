@@ -976,7 +976,8 @@ export default class Filter extends Component {
                     If you would like to reset the filters, scroll all the way down{' '}
                     on the left column to find the “Reset Filters” button.
                   </div>}
-                overlayStyle={{maxWidth: '600px'}}
+                  overlayStyle={{maxWidth: '600px'}}
+                  style={{ boxShadow: 'none'}}
                   >
                   <div style={{
                     height: (this.state.counter == 4 || this.state.counter == 5 ? this.state.height - 260 : 'auto'),
