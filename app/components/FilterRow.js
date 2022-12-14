@@ -3,7 +3,7 @@ import Modal from './Modal';
 
 import menu from 'images/menu.svg';
 import close from 'images/close.svg';
-
+import restoreRowImage from 'images/restoreRowButton.png';
 import FrequencyChart from './FrequencyChart';
 
 import styles from './FilterRow.css';
@@ -34,7 +34,9 @@ export default class FilterRow extends Component {
           onClick={this.props.restoreDatum}
           onKeyPress={e => (e.key === ' ' ? this.props.restoreDatum() : null)}
         >
-          <div className={styles.delete}>⤴</div>
+          <div className={styles.delete}>
+            <img src={restoreRowImage} alt="restore" />
+          </div>
         </div>
       </div>
     ) : (
@@ -112,13 +114,13 @@ export default class FilterRow extends Component {
       `${styles.row} ${styles.grey}`
     ) : styles.row;
 
-    const tableWidth = this.props.tableWidth - 250;//this scales down tableWidth for the drag, close, and frequency chart cells
+    const tableWidth = this.props.tableWidth - 300;//this scales down tableWidth for the drag, close, and frequency chart cells
 
     return (
       <div
         className={className}
         key={this.props.data.sampleName}
-        style={{ position: 'absolute', top: `${this.props.yOffset}px`, width: this.props.tableWidth, }}
+        style={{ position: 'absolute', top: `${this.props.yOffset}px`, width: this.props.tableWidth - 40, }}
         data-id={this.props.data.order}
         data-group={this.props.isRemoved ? 'removed' : 'data'}
         draggable="true"
