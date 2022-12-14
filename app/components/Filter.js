@@ -983,8 +983,8 @@ export default class Filter extends Component {
                 overlayStyle={{maxWidth: '600px'}}
                   >
                   <div style={{
-                    height: (this.state.counter == 4 || this.state.counter == 5 ? this.state.height - 240 : 'auto'),
-                    overflowY: 'overlay',
+                    height: (this.state.counter == 4 || this.state.counter == 5 ? this.state.height - 260 : 'auto'),
+                    overflowY: (this.state.counter == 4 || this.state.counter == 5 ? 'hidden' : 'overlay'),
                   }}>
                     {this.displayFilters()}
                     <div
