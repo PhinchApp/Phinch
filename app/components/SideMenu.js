@@ -137,8 +137,10 @@ export default class SideMenu extends Component {
       <div
         className={`${gstyle.panel} ${styles.menu}`}
         style={{
-          width: (this.props.leftSidebar - this.props.leftMin),
-          height: this.props.chartHeight,
+          width: `calc(${this.props.leftSidebar - this.props.leftMin}px ${this.props.spotlight ? '- 0.2em' : ''})`,
+          height: this.props.spotlight ? 168 :this.props.chartHeight,
+          margin: this.props.spotlight ? '0.1em' : null,
+          minWidth: this.props.spotlight ? '0' : null
         }}
       >
         {items}
@@ -172,6 +174,10 @@ export default class SideMenu extends Component {
               toolTipTitle={<div>
                 {this.props.helpText || defaultHelpText}
                 </div>}
+              style={{
+                position: 'fixed',
+                transform: 'translateY(-1.5em)'
+              }}
               >
               <div
                 role="button"
