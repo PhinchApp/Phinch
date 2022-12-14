@@ -904,24 +904,20 @@ export default class Filter extends Component {
                 </div>
               </div>
             </SpotlightWithToolTip>
-            <SpotlightWithToolTip
-              isActive={this.state.counter == 6}
-              toolTipPlacement="bottomRight"
-                >
-                <div className={styles.headingRow}>
-                  <div
-                    className={styles.spacer}
-                    style={{
-                      width: (
-                        this.metrics.leftSidebar + this.metrics.filterWidth + (
-                          this.metrics.padding * 5
-                          )
-                          ) - 100,
-                        }}
-                        />
-                  {this.renderHeader()}
-                </div>
-              </SpotlightWithToolTip>
+
+            <div className={styles.headingRow}>
+              <div
+                className={styles.spacer}
+                style={{
+                  width: (
+                    this.metrics.leftSidebar + this.metrics.filterWidth + (
+                      this.metrics.padding * 5
+                      )
+                      ) - 100,
+                    }}
+                    />
+              {this.renderHeader()}
+            </div>
           </div>
         </div>
         <div style={{ position: 'inherit', backgroundColor: '#fdfdfa', color: '#808080' }}>
