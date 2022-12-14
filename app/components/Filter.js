@@ -862,7 +862,7 @@ export default class Filter extends Component {
               isActive={this.state.counter == 3}
               inheritParentBackgroundColor={false}
               toolTipPlacement="bottomRight"
-              toolTipTitle={<div>
+              toolTipTitle={<div style={{ marginRight: '1em'}}>
                 The uploaded data file can be explored through a number{' '}
                 of distinct visualization types.
                 <br /><br />

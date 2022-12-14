@@ -13,7 +13,7 @@ export default class StackedBar extends Component {
       <SpotlightWithToolTip
         isActive={this.props.helping}
         toolTipPlacement="bottomRight"
-        toolTipTitle={<div>
+        toolTipTitle={<div style={{marginRight: '1em'}}>
           On the top right corner, there is an overview information about the data file uploaded.
           <br /><br />
           ‘Observations’ refer to the data points in the uploaded sample matrix.{' '}
