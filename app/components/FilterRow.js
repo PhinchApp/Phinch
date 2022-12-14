@@ -34,7 +34,7 @@ export default class FilterRow extends Component {
           onClick={this.props.restoreDatum}
           onKeyPress={e => (e.key === ' ' ? this.props.restoreDatum() : null)}
         >
-          <div className={styles.delete}>
+          <div className={styles.restore}>
             <img src={restoreRowImage} alt="restore" />
           </div>
         </div>
