@@ -115,15 +115,20 @@
   cursor: pointer;
   background: url('../images/arrowDown.png') 0 0 no-repeat;
   z-index: 2;
+  background-size: contain;
 }
 .expand:hover {
   background: url('../images/arrowDownHover.png') 0 0px no-repeat;
+  background-size: contain;
+
 }
 .expand.expanded {
   background: url('../images/arrowUp.png') 0 0 no-repeat;
+  background-size: contain;
 }
 .expand.expanded:hover {
   background: url('../images/arrowUpHover.png') 0 0px no-repeat;
+  background-size: contain;
 }
 .expand img {
   width: 10px;

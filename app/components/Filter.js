@@ -21,7 +21,7 @@ import back from 'images/back.svg';
 import save from 'images/save.svg';
 import needHelp from 'images/needHelpDefault.png';
 import needHelpHover from 'images/needHelpHover.png';
-import closeHelp from 'images/closeHelpHP.svg';
+import closeHelp from 'images/closeHelp.png';
 
 import help1 from 'images/help1.svg';
 import help1Hover from 'images/help1Hover.svg';
