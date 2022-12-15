@@ -199,7 +199,7 @@ export default class Vis extends Component {
         min: 27,
         max: 121,
       },
-      rightSidebar: 216,
+      rightSidebar: 236,
       debounce: 350,
     };
 
@@ -698,7 +698,7 @@ export default class Vis extends Component {
             fill={this.scales.c(k)}
             handle={this.scales.c(k)}
             data={this.state.filters[k]}
-            width={this.metrics.rightSidebar - (this.metrics.padding * 3.25)}
+            width={this.metrics.rightSidebar - (this.metrics.padding * 4.25)}
             height={this.metrics.rightSidebar / 4}
             filters={this.state.filters}
             update={updateFilters}
