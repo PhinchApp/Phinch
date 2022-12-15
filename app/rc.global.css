@@ -57,6 +57,14 @@
 .rc-slider-handle:hover {
   border-color: #2b2b2b;
 }
+.rc-slider.simpleHandles .rc-slider-handle {
+  border-color: #000;
+  box-shadow: 0 0 0 2px #000;
+}
+.rc-slider.simpleHandles .rc-slider-handle:hover {
+  border-color: #000;
+}
+
 
 .rc-slider-handle:active {
   /* border-color: #2b2b2b;

@@ -157,10 +157,14 @@ export default class FilterChart extends Component {
         {range}
       </div>
     ) : <div />;
-    const style = { width: (this.props.width - (this.padding * 2)), margin: '0 24px', };
+    const style = {
+        width: (this.props.width - (this.padding * 2)),
+        margin: this.props.noMargin ? '0 8px' : '0 24px',
+    };
     const brush = filter.expanded ? (
       <div style={style}>
         <Range
+          className={this.props.simpleHandles ? 'simpleHandles' : ''}
           min={this.xscale(0)}
           max={this.xscale(this.props.data.values.length)}
           marks={marks}
@@ -175,7 +179,7 @@ export default class FilterChart extends Component {
       </div>
     ) : '';
     const scaleToggle = this.props.showScale ? (
-      <div>
+      <div style={{ marginTop: '2em'}}>
         <div className={styles.toggleLabel}>
           Percentage
         </div>
@@ -184,7 +188,7 @@ export default class FilterChart extends Component {
           icons={false}
           defaultChecked={this.props.data.log}
           onChange={() => this.props.toggleLog(this.props.name)}
-          style={{backgroundColor: "#b2b2b2 !important", height: "12px !important", }}
+          style={{backgroundColor: "red !important", height: "12px !important", }}
         />
         <div className={styles.toggleLabel}>
           Log Scale
@@ -194,10 +198,14 @@ export default class FilterChart extends Component {
     const taxa = this.props.name.split(',');
     const name = taxa[taxa.length - 1].replace(/[a-zA-Z]__/g, '');
     const circle = this.props.showCircle ? (
-      <div className={gstyle.circle} style={{ verticalAlign: 'top', background: this.props.fill }} />
+      <div className={gstyle.circle} style={{ verticalAlign: 'middle', background: this.props.fill,
+      transform: 'scale(1.1)',
+      marginRight: '0.5em',
+      border: 'none',
+    }} />
     ) : '';
     return (
-      <div className={styles.filterChart}>
+      <div className={styles.filterChart} style={{ paddingBottom: this.props.noMargin ? '0.5rem' : null}}>
         {circle}
         {remove}
         <div
@@ -217,6 +225,9 @@ export default class FilterChart extends Component {
           className={styles.svg}
           onMouseOut={() => { document.addEventListener('mousemove', null); }}
           onBlur={() => {}}
+          style={{
+            margin: this.props.noMargin ? '0 8px' : null
+          }}
         >
           {bars}
         </svg>

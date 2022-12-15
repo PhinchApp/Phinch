@@ -12,6 +12,7 @@
   font-weight: 500;
   overflow: visible;
   color: #ccc;
+  white-space: nowrap;
 }
 
 .svg {

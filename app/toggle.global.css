@@ -36,26 +36,26 @@
 }
 
 .react-toggle-track {
-  width: 44px;
+  width: 34px;
   height: 18px;
   padding: 0;
   border-radius: 9px;
-  background-color: #262626;
+  background-color: #888E8D;
   -webkit-transition: all 0.2s ease;
   -moz-transition: all 0.2s ease;
   transition: all 0.2s ease;
 }
 
 .react-toggle--checked .react-toggle-track {
-  background-color: #262626;
+  background-color: #888E8D;
 }
 
 .react-toggle:hover:not(.react-toggle--disabled) .react-toggle-track {
-  background-color: #000;
+  background-color: #888E8D;
 }
 
 .react-toggle--checked:hover:not(.react-toggle--disabled) .react-toggle-track {
-  background-color: #262626;
+  background-color: #888E8D;
 }
 
 .react-toggle-track-check {
@@ -119,17 +119,17 @@
 }
 
 .react-toggle--checked .react-toggle-thumb {
-  left: 27px;
+  left: 17px;
 }
 
 .react-toggle--focus .react-toggle-thumb {
-  -webkit-box-shadow: 0 0 3px 2px #F09E6A;
+  /* -webkit-box-shadow: 0 0 3px 2px #F09E6A;
   -moz-box-shadow: 0 0 3px 2px #F09E6A;
-  box-shadow: 0 0 2px 3px #F09E6A;
+  box-shadow: 0 0 2px 3px #F09E6A; */
 }
 
 .react-toggle:active:not(.react-toggle--disabled) .react-toggle-thumb {
-  -webkit-box-shadow: 0 0 5px 5px #F09E6A;
-  -moz-box-shadow: 0 0 5px 5px #F09E6A;
-  box-shadow: 0 0 5px 5px #F09E6A;
+    /* -webkit-box-shadow: 0 0 5px 5px #F09E6A;
+    -moz-box-shadow: 0 0 5px 5px #F09E6A;
+    box-shadow: 0 0 5px 5px #F09E6A; */
 }

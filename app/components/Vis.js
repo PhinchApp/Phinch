@@ -686,9 +686,8 @@ export default class Vis extends Component {
         <div
           key={k}
           style={{
-            display: 'inline-block',
-            borderBottom: '1px solid #262626',
-            margin: '0.5rem',
+            borderBottom: '1px solid #000',
+            margin: '0.5rem 1rem 0',
           }}
         >
           <FilterChart
@@ -698,13 +697,15 @@ export default class Vis extends Component {
             fill={this.scales.c(k)}
             handle={this.scales.c(k)}
             data={this.state.filters[k]}
-            width={this.metrics.rightSidebar - (this.metrics.padding * 4.25)}
+            width={this.metrics.rightSidebar - (this.metrics.padding * 4)}
             height={this.metrics.rightSidebar / 4}
             filters={this.state.filters}
             update={updateFilters}
             remove={this.removeFilter}
             toggleLog={this.toggleLog}
             callback={this.applyFilters}
+            noMargin
+            simpleHandles
           />
         </div>
       ));
@@ -714,9 +715,9 @@ export default class Vis extends Component {
           style={{
             borderTop: '1px solid #262626',
             position: 'fixed',
-            width: this.state.showRightSidebar ? this.metrics.rightSidebar : 0,
+            width: this.state.showRightSidebar ? this.metrics.rightSidebar + 10 : 0,
             height: this.metrics.chartHeight + (this.metrics.lineHeight * 2),
-            background: "#2d2f21",
+            background: "#2D2F31",
           }}
         >
           {segments}
@@ -1550,9 +1551,9 @@ export default class Vis extends Component {
                 {visType === 'sankey' ?
                   null :
                   <React.Fragment>
-                    {this.levels.length ? spacer : null}
+                    {this.levels.length ? <div className={styles.spacer} style={{ marginLeft: '8px'}} /> : null}
                     {this.renderAttributesSelect()}
-                    {spacer}
+                    <div className={styles.spacer} style={{ marginRight: '12px'}} />
                     {this.renderTagFilter()}
                   </React.Fragment>
                 }
