@@ -125,10 +125,10 @@ export default class SideMenu extends Component {
   /*This function deals with the mouse leaving an icon (no longer hovering) and
   changed img src to correct svg file */
   handleMouseLeave () {
-    if(this.state.sideMenuToggle === sideMenuToggleHover) {
-      this.setState({ sideMenuToggle: sideMenuToggle });
-      this.setState({ closeMenu: sideMenuToggleClose });
-    }
+    // if(this.state.sideMenuToggle === sideMenuToggleHover) {
+    //   this.setState({ sideMenuToggle: sideMenuToggle });
+    //   this.setState({ closeMenu: sideMenuToggleClose });
+    // }
   }
 
   render() {
@@ -182,14 +182,14 @@ export default class SideMenu extends Component {
               <div
                 role="button"
                 tabIndex={0}
-                className={`${styles.menuToggle}`}
+                className={`${styles.menuToggle} ${this.props.showLeftSidebar ? styles.closeMenu : styles.openMenu}`}
                 onClick={this.props.toggleMenu}
                 onKeyPress={e => (e.key === ' ' ? this.props.toggleMenu() : null)}
                 onMouseEnter={() => this.handleMouseOver()}
                 onMouseLeave={() => this.handleMouseLeave()}
               >
-                {this.props.showLeftSidebar ? <img src={this.state.closeMenu} alt="arrow-toggle-menu-hover" />
-                : <img src={this.state.sideMenuToggle} alt="arrow-toggle-menu" />}
+                {/* {this.props.showLeftSidebar ? <img src={this.state.closeMenu} alt="arrow-toggle-menu-hover" />
+                : <img src={this.state.sideMenuToggle} alt="arrow-toggle-menu" />} */}
               </div>
             </SpotlightWithToolTip>
           </div>
