@@ -1592,15 +1592,25 @@ export default class Vis extends Component {
           helpText="Paragraph to mention about the save, back and export features again in sankey visualization."
         />
         <SpotlightWithToolTip
-          isActive={this.state.helpCounter === 2 && visType === 'stackedbar'}
-          toolTipPlacement="topLeft"
-          overlayStyle={{maxWidth: "850px"}}
+          isActive={(this.state.helpCounter === 2 || this.state.helpCounter === 4 )&& visType === 'stackedbar'}
+          toolTipPlacement={ this.state.helpCounter === 2 ? "topLeft" : "bottomLeft"}
+          overlayStyle={{maxWidth: "950px"}}
 
           toolTipTitle={
-            <div>
-              The graphs are visualized based on users’ setting on data filtering page, which means the actions taken previously will affect the visualisation shown here.
-              The top sequences box below shows the most abundant observations in your TOTAL dataset, with numerical values calculated after filter page settings have been applied.
-            </div>
+            this.state.helpCounter === 2 ? (
+              <div>
+                The graphs are visualized based on users’ setting on data filtering page, which means the actions taken previously will affect the visualisation shown here.
+                The top sequences box below shows the most abundant observations in your TOTAL dataset, with numerical values calculated after filter page settings have been applied.
+              </div>
+            ) : this.state.helpCounter === 4 ? (
+              <div>
+                By hovering on the sample, you will see “EDIT TAG” and “ARCHIVE” for each individual sample. The tags can only be removed on this level (no attributes selected), which means it will not be editable under single attribute or on taxonomic levels.
+                <br /><br />
+                The visuals displayed can be updated by tag filter menu on the top right. When there is any tag selected, the “tags” will be highlighted in orange and selected tags will be shown in full opacity.
+                <br /><br />
+                The end user can edit and customize all text labels for each tag by double-clicking its texts in the dropdown menu. Tags are used for labelling samples, and multiple tags can be attached to any given sample.
+              </div>
+            ) : null
           }
         >
           <div
@@ -1615,7 +1625,7 @@ export default class Vis extends Component {
                 style={{
                   width: this.metrics.chartWidth + (this.metrics.nonbarWidth - this.metrics.padding),
                   height: this.metrics.lineHeight * 2,
-                  top: visType === 'stackedbar' && this.state.helpCounter === 2 ? '0' : null,
+                  top: visType === 'stackedbar' && (this.state.helpCounter === 2 || this.state.helpCounter === 4) ? '0' : null,
                 }}
               >
                 <svg
@@ -1660,8 +1670,9 @@ export default class Vis extends Component {
                 backgroundColor: '#ffffff',
                 width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
                 height: this.metrics.chartHeight -
-                  (this.state.helpCounter === 2 && visType === 'stackedbar' ?
-                  100 : 0),
+                  (this.state.helpCounter === 2 && visType === 'stackedbar' ? 100 :
+                   this.state.helpCounter === 4 && visType === 'stackedbar' ? this.metrics.chartHeight / 2
+                   : 0),
 
               }}
             >
