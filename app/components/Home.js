@@ -373,8 +373,8 @@ export default class Home extends Component {
                 onKeyPress={e => (e.key === ' ' ? this.edit() : null)}
                 onMouseEnter={() => this.handleMouseOver("edit")}
                 onMouseLeave={() => this.handleMouseLeave("edit")}
-                style={{ padding: this.state.help4 ? '0.5em' : null,
-                  transform: this.state.help4 ? 'translate(0.5em,  -0.5em)' : null
+                style={{ padding: this.state.help4 || this.state.help3 ? '0.5em' : null,
+                  transform: this.state.help4 || this.state.help3 ? 'translate(0.5em,  -0.5em)' : null
               }}
               >
                 <img src={this.state.iconSRC} alt="edit" />
