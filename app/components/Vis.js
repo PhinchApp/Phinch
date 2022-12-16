@@ -1476,6 +1476,7 @@ export default class Vis extends Component {
 
     const visType = this.props.match.params.visType || 'stackedbar';
     this._visType = visType;
+    // console.log(this.state.helpCounter === 1, visType === 'stackedbar', this.state.helpCounter === 1 && visType === 'stackedbar', this.state.helpCounter, visType)
     return (
       <div className={gstyle.container}>
         {redirect}
@@ -1497,70 +1498,87 @@ export default class Vis extends Component {
         <div
           className={`${gstyle.header} ${gstyle.darkbgscrollbar}`}
           style={{
-            zIndex: visType === 'stackedbar' ? 2000 :
+            zIndex: visType === 'stackedbar' ?
+              (this.state.helpCounter === 0 || this.state.helpCounter === 3 ? 2000 : 1000) :
               visType === 'sankey' ?
-                this.state.helpCounter === 2 ? 2000 : 1000
-                : 2000
-              }}>
+              this.state.helpCounter === 2 ? 2000 : 1000
+              : 2000
+            }}>
           <Summary
             summary={this.state.summary}
             observations={this.state.observations}
             datalength={this.state.data.length}
             opacity={this.state.helpCounter === 0 ? 1 : 0.2}
           />
-          <div className={styles.controls}>
-            <div className={styles.controlRow} style={{
-              opacity: this.state.helpCounter === 0? 1 : 0.2
-            }}>
-              {
-                visType === 'stackedbar' ? <React.Fragment>
-                {this.renderSearch()}
-                {this.renderShow()}
-                {this.renderSort()}
-                {spacer}
-                {this.renderToggle()}
-              </React.Fragment> : visType === 'sankey' ? <React.Fragment>
-                {this.renderSearch()}
-                <div className={styles.inlineControl}>
-                  <label htmlFor='sankeyColors'>
-                    Link Colors:{' '}
-                    <select
-                      id='sankeyColors'
-                      value={this.state.sankeyColors}
-                      onChange={e => this.setState({ sankeyColors: e.target.value })}
-                    >
-                      {/* <option value="mix">mix</option> */}
-                      <option value="left">left</option>
-                      <option value="right">right</option>
-                    </select>
-                  </label>
+          <SpotlightWithToolTip
+            isActive={visType === 'stackedbar' && this.state.helpCounter === 3}
+            toolTipPlacement='bottomLeft'
+            overlayStyle={{maxWidth: "850px", zIndex: '10000'}}
+            toolTipTitle={<div>
+              Further editing or filtering can be carried out using the buttons and dropdown menus on the top panel. Any change made here will impact how the underlying data is summarized and visualized.
+              <br /><br />
+              Current selections and options will be highlighted in orange (activated), and those not editable or selectable will be greyed out (inactivated).
+            </div>}
+          >
+            <div className={styles.controls}>
+              <div className={styles.controlRow} style={{
 
-                </div>
+                opacity: visType === 'stackedbar' && this.state.helpCounter === 3 ?
+                  1 : this.state.helpCounter === 0? 1 : 0.2
+              }}>
+                {
+                  visType === 'stackedbar' ? <React.Fragment>
+                  {this.renderSearch()}
+                  {this.renderShow()}
+                  {this.renderSort()}
+                  {spacer}
+                  {this.renderToggle()}
+                </React.Fragment> : visType === 'sankey' ? <React.Fragment>
+                  {this.renderSearch()}
+                  <div className={styles.inlineControl}>
+                    <label htmlFor='sankeyColors'>
+                      Link Colors:{' '}
+                      <select
+                        id='sankeyColors'
+                        value={this.state.sankeyColors}
+                        onChange={e => this.setState({ sankeyColors: e.target.value })}
+                      >
+                        {/* <option value="mix">mix</option> */}
+                        <option value="left">left</option>
+                        <option value="right">right</option>
+                      </select>
+                    </label>
 
-              </React.Fragment> : null
-            }
-            </div>
-            <SpotlightWithToolTip
-              isActive={this.state.helpCounter === 2}
-              style={{ boxShadow: 'rgba(255, 255, 255, 0.4) 0 0 10px 3px',
-                borderBottomLeftRadius: '0',
-                borderBottomRightRadius: '0',
-              }}
-            >
-              <div className={styles.controlRow}>
-                {this.renderLevelSelector(this.levels, dataLength)}
-                {visType === 'sankey' ?
-                  null :
-                  <React.Fragment>
-                    {this.levels.length ? <div className={styles.spacer} style={{ marginLeft: '8px'}} /> : null}
-                    {this.renderAttributesSelect()}
-                    <div className={styles.spacer} style={{ marginRight: '12px'}} />
-                    {this.renderTagFilter()}
-                  </React.Fragment>
-                }
+                  </div>
+
+                </React.Fragment> : null
+              }
               </div>
-            </SpotlightWithToolTip>
-          </div>
+              <SpotlightWithToolTip
+                isActive={this.state.helpCounter === 2 && visType === 'sankey'}
+                style={{ boxShadow: 'rgba(255, 255, 255, 0.4) 0 0 10px 3px',
+                  // borderBottomLeftRadius: '0',
+                  // borderBottomRightRadius: '0',
+                }}
+              >
+                <div className={styles.controlRow}
+                  style={{
+                    paddingBottom: '0.5rem'
+                  }}>
+                  {this.renderLevelSelector(this.levels, dataLength)}
+                  {visType === 'sankey' ?
+                    null :
+                    <React.Fragment>
+                      {this.levels.length ? <div className={styles.spacer} style={{ marginLeft: '8px'}} /> : null}
+                      {this.renderAttributesSelect()}
+                      <div className={styles.spacer} style={{ marginRight: '12px'}} />
+                      {this.renderTagFilter()}
+                    </React.Fragment>
+                  }
+                </div>
+              </SpotlightWithToolTip>
+            </div>
+          </SpotlightWithToolTip>
         </div>
 
         <SideMenu
@@ -1573,118 +1591,135 @@ export default class Vis extends Component {
           spotlight={this.state.helpCounter === 6}
           helpText="Paragraph to mention about the save, back and export features again in sankey visualization."
         />
-        <div
-          className={classNames(gstyle.panel,  gstyle.noscrollbar)}
-          style={{
-            width: this.metrics.chartWidth + this.metrics.nonbarWidth,
-          }}
+        <SpotlightWithToolTip
+          isActive={this.state.helpCounter === 2 && visType === 'stackedbar'}
+          toolTipPlacement="topLeft"
+          overlayStyle={{maxWidth: "850px"}}
+
+          toolTipTitle={
+            <div>
+              The graphs are visualized based on users’ setting on data filtering page, which means the actions taken previously will affect the visualisation shown here.
+              The top sequences box below shows the most abundant observations in your TOTAL dataset, with numerical values calculated after filter page settings have been applied.
+            </div>
+          }
         >
-          { visType === 'stackedbar' ? (
-            <div
-              className={styles.axis}
-              style={{
-                width: this.metrics.chartWidth + (this.metrics.nonbarWidth - this.metrics.padding),
-                height: this.metrics.lineHeight * 2,
-              }}
+          <div
+            className={classNames(gstyle.panel,  gstyle.noscrollbar)}
+            style={{
+              width: this.metrics.chartWidth + this.metrics.nonbarWidth,
+            }}
             >
-              <svg
-                fontFamily="Open Sans"
-                fontWeight="200"
-                fontSize="12px"
+            { visType === 'stackedbar' ? (
+              <div
+                className={styles.axis}
                 style={{
-                  position: 'absolute',
-                  left: 0,
-                  pointerEvents: 'none',
-                  width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
-                  height: this.metrics.chartHeight,
+                  width: this.metrics.chartWidth + (this.metrics.nonbarWidth - this.metrics.padding),
+                  height: this.metrics.lineHeight * 2,
+                  top: visType === 'stackedbar' && this.state.helpCounter === 2 ? '0' : null,
                 }}
               >
-                {ticks}
-              </svg>
+                <svg
+                  fontFamily="Open Sans"
+                  fontWeight="200"
+                  fontSize="12px"
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    pointerEvents: 'none',
+                    width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
+                    height: this.metrics.chartHeight,
+                  }}
+                >
+                  {ticks}
+                </svg>
+                {
+                  isAttribute ? (
+                    <div className={styles.attrInfo}>
+                      <div className={styles.attrLabel}>
+                        {this.attribute.key} {this.attribute.unit ? `(${this.attribute.unit})` : ''}
+                      </div>
+                      <div
+                        role="button"
+                        tabIndex={0}
+                        className={styles.attrToggle}
+                        onClick={this.toggleEmptyAttrs}
+                        onKeyPress={e => (e.key === ' ' ? this.toggleEmptyAttrs() : null)}
+                      >
+                        {`${this.state.showEmptyAttrs ? 'Hide' : 'Show'} Empty`}
+                      </div>
+                    </div>
+                  ) : ''
+                }
+              </div>
+            ) : null }
+            <div
+              className={classNames(gstyle.panel,  gstyle.noscrollbar, {
+                [gstyle.panelNoYScroll]: visType === 'sankey'
+              })}
+              style={{
+                backgroundColor: '#ffffff',
+                width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
+                height: this.metrics.chartHeight -
+                  (this.state.helpCounter === 2 && visType === 'stackedbar' ?
+                  100 : 0),
+
+              }}
+            >
               {
-                isAttribute ? (
-                  <div className={styles.attrInfo}>
-                    <div className={styles.attrLabel}>
-                      {this.attribute.key} {this.attribute.unit ? `(${this.attribute.unit})` : ''}
-                    </div>
-                    <div
-                      role="button"
-                      tabIndex={0}
-                      className={styles.attrToggle}
-                      onClick={this.toggleEmptyAttrs}
-                      onKeyPress={e => (e.key === ' ' ? this.toggleEmptyAttrs() : null)}
-                    >
-                      {`${this.state.showEmptyAttrs ? 'Hide' : 'Show'} Empty`}
-                    </div>
-                  </div>
-                ) : ''
-              }
-            </div>
-          ) : null }
-          <div
-            className={classNames(gstyle.panel,  gstyle.noscrollbar, {
-              [gstyle.panelNoYScroll]: visType === 'sankey'
-            })}
-            style={{
-              backgroundColor: '#ffffff',
-              width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
-              height: this.metrics.chartHeight,
-            }}
-          >
-            {
-              this.state.renderSVG && visType === 'stackedbar' ? (
-                <StackedBarsSVG
-                  setRef={r => { this._svg = r; }}
-                  id={this.state.summary.path.slice(-1)}
-                  svgWidth={this.metrics.chartWidth + this.metrics.nonbarWidth}
-                  svgHeight={svgHeight}
-                  seqHeight={this.metrics.sequenceRowHeight * this.topSequences.length}
-                  data={isAttribute ? this.attribute.displayValues : this.state.data}
-                  row={isAttribute ? this.attrRow : this.stackRow}
-                  itemSize={this.metrics.barContainerHeight + (
-                    this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
-                  )}
-                  padding={this.metrics.padding}
-                  ticks={ticks}
-                  topSequences={this.renderTopSequences()}
-                />
-              ) : (
-                visType === 'stackedbar' ?
-                  <List
-                    className={`${styles.svglist}`}
-                    innerElementType="svg"
-                    width={this.metrics.chartWidth + this.metrics.nonbarWidth}
-                    height={this.metrics.chartHeight - (this.metrics.padding * 4)}
+                this.state.renderSVG && visType === 'stackedbar' ? (
+                  <StackedBarsSVG
+                    setRef={r => { this._svg = r; }}
+                    id={this.state.summary.path.slice(-1)}
+                    svgWidth={this.metrics.chartWidth + this.metrics.nonbarWidth}
+                    svgHeight={svgHeight}
+                    seqHeight={this.metrics.sequenceRowHeight * this.topSequences.length}
+                    data={isAttribute ? this.attribute.displayValues : this.state.data}
+                    row={isAttribute ? this.attrRow : this.stackRow}
                     itemSize={this.metrics.barContainerHeight + (
                       this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
                     )}
-                    itemCount={dataLength}
-                    itemKey={index => (isAttribute
-                      ? this.attribute.displayValues[index].name : this.state.data[index].sampleName
-                    )}
-                  >
-                    {isAttribute ? this.attrRow : this.stackRow}
-                  </List>
-                : visType === 'sankey' ?
-                  <Sankey
-                    setRef={r => { this._svg = r; }}
-
-                    data={this.state.data} preData={this.state.preData}
-                    width={this.metrics.chartWidth + this.metrics.nonbarWidth}
-                    height={this.metrics.chartHeight}
-                    colors={this.state.sankeyColors}
-                    renderSVG={this.state.renderSVG}
-                    helpCounter={this.state.helpCounter}
-                    clickDatum={this._clickDatum}
-                    colorScale={this.scales.c || (() => {})}
-                    highlightedDatum={this.state.highlightedDatum}
+                    padding={this.metrics.padding}
+                    ticks={ticks}
+                    topSequences={this.renderTopSequences()}
                   />
-                : null
-              )
+                ) : (
+                  visType === 'stackedbar' ?
+                    <List
+                      className={`${styles.svglist}`}
+                      innerElementType="svg"
+                      width={this.metrics.chartWidth + this.metrics.nonbarWidth}
+                      height={this.metrics.chartHeight - (this.metrics.padding * 4)}
+                      itemSize={this.metrics.barContainerHeight + (
+                        this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
+                      )}
+                      itemCount={dataLength}
+                      itemKey={index => (isAttribute
+                        ? this.attribute.displayValues[index].name : this.state.data[index].sampleName
+                      )}
+                    >
+                      {isAttribute ? this.attrRow : this.stackRow}
+                    </List>
+                  : visType === 'sankey' ?
+                    <Sankey
+                      setRef={r => { this._svg = r; }}
 
-            }
+                      data={this.state.data} preData={this.state.preData}
+                      width={this.metrics.chartWidth + this.metrics.nonbarWidth}
+                      height={this.metrics.chartHeight}
+                      colors={this.state.sankeyColors}
+                      renderSVG={this.state.renderSVG}
+                      helpCounter={this.state.helpCounter}
+                      clickDatum={this._clickDatum}
+                      colorScale={this.scales.c || (() => {})}
+                      highlightedDatum={this.state.highlightedDatum}
+                    />
+                  : null
+                )
+
+              }
+            </div>
           </div>
-        </div>
+        </SpotlightWithToolTip>
         {this.renderFilters()}
         {tooltip}
         <Modal
