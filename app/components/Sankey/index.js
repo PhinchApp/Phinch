@@ -572,6 +572,8 @@ export default function Sankey(props) {
               zIndex: 20000,
               overflow: 'visible',
             }}
+            style={{ boxShadow: 'none'}}
+
             toolTipTitle={<div style={{
 
               }}>

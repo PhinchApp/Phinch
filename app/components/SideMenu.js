@@ -138,9 +138,10 @@ export default class SideMenu extends Component {
         className={`${gstyle.panel} ${styles.menu}`}
         style={{
           width: `calc(${this.props.leftSidebar - this.props.leftMin}px ${this.props.spotlight ? '- 0.2em' : ''})`,
-          height: this.props.spotlight ? 168 :this.props.chartHeight,
+          height: this.props.spotlight ? 160 :this.props.chartHeight,
           margin: this.props.spotlight ? '0.1em' : null,
-          minWidth: this.props.spotlight ? '0' : null
+          minWidth: this.props.spotlight ? '0' : null,
+          overflow: this.props.spotlight ? 'hidden' : null,
         }}
       >
         {items}
