@@ -419,6 +419,10 @@ export default class NewProject extends Component {
             </Link>
             <button
               className={styles.help}
+              style={{
+                visibility: 'hidden',
+                pointerEvents: 'none',
+              }}
               // on click command is still undefined outside of home page, set to issues page for now until later
               onClick={() => shell.openExternal('https://github.com/PhinchApp/Phinch/issues')}
                   onMouseEnter={() => this.handleMouseOver("help")}

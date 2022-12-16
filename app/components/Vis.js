@@ -1337,6 +1337,7 @@ export default class Vis extends Component {
       <div className={gstyle.helpIcons}>
         <div
         role="button"
+        style={{ marginRight: '4em'}}
         className={gstyle.helpIcons}
         onClick={() => {this.setState({ helpCounter: 0 }); this.forceUpdate();} }
         >
@@ -1740,7 +1741,7 @@ export default class Vis extends Component {
           inheritParentBackgroundColor={false}
           toolTipTitle={"* mouse click anywhere to advance"}
           overlayStyle={{zIndex: '1001'}}
-          innerStyle={{color: 'white', fontWeight: '600', fontSize: '10px'}}
+          innerStyle={{color: 'white', fontWeight: '400', fontSize: '14px'}}
           style={{boxShadow: 'none'}}
         >
           <div className={gstyle.helpButtons}>

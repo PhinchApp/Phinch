@@ -258,8 +258,8 @@
 
 .helpButtons {
   position: fixed !important;
-  bottom: 50px;
-  left: 0;
+  bottom: 25px;
+  left: 10px;
   width: fit-content;
 }
 

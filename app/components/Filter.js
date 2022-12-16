@@ -666,6 +666,7 @@ export default class Filter extends Component {
         <div
         role="button"
         className={gstyle.helpIcons}
+        style={{ marginRight: '4em'}}
         onClick={() => {this.setState({ counter: 0 }); this.forceUpdate(); this.deleteBackdropTooltip()} }
         >
           <img src={closeHelp} alt="close-walkthrough" />
@@ -1044,7 +1045,7 @@ export default class Filter extends Component {
             inheritParentBackgroundColor={false}
             toolTipTitle={" *mouse click anywhere to advance"}
             overlayStyle={{zIndex: '1001'}}
-            innerStyle={{color: 'white', fontWeight: '600', fontSize: '10px'}}
+            innerStyle={{color: 'white', fontWeight: '400', fontSize: '14px'}}
             style={{boxShadow: 'none'}}
           >
             <div className={gstyle.helpButtons}>
