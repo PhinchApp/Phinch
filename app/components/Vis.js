@@ -1499,7 +1499,11 @@ export default class Vis extends Component {
           className={`${gstyle.header} ${gstyle.darkbgscrollbar}`}
           style={{
             zIndex: visType === 'stackedbar' ?
-              (this.state.helpCounter === 0 || this.state.helpCounter === 3 ? 2000 : 1000) :
+              (
+                this.state.helpCounter === 0 ||
+                this.state.helpCounter === 3 ||
+                this.state.helpCounter === 5 ? 2000 : 1000
+              ) :
               visType === 'sankey' ?
               this.state.helpCounter === 2 ? 2000 : 1000
               : 2000
@@ -1522,17 +1526,39 @@ export default class Vis extends Component {
           >
             <div className={styles.controls}>
               <div className={styles.controlRow} style={{
-
-                opacity: visType === 'stackedbar' && this.state.helpCounter === 3 ?
-                  1 : this.state.helpCounter === 0? 1 : 0.2
+                display: 'flex',
+                opacity: visType === 'stackedbar' && (
+                  this.state.helpCounter === 3 ||
+                  this.state.helpCounter === 5
+                ) ? 1 : this.state.helpCounter === 0 ? 1 : 0.2
               }}>
                 {
                   visType === 'stackedbar' ? <React.Fragment>
-                  {this.renderSearch()}
-                  {this.renderShow()}
-                  {this.renderSort()}
-                  {spacer}
-                  {this.renderToggle()}
+                  <SpotlightWithToolTip
+                    isActive={visType === 'stackedbar' && this.state.helpCounter === 5}
+                    toolTipPlacement='bottomLeft'
+                    toolTipTitle={<div>
+                      The search box on the top left will highlight the search result in the graph, and auto-complete based on the information contained within the uploaded file itself (e.g. so any search result that show up is a taxon/gene name (or other metadata text string) that is IN YOUR FILE).
+                      <br /><br />
+                      After clicking the search result (selecting an item in the list below the search field), the selected item will be highlighted in the main bar graph and a side bar will become activated (see next step).
+                    </div>}
+                    overlayStyle={{
+                      zIndex: '10000',
+                    }}
+                  >
+                    {this.renderSearch()}
+                  </SpotlightWithToolTip>
+                  <div
+                    style={{ display: 'flex',
+                    opacity: visType === 'stackedbar' && this.state.helpCounter === 5 ? 0.2 : null
+
+                  }}
+                  >
+                    {this.renderShow()}
+                    {this.renderSort()}
+                    {spacer}
+                    {this.renderToggle()}
+                  </div>
                 </React.Fragment> : visType === 'sankey' ? <React.Fragment>
                   {this.renderSearch()}
                   <div className={styles.inlineControl}>
@@ -1563,7 +1589,8 @@ export default class Vis extends Component {
               >
                 <div className={styles.controlRow}
                   style={{
-                    paddingBottom: '0.5rem'
+                    paddingBottom: '0.5rem',
+                    opacity: visType === 'stackedbar' && this.state.helpCounter === 5 ? 0.2 : 1,
                   }}>
                   {this.renderLevelSelector(this.levels, dataLength)}
                   {visType === 'sankey' ?
