@@ -3,8 +3,8 @@
     <g id="Layer_2" data-name="Layer 2">
         <g id="content">
             <rect x="0.28" y="0.28" width="17.43" height="17.43" rx="2" ry="2" style="fill:none" />
-            <line x1="5" y1="5.04" x2="13" y2="12.96" style="fill:none;stroke:#b2b2b2;stroke-miterlimit:10" />
-            <line x1="5" y1="12.96" x2="13" y2="5.04" style="fill:none;stroke:#b2b2b2;stroke-miterlimit:10" />
+            <line x1="5" y1="5.04" x2="13" y2="12.96" style="fill:none;stroke:#f2f2f2;stroke-miterlimit:10" />
+            <line x1="5" y1="12.96" x2="13" y2="5.04" style="fill:none;stroke:#f2f2f2;stroke-miterlimit:10" />
         </g>
     </g>
 </svg>
