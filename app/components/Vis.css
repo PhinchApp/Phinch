@@ -35,56 +35,72 @@
   padding: 0;
 }
 
-/* .menuToggle {
+.rightPanelContainer {
+  display: inline-flex;
+  position: absolute;
+  overflow: visible;
+  right: 0;
+  z-index: 10;
+}
+.rightPanelContainer.rightSidebarOpen {
+  right: 236px;
+}
+.menuToggle {
   position: relative;
   color: #fff;
-  background: #F09E6A;
-  width: 22px;
-  height: 22px;
-  border-radius: 11px;
-  font-size: 15px;
-  line-height: 15px;
-  margin: 0;
+  background: #575A5C;
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
   padding: 0;
   text-align: center;
   cursor: pointer;
-  border: 2px solid #333;
+  border: 3px solid #575A5C;
+  transition: transform 0.5s ease-in-out;
+  transform: rotate(-180deg);
+  background-size: cover;
+  background-repeat: no-repeat;
+
+
+
+}
+.buttonContainer {
+  position: absolute;
+
+  top: 0.5em;
+  right: 0;
 }
 
 .toggleSquare {
-  position: absolute;
-  background: #333;
-  width: 11px;
-  height: 22px;
+  background: #575A5C;
+  width: 9px;
+  height: 24px;
   margin: 0;
   padding: 0;
+  right: 0;
+  position: absolute;
+
+}
+.menuToggle.open {
+  right: 24px;
+
 }
 
-.menu {
-  color: #fff;
-  background: #333;
-  font-weight: 400;
-  font-size: 18px;
-  text-transform: uppercase;
+.menuToggle:hover {
+  background-color: #F09E6A;
 }
-
-.menuItem {
-  margin: 1rem;
-  color: #fff;
-  text-align: center;
+.menuToggle.closeMenu {
+  background-image: url('../images/sideMenuToggleClose.svg');
 }
-
-.menuBox {
-  margin: auto;
-  margin-bottom: 0.5rem;
-  width: 45px;
-  height: 45px;
-  background: #F09E6A;
-  padding: 9px;
-  font-size: 24px;
-  text-align: center;
-  border-radius: 8px;
-} */
+.menuToggle.closeMenu:hover {
+  background-image: url('../images/sideMenuToggleCloseHover.svg');
+}
+.menuToggle.openMenu {
+  background-image: url('../images/sideMenuToggleOpen.svg');
+}
+.menuToggle.openMenu:hover {
+  background-image: url('../images/sideMenuToggleOpenHover.svg');
+}
 
 .axis {
   position: absolute;

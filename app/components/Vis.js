@@ -74,7 +74,7 @@ import { style } from 'd3';
 export default class Vis extends Component {
   constructor(props) {
     super(props);
-    console.log(props)
+    // console.log(props)
     pageView('/vis');
 
     this.state = {
@@ -108,7 +108,7 @@ export default class Vis extends Component {
       sankeyColors: 'right',
       helpCounter: 0,
       helpButton: needHelp,
-
+      overrideRightSidebar: null
     };
 
     this._inputs = {};
@@ -223,9 +223,9 @@ export default class Vis extends Component {
       this.init = getProjectFilters(this.state.summary.path, this.state.summary.dataKey, 'vis');
       //
       this.state.names = this.init.names;
-      console.log('initial level', this.state.level)
+      // console.log('initial level', this.state.level)
       this.state.level = (this.init.level !== undefined) ? this.init.level : this.state.level;
-      console.log(this.init, this.state.level)
+      // console.log(this.init, this.state.level)
       this.filters = this.init.filters ? this.init.filters : {};
       this.state.deleted = this.init.deleted ? this.init.deleted : [];
       this.state.tags = this.init.tags ? this.init.tags : this.state.tags;
@@ -289,11 +289,14 @@ export default class Vis extends Component {
     this.applyFilters = this.applyFilters.bind(this);
     this.removeFilter = this.removeFilter.bind(this);
     this.toggleMenu = this.toggleMenu.bind(this);
+    this.toggleRightMenu = this.toggleRightMenu.bind(this);
     this.toggleLog = this.toggleLog.bind(this);
     this.countUpHelp = this.countUpHelp.bind(this);
+    this._isMounted = false
   }
 
   componentDidMount() {
+    this._isMounted = true
     window.addEventListener('resize', this.updateDimensions);
     if (this.initdata) {
       this.formatTaxonomyData(this.initdata, this.state.level, (data) => {
@@ -310,13 +313,14 @@ export default class Vis extends Component {
   componentDidUpdate() {
     if (this.state.renderSVG && !this.state.dialogVisible) {
       this.setDialogVisible();
-      console.log(this.state.summary.path)
-      console.log(this._svg)
+      // console.log(this.state.summary.path)
+      // console.log(this._svg)
       handleExportButton(_cloneDeep(this.state.summary.path), this._svg, this.exportComplete, this._visType);
     }
   }
 
   componentWillUnmount() {
+    this._isMounted = false
     clearTimeout(this.tooltip.handle);
     clearTimeout(this.timeout);
     window.removeEventListener('resize', this.updateDimensions);
@@ -505,13 +509,18 @@ export default class Vis extends Component {
     });
   }
 
-  updateChartWidth(showRightSidebar) {
+  updateChartWidth(_showRightSidebar) {
+    const showRightSidebar = (_showRightSidebar || this.state.overrideRightSidebar === 'open') && !(_showRightSidebar && this.state.overrideRightSidebar === 'close')
+    // console.log('update chart width', { _showRightSidebar, showRightSidebar, overrideRightSidebar: this.state.overrideRightSidebar })
     if (showRightSidebar) {
       this.metrics.chartWidth = window.innerWidth
         - (this.metrics.leftSidebar + this.metrics.rightSidebar + this.metrics.nonbarWidth);
     } else {
       this.metrics.chartWidth = window.innerWidth
-        - (this.metrics.leftSidebar + this.metrics.nonbarWidth);
+        - (this.metrics.leftSidebar + this.metrics.nonbarWidth );
+    }
+    if (this._isMounted) {
+      this.setState({ chartWidth: this.metrics.chartWidth })
     }
   }
 
@@ -681,8 +690,9 @@ export default class Vis extends Component {
     />
   }
   renderFilters() {
-    if (Object.keys(this.state.filters).length) {
-      const segments = Object.keys(this.state.filters).map(k => (
+    let segments = null
+    if (Object.keys(this.state.filters).length && this.state.overrideRightSidebar !== 'close') {
+      segments = Object.keys(this.state.filters).map(k => (
         <div
           key={k}
           style={{
@@ -709,22 +719,39 @@ export default class Vis extends Component {
           />
         </div>
       ));
-      return (
-        <div
-          className={`${gstyle.panel} ${gstyle.darkbgscrollbar}`}
-          style={{
-            borderTop: '1px solid #262626',
-            position: 'fixed',
-            width: this.state.showRightSidebar ? this.metrics.rightSidebar + 10 : 0,
-            height: this.metrics.chartHeight + (this.metrics.lineHeight * 2),
-            background: "#2D2F31",
-          }}
-        >
-          {segments}
-        </div>
-      );
     }
-    return null;
+    const rightSidebarOpen = (this.state.showRightSidebar || this.state.overrideRightSidebar === 'open') && !(this.state.showRightSidebar && this.state.overrideRightSidebar === 'close')
+    return (
+      <div className={classNames(gstyle.panel, gstyle.noscrollbar, styles.rightPanelContainer, { [styles.rightSidebarOpen]: rightSidebarOpen})}>
+        <div className={styles.buttonContainer}>
+          <div className={styles.toggleSquare} />
+
+          <div
+            role="button"
+            tabIndex={0}
+            className={`
+              ${styles.menuToggle}
+              ${this.state.showRightSidebar || (this.state.overrideRightSidebar === 'open'  && this.state.overrideRightSidebar !== 'close') ? styles.closeMenu : styles.openMenu}`}
+            onClick={this.toggleRightMenu}
+          />
+        </div>
+        {segments ?
+          <div
+            className={`${gstyle.panel} ${gstyle.darkbgscrollbar}`}
+            style={{
+              borderTop: '1px solid #262626',
+              position: 'fixed',
+              width: this.state.showRightSidebar || (this.state.overrideRightSidebar === 'open'  && this.state.overrideRightSidebar !== 'close') ? this.metrics.rightSidebar + 10 : 0,
+              height: this.metrics.chartHeight + (this.metrics.lineHeight * 2),
+              background: "#2D2F31",
+            }}
+          >
+            {segments}
+          </div>
+        : null}
+      </div>
+
+    );
   }
 
   toggleMenu() {
@@ -735,6 +762,19 @@ export default class Vis extends Component {
     this.setState({ showLeftSidebar }, () => {
       this.save(this.setResult);
     });
+  }
+  toggleRightMenu() {
+    let newValue = this.state.showRightSidebar ? 'close' : 'open'
+    if (newValue === this.state.overrideRightSidebar) {
+      newValue = null
+    }
+
+    this.setState({
+      overrideRightSidebar: newValue
+    }, () => {
+      this.updateChartWidth(this.state.showRightSidebar);
+    })
+
   }
 
   onSuggestionSelected(e, { suggestion }) {
@@ -1398,7 +1438,7 @@ export default class Vis extends Component {
   render() {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
     const helpButtons = this.state.counter > 0 ? this.makeHelpButtons() : '';
-
+    // console.log('render', { showRightSidebar: this.state.showRightSidebar, overrideRightSidebar: this.state.overrideRightSidebar });
     const isAttribute = (
       this.state.selectedAttribute !== ''
         &&
