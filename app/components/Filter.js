@@ -311,8 +311,8 @@ export default class Filter extends Component {
           role="button"
           tabIndex={0}
           className={styles.columnHeading}
-          // This -250 from the width is so drag and close buttons are always visible
-          style={{ width: (this.metrics.tableWidth - 250) * this.columnWidths[c.id],
+          // This -300 from the width is so drag and close buttons are always visible
+          style={{ width: (this.metrics.tableWidth - 300) * this.columnWidths[c.id],
                    textAlign: c.id === 'biomid' || c.id ==='reads' ? 'right':'left', }}
           onClick={onClick}
           onKeyPress={e => (e.key === ' ' ? onClick() : null)}
