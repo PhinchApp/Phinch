@@ -18,7 +18,9 @@
   height: 10px;
   margin-top: 3px;
 }
-
+.phinchNameInput:focus {
+  border: 1px solid black;
+}
 .restore {
   cursor: pointer;
   width: 20px;

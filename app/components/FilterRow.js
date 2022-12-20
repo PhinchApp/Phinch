@@ -8,12 +8,14 @@ import FrequencyChart from './FrequencyChart';
 
 import styles from './FilterRow.css';
 import gstyle from './general.css';
+import classNames from 'classnames';
 
 export default class FilterRow extends Component {
   constructor(props){
     super(props);
     this.state = {
       deleting: false,
+      focused: false,
     };
   }
 
@@ -23,6 +25,12 @@ export default class FilterRow extends Component {
 
   cancel = () => {
     this.setState({ deleting: false });
+  }
+  setFocus = () => {
+    this.setState({ focused: true });
+  }
+  removeFocus = () => {
+    this.setState({ focused: false });
   }
 
   render() {
@@ -145,9 +153,12 @@ export default class FilterRow extends Component {
           }}
           >
           <input
-            className={gstyle.input}
+            data-tip={this.state.focused ? null : 'Click to edit Phinch name'}
+            className={classNames(gstyle.input, styles.phinchNameInput)}
             type="text"
             value={this.props.data.phinchName}
+            onFocus={e => this.setFocus()}
+            onBlur={e => this.removeFocus()}
             onChange={(e) => this.props.updatePhinchName(e, this.props.data)}
             />
         </div>
