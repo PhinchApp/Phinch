@@ -403,6 +403,7 @@ export default class Home extends Component {
       help2= { this.state.help2 }
       help3= { this.state.help3 }
       iconSRC= { this.state.iconSRC }
+      disableEditing={ () => this.setState({ editing: false }) }
       type= 'projects'
       />;
     const flagshipProjects = FSProjectList({

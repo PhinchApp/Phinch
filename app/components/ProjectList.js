@@ -64,6 +64,7 @@ function ProjectThumb(props) {
     </div>
   );
 
+  const newOnClick = props.editing ? props.disableEditing : () => props.view(props.project);
   const onClick = props.editing ? () => {} : () => props.view(props.project);
   const name = (props.editing && !isNew) ? (
     <textarea
@@ -89,7 +90,7 @@ function ProjectThumb(props) {
         role="button"
         tabIndex={0}
         className={styles.project}
-        onClick={onClick}
+        onClick={newOnClick}
         onKeyPress={e => (e.key === ' ' ? onClick() : null)}
       >
         {icon}
@@ -162,6 +163,7 @@ export function ProjectList(props) {
     view: props.view,
     update: props.updateName,
     remove: props.remove,
+    disableEditing: props.disableEditing,
   }));
 
   return (
