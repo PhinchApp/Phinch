@@ -99,7 +99,7 @@ export default class Filter extends Component {
       helpButton: needHelp,
       deleting: false,
       counter: 0, //tracks what help step we are on to allow global click advance
-      selectedVisualization: null ,
+      selectedVisualization: 'stackedbar',
     };
 
     this.filters = DataContainer.getFilters();
@@ -186,6 +186,12 @@ export default class Filter extends Component {
         : this.init.sort.sortKey;
     }
 
+    if (this.init && this.init.selectedVisualization) {
+      const validVisuals = ['sankey', 'stackedbar', 'bubblegraph']
+      if (validVisuals.includes(this.init.selectedVisualization)) {
+        this.state.selectedVisualization = this.init.selectedVisualization
+      }
+    }
     DataContainer.setAttributes(this.state.filters);
 
     this.dragEnd = this.dragEnd.bind(this);
@@ -239,6 +245,7 @@ export default class Filter extends Component {
         sortKey: this.state.sortKey,
       },
       showLeftSidebar: true,
+      selectedVisualization: this.state.selectedVisualization,
     };
     setProjectFilters(
       this.state.summary.path,
@@ -831,6 +838,13 @@ export default class Filter extends Component {
     this.allData = this.state.data.concat(this.state.deleted);
 
     const notMac = isMac() ? '' : gstyle.notMac;
+
+    const setSelectedVisualization = (visualization) => () => {
+      this.setState({ selectedVisualization: visualization }, () => {
+        this.save(this.setResult);
+      })
+    }
+
     return (
       <div className={`${gstyle.container} ${notMac}`}>
         <Loader loading={this.state.loading} />
@@ -875,12 +889,12 @@ export default class Filter extends Component {
             >
               <div>
                 <div className={styles.visRowLabel}>Visualization Type</div>
-                <div className={styles.visOption} onClick={() => this.setState({ selectedVisualization: 'stackedbar' })}>
+                <div className={styles.visOption} onClick={setSelectedVisualization('stackedbar')}>
                   <img src={stackedbar} alt="Stacked bargraph" />
                   <div className={classNames(styles.visOptionLabel, { [styles.selected]: this.state.selectedVisualization === 'stackedbar'})}
                     id="stackedgraph" >Stacked Bargraph</div>
                 </div>
-                <div className={styles.visOption} onClick={() => this.setState({ selectedVisualization: 'sankey' })}>
+                <div className={styles.visOption} onClick={setSelectedVisualization('sankey')}>
                   <img src={sankeygraph} alt="Sankey bargraph" id="sankeygraph" />
                   <div
                     className={classNames(styles.visOptionLabel, { [styles.selected]: this.state.selectedVisualization === 'sankey'})}
