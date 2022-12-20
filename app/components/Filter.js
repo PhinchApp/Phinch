@@ -151,7 +151,6 @@ export default class Filter extends Component {
     this.state.redirect = (this.state.summary.path !== '' && this.state.summary.dataKey !== '') ? null : '/';
 
     this.init = getProjectFilters(this.state.summary.path, this.state.summary.dataKey, 'filter');
-
     // Ugly...
     this.state.showLeftSidebar = (this.init.showLeftSidebar !== undefined) ? (
       this.init.showLeftSidebar
@@ -900,7 +899,7 @@ export default class Filter extends Component {
                     className={classNames(styles.visOptionLabel, { [styles.selected]: this.state.selectedVisualization === 'sankey'})}
                   >Sankey Graph</div>
                 </div>
-                <div className={styles.futureVis}>
+                <div className={styles.futureVis} data-tip={'This visualization will be available in a future Phinch release.'}>
                   <img src={bubblegraph} alt="Bubble Graph" id="bubblegraph" />
                   <div className={styles.visOptionLabel}>Bubble Graph</div>
                 </div>

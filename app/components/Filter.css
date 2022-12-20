@@ -71,8 +71,8 @@
 }
 
 .futureVis {
-  pointer-events: none;
   opacity: 0.3;
+  cursor: default;
 }
 
 .visOptionLabel {
@@ -88,6 +88,10 @@
 .visOptionLabel:hover, .visOptionLabel.selected {
   background: #F09E6A;
   color: #000000;
+}
+.futureVis:hover .visOptionLabel {
+  background: #001226 !important;
+  color: #fff !important;
 }
 
 .visOption img,
