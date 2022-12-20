@@ -249,6 +249,14 @@
   padding: 0.25rem;
   margin-right: 0.5rem;
   cursor: pointer;
+  line-height: 1em;
+  -webkit-appearance: none;
+  padding-left: 0.5rem;
+  background-image: url('../images/greyDownArrow.png');
+  background-position: center right 0.5em;
+  background-repeat: no-repeat;
+  background-size: 0.6em;
+
 }
 
 .inlineControl select option {
