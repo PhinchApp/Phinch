@@ -96,7 +96,7 @@ export default function SankeyTooltip(props) {
   //   position.y = Math.max(position.y -= size.y, 8);
   // }
   const style = {
-    transform: `translate(${0}px, ${position.y}px)`,
+    transform: `translate(${position.x}px, ${position.y}px)`,
   };
 
   if (position.y > window.innerHeight / 2) {

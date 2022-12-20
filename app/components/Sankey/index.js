@@ -145,7 +145,7 @@ export default function Sankey(props) {
   const [scrollOffset, setScrollOffset] = useState(0)
   const [hoveredListItem, setHoveredListItem] = useState(null)
 
-  const hoverListItem = (node) => (e) => {
+  const hoverListItem = (node, hoverType = 'list') => (e) => {
     if (!node) {
       setHoveredListItem(null)
       return
@@ -154,17 +154,24 @@ export default function Sankey(props) {
     const { name, value } = node
     // const listX = listRef.current.getBoundingClientRect().x
     const containerPosition = containerRef.current.getBoundingClientRect()
+    let y = e.target.getBoundingClientRect().top
+    let x = 0
 
-    const y = e.target.getBoundingClientRect().top
+    if (hoverType === 'sankey') {
+      x = e.target.getBoundingClientRect().left -
+        listRef.current.getBoundingClientRect().left +
+        e.target.getBoundingClientRect().width + 5
+      y = e.clientY
+    }
     const position = {
-      // x: 0,
+      x,
       y: y - containerPosition.top,
     }
     const color = colorScale(node.fullName)
     if (isNaN(position.y)) {
       debugger
     }
-    setHoveredListItem({position, name, counts: value, totalCounts: depthOneSum, color})
+    setHoveredListItem({position, name, counts: value, totalCounts: depthOneSum, color, hoverType})
   }
   const onListScroll = debounce(() => {
     setHoveredListItem(null)
@@ -267,6 +274,9 @@ export default function Sankey(props) {
               fill: colorScale(node.fullName),
               stroke: 'none'
             }}
+
+            onMouseMove={hoverListItem(node, 'sankey')}
+            onMouseOut={hoverListItem(null, 'sankey')}
             data-name={node.name}
           />
       )})}
