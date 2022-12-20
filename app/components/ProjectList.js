@@ -133,11 +133,11 @@ function ProjectThumb(props) {
 function fsThumb(props) {
   const icon = (<img src={fsIcon} alt="flagship"/>);
   const onClick = () => props.view(props.project);
-  const name = (<p className={styles.name}>{props.project.summary.name}</p>);
+  const name = (<p className={styles.name}>{props.project.name}</p>);
 
   return (
     <div
-      key={`${props.project.slug}-${props.index}`}
+      key={`${props.index}`}
       role="button"
       tabIndex={0}
       className={styles.project}
@@ -181,6 +181,7 @@ export function FSProjectList(props) {
     index: i,
     view: props.view,
   }));
+  // console.log(props)
   return (
     <div className={`${styles.projects}`}>
       {projects}

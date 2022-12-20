@@ -5,7 +5,8 @@ import Spotlight from "rc-spotlight";
 import 'antd/dist/antd.css';
 import { Tooltip } from 'antd';
 import ReactTooltip from 'react-tooltip';
-
+// const {BrowserWindow} = require('electron');
+import electron from 'electron';
 import editOff from 'images/edit-off.svg';
 import editOn from 'images/edit-on.svg';
 import editHover from 'images/edit-hover.svg';
@@ -17,6 +18,12 @@ import arrowHover from 'images/arrowHover.svg';
 
 import { pageView } from '../analytics';
 import DataContainer from '../datacontainer';
+import { createProject } from '../projects';
+import { homedir, tmpdir } from 'os'
+import {join} from 'path'
+import fs from 'fs'
+
+
 import { getFSProjects, getProjects, setProjectFilters, deleteProject } from '../projects';
 import SpotlightWithToolTip from './SpotlightWithToolTip';
 
@@ -27,6 +34,7 @@ import Modal from './Modal';
 
 import styles from './Home.css';
 import gstyle from './general.css';
+const phinchdir = join(homedir(), 'Documents', 'Phinch2.0');
 
 export default class Home extends Component {
   constructor(props) {
@@ -83,6 +91,8 @@ export default class Home extends Component {
       link3: arrow,
       link4: arrow,
       link5: arrow,
+      downloading: false,
+      downloadProgress: 0,
     };
 
     this.success = this.success.bind(this);
@@ -138,6 +148,55 @@ export default class Home extends Component {
       DataContainer.setSummary(project, () => {
         DataContainer.loadAndFormatData(project.data, this.success, this.failure);
       }, this.failure);
+    } else if (project.flagship) {
+      const contents = electron.remote.getCurrentWindow().webContents
+      let existingFilePath = join(phinchdir, project.name, project.name + '.biom')
+      if (fs.existsSync(existingFilePath)) {
+        const matchingProject = this.state.projects.find(d => d.summary.name === project.name);
+        if (matchingProject && matchingProject.data) {
+
+          this.setState({ loading: true });
+          DataContainer.setSummary(matchingProject, () => {
+            DataContainer.loadAndFormatData(matchingProject.data, this.success, this.failure);
+          }, this.failure);
+        }
+      } else {
+        try {
+          const listener = (event, item, webContents) => {
+            // console.log(event)
+            // console.log(item)
+            // console.log(webContents)
+            let filePath = join(tmpdir(), item.getFilename())
+            item.setSavePath(filePath)
+            item.on('done', () => {
+              // console.log('saved', project.name)
+              contents.session.removeListener('will-download', listener)
+              DataContainer.setSummary({ data: filePath}, () => {
+                console.log(project)
+                const success = () => {
+                  const newProject = createProject({ name: project.name, data: DataContainer.getData() });
+                  DataContainer.setSummary(newProject, () => {
+                    this.setState({
+                      downloading: false,
+                    }, () => {
+                      this.success()
+                    })
+                  }, this.failure);
+                }
+                DataContainer.loadAndFormatData(filePath, success, this.failure);
+              }, this.failure);
+            })
+          }
+          contents.session.on('will-download', listener);
+          contents.downloadURL(project.link);
+          this.setState({
+            downloading: true,
+          })
+
+        } catch(e) {
+          console.log(e)
+        }
+      }
     } else {
       this.failure();
     }
@@ -355,7 +414,7 @@ export default class Home extends Component {
     return (
       <div>
         <div className={styles.container} data-tid="container">
-          <Loader loading={this.state.loading} />
+          <Loader loading={this.state.loading || this.state.downloading} />
           <SideBar context={this} />
           <div className={`${styles.section} ${styles.right}`}>
             <SpotlightWithToolTip

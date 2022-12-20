@@ -10,9 +10,13 @@
  *
  * @flow
  */
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import MenuBuilder from './menu';
 
+import { homedir, tmpdir } from 'os'
+import {join} from 'path'
+import fs from 'fs'
+const phinchdir = join(homedir(), 'Documents', 'Phinch2.0');
 let mainWindow = null;
 
 if (process.env.NODE_ENV === 'production') {
@@ -73,6 +77,13 @@ app.on('ready', async () => {
   });
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
+  mainWindow.webContents.session.setDownloadPath(phinchdir)
+  const listener = (event, item, webContents) => {
+    let filePath = join(tmpdir(), item.getFilename())
+    item.setSavePath(filePath)
+
+  }
+  mainWindow.webContents.session.on('will-download', listener);
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event

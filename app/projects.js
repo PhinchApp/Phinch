@@ -20,19 +20,19 @@ function checkFolders() {
   }
 }
 //this is to look into preloaded flagship data folder
-function checkFSFolders() {
-  // check settings file - look somewhere other than home folder
-  const home = fs.readdirSync(join(homedirectory));
-  if (!home.includes('Documents')) { // weird but ok
-    fs.mkdirSync(join(homedirectory, 'Documents'));
-  }
-  const documents = fs.readdirSync(join(homedirectory, 'Documents'));
-  if (!documents.includes('FlagshipData')) {
-    fs.mkdirSync(join(homedirectory, 'Documents', 'FlagshipData'));
-  }
-}
+// function checkFSFolders() {
+//   // check settings file - look somewhere other than home folder
+//   const home = fs.readdirSync(join(homedirectory));
+//   if (!home.includes('Documents')) { // weird but ok
+//     fs.mkdirSync(join(homedirectory, 'Documents'));
+//   }
+//   const documents = fs.readdirSync(join(homedirectory, 'Documents'));
+//   if (!documents.includes('FlagshipData')) {
+//     fs.mkdirSync(join(homedirectory, 'Documents', 'FlagshipData'));
+//   }
+// }
 
-function getProjectInfo(path, dataKey) {
+export function getProjectInfo(path, dataKey) {
   let summary = {
     name: dataKey,
     path,
@@ -127,6 +127,7 @@ export function getProjectFilters(path, dataKey, viewType) {
 }
 
 export function createProject(project) {
+  // console.log('createProject', project)
   checkFolders();
   const phinchdir = join(homedirectory, 'Documents', 'Phinch2.0');
   const phinch = fs.readdirSync(phinchdir);
@@ -183,6 +184,7 @@ export function getProjects() {
       const path = join(homedirectory, 'Documents', 'Phinch2.0', p);
       return getProjectInfo(path, p);
     });
+  // console.log(projects)
   const newproject = {
     summary: {
       name: 'New Project',
@@ -193,33 +195,59 @@ export function getProjects() {
     thumb: newicon
   };
   //this filters out any flagship datasets as they are located in the same location.
-  const nonFSProjects = [];
-  projects.forEach(proj => {
-    if(proj.summary.name != "Earth Microbiome Project" && proj.summary.name !=  "Showerhead Microbiome Project" && proj.summary.name !=  "Project MERCCURI") {
-      nonFSProjects.push(proj);
-    }
-  });
+  // const nonFSProjects = [];
+  // projects.forEach(proj => {
+  //   if(proj.summary.name != "Earth Microbiome Project" && proj.summary.name !=  "Showerhead Microbiome Project" && proj.summary.name !=  "Project MERCCURI") {
+  //     nonFSProjects.push(proj);
+  //   }
+  // });
 
-  nonFSProjects.unshift(newproject);
-  return nonFSProjects;
+  projects.unshift(newproject);
+  return projects;
 }
 // A better location for storing flagship data files still needs to be established. The names should also be changes if they do stay in current directory of "Phinch 2.0"
 export function getFSProjects() {
-  checkFSFolders();
-  const projects = fs.readdirSync(join(homedirectory, 'Documents', 'Phinch2.0'))
+  checkFolders();
+  const existingProjects = fs.readdirSync(join(homedirectory, 'Documents', 'Phinch2.0'))
     .filter(f => fs.lstatSync(join(homedirectory, 'Documents', 'Phinch2.0', f)).isDirectory())
     .map((p) => {
       // check for files inside phinch directory folders (data*, settings, thumbnails, etc)
-        const path = join(homedirectory, 'Documents', 'Phinch2.0', p);
-        return getProjectInfo(path, p);
+      const path = join(homedirectory, 'Documents', 'Phinch2.0', p);
+      return getProjectInfo(path, p);
     });
-  // This exists to get only the flagship datasets from the main data storage files
-  const fsProjects = [];
-  projects.forEach(props => {
-    if(props.summary.name == "Earth Microbiome Project" || props.summary.name ==  "Showerhead Microbiome Project" || props.summary.name ==  "Project MERCCURI") {
-      fsProjects.push(props);
-    }
+  return [
+    {
+      name: 'Project MERCCURI',
+      link: 'https://github.com/PhinchApp/datasets/raw/master/ps10.biomlike.2-edited-HDF5-metadata.biom',
+    },
+    {
+      name: 'Showerhead Microbiome Project',
+      link: 'http://phinch.org/showerhead_unoise_16S_otu_table_wTax_noChloroMito_nodust_nocntrls_2000%2Breads_March2018_vfinal-JSON-Metadata.txt',
+    },
+    {
+      name: 'Earth Microbiome Project',
+      link: 'https://github.com/PhinchApp/datasets/raw/master/emp_deblur_150bp.subset_10k.rare_5000-metadata.biom',
+    },
+  ].map(d => {
+    d.flagship = true
+    return d
   });
-  return fsProjects;
+
+  // checkFSFolders();
+  // const projects = fs.readdirSync(join(homedirectory, 'Documents', 'Phinch2.0'))
+  //   .filter(f => fs.lstatSync(join(homedirectory, 'Documents', 'Phinch2.0', f)).isDirectory())
+  //   .map((p) => {
+  //     // check for files inside phinch directory folders (data*, settings, thumbnails, etc)
+  //       const path = join(homedirectory, 'Documents', 'Phinch2.0', p);
+  //       return getProjectInfo(path, p);
+  //   });
+  // // This exists to get only the flagship datasets from the main data storage files
+  // const fsProjects = [];
+  // projects.forEach(props => {
+  //   if(props.summary.name == "Earth Microbiome Project" || props.summary.name ==  "Showerhead Microbiome Project" || props.summary.name ==  "Project MERCCURI") {
+  //     fsProjects.push(props);
+  //   }
+  // });
+  // return fsProjects;
 }
 
