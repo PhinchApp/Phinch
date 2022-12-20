@@ -404,7 +404,7 @@ export default class NewProject extends Component {
       <div className={gstyle.container}>
         <Loader loading={this.state.loading} />
         <Microbes
-          show={true}
+          show={false}
           width={this.state.width}
           height={this.state.height}
           count={100}
