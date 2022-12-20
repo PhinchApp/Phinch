@@ -114,8 +114,8 @@ export default class Microbes extends Component {
       });
 
       if (progress < 1) {
-        this.time.current = Date.now();
-        this.scheduleUpdate();
+        // this.time.current = Date.now();
+        // this.scheduleUpdate();
       }
     }
   }

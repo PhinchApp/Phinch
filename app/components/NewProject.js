@@ -389,22 +389,22 @@ export default class NewProject extends Component {
     );
     const indicateDrag = this.state.dragging ? styles.drag : '';
     let microbeColor = {
-      r: 0, g: 0, b: 0, a: 0
+      r: 0, g: 0, b: 0, a: 0.25
     };
-    if (this.state.loading) {
-      microbeColor = {
-        r: 0, g: 0, b: 0, a: 0.25
-      };
-    } else if (this.state.valid !== null) {
-      microbeColor = {
-        r: 0, g: 0, b: 0, a: 0.25
-      };
-    }
+    // if (this.state.loading) {
+    //   microbeColor = {
+    //     r: 0, g: 0, b: 0, a: 0.25
+    //   };
+    // } else if (this.state.valid !== null) {
+    //   microbeColor = {
+    //     r: 0, g: 0, b: 0, a: 0.25
+    //   };
+    // }
     return (
       <div className={gstyle.container}>
         <Loader loading={this.state.loading} />
         <Microbes
-          show={this.state.loading || this.state.valid !== null}
+          show={true}
           width={this.state.width}
           height={this.state.height}
           count={100}
