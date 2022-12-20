@@ -1099,7 +1099,7 @@ export default class Vis extends Component {
     const buttons = radioOptions.map(o => {
       const checked = this.state.sortReverse === o.value ? 'checked' : '';
       return (
-        <div key={o.name} className={styles.inlineControl}>
+        <div key={o.name} className={classNames(styles.inlineControl, { [styles.controlChecked]: checked })}>
           <label htmlFor={o.name}>
             <input
               type="radio"
@@ -1151,7 +1151,7 @@ export default class Vis extends Component {
       };
       const checked = this.state.mode === b.id ? 'checked' : '';
       return (
-        <div key={b.id} className={styles.inlineControl}>
+        <div key={b.id}  className={classNames(styles.inlineControl, { [styles.controlChecked]: checked })}>
           <label htmlFor={b.id}>
             <input
               type="radio"

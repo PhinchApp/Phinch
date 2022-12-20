@@ -195,6 +195,7 @@
 
 .inlineControl label {
   margin-right: 0.25rem;
+  font-weight: 400;
 }
 
 .inlineControl input {
@@ -204,6 +205,10 @@
   cursor: pointer;
 }
 
+.controlChecked label {
+  font-weight: 600;
+  color: #F09E6A;
+}
 .inlineControl input[type='radio']::after {
   width: 14px;
   height: 14px;
