@@ -1,7 +1,7 @@
 import React from 'react';
 
 import PercentageBarGraph from './PercentageBarGraph';
-
+import SpotlightWithToolTip from './SpotlightWithToolTip';
 import styles from './StackedBarTooltip.css';
 
 const size = {
@@ -16,54 +16,62 @@ function Datum(props) {
   const totalPercentReads = props.datum.reads / props.totalDataReads;
 
   return (
-    <div
-      ref={(t) => {
-        if (t) {
-          if (size.y !== t.clientHeight) {
-            size.y = t.clientHeight;
-          }
-        }
+    <SpotlightWithToolTip
+      isActive={props.spotlight}
+      toolTipTitle={"If you hover over any visible bar chart slice, the whole visual will highlight the same observation across all graphs, and a box of detailed information will appear accordingly. If you click the hovered taxonomy, its graph will be added to the side bar."}
+      style={{
+        zIndex: 100000,
       }}
-      style={props.style}
-      className={styles.StackedBarTooltip}
     >
+      <div
+        ref={(t) => {
+          if (t) {
+            if (size.y !== t.clientHeight) {
+              size.y = t.clientHeight;
+            }
+          }
+        }}
+        style={props.style}
+        className={styles.StackedBarTooltip}
+      >
 
-      {
-        props.sample.phinchName ? (
-          <div>
-            <div className={styles.label}>Sample Name:</div>
-            <div className={styles.value}>{props.sample.phinchName}</div>
+        {
+          props.sample.phinchName ? (
+            <div>
+              <div className={styles.label}>Sample Name:</div>
+              <div className={styles.value}>{props.sample.phinchName}</div>
+            </div>
+          ) : ''
+        }
+
+        <div className={styles.label}>Taxonomy:</div>
+        <div className={styles.value}>{props.datum.name}</div>
+
+        <div className={styles.label}>Taxonomy Occurence in this sample:</div>
+        <div className={styles.value}>
+          {percentFormatter(samplePercent)}
+          <span className={styles.small}>
+            {` (${props.datum.reads.toLocaleString()} out of ${props.sample.reads.toLocaleString()})`}
+          </span>
+          <div className={styles.bar}>
+            <PercentageBarGraph percent={samplePercent} color={props.color} width="324px" />
           </div>
-        ) : ''
-      }
-
-      <div className={styles.label}>Taxonomy:</div>
-      <div className={styles.value}>{props.datum.name}</div>
-
-      <div className={styles.label}>Taxonomy Occurence in this sample:</div>
-      <div className={styles.value}>
-        {percentFormatter(samplePercent)}
-        <span className={styles.small}>
-          {` (${props.datum.reads.toLocaleString()} out of ${props.sample.reads.toLocaleString()})`}
-        </span>
-        <div className={styles.bar}>
-          <PercentageBarGraph percent={samplePercent} color={props.color} width="324px" />
         </div>
-      </div>
 
-      <div className={styles.label}>Out of Total Taxonomy Occurence in all samples:</div>
-      <div className={styles.value}>
-        {percentFormatter(totalPercentReads)}
-        <span className={styles.small}>
-          {` (${props.datum.reads.toLocaleString()} out of ${props.totalDataReads.toLocaleString()})`}
-        </span>
-        <div className={styles.bar}>
-          <PercentageBarGraph percent={totalPercentReads} color={props.color} width="324px" />
+        <div className={styles.label}>Out of Total Taxonomy Occurence in all samples:</div>
+        <div className={styles.value}>
+          {percentFormatter(totalPercentReads)}
+          <span className={styles.small}>
+            {` (${props.datum.reads.toLocaleString()} out of ${props.totalDataReads.toLocaleString()})`}
+          </span>
+          <div className={styles.bar}>
+            <PercentageBarGraph percent={totalPercentReads} color={props.color} width="324px" />
+          </div>
         </div>
-      </div>
 
-      <div className={styles.click}>Click the taxonomy fraction to show its histogram on left panel</div>
-    </div>
+        <div className={styles.click}>Click the taxonomy fraction to show its histogram on left panel</div>
+      </div>
+    </SpotlightWithToolTip>
   );
 }
 

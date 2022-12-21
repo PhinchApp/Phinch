@@ -130,10 +130,11 @@ export default class StackedBarRow extends Component {
         {this.props.data[this.props.labelKey]}
       </div>
     );
-    const samples = (this.state.hovered && this.props.isAttribute) ? (
+    const samples = ((this.state.hovered || this.props.forceOpenModal) && this.props.isAttribute) ? (
       <Modal
         buttonTitle="See Samples"
         modalTitle={`${this.props.data[this.props.labelKey]} ${this.props.unit}`}
+        forceOpenModal={this.props.forceOpenModal}
         buttonPosition={{
           position: 'relative',
           marginTop: this.props.metrics.padding,

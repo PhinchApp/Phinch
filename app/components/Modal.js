@@ -48,7 +48,7 @@ export default class Modal extends Component {
         {this.props.data.length}
       </div>
     ) : <div />;
-    const modal = (this.state.showHidden && this.props.data.length) ? (
+    const modal = ((this.state.showHidden || this.props.forceOpenModal) && this.props.data.length) ? (
       <div
         className={styles.modal}
         style={{

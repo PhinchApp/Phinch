@@ -322,9 +322,43 @@ export default class Vis extends Component {
       this.setState({ datumClickedViaHelp: this.sequences[0] });
     }
     if (this.state.helpCounter !== 6 && this._visType === 'stackedbar' && this.state.datumClickedViaHelp) {
-      // this._clickDatum(this.state.datumClickedViaHelp);
       this.removeFilter(this.state.datumClickedViaHelp.name);
       this.setState({ datumClickedViaHelp: null });
+
+    }
+    if (this.state.helpCounter === 7 && this._visType === 'stackedbar' && !this.state.highlightedDatum && !this.state.highlightedDatumFromHelp) {
+      this.setState({
+        highlightedDatum: {
+          datum: this.state.data[0].sequences[0],
+          sample: this.state.data[0],
+          position: {
+            x: 400, y: 250
+          }
+        },
+        showTooltip: true,
+        highlightedDatumFromHelp: true,
+      })
+    } else if (this.state.helpCounter !== 7 && this._visType === 'stackedbar' && this.state.highlightedDatum && this.state.highlightedDatumFromHelp) {
+      this.setState({
+        highlightedDatum: null,
+        showTooltip: false,
+        highlightedDatumFromHelp: false,
+      })
+    }
+    if (this.state.helpCounter === 8 && this._visType === 'stackedbar' && !this.state.selectedAttributeFromHelp) {
+      const selectedAttribute = Object.keys(this.attributes)[0];
+      this.updateAttributeValues(selectedAttribute, this.state.data);
+
+      this.setState({
+        selectedAttribute,
+        selectedAttributeFromHelp: true,
+
+      })
+    } else if (this.state.helpCounter !== 8 && this._visType === 'stackedbar' && this.state.selectedAttributeFromHelp) {
+      this.setState({
+        selectedAttribute: '',
+        selectedAttributeFromHelp: false,
+      })
     }
   }
 
@@ -713,6 +747,8 @@ export default class Vis extends Component {
                 On the side bar, the circles and slider bar underneath each distribution graph can be used as a further filtering mechanisms for rows displayed in the taxonomy bar chart. Only samples meeting the sidebar filtering criteria will remain visible in the main visualization window.
                 The graphs are visualized based on users’ setting on data filtering page, which means the actions taken previously will affect the visualisation shown here.
                 The top sequences box below shows the most abundant observations in your TOTAL dataset, with numerical values calculated after filter page settings have been applied.
+                <br /><br />
+                To remove the graph on the sidebar, simply click the “X” button on the upper right hand side of the sidebar detail. This will also cause the corresponding mini-bar chart to be removed in the main window.
               </div>
           }
           style={{ boxShadow: 'rgba(255, 255, 255, 0.4) 0 0 10px 3px',
@@ -960,6 +996,7 @@ export default class Vis extends Component {
         reads: styles.reads,
       }}
       renderSVG={this.state.renderSVG}
+      forceOpenModal={this.state.helpCounter === 8 && index === 0}
     />
   );
 
@@ -1011,20 +1048,30 @@ export default class Vis extends Component {
     };
     const active = (this.state.selectedAttribute !== '') ? styles.selected : '';
     return (
-      <div className={styles.inlineControl}>
-        <label htmlFor="attributesSelect">
-          {'Attributes '}
-          <select
-            id="attributesSelect"
-            onChange={onSelectChange}
-            className={`${active}`}
-            style={{ marginRight: 0, width: '200px' }}
-            value={this.state.selectedAttribute}
-          >
-            {options}
-          </select>
-        </label>
-      </div>
+      <Spotlight
+        isActive={this.state.helpCounter === 8}
+        style={{ boxShadow: 'rgba(255, 255, 255, 0.4) 0 0 10px 3px',
+          padding: '0.5em',
+          margin: '-0.5em',
+          borderRadius: '0.5em',
+        }}
+
+      >
+        <div className={styles.inlineControl} style={{ opacity: this.state.helpCounter === 8 ? '1' : null}}>
+          <label htmlFor="attributesSelect">
+            {'Attributes '}
+            <select
+              id="attributesSelect"
+              onChange={onSelectChange}
+              className={`${active}`}
+              style={{ marginRight: 0, width: '200px' }}
+              value={this.state.selectedAttribute}
+            >
+              {options}
+            </select>
+          </label>
+        </div>
+      </Spotlight>
     );
   }
 
@@ -1507,6 +1554,7 @@ export default class Vis extends Component {
         &&
       this.attributes[this.state.selectedAttribute].displayValues
     );
+    // console.log(isAttribute, this.state.selectedAttribute, this.attributes)
 
     this.attribute = isAttribute ? this.attributes[this.state.selectedAttribute] : null;
     const dataLength = isAttribute ? this.attribute.displayValues.length : this.state.data.length;
@@ -1530,6 +1578,7 @@ export default class Vis extends Component {
         {...this.state.highlightedDatum}
         totalDataReads={this.totalDataReads}
         color={color}
+        spotlight={this.state.helpCounter === 7}
       />
     ) : null;
 
@@ -1603,7 +1652,9 @@ export default class Vis extends Component {
               (
                 this.state.helpCounter === 0 ||
                 this.state.helpCounter === 3 ||
-                this.state.helpCounter === 5 ? 2000 : 1000
+                this.state.helpCounter === 5 ||
+                this.state.helpCounter === 8 ? 2000 : 1000
+
               ) :
               visType === 'sankey' ?
               this.state.helpCounter === 2 ? 2000 : 1000
@@ -1688,7 +1739,7 @@ export default class Vis extends Component {
                   // borderBottomRightRadius: '0',
                 }}
               >
-                <div className={styles.controlRow}
+                <div className={classNames(styles.controlRow, { [styles.controlRowFadeChildren]: this.state.helpCounter === 8})}
                   style={{
                     paddingBottom: '0.5rem',
                     opacity: visType === 'stackedbar' && this.state.helpCounter === 5 ? 0.2 : 1,
@@ -1726,7 +1777,7 @@ export default class Vis extends Component {
           }
         />
         <SpotlightWithToolTip
-          isActive={(this.state.helpCounter === 2 || this.state.helpCounter === 4 )&& visType === 'stackedbar'}
+          isActive={(this.state.helpCounter === 2 || this.state.helpCounter === 4 || this.state.helpCounter === 8 )&& visType === 'stackedbar'}
           toolTipPlacement={ this.state.helpCounter === 2 ? "topLeft" : "bottomLeft"}
           overlayStyle={{maxWidth: "950px"}}
 
@@ -1744,6 +1795,14 @@ export default class Vis extends Component {
                 <br /><br />
                 The end user can edit and customize all text labels for each tag by double-clicking its texts in the dropdown menu. Tags are used for labelling samples, and multiple tags can be attached to any given sample.
               </div>
+            ) : this.state.helpCounter === 8 ? (
+              <div>
+                If a specific category is chosen from the “Attributes” drop down list on the top panel (take “{this.state.selectedAttribute}” here as an example), then the main visual will be updated to reflect the selected attribute.
+                The bar chart will show the overall proportions for all observations in all samples associated with the selected “Attribute” category.
+                <br /><br />
+                If you hover the mouse over an individual selected attribute on the left hand side of the main visualization window, there will be a “See samples” button showing a list of included sample sets.
+                In this example, hovering over the “{this.attribute && this.attribute.displayValues && this.attribute.displayValues[0] ? this.attribute.displayValues[0].name : ''}” group is showing a list of all the samples whose data is being combined and visualized in that specific bar graph row.
+              </div>
             ) : null
           }
         >
@@ -1759,7 +1818,7 @@ export default class Vis extends Component {
                 style={{
                   width: this.metrics.chartWidth + (this.metrics.nonbarWidth - this.metrics.padding),
                   height: this.metrics.lineHeight * 2,
-                  top: visType === 'stackedbar' && (this.state.helpCounter === 2 || this.state.helpCounter === 4) ? '0' : null,
+                  top: visType === 'stackedbar' && (this.state.helpCounter === 2 || this.state.helpCounter === 4 || this.state.helpCounter === 8) ? '0' : null,
                 }}
               >
                 <svg
@@ -1805,8 +1864,12 @@ export default class Vis extends Component {
                 width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
                 height: this.metrics.chartHeight -
                   (this.state.helpCounter === 2 && visType === 'stackedbar' ? 100 :
-                   this.state.helpCounter === 4 && visType === 'stackedbar' ? this.metrics.chartHeight / 2
-                   : 0),
+                  this.state.helpCounter === 4 && visType === 'stackedbar' ? this.metrics.chartHeight / 2 :
+                  this.state.helpCounter === 8 && visType === 'stackedbar' ? this.metrics.chartHeight / 2
+                  : 0),
+                pointerEvents: (visType === 'stackedbar' &&
+                  (this.state.helpCounter === 4 && this.state.helpCounter === 8)
+                ) ? 'none' : null,
 
               }}
             >

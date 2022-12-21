@@ -122,6 +122,9 @@
   color: rgba(178, 178, 178, .7);
   padding-bottom: 0;
 }
+.controlRowFadeChildren > * {
+  opacity: 0.2;
+}
 
 .selector {
   display: inline-block;
