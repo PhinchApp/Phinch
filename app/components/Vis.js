@@ -317,6 +317,15 @@ export default class Vis extends Component {
       // console.log(this._svg)
       handleExportButton(_cloneDeep(this.state.summary.path), this._svg, this.exportComplete, this._visType);
     }
+    if (this.state.helpCounter === 6 && this._visType === 'stackedbar' && Object.keys(this.state.filters).length === 0) {
+      this._clickDatum(this.sequences[0]);
+      this.setState({ datumClickedViaHelp: this.sequences[0] });
+    }
+    if (this.state.helpCounter !== 6 && this._visType === 'stackedbar' && this.state.datumClickedViaHelp) {
+      // this._clickDatum(this.state.datumClickedViaHelp);
+      this.removeFilter(this.state.datumClickedViaHelp.name);
+      this.setState({ datumClickedViaHelp: null });
+    }
   }
 
   componentWillUnmount() {
@@ -694,36 +703,58 @@ export default class Vis extends Component {
     let segments = null
     if (Object.keys(this.state.filters).length && this.state.overrideRightSidebar !== 'close') {
       segments = Object.keys(this.state.filters).map(k => (
-        <div
-          key={k}
-          style={{
-            borderBottom: '1px solid #000',
-            margin: '0.5rem 1rem 0',
+        <SpotlightWithToolTip
+          isActive={this.state.helpCounter === 6 && this._visType === 'stackedbar'}
+          toolTipPlacement= "left"
+          toolTipTitle={
+              <div>
+                After clicking a search result, a side bar will appear that shows the distribution of observations for each chosen search result. A mini bar chart for that search result will also appear underneath each main graph.
+                <br /><br />
+                On the side bar, the circles and slider bar underneath each distribution graph can be used as a further filtering mechanisms for rows displayed in the taxonomy bar chart. Only samples meeting the sidebar filtering criteria will remain visible in the main visualization window.
+                The graphs are visualized based on users’ setting on data filtering page, which means the actions taken previously will affect the visualisation shown here.
+                The top sequences box below shows the most abundant observations in your TOTAL dataset, with numerical values calculated after filter page settings have been applied.
+              </div>
+          }
+          style={{ boxShadow: 'rgba(255, 255, 255, 0.4) 0 0 10px 3px',
+            pointerEvents: 'none',
+            padding: '0.25rem 0.5rem 0px',
+            margin: '0.25rem 0.5rem 0px',
           }}
+
         >
-          <FilterChart
-            name={k}
-            showScale
-            showCircle
-            fill={this.scales.c(k)}
-            handle={this.scales.c(k)}
-            data={this.state.filters[k]}
-            width={this.metrics.rightSidebar - (this.metrics.padding * 4)}
-            height={this.metrics.rightSidebar / 4}
-            filters={this.state.filters}
-            update={updateFilters}
-            remove={this.removeFilter}
-            toggleLog={this.toggleLog}
-            callback={this.applyFilters}
-            noMargin
-            simpleHandles
-          />
-        </div>
+          <div
+            key={k}
+            style={{
+              borderBottom: '1px solid #000',
+              margin: this.state.helpCounter === 6 ? '0.25rem 0.5rem 0px' : '0.5rem 1rem 0',
+            }}
+          >
+            <FilterChart
+              name={k}
+              showScale
+              showCircle
+              fill={this.scales.c(k)}
+              handle={this.scales.c(k)}
+              data={this.state.filters[k]}
+              width={this.metrics.rightSidebar - (this.metrics.padding * 4)}
+              height={this.metrics.rightSidebar / 4}
+              filters={this.state.filters}
+              update={updateFilters}
+              remove={this.removeFilter}
+              toggleLog={this.toggleLog}
+              callback={this.applyFilters}
+              noMargin
+              simpleHandles
+            />
+          </div>
+        </SpotlightWithToolTip>
       ));
     }
     const rightSidebarOpen = (this.state.showRightSidebar || this.state.overrideRightSidebar === 'open') && !(this.state.showRightSidebar && this.state.overrideRightSidebar === 'close')
     return (
-      <div className={classNames(gstyle.panel, gstyle.noscrollbar, styles.rightPanelContainer, { [styles.rightSidebarOpen]: rightSidebarOpen})}>
+      <div className={classNames(gstyle.panel, gstyle.noscrollbar, styles.rightPanelContainer, { [styles.rightSidebarOpen]: rightSidebarOpen})}
+        style={{ zIndex: this.state.helpCounter === 6 && this._visType === 'stackedbar' ? 100000 : null}}
+      >
         <div className={styles.buttonContainer}>
           <div className={styles.toggleSquare} />
 
@@ -734,6 +765,7 @@ export default class Vis extends Component {
               ${styles.menuToggle}
               ${this.state.showRightSidebar || (this.state.overrideRightSidebar === 'open'  && this.state.overrideRightSidebar !== 'close') ? styles.closeMenu : styles.openMenu}`}
             onClick={this.toggleRightMenu}
+            style={{ display: this.state.helpCounter === 6 && this._visType === 'stackedbar' ? 'none' : null }}
           />
         </div>
         {segments ?
