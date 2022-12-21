@@ -333,7 +333,8 @@ export default class Vis extends Component {
       const currCount = this.state.helpCounter;
       const newCount = currCount + 1;
       // 6 for sankey, 8 for bargraph
-      newCount > 6 ? this.setState({ helpCounter: 2, }) : this.setState({ helpCounter: newCount, });
+      const maxCount = this._visType === 'sankey' ? 6 : 9;
+      newCount > maxCount ? this.setState({ helpCounter: 2, }) : this.setState({ helpCounter: newCount, });
     }
   }
 
@@ -1429,7 +1430,33 @@ export default class Vis extends Component {
         >
           <img src={this.state.helpCounter == 6 ? help5Hover : help5} />
         </div>
+        {this._visType === 'stackedbar' ? <React.Fragment>
+          <div
+            role="button"
+            tabIndex={0}
+            className={gstyle.helpIcons}
+            onClick={() => this.setState({ helpCounter: 6 })}
+          >
+            <img src={this.state.helpCounter == 7 ? help6Hover : help6} />
+          </div>
+          <div
+            role="button"
+            tabIndex={0}
+            className={gstyle.helpIcons}
+            onClick={() => this.setState({ helpCounter: 7 })}
+          >
+            <img src={this.state.helpCounter == 8 ? help7Hover : help7} />
+          </div>
+          <div
+            role="button"
+            tabIndex={0}
+            className={gstyle.helpIcons}
+            onClick={() => this.setState({ helpCounter: 8 })}
+          >
+            <img src={this.state.helpCounter == 9 ? help8Hover : help8} />
+          </div>
 
+        </React.Fragment> : null}
       </div>
     );
   }
@@ -1437,6 +1464,10 @@ export default class Vis extends Component {
 
   render() {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
+
+    const visType = this.props.match.params.visType || 'stackedbar';
+    this._visType = visType;
+
     const helpButtons = this.state.counter > 0 ? this.makeHelpButtons() : '';
     // console.log('render', { showRightSidebar: this.state.showRightSidebar, overrideRightSidebar: this.state.overrideRightSidebar });
     const isAttribute = (
@@ -1514,8 +1545,6 @@ export default class Vis extends Component {
       />
     );
 
-    const visType = this.props.match.params.visType || 'stackedbar';
-    this._visType = visType;
     // console.log(this.state.helpCounter === 1, visType === 'stackedbar', this.state.helpCounter === 1 && visType === 'stackedbar', this.state.helpCounter, visType)
     return (
       <div className={gstyle.container}>
@@ -1655,8 +1684,14 @@ export default class Vis extends Component {
           chartHeight={this.metrics.chartHeight + (this.metrics.lineHeight * 2)}
           items={this.menuItems}
           toggleMenu={this.toggleMenu}
-          spotlight={this.state.helpCounter === 6}
-          helpText="Paragraph to mention about the save, back and export features again in sankey visualization."
+          spotlight={visType === 'sankey' ? this.state.helpCounter === 6 : this.state.helpCounter === 9}
+          helpText={
+            <div>
+              Clicking the Phinch logo in the upper left corner of the app will direct you back to the App homepage. The App automatically saves your work in progress, and you can return to your visual manipulations by re-selecting your project file on the homepage.
+              <br /><br />
+              Clicking the menu button underneath the Phinch logo will expand a side panel, revealing buttons that allow you to save your work, go back to the filter page window, or export a SVG graphic showing your customized visualization currently displayed in the main window.
+            </div>
+          }
         />
         <SpotlightWithToolTip
           isActive={(this.state.helpCounter === 2 || this.state.helpCounter === 4 )&& visType === 'stackedbar'}
