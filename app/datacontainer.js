@@ -1,5 +1,5 @@
 import { remote } from 'electron';
-import { stat } from 'fs';
+import { stat, readFileSync, writeFileSync, existsSync } from 'fs';
 import { join, resolve, parse } from 'path';
 
 const isLinux = () => process.platform === 'linux';
@@ -83,27 +83,44 @@ class DataContainer {
   }
 
   loadAndFormatData(filepath, success, failure, metadataWarning = null) {
+    const filename = filepath
+    const pathWithoutExtension = filename.substring(0, filename.lastIndexOf('.'));
+    const savedJSONData = `${pathWithoutExtension}-cached.json`;
+
+    const handleJSONData = (data) => {
+      this.rejectedSamples = data.rejectedSamples;
+      if (this.rejectedSamples.length && metadataWarning !== null) {
+        metadataWarning(this.rejectedSamples);
+      } else {
+        this.data = data;
+        this.samples = data.columns;
+        this.observations = data.rows;
+        this.summary.samples = this.samples.length;
+        this.summary.observations = this.observations.length;
+        this.attributes = data.stateFilters;
+        this.filters = data.filters;
+        this.levels = data.levels;
+        if (!this.levels || this.levels.length === 0) {
+          this.levels = defaultLevels;
+        }
+        success();
+      }
+    }
+
+    if (existsSync(savedJSONData)) {
+      const data = JSON.parse(readFileSync(savedJSONData, 'utf8'));
+      handleJSONData(data);
+      return;
+    }
     worker.postMessage({ biomhandlerPath, filepath, isLinux: isLinux() });
+
     worker.onmessage = e => {
       if (e.data.status === 'success') {
         const data = JSON.parse(e.data.data);
-        this.rejectedSamples = data.rejectedSamples;
-        if (this.rejectedSamples.length && metadataWarning !== null) {
-          metadataWarning(this.rejectedSamples);
-        } else {
-          this.data = data;
-          this.samples = data.columns;
-          this.observations = data.rows;
-          this.summary.samples = this.samples.length;
-          this.summary.observations = this.observations.length;
-          this.attributes = data.stateFilters;
-          this.filters = data.filters;
-          this.levels = data.levels;
-          if (!this.levels || this.levels.length === 0) {
-            this.levels = defaultLevels;
-          }
-          success();
-        }
+        writeFileSync(savedJSONData, JSON.stringify(data));
+        handleJSONData(data)
+
+
       } else {
         const { type, file } = e.data;
         failure(type, file);
