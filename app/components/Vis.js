@@ -1771,6 +1771,10 @@ export default class Vis extends Component {
           toggleMenu={this.toggleMenu}
           spotlight={visType === 'sankey' ? this.state.helpCounter === 6 : this.state.helpCounter === 9}
           helpText={
+            this.state.helpCounter === 6 ?
+            <div>
+              The sidebar on the left can be used to save the displayed sankey visual to file (Save button), go back to the filter window (Back button), or export a publication-read SVG image of the displayed visualization (Export SVG button).
+            </div> :
             <div>
               Clicking the Phinch logo in the upper left corner of the app will direct you back to the App homepage. The App automatically saves your work in progress, and you can return to your visual manipulations by re-selecting your project file on the homepage.
               <br /><br />

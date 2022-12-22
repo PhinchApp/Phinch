@@ -526,18 +526,36 @@ export default function Sankey(props) {
         toolTipTitle={helpCounter === 2 ? <div style={{
           // position: 'relative',
           // zIndex: 200002,
-
+          width: '820px',
           transform: 'translateY(-3em)',
           }}>
-          Paragraph to introduce what this graph is and how it works.
+          The Sankey diagram displays the “flow” of data across hierarchal levels (taxonomy, gene ontologies, etc.).<br />
+          From left to right, data is shown flowing from highest to lowest levels.
         </div>
         : helpCounter === 4 ?
           <div>
-            Praesent pulvinar blandit turpis, scelerisque eleifend velit laoreet eu. Nullam molestie elit nibh, nec viverra nibh porttitor ut. Nulla sit amet risus massa.
+            Hovering over a name on the right scroll bar will bring up information about that selected group, including sample name and occurrence in the overall dataset.
           </div>
         : helpCounter === 5 ?
-          <div>
-            Aliquam ut orci ultrices, viverra magna vitae, ultrices erat. Ut quis convallis dolor, at finibus quam. Sed et ultrices justo, fermentum sodales lectus.
+          <div
+            style={{
+              width: '1130px',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              fontSize: '0.9em',
+              display: 'flex',
+            }}
+          >
+            <div style={{
+              width: '60%', paddingRight: '4em',
+            }}>
+              The subway chart at the top of the visual window can be used to display more or fewer Sankey levels.
+              Typing in the autocomplete search box can also be used to find specific taxa/genes in your dataset
+              Note: the scroll bar will only display information from the right-most Sankey level; use the subway chart to access data from different levels.
+            </div>
+            <div style={{ width: '40%'}}>
+              Choosing “Left” or “Right” from the drop down menu will change the coloring of the Sankey chart according to the data displayed on the left or right of the space between each level, respectively.
+            </div>
           </div>
         : null
       }
@@ -587,7 +605,11 @@ export default function Sankey(props) {
             toolTipTitle={<div style={{
 
               }}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sem libero, faucibus ac est eu, faucibus finibus felis. Quisque ut suscipit lectus, sit amet tempus urna.
+                The data within in a selected Sankey level is shown on the right.
+                Users can scroll up and down to move up and down the sankey bar charts.
+                As you scroll, the corresponding data points (and their respective counts) will be highlighted in the main Sankey graph.
+                <br /><br />
+                Clicking on a data point in the Sankey window will cause a sidebar to appear on the right, where users can use slider bars to filter out proportions of taxa if needed (similar functionality as in the taxonomy bar chart visualization).
 
           </div>}
           >
