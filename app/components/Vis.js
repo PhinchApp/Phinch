@@ -869,16 +869,10 @@ export default class Vis extends Component {
       position: null,
     };
     const showTooltip = false;
-    const f = () => document.querySelectorAll('*').forEach(n => n.scrollTop = 0)
     this.setState({
       highlightedDatum,
       showTooltip
-    }, () => {
-      f()
-      setTimeout(f, 1)
-      setTimeout(f, 100)
-    });
-    f()
+    })
   }
 
   onValueCleared() {

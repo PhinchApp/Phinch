@@ -213,7 +213,9 @@ export default function Sankey(props) {
   const checkNodeHoverVisibility = (_node) => {
     let visibility = false
     const recurseNode = (node) => {
-      if (highlightedDatum && node.fullName === highlightedDatum.datum.name) {
+      if (highlightedDatum && (node.fullName === highlightedDatum.datum.name ||
+        node.fullName.split(',').pop() === highlightedDatum.datum.name.split(',').pop())
+      ) {
         visibility = true
         return
       } else if (hoveredListItem && node.name === hoveredListItem.name) {
@@ -356,9 +358,15 @@ export default function Sankey(props) {
   }
   useEffect(() => {
     if (highlightedDatum && highlightedDatum.datum) {
-      const node = document.querySelector(`[data-fullname="${highlightedDatum.datum.name}"]`)
+      let node = document.querySelector(`[data-fullname="${highlightedDatum.datum.name}"]`)
+      if (!node) {
+        node = document.querySelector(`[data-lastname="${highlightedDatum.datum.name.split(',').pop()}"]`)
+      }
       if (node) {
-        node.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' })
+        node.parentNode.scrollTop = node.offsetTop - node.parentNode.offsetTop
+        // node.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' })
+      } else {
+        console.log('node not found', highlightedDatum.datum.name)
       }
     }
   }, [highlightedDatum])
@@ -368,7 +376,10 @@ export default function Sankey(props) {
       return null
     }
     let opacity = 1
-    if ((hoveredListItem && hoveredListItem.name !== node.name) || (highlightedDatum && highlightedDatum.datum.name !== node.fullName)) {
+    if ((hoveredListItem && hoveredListItem.name !== node.name) || (
+        highlightedDatum && (highlightedDatum.datum.name !== node.fullName
+          && highlightedDatum.datum.name.split(',').pop() !== node.fullName.split(',').pop()
+        ))) {
       opacity = 0.2
     }
     // console.log(node)
@@ -381,6 +392,7 @@ export default function Sankey(props) {
         onMouseOut={hoverListItem(null)}
         onClick={clickListItem(node)}
         data-fullname={node.fullName}
+        data-lastname={node.fullName.split(',').pop()}
       >
         <span><span style={{ width: listNumberWidth}} className={styles.listNumber}>{i + 1}</span> <div className={styles.dot} style={{backgroundColor: color}} /> {node.name}</span>
         <span>{node.value.toLocaleString()}</span>
@@ -390,7 +402,10 @@ export default function Sankey(props) {
 
   const listConnectingLines = listItems.filter(d => d.listItemVisible)
     .map((node, nodeIndex) => {
-      if ((hoveredListItem && hoveredListItem.name !== node.name) || (highlightedDatum && highlightedDatum.datum.name !== node.fullName)) {
+      if (
+        (hoveredListItem && hoveredListItem.name !== node.name)
+        || (highlightedDatum && (highlightedDatum.datum.name !== node.fullName && highlightedDatum.datum.name.split(',').pop() !== node.fullName.split(',').pop() ))
+       ) {
         return null
       }
       const x1 = node.x1 + connecingPathPadding
