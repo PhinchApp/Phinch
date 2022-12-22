@@ -49,6 +49,10 @@ export default class Search extends Component {
     });
   };
 
+  selected = (e, { suggestion }) => {
+    this.setState({ value: ''})
+    this.props.onSuggestionSelected(e, { suggestion });
+  }
   render() {
     const inputProps = {
       placeholder: 'Search',
@@ -56,11 +60,12 @@ export default class Search extends Component {
       onChange: this.onChange,
     };
 
+
     return (
       <Autosuggest
         theme={styles}
         suggestions={this.state.suggestions}
-        onSuggestionSelected={this.props.onSuggestionSelected}
+        onSuggestionSelected={this.selected}
         onSuggestionHighlighted={this.props.onSuggestionHighlighted}
         onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
         onSuggestionsClearRequested={this.onSuggestionsClearRequested}
