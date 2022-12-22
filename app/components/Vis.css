@@ -254,10 +254,10 @@
   border: none;
   height: 24px;
   width: 140px;
-  padding: 0.25rem;
+  padding-left: 0.25rem;
   margin-right: 0.5rem;
   cursor: pointer;
-  line-height: 1em;
+  line-height: 1.4em;
   -webkit-appearance: none;
   padding-left: 0.5rem;
   background-image: url('../images/greyDownArrow.png');
@@ -265,6 +265,8 @@
   background-repeat: no-repeat;
   background-size: 0.6em;
   padding-right: 1.5em;
+  padding-top: 0;
+  padding-bottom: 0;
 
 }
 
