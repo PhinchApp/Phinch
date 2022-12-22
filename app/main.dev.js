@@ -10,7 +10,7 @@
  *
  * @flow
  */
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, screen } from 'electron';
 import MenuBuilder from './menu';
 
 import { homedir, tmpdir } from 'os'
@@ -62,11 +62,13 @@ app.on('ready', async () => {
   if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
     await installExtensions();
   }
+  const maxSize = { width: 1398, height: 875 }
+  const { width, height } = screen.getPrimaryDisplay().workAreaSize
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1282,
-    height: 768,
+    width: Math.min(width, maxSize.width),
+    height: Math.min(height, maxSize.height),
     minWidth: 1147,
     minHeight: 620,
     webPreferences: {
