@@ -60,8 +60,8 @@ export default class FilterChart extends Component {
       }
     }
 
-    const barWidth = (this.xscale(1) - this.xscale(0));
-    const strokeWidth = barWidth > 2 ? 2 : 1;
+    const barWidth = Math.max(0.1, (this.xscale(1) - this.xscale(0)));
+    const strokeWidth = barWidth > 2 ? 2 : 0;
     const filter = this.props.filters[this.props.name];
 
     const bars = this.props.data.values.map((d, i) => {
