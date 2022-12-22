@@ -29,7 +29,7 @@
   background-color: #000;
   border: none;
   color: #fff;
-  z-index: 2000;
+  z-index: 20000;
 }
 
 .suggestionsContainer::-webkit-scrollbar-thumb {
