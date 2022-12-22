@@ -132,7 +132,7 @@ function ProjectThumb(props) {
 }
 
 function fsThumb(props) {
-  const icon = (<img src={fsIcon} alt="flagship"/>);
+  const icon = (<img src={fsIcon} className={styles.info} alt="flagship" style={{ padding: '2px 6px' }}/>);
   const onClick = () => props.view(props.project);
   const name = (<p className={styles.name}>{props.project.name}</p>);
 
