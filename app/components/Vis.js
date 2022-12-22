@@ -801,7 +801,9 @@ export default class Vis extends Component {
               ${styles.menuToggle}
               ${this.state.showRightSidebar || (this.state.overrideRightSidebar === 'open'  && this.state.overrideRightSidebar !== 'close') ? styles.closeMenu : styles.openMenu}`}
             onClick={this.toggleRightMenu}
-            style={{ display: this.state.helpCounter === 6 && this._visType === 'stackedbar' ? 'none' : null }}
+            style={{
+              display: this.state.helpCounter === 6 && this._visType === 'stackedbar' ? 'none' : null,
+            }}
           />
         </div>
         {segments ?

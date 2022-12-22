@@ -48,19 +48,19 @@
 .menuToggle {
   position: relative;
   color: #fff;
-  background: #575A5C;
+  background: rgb(45, 47, 49);
   width: 24px;
   height: 24px;
   border-radius: 12px;
   padding: 0;
   text-align: center;
   cursor: pointer;
-  border: 3px solid #575A5C;
+  border: 3px solid rgb(45, 47, 49);
   transition: transform 0.5s ease-in-out;
   transform: rotate(-180deg);
   background-size: cover;
   background-repeat: no-repeat;
-
+  margin-right: -3px;
 
 
 }
@@ -72,7 +72,7 @@
 }
 
 .toggleSquare {
-  background: #575A5C;
+  background: rgb(45, 47, 49);
   width: 9px;
   height: 24px;
   margin: 0;
