@@ -30,7 +30,8 @@ import { findLastKey } from 'lodash-es';
 
 export default function SideBar(props) {
   const {inAboutPage} = props
-  const version = remote.app.getVersion();
+  // const version = remote.app.getVersion(); // this gives the electron version which isn't what we want
+  const version = '2.1' // hard code fow now..
   const links = LinkList(props.context);
   const helpIcon = props.context.state.helpIcon;
   const help1Icon = help1;
@@ -151,7 +152,7 @@ export default function SideBar(props) {
           />
           <p>Version {version}</p>
           {/* Possible change wording of linke to "Download 2.0.3 Here" as clicking does not actually download it automatically (Yet). */}
-          <p className={styles.vUpdate}>A newer version is available. <a href="{https://github.com/PhinchApp/Phinch.git}">{'Download 2.0.3'}</a></p>
+          {/* <p className={styles.vUpdate}>A newer version is available. <a href="{https://github.com/PhinchApp/Phinch.git}">{'Download 2.0.3'}</a></p> */}
         </div>
       </div>
       <div className={`${styles.links} ${gstyle.exdarkbgscrollbar}`}>
