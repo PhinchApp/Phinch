@@ -79,7 +79,7 @@ export default class Modal extends Component {
               itemSize={this.props.itemHeight}
               itemCount={this.props.data.length}
               itemKey={index => this.props.data[index][this.props.dataKey]}
-              >
+            >
               {this.stackRow}
             </List>
           ) : (
@@ -97,8 +97,8 @@ export default class Modal extends Component {
       </div>
     ) : <div />;
     return (
-    <div
-      style={{
+      <div
+        style={{
         display: 'inline-block',
         verticalAlign: 'top',
       }}
@@ -117,14 +117,15 @@ export default class Modal extends Component {
             <br /><br />
             The “Archived Samples” tab not be visible in the filter page{' '}
             window unless you choose to remove samples from the main list{' '}
-            using the “X” button. </div>
+            using the “X” button.
+          </div>
             }
-          overlayStyle={{maxWidth: "700px"}}
-          >
+          overlayStyle={{ maxWidth: '700px' }}
+        >
           {modal}
         </SpotlightWithToolTip>
-          {badge}
-          {button}
+        {badge}
+        {button}
       </div>
     );
   }

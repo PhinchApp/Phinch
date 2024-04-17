@@ -2,25 +2,45 @@
  * Builds the DLL for development electron renderer process
  */
 
-import webpack from 'webpack';
-import path from 'path';
-import merge from 'webpack-merge';
-import baseConfig from './webpack.config.base';
-import { dependencies } from './package.json';
-import CheckNodeEnv from './internals/scripts/CheckNodeEnv';
+require('@babel/register');
+
+const webpack = require('webpack');
+const path = require('path');
+const { dependencies } = require('./package.json');
+const CheckNodeEnv = require('./internals/scripts/CheckNodeEnv');
 
 CheckNodeEnv('development');
 
 const dist = path.resolve(process.cwd(), 'dll');
 
-export default merge.smart(baseConfig, {
+module.exports = {
+  mode: 'development',
+
   context: process.cwd(),
 
   devtool: 'eval',
 
+  resolve: {
+    extensions: ['.js', '.jsx', '.json'],
+    modules: [path.join(__dirname, 'app'), 'node_modules'],
+  },
+
   target: 'electron-renderer',
 
   externals: ['fsevents', 'crypto-browserify'],
+
+  entry: {
+    renderer: Object.keys(dependencies || {}).filter(
+      (dependency) => dependency !== 'font-awesome'
+    ),
+  },
+
+  output: {
+    library: 'renderer',
+    path: dist,
+    filename: '[name].dev.dll.js',
+    libraryTarget: 'var',
+  },
 
   /**
    * Use `module` from `webpack.config.renderer.dev.js`
@@ -34,36 +54,48 @@ export default merge.smart(baseConfig, {
           loader: 'babel-loader',
           options: {
             cacheDirectory: true,
+            presets: [
+              // "@babel/preset-env",
+              [
+                '@babel/preset-env',
+                {
+                  targets: { node: 7 },
+                  useBuiltIns: 'usage',
+                  corejs: 3,
+                },
+              ],
+              '@babel/preset-react',
+              '@babel/preset-flow',
+            ],
             plugins: [
               // Here, we include babel plugins that are only required for the
               // renderer process. The 'transform-*' plugins must be included
               // before react-hot-loader/babel
-              'transform-class-properties',
-              'transform-es2015-classes',
-              'react-hot-loader/babel'
+              '@babel/plugin-transform-classes',
+              'react-hot-loader/babel',
             ],
-          }
-        }
+          },
+        },
       },
       {
         test: /\.global\.css$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: 'style-loader',
           },
           {
             loader: 'css-loader',
             options: {
               sourceMap: true,
             },
-          }
-        ]
+          },
+        ],
       },
       {
         test: /^((?!\.global).)*\.css$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: 'style-loader',
           },
           {
             loader: 'css-loader',
@@ -72,16 +104,16 @@ export default merge.smart(baseConfig, {
               sourceMap: true,
               importLoaders: 1,
               localIdentName: '[name]__[local]__[hash:base64:5]',
-            }
+            },
           },
-        ]
+        ],
       },
       // SASS support - compile all .global.scss files and pipe it to style.css
       {
         test: /\.global\.(scss|sass)$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: 'style-loader',
           },
           {
             loader: 'css-loader',
@@ -90,16 +122,16 @@ export default merge.smart(baseConfig, {
             },
           },
           {
-            loader: 'sass-loader'
-          }
-        ]
+            loader: 'sass-loader',
+          },
+        ],
       },
       // SASS support - compile all other .scss files and pipe it to style.css
       {
         test: /^((?!\.global).)*\.(scss|sass)$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: 'style-loader',
           },
           {
             loader: 'css-loader',
@@ -108,12 +140,12 @@ export default merge.smart(baseConfig, {
               sourceMap: true,
               importLoaders: 1,
               localIdentName: '[name]__[local]__[hash:base64:5]',
-            }
+            },
           },
           {
-            loader: 'sass-loader'
-          }
-        ]
+            loader: 'sass-loader',
+          },
+        ],
       },
       // WOFF Font
       {
@@ -123,7 +155,7 @@ export default merge.smart(baseConfig, {
           options: {
             limit: 10000,
             mimetype: 'application/font-woff',
-          }
+          },
         },
       },
       // WOFF2 Font
@@ -134,8 +166,8 @@ export default merge.smart(baseConfig, {
           options: {
             limit: 10000,
             mimetype: 'application/font-woff',
-          }
-        }
+          },
+        },
       },
       // TTF Font
       {
@@ -144,9 +176,9 @@ export default merge.smart(baseConfig, {
           loader: 'url-loader',
           options: {
             limit: 10000,
-            mimetype: 'application/octet-stream'
-          }
-        }
+            mimetype: 'application/octet-stream',
+          },
+        },
       },
       // EOT Font
       {
@@ -161,8 +193,8 @@ export default merge.smart(baseConfig, {
           options: {
             limit: 10000,
             mimetype: 'image/svg+xml',
-          }
-        }
+          },
+        },
       },
       // Common Image Formats
       {
@@ -172,24 +204,9 @@ export default merge.smart(baseConfig, {
       // CLI
       {
         test: path.resolve(__dirname, 'node_modules/npm/bin/npm-cli.js'),
-        loader: 'shebang-loader'
+        loader: 'shebang-loader',
       },
-    ]
-  },
-
-  entry: {
-    renderer: (
-      Object
-        .keys(dependencies || {})
-        .filter(dependency => dependency !== 'font-awesome')
-    )
-  },
-
-  output: {
-    library: 'renderer',
-    path: dist,
-    filename: '[name].dev.dll.js',
-    libraryTarget: 'var'
+    ],
   },
 
   plugins: [
@@ -208,7 +225,7 @@ export default merge.smart(baseConfig, {
      * development checks
      */
     new webpack.EnvironmentPlugin({
-      NODE_ENV: 'development'
+      NODE_ENV: 'development',
     }),
 
     new webpack.LoaderOptionsPlugin({
@@ -219,6 +236,6 @@ export default merge.smart(baseConfig, {
           path: path.resolve(process.cwd(), 'dll'),
         },
       },
-    })
+    }),
   ],
-});
+};

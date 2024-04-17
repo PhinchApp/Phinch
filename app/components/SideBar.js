@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Spotlight from "rc-spotlight";
+import Spotlight from 'rc-spotlight';
 import { remote } from 'electron';
 
 import SpotlightWithToolTip from './SpotlightWithToolTip';
@@ -29,9 +29,9 @@ import { stackOffsetSilhouette } from 'd3';
 import { findLastKey } from 'lodash-es';
 
 export default function SideBar(props) {
-  const {inAboutPage} = props
+  const { inAboutPage } = props;
   // const version = remote.app.getVersion(); // this gives the electron version which isn't what we want
-  const version = '2.1' // hard code fow now..
+  const version = '2.2'; // hard code fow now..
   const links = LinkList(props.context);
   const helpIcon = props.context.state.helpIcon;
   const help1Icon = help1;
@@ -61,24 +61,26 @@ export default function SideBar(props) {
   //   }
   // }
 
-  const hideStep2 = inAboutPage
-  const hideStep3 = inAboutPage
-  const hideStep4 = inAboutPage || (props.context.state.projects && props.context.state.projects.length === 1)
+  const hideStep2 = inAboutPage;
+  const hideStep3 = inAboutPage;
+  const hideStep4 = inAboutPage || (props.context.state.projects && props.context.state.projects.length === 1);
 
   let helpButtons = null;
-  if(props.context.state.helping) {
+  if (props.context.state.helping) {
     helpButtons = (
       <div className={styles.helpIcons}>
         <div
           role="button"
           tabIndex={0}
           className={styles.helpIcons}
-          onClick={() => props.context.setState({ help1: !props.context.state.help1,
+          onClick={() => props.context.setState({
+ help1: !props.context.state.help1,
                                                   help2: false,
                                                   help3: false,
-                                                  help4: false})}
-          //onMouseEnter={() => handleMouseOver("help1")}
-          //onMouseLeave={() => handleMouseLeave("help1")}
+                                                  help4: false
+})}
+          // onMouseEnter={() => handleMouseOver("help1")}
+          // onMouseLeave={() => handleMouseLeave("help1")}
         >
           <img src={props.context.state.help1 ? help1Hover : help1} alt="help1" />
         </div>
@@ -87,14 +89,16 @@ export default function SideBar(props) {
           tabIndex={0}
           className={styles.helpIcons}
           onClick={(e) => {
-            e.stopPropagation()
+            e.stopPropagation();
             props.context.setState({
             help1: false,
             help2: !props.context.state.help2,
             help3: false,
-            help4: false})}}
-          //onMouseEnter={() => handleMouseOver("help2")}
-          //onMouseLeave={() => handleMouseLeave("help2")}
+            help4: false
+});
+}}
+          // onMouseEnter={() => handleMouseOver("help2")}
+          // onMouseLeave={() => handleMouseLeave("help2")}
         >
           <img src={props.context.state.help2 ? help2Hover : help2} alt="help2" />
         </div>}
@@ -103,36 +107,38 @@ export default function SideBar(props) {
           tabIndex={0}
           className={styles.helpIcons}
           onClick={(e) => {
-            e.stopPropagation()
+            e.stopPropagation();
             props.context.setState({
             help1: false,
             help2: false,
             help3: !props.context.state.help3,
-            help4: false})}}
-          //onMouseEnter={() => handleMouseOver("help3")}
-          //onMouseLeave={() => handleMouseLeave("help3")}
+            help4: false
+});
+}}
+          // onMouseEnter={() => handleMouseOver("help3")}
+          // onMouseLeave={() => handleMouseLeave("help3")}
         >
           <img src={props.context.state.help3 ? help3Hover : help3} alt="help3" />
         </div>}
         {hideStep4 ? null :
-          <div
-            role="button"
-            tabIndex={0}
-            className={styles.helpIcons}
-            onClick={(e) => {
-              e.stopPropagation()
+        <div
+          role="button"
+          tabIndex={0}
+          className={styles.helpIcons}
+          onClick={(e) => {
+              e.stopPropagation();
               props.context.setState({
               help1: false,
               help2: false,
               help3: false,
-              help4: !props.context.state.help4})}}
-            //onMouseEnter={() => handleMouseOver("help4")}
-            //onMouseLeave={() => handleMouseLeave("help4")}
-          >
-            <img src={props.context.state.help4 ? help4Hover : help4} alt="help4" />
-          </div>
+              help4: !props.context.state.help4
+});
+}}
+        >
+          <img src={props.context.state.help4 ? help4Hover : help4} alt="help4" />
+        </div>
         }
-        <span style={{ marginLeft: '1em'}}>* mouse click anywhere to advance</span>
+        <span style={{ marginLeft: '1em' }}>* mouse click anywhere to advance</span>
       </div>
     );
   }
@@ -156,25 +162,25 @@ export default function SideBar(props) {
         </div>
       </div>
       <div className={`${styles.links} ${gstyle.exdarkbgscrollbar}`}>
-        <div className={`${styles.area} ${styles.rightSpace}`} style={{ marginTop: '-1em', paddingLeft: '1em'}}>
+        <div className={`${styles.area} ${styles.rightSpace}`} style={{ marginTop: '-1em', paddingLeft: '1em' }}>
           <SpotlightWithToolTip
             isActive={props.context.state.help1}
             inheritParentBackgroundColor
             toolTipPlacement="right"
-            toolTipTitle={"Find a software bug or need help?\r\n Click these links to access our tutorials,\r\n community resources, and Github issue tracker."}
-            overlayStyle={{zIndex: '1001'}}
-            >
+            toolTipTitle={'Find a software bug or need help?\r\n Click these links to access our tutorials,\r\n community resources, and Github issue tracker.'}
+            overlayStyle={{ zIndex: '1001' }}
+          >
             {links}
           </SpotlightWithToolTip>
         </div>
       </div>
       <div className={` ${styles.bottomLeft}`}>
-        <Spotlight isActive = {props.context.state.helping} inheritParentBackgroundColor={false} backdropOpacity='0.7' backdropColor='#2D2F31'>
+        <Spotlight isActive={props.context.state.helping} inheritParentBackgroundColor={false} backdropOpacity="0.7" backdropColor="#2D2F31">
           <div
-              role="button"
-              tabIndex={0}
-              className={styles.help}
-              onClick={(e) => {
+            role="button"
+            tabIndex={0}
+            className={styles.help}
+            onClick={(e) => {
                 e.stopPropagation();
 
                 props.context.setState({
@@ -183,15 +189,17 @@ export default function SideBar(props) {
                   help2: false,
                   help3: false,
                   help4: false
-                })
+                });
               }}
-            >
-              <img
-                onMouseOver={() => setHelpHovered(true)}
-                onMouseLeave={() => setHelpHovered(false)}
+          >
+            <img
+              onMouseOver={() => setHelpHovered(true)}
+              onMouseLeave={() => setHelpHovered(false)}
 
-                style={{ cursor: 'pointer'}}
-                src={props.context.state.helping ? helpStop : helpHovered ? helpHover : helpGo } alt="help" />
+              style={{ cursor: 'pointer' }}
+              src={props.context.state.helping ? helpStop : helpHovered ? helpHover : helpGo}
+              alt="help"
+            />
           </div>
           {helpButtons}
         </Spotlight>

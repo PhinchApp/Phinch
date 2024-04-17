@@ -15,16 +15,16 @@ import { documentElement } from 'min-document';
 import { element } from 'prop-types';
 import { fix } from 'prelude-ls';
 
-const defaultHelpText = <React.Fragment>
+const defaultHelpText = (<React.Fragment>
   Expand the side panel by clicking the menu button.{' '}
   After expanding the panel, you will see a button to{' '}
   save the data and another button to go back to the app homepage.
-</React.Fragment>
+                         </React.Fragment>);
 export default class SideMenu extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      sideMenuToggle: sideMenuToggle,
+      sideMenuToggle,
       closeMenu: sideMenuToggleClose,
     };
   }
@@ -35,18 +35,19 @@ export default class SideMenu extends Component {
   // the JSX element. ReactDOM and possible React version updates to allow use of
   // React useCases would be a possible fix.
   constructItem = (l) => {
-    if(l.id == "save") {
+    if (l.id == 'save') {
       return (
         <div
-        key={l.id}
-        role="button"
-        tabIndex={0}
-        className={styles.menuItem}
-        onClick={l.action}
-        onKeyDown={e => (e.key === ' ' ? l.action() : null)}
+          key={l.id}
+          role="button"
+          tabIndex={0}
+          className={styles.menuItem}
+          onClick={l.action}
+          onKeyDown={e => (e.key === ' ' ? l.action() : null)}
         >
           <div
-          className={`${styles.menuBox} ${styles.Filter}`}>
+            className={`${styles.menuBox} ${styles.Filter}`}
+          >
             {/* done need image here as save is always highlighted */}
           </div>
           <span className={styles.menuItemLabel}>
@@ -56,18 +57,19 @@ export default class SideMenu extends Component {
       );
     }
 
-    if(l.id == "export") {
+    if (l.id == 'export') {
       return (
         <div
-        key={l.id}
-        role="button"
-        tabIndex={0}
-        className={styles.menuItem}
-        onClick={l.action}
-        onKeyDown={e => (e.key === ' ' ? l.action() : null)}
+          key={l.id}
+          role="button"
+          tabIndex={0}
+          className={styles.menuItem}
+          onClick={l.action}
+          onKeyDown={e => (e.key === ' ' ? l.action() : null)}
         >
           <div
-          className={`${styles.menuBox} ${styles.stackedBar}`}>
+            className={`${styles.menuBox} ${styles.stackedBar}`}
+          >
             {l.icon}
           </div>
           <span className={styles.menuItemLabel}>
@@ -77,54 +79,55 @@ export default class SideMenu extends Component {
       );
     }
 
-    return (l.id == "back" || 'filter') ? (
-    <div
-    key={l.id}
-    role="button"
-    tabIndex={0}
-    className={styles.menuItem}
-    onClick={l.action}
-    onKeyDown={e => (e.key === ' ' ? l.action() : null)}
-    >
+    return (l.id == 'back' || 'filter') ? (
+      <div
+        key={l.id}
+        role="button"
+        tabIndex={0}
+        className={styles.menuItem}
+        onClick={l.action}
+        onKeyDown={e => (e.key === ' ' ? l.action() : null)}
+      >
         <div className={`${styles.menuBox} ${styles.newProject}`}>
-        {l.icon}
+          {l.icon}
+        </div>
+        <span className={styles.menuItemLabel}>
+          {l.name}
+        </span>
       </div>
-      <span className={styles.menuItemLabel}>
-        {l.name}
-      </span>
-    </div>
-  ) : (
-    <div
-    key={l.id}
-    role="button"
-    tabIndex={0}
-    className={styles.menuItem}
-    onClick={l.action}
-    onKeyDown={e => (e.key === ' ' ? l.action() : null)}
-    >
+    ) : (
+      <div
+        key={l.id}
+        role="button"
+        tabIndex={0}
+        className={styles.menuItem}
+        onClick={l.action}
+        onKeyDown={e => (e.key === ' ' ? l.action() : null)}
+      >
         <div
-        className={`${styles.menuBox}`}>
-        {l.icon}
+          className={`${styles.menuBox}`}
+        >
+          {l.icon}
+        </div>
+        <span className={styles.menuItemLabel}>
+          {l.name}
+        </span>
       </div>
-      <span className={styles.menuItemLabel}>
-        {l.name}
-      </span>
-    </div>
-  );
-}
+    );
+  }
 
-  /*This function deals with when the mouse hovers over the edit icon on top right of
+  /* This function deals with when the mouse hovers over the edit icon on top right of
   the home screen and changes img src accordingly to correct svg file */
-  handleMouseOver () {
-    if(this.state.sideMenuToggle === sideMenuToggle) {
+  handleMouseOver() {
+    if (this.state.sideMenuToggle === sideMenuToggle) {
       this.setState({ sideMenuToggle: sideMenuToggleHover });
-      this.setState({ closeMenu: sideMenuToggleCloseHover});
+      this.setState({ closeMenu: sideMenuToggleCloseHover });
     }
   }
 
-  /*This function deals with the mouse leaving an icon (no longer hovering) and
+  /* This function deals with the mouse leaving an icon (no longer hovering) and
   changed img src to correct svg file */
-  handleMouseLeave () {
+  handleMouseLeave() {
     // if(this.state.sideMenuToggle === sideMenuToggleHover) {
     //   this.setState({ sideMenuToggle: sideMenuToggle });
     //   this.setState({ closeMenu: sideMenuToggleClose });
@@ -138,7 +141,7 @@ export default class SideMenu extends Component {
         className={`${gstyle.panel} ${styles.menu}`}
         style={{
           width: `calc(${this.props.leftSidebar - this.props.leftMin}px ${this.props.spotlight ? '- 0.2em' : ''})`,
-          height: this.props.spotlight ? 250 :this.props.chartHeight,
+          height: this.props.spotlight ? 250 : this.props.chartHeight,
           margin: this.props.spotlight ? '0.1em' : null,
           minWidth: this.props.spotlight ? '0' : null,
           overflow: this.props.spotlight ? 'hidden' : null,
@@ -154,7 +157,7 @@ export default class SideMenu extends Component {
       >
         <SpotlightWithToolTip
           isActive={this.props.spotlight}
-          >
+        >
           {menuItems}
         </SpotlightWithToolTip>
         <div
@@ -174,12 +177,12 @@ export default class SideMenu extends Component {
               toolTipPlacement="rightTop"
               toolTipTitle={<div>
                 {this.props.helpText || defaultHelpText}
-                </div>}
+              </div>}
               style={{
                 position: 'fixed',
                 transform: 'translateY(-1.5em)'
               }}
-              >
+            >
               <div
                 role="button"
                 tabIndex={0}

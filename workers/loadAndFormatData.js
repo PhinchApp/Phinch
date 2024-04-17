@@ -80,8 +80,8 @@ function formatData(data) {
     const units = [];
     const entries = thisData.columns.map(d => {
       // const [value, unit] = d.metadata[k].split(' ');
-      const value = d.metadata[k]
-      const unit = undefined
+      const value = d.metadata[k];
+      const unit = undefined;
 
       if (unit !== undefined && !units.includes(unit)) {
         units.push(unit);

@@ -50,7 +50,7 @@ export default class Search extends Component {
   };
 
   selected = (e, { suggestion }) => {
-    this.setState({ value: ''})
+    this.setState({ value: '' });
     this.props.onSuggestionSelected(e, { suggestion });
   }
   render() {

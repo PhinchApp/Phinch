@@ -7,9 +7,11 @@ import logo from 'images/phinch.svg';
 import back from 'images/back.svg';
 import hoverBack from 'images/backArrowW.svg';
 import upload from 'images/upload.svg';
-import browseOn from 'images/browseOn.svg';
-import browseOff from 'images/browseOff.svg';
+import btn_browse_rollover from 'images/btn_browse_rollover.png';
+import btn_browseOff from 'images/btn_browseOff.png';
 import filterOn from 'images/filterOn.svg';
+import btn_filter_data from 'images/btn_filter_data.png';
+import btn_filterdata_default from  'images/btn_filterdata_default.png'
 import filterOff from 'images/filterOff.svg';
 import flagshipOn from 'images/flagshipOn.png';
 import flagshipOff from 'images/flagshipOff.png';
@@ -102,33 +104,33 @@ export default class NewProject extends Component {
       width: window.innerWidth,
       height: window.innerHeight,
       showLeftSidebar: true,
-      browse: browseOff,
-      filter: filterOff,
+      browse: btn_browseOff,
+      filter: btn_filterdata_default,
       flagship: flagshipOff,
       helpButton: needHelp,
       backArrow: back,
     };
 
-    /*This sets the width of the sidemenu to 100px (same as logo) and it also has a min max set for
+    /* This sets the width of the sidemenu to 100px (same as logo) and it also has a min max set for
     the size of the sidebar to maximize other components screen size
-    NOTE: left min and max should be removed someday as the current formula is more effecient.*/
+    NOTE: left min and max should be removed someday as the current formula is more effecient. */
     this.metrics = {
-      leftSidebar: "100px",
+      leftSidebar: '100px',
       left: {
         min: -10,
-        max: (window.innerWidth*0.0672 + 30),
+        max: (window.innerWidth * 0.0672 + 30),
       },
     };
 
     this.menuItems = [
       {
-        id: "back",
+        id: 'back',
         name: 'Back',
         action: () => {
           this.setState({ redirect: '/Home' });
           this.rebuildTooltip();
         },
-        icon: <img src={this.state.backArrow} alt="back-arrow"/>,
+        icon: <img src={this.state.backArrow} alt="back-arrow" />,
       },
     ];
 
@@ -174,7 +176,7 @@ export default class NewProject extends Component {
   }
 
   rebuildTooltip() {
-    console.log("render() method");
+    console.log('render() method');
   }
 
   updateSummary(project) {
@@ -282,28 +284,28 @@ export default class NewProject extends Component {
     return false;
   }
 
-  /*This function deals with when the mouse hovers over the browse icon on top right of
+  /* This function deals with when the mouse hovers over the browse icon on top right of
    and changes img src accordingly to correct svg file */
-  handleMouseOver (button) {
-    switch(button) {
-      case "browse":
-        if(this.state.browse === browseOff) {
-          this.setState({browse: browseOn});
+  handleMouseOver(button) {
+    switch (button) {
+      case 'browse':
+        if (this.state.browse === btn_browseOff) {
+          this.setState({ browse: btn_browse_rollover });
         }
         break;
-      case "filter":
-        if(this.state.filter === filterOff) {
-          this.setState({filter: filterOn});
+      case 'filter':
+        if (this.state.filter === btn_filterdata_default) {
+          this.setState({ filter: btn_filter_data });
         }
         break;
-      case "flagship":
-        if(this.state.flagship === flagshipOff) {
-          this.setState({flagship: flagshipOn});
+      case 'flagship':
+        if (this.state.flagship === flagshipOff) {
+          this.setState({ flagship: flagshipOn });
         }
         break;
-      case "help":
-        if(this.state.helpButton === needHelp) {
-          this.setState({helpButton: needHelpHover});
+      case 'help':
+        if (this.state.helpButton === needHelp) {
+          this.setState({ helpButton: needHelpHover });
         }
         break;
       case 'back':
@@ -312,35 +314,35 @@ export default class NewProject extends Component {
     }
   }
 
-  /*This function deals with the mouse leaving an icon (no longer hovering) and
+  /* This function deals with the mouse leaving an icon (no longer hovering) and
   changed img src to correct svg file */
-  handleMouseLeave (button) {
-    switch(button) {
-      case "browse":
-        if(this.state.browse === browseOn) {
-          this.setState({browse: browseOff});
+  handleMouseLeave(button) {
+    switch (button) {
+      case 'browse':
+        if (this.state.browse === btn_browse_rollover) {
+          this.setState({ browse: btn_browseOff });
         }
         break;
-      case "filter":
-        if(this.state.filter === filterOn) {
-          this.setState({filter: filterOff});
+      case 'filter':
+        if (this.state.filter === btn_filter_data) {
+          this.setState({ filter: btn_filterdata_default });
         }
         break;
-      case "flagship":
-        if(this.state.flagship === flagshipOn) {
-          this.setState({flagship: flagshipOff});
+      case 'flagship':
+        if (this.state.flagship === flagshipOn) {
+          this.setState({ flagship: flagshipOff });
         }
         break;
-      case "help":
-        if(this.state.helpButton === needHelpHover) {
-          this.setState({helpButton: needHelp});
+      case 'help':
+        if (this.state.helpButton === needHelpHover) {
+          this.setState({ helpButton: needHelp });
         }
         break;
       case 'back':
         this.setState({ backArrow: back });
         break;
-     }
-   }
+    }
+  }
 
   render() {
     const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
@@ -348,8 +350,8 @@ export default class NewProject extends Component {
     const result = (this.state.valid === 'Yes') ? (
       <button
         className={`${styles.filter}`}
-        onMouseEnter={() => this.handleMouseOver("filter")}
-        onMouseLeave={() => this.handleMouseLeave("filter")}
+        onMouseEnter={() => this.handleMouseOver('filter')}
+        onMouseLeave={() => this.handleMouseLeave('filter')}
         onClick={() => {
           this.setState({ loading: true }, () => {
             this.timeout = setTimeout(() => {
@@ -364,7 +366,7 @@ export default class NewProject extends Component {
       <div className={styles.error}>{this.state.error}</div>
     );
     const indicatorBG = (this.state.valid === 'Yes') ? '#00da3e' : '#ff2514';
-    const indicator = <div className={`${gstyle.circle} ${styles.indicator}`} style={{ background: indicatorBG, transform: 'translateY(-40%)' }} />
+    const indicator = <div className={`${gstyle.circle} ${styles.indicator}`} style={{ background: indicatorBG, transform: 'translateY(-40%)' }} />;
     const table = (this.state.valid === null) ? null : (
       <table className={styles.table}>
         <tbody>
@@ -388,7 +390,7 @@ export default class NewProject extends Component {
       </table>
     );
     const indicateDrag = this.state.dragging ? styles.drag : '';
-    let microbeColor = {
+    const microbeColor = {
       r: 0, g: 0, b: 0, a: 0.25
     };
     // if (this.state.loading) {
@@ -425,10 +427,10 @@ export default class NewProject extends Component {
               }}
               // on click command is still undefined outside of home page, set to issues page for now until later
               onClick={() => shell.openExternal('https://github.com/PhinchApp/Phinch/issues')}
-                  onMouseEnter={() => this.handleMouseOver("help")}
-                  onMouseLeave={() => this.handleMouseLeave("help")}
-                >
-                <img src={this.state.helpButton} alt="needHelp" />
+              onMouseEnter={() => this.handleMouseOver('help')}
+              onMouseLeave={() => this.handleMouseLeave('help')}
+            >
+              <img src={this.state.helpButton} alt="needHelp" />
             </button>
           </div>
           <SideMenu
@@ -464,21 +466,22 @@ export default class NewProject extends Component {
               <h1 className={styles.flagshipHeading}>Sample Datasets</h1>
               <p>Whether it's your first time here or if your just want to explore Phinch's
                 capabilities before your're ready to upload your own BIOM file, use the links
-                below to download a dataset to your local HD that you can use</p>
-                <button
-                  className={styles.downloadFS}
-                  onClick={() => shell.openExternal('https://github.com/PhinchApp/datasets')}
-                  onMouseEnter={() =>  this.handleMouseOver("flagship")}
-                  onMouseLeave={() => this.handleMouseLeave("flagship")}
-                >
-                  <img src={this.state.flagship} alt="flagship-Datasets" />
-                </button>
+                below to download a dataset to your local HD that you can use
+              </p>
+              <button
+                className={styles.downloadFS}
+                onClick={() => shell.openExternal('https://github.com/PhinchApp/datasets')}
+                onMouseEnter={() => this.handleMouseOver('flagship')}
+                onMouseLeave={() => this.handleMouseLeave('flagship')}
+              >
+                <img src={this.state.flagship} alt="flagship-Datasets" />
+              </button>
             </div>
             <button
               className={`${styles.browse}`}
               onClick={this.handleOpenButton}
-              onMouseEnter={() => this.handleMouseOver("browse")}
-              onMouseLeave={() => this.handleMouseLeave("browse")}
+              onMouseEnter={() => this.handleMouseOver('browse')}
+              onMouseLeave={() => this.handleMouseLeave('browse')}
             >
               <img src={this.state.browse} alt="browse" />
             </button>

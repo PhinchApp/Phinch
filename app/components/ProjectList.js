@@ -19,7 +19,7 @@ function ProjectThumb(props) {
       onClick={() => props.remove(props.project)}
       onKeyPress={e => (e.key === ' ' ? props.remove(props.project) : null)}
     >
-      <img src={removeIcon} alt="remove"  style={{ verticalAlign: 'top' }} />
+      <img src={removeIcon} alt="remove" style={{ verticalAlign: 'top' }} />
     </div>
   ) : null;
   const icon = isNew ? (
@@ -27,7 +27,7 @@ function ProjectThumb(props) {
       className={`${styles.info} ${styles.new}`}
       src={props.project.thumb}
       alt={props.project.summary.name}
-      data-tip='Click to load a new file'
+      data-tip="Click to load a new file"
     />
   ) : (
     <div className={styles.info}>
@@ -79,11 +79,11 @@ function ProjectThumb(props) {
 
   const returnValue = isNew ? (
     <SpotlightWithToolTip
-    isActive={props.help2}
-    inheritParentBackgroundColor
-    toolTipPlacement="bottomLeft"
-    toolTipTitle={"Click “New Project” to load a new BIOM-formatted data file and start a new project."}
-    key={props.index} //this is to give the children unique keys for react hot loader
+      isActive={props.help2}
+      inheritParentBackgroundColor
+      toolTipPlacement="bottomLeft"
+      toolTipTitle="Click “New Project” to load a new BIOM-formatted data file and start a new project."
+      key={props.index} // this is to give the children unique keys for react hot loader
     >
       <div
         key={`${props.project.slug}-${props.index}`}
@@ -99,19 +99,19 @@ function ProjectThumb(props) {
     </SpotlightWithToolTip>
   ) : (
     <SpotlightWithToolTip
-    isActive={props.help3 && props.index<2}
-    inheritParentBackgroundColor
-    toolTipPlacement="bottomLeft"
-    overlayStyle={{ maxWidth: '380px'}}
-    toolTipTitle={<div>
-      Each saved project will be displayed with file size{' '}
-      (in Mb), number of biological samples, and{' '}
-      number of observations (number of ASVs, OTUs, Contigs, etc.).{' '}
-      This information will be calculated by Phinch during file upload.
-      <br /><br />
-      The saved project is only saved locally on the user’s hard drive (never uploaded to the cloud).
+      isActive={props.help3 && props.index<2}
+      inheritParentBackgroundColor
+      toolTipPlacement="bottomLeft"
+      overlayStyle={{ maxWidth: '380px' }}
+      toolTipTitle={<div>
+        Each saved project will be displayed with file size{' '}
+        (in Mb), number of biological samples, and{' '}
+        number of observations (number of ASVs, OTUs, Contigs, etc.).{' '}
+        This information will be calculated by Phinch during file upload.
+        <br /><br />
+        The saved project is only saved locally on the user’s hard drive (never uploaded to the cloud).
       </div>}
-    key={props.index}
+      key={props.index}
     >
       <div
         key={`${props.project.slug}-${props.index}`}
@@ -128,11 +128,11 @@ function ProjectThumb(props) {
     </SpotlightWithToolTip>
   );
 
-  return(returnValue);
+  return (returnValue);
 }
 
 function fsThumb(props) {
-  const icon = (<img src={fsIcon} className={styles.info} alt="flagship" style={{ padding: '2px 6px' }}/>);
+  const icon = (<img src={fsIcon} className={styles.info} alt="flagship" style={{ padding: '2px 6px' }} />);
   const onClick = () => props.view(props.project);
   const name = (<p className={styles.name}>{props.project.name}</p>);
 
@@ -152,7 +152,7 @@ function fsThumb(props) {
 }
 
 export function ProjectList(props) {
-  const [newProjectTT, setNewProjectTT] = useState(false)
+  const [newProjectTT, setNewProjectTT] = useState(false);
   const editClass = props.editing ? styles.edit : '';
   const projects = props.projectList.map((p, i) => ProjectThumb({
     project: p,
@@ -168,9 +168,9 @@ export function ProjectList(props) {
 
   return (
     <div
-    className={`${styles.projects} ${editClass}`}
-    onMouseOver={() => ReactTooltip.rebuild()}
-    onMouseLeave={() => setNewProjectTT(false)}
+      className={`${styles.projects} ${editClass}`}
+      onMouseOver={() => ReactTooltip.rebuild()}
+      onMouseLeave={() => setNewProjectTT(false)}
     >
       {projects}
     </div>

@@ -48,3 +48,15 @@
     transform: rotate(360deg);
   }
 }
+.loaderContent {
+  text-align: center; /* Center the content */
+position: relative;
+}
+
+.loadingText {
+  margin-top: 10px; 
+  color: #ffff; 
+  font-size: 16px; 
+  font-weight: 300m;
+  text-align: center;
+}

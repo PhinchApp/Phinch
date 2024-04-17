@@ -20,14 +20,14 @@ function formatFileSize(bytes) {
 
 
 const defaultLevels = [
-  {name: "kingdom", number: null, order: 0},
-  {name: "phylum", number: null, order: 1},
-  {name: "class", number: null, order: 2},
-  {name: "order", number: null, order: 3},
-  {name: "family", number: null, order: 4},
-  {name: "genus", number: null, order: 5},
-  {name: "species", number: null, order: 6},
-]
+  { name: 'kingdom', number: null, order: 0 },
+  { name: 'phylum', number: null, order: 1 },
+  { name: 'class', number: null, order: 2 },
+  { name: 'order', number: null, order: 3 },
+  { name: 'family', number: null, order: 4 },
+  { name: 'genus', number: null, order: 5 },
+  { name: 'species', number: null, order: 6 },
+];
 
 class DataContainer {
   constructor() {
@@ -83,7 +83,7 @@ class DataContainer {
   }
 
   loadAndFormatData(filepath, success, failure, metadataWarning = null) {
-    const filename = filepath
+    const filename = filepath;
     const pathWithoutExtension = filename.substring(0, filename.lastIndexOf('.'));
     const savedJSONData = `${pathWithoutExtension}-cached.json`;
 
@@ -105,7 +105,7 @@ class DataContainer {
         }
         success();
       }
-    }
+    };
 
     if (existsSync(savedJSONData)) {
       const data = JSON.parse(readFileSync(savedJSONData, 'utf8'));
@@ -118,9 +118,7 @@ class DataContainer {
       if (e.data.status === 'success') {
         const data = JSON.parse(e.data.data);
         writeFileSync(savedJSONData, JSON.stringify(data));
-        handleJSONData(data)
-
-
+        handleJSONData(data);
       } else {
         const { type, file } = e.data;
         failure(type, file);

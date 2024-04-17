@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router';
 import _clonedeep from 'lodash.clonedeep';
-import Spotlight from "rc-spotlight";
+import Spotlight from 'rc-spotlight';
 import 'antd/dist/antd.css';
 import { Tooltip } from 'antd';
 import ReactTooltip from 'react-tooltip';
@@ -12,19 +12,18 @@ import editOn from 'images/edit-on.svg';
 import editHover from 'images/edit-hover.svg';
 import fsIcon from 'images/flagshipIcons.svg';
 import helpGo from 'images/needHelpDefault.png';
-import helpStop from 'images/needHelpHover.svg'
+import helpStop from 'images/needHelpHover.svg';
 import arrow from 'images/arrow.svg';
 import arrowHover from 'images/arrowHover.svg';
 
 import { pageView } from '../analytics';
 import DataContainer from '../datacontainer';
-import { createProject } from '../projects';
-import { homedir, tmpdir } from 'os'
-import {join} from 'path'
-import fs from 'fs'
+import { createProject, getFSProjects, getProjects, setProjectFilters, deleteProject } from '../projects';
+import { homedir, tmpdir } from 'os';
+import { join } from 'path';
+import fs from 'fs';
 
 
-import { getFSProjects, getProjects, setProjectFilters, deleteProject } from '../projects';
 import SpotlightWithToolTip from './SpotlightWithToolTip';
 
 import { FSProjectList, ProjectList } from './ProjectList';
@@ -34,6 +33,7 @@ import Modal from './Modal';
 
 import styles from './Home.css';
 import gstyle from './general.css';
+
 const phinchdir = join(homedir(), 'Documents', 'Phinch2.0');
 
 export default class Home extends Component {
@@ -104,7 +104,6 @@ export default class Home extends Component {
     this.cancelRemove = this.cancelRemove.bind(this);
     this.completeRemove = this.completeRemove.bind(this);
     this.countUpHelp = this.countUpHelp.bind(this);
-
   }
 
   componentDidMount() {
@@ -117,13 +116,13 @@ export default class Home extends Component {
 
   countUpHelp() {
     if (this.state.help1) {
-      this.setState({help2: true, help1: false});
+      this.setState({ help2: true, help1: false });
     } else if (this.state.help2) {
-      this.setState({help3: true, help2: false});
+      this.setState({ help3: true, help2: false });
     } else if (this.state.help3) {
-      this.setState({help4: true, help3: false});
+      this.setState({ help4: true, help3: false });
     } else if (this.state.help4) {
-      this.setState({help4: false, help1: true});
+      this.setState({ help4: false, help1: true });
     }
   }
 
@@ -134,12 +133,12 @@ export default class Home extends Component {
       loading: false,
     });
   }
-  //this reports errors if file uploaded for new project failed
+  // this reports errors if file uploaded for new project failed
   failure(type = 'file', path = '') {
     const error = this.errors[type](path);
     this.setState({ loading: false, erroring: true, error });
   }
-  //This takes you to data view page when a project is selected at home screen
+  // This takes you to data view page when a project is selected at home screen
   view(project) {
     if (project.slug === 'newproject') {
       this.setState({ redirect: '/newproject' });
@@ -149,12 +148,11 @@ export default class Home extends Component {
         DataContainer.loadAndFormatData(project.data, this.success, this.failure);
       }, this.failure);
     } else if (project.flagship) {
-      const contents = electron.remote.getCurrentWindow().webContents
-      let existingFilePath = join(phinchdir, project.name, project.name + '.biom')
+      const contents = electron.remote.getCurrentWindow().webContents;
+      const existingFilePath = join(phinchdir, project.name, `${project.name}.biom`);
       if (fs.existsSync(existingFilePath)) {
         const matchingProject = this.state.projects.find(d => d.summary.name === project.name);
         if (matchingProject && matchingProject.data) {
-
           this.setState({ loading: true });
           DataContainer.setSummary(matchingProject, () => {
             DataContainer.loadAndFormatData(matchingProject.data, this.success, this.failure);
@@ -166,42 +164,41 @@ export default class Home extends Component {
             // console.log(event)
             // console.log(item)
             // console.log(webContents)
-            let filePath = join(tmpdir(), item.getFilename())
-            item.setSavePath(filePath)
+            const filePath = join(tmpdir(), item.getFilename());
+            item.setSavePath(filePath);
             item.on('done', () => {
               // console.log('saved', project.name)
-              contents.session.removeListener('will-download', listener)
-              DataContainer.setSummary({ data: filePath}, () => {
-                console.log(project)
+              contents.session.removeListener('will-download', listener);
+              DataContainer.setSummary({ data: filePath }, () => {
+                console.log(project);
                 const success = () => {
                   const newProject = createProject({ name: project.name, data: DataContainer.getData() });
                   DataContainer.setSummary(newProject, () => {
                     this.setState({
                       downloading: false,
                     }, () => {
-                      this.success()
-                    })
+                      this.success();
+                    });
                   }, this.failure);
-                }
+                };
                 DataContainer.loadAndFormatData(filePath, success, this.failure);
               }, this.failure);
-            })
-          }
+            });
+          };
           contents.session.on('will-download', listener);
           contents.downloadURL(project.link);
           this.setState({
             downloading: true,
-          })
-
-        } catch(e) {
-          console.log(e)
+          });
+        } catch (e) {
+          console.log(e);
         }
       }
     } else {
       this.failure();
     }
   }
-  //This handels deletion and renaming of listed projects in home screen
+  // This handels deletion and renaming of listed projects in home screen
   edit() {
     const editing = !this.state.editing;
     Object.keys(this.shouldUpdate).forEach(k => {
@@ -217,15 +214,13 @@ export default class Home extends Component {
       );
     });
     this.shouldUpdate = {};
-    //this const will handle the deleting of data when projects are deleted
+    // this const will handle the deleting of data when projects are deleted
     const deleting = editing ? this.state.deleting : false;
     this.setState({ editing, deleting });
-    if(this.state.iconSRC === editOn) {
-      this.setState({iconSRC: editOff});
-    }
-    else
-    {
-      this.setState({iconSRC: editOn});
+    if (this.state.iconSRC === editOn) {
+      this.setState({ iconSRC: editOff });
+    } else {
+      this.setState({ iconSRC: editOn });
     }
   }
 
@@ -258,12 +253,12 @@ export default class Home extends Component {
     this.setState({ deleting: true });
   }
 
-  /*This function deals with when the mouse hovers over the edit icon on top right of
+  /* This function deals with when the mouse hovers over the edit icon on top right of
   the home screen and changes img src accordingly to correct svg file */
-  handleMouseOver (title) {
-    switch(title) {
-      case "edit":
-        if(this.state.iconSRC === editOff) {
+  handleMouseOver(title) {
+    switch (title) {
+      case 'edit':
+        if (this.state.iconSRC === editOff) {
           this.setState({ iconSRC: editHover });
         }
         break;
@@ -285,21 +280,17 @@ export default class Home extends Component {
     }
   }
 
-  /*This function deals with the mouse leaving an icon (no longer hovering) and
+  /* This function deals with the mouse leaving an icon (no longer hovering) and
   changed img src to correct svg file */
-  handleMouseLeave (title) {
-    switch(title) {
-      case "edit":
-        if(this.state.iconSRC === editHover) {
-          this.setState({iconSRC: editOff});
-        }
-        else if(this.state.iconSRC === editOn)
-        {
-          this.setState({iconSRC: editOn});
-        }
-        else
-        {
-          this.setState({iconSRC: editOff});
+  handleMouseLeave(title) {
+    switch (title) {
+      case 'edit':
+        if (this.state.iconSRC === editHover) {
+          this.setState({ iconSRC: editOff });
+        } else if (this.state.iconSRC === editOn) {
+          this.setState({ iconSRC: editOn });
+        } else {
+          this.setState({ iconSRC: editOff });
         }
         break;
       case 'New to Phinch?':
@@ -321,7 +312,7 @@ export default class Home extends Component {
   }
 
   render() {
-    console.log("render() method");
+    console.log('render() method');
     if (this.state.redirect !== null && this.state.redirect !== '/') {
       return <Redirect push to={this.state.redirect} />;
     }
@@ -394,18 +385,18 @@ export default class Home extends Component {
         data={[modalContent]}
       />
     ) : null;
-    const projects = <ProjectList
-      projectList= { this.state.projects }
-      view= { this.view }
-      updateName= { this.updateName }
-      remove= { this.remove }
-      editing= { this.state.editing }
-      help2= { this.state.help2 }
-      help3= { this.state.help3 }
-      iconSRC= { this.state.iconSRC }
-      disableEditing={ () => this.setState({ editing: false }) }
-      type= 'projects'
-      />;
+    const projects = (<ProjectList
+      projectList={this.state.projects}
+      view={this.view}
+      updateName={this.updateName}
+      remove={this.remove}
+      editing={this.state.editing}
+      help2={this.state.help2}
+      help3={this.state.help3}
+      iconSRC={this.state.iconSRC}
+      disableEditing={() => this.setState({ editing: false })}
+      type="projects"
+    />);
     const flagshipProjects = FSProjectList({
       projectList: this.state.fsProjects,
       view: this.view,
@@ -419,11 +410,11 @@ export default class Home extends Component {
           <SideBar context={this} />
           <div className={`${styles.section} ${styles.right}`}>
             <SpotlightWithToolTip
-              isActive = {hideStep4 ? this.state.help3 : this.state.help4}
+              isActive={hideStep4 ? this.state.help3 : this.state.help4}
               inheritParentBackgroundColor={false}
               toolTipPlacement="leftTop"
-              toolTipTitle={"Click the edit button to edit the project name or delete the file from the Phinch app."}
-              style={{position: "absolute", pointerEvents: this.state.help4 ? 'none' : null}}
+              toolTipTitle="Click the edit button to edit the project name or delete the file from the Phinch app."
+              style={{ position: 'absolute', pointerEvents: this.state.help4 ? 'none' : null }}
             >
               <div
                 role="button"
@@ -431,9 +422,10 @@ export default class Home extends Component {
                 className={styles.edit}
                 onClick={this.edit}
                 onKeyPress={e => (e.key === ' ' ? this.edit() : null)}
-                onMouseEnter={() => this.handleMouseOver("edit")}
-                onMouseLeave={() => this.handleMouseLeave("edit")}
-                style={{ padding: this.state.help4 || this.state.help3 ? '0.5em' : null,
+                onMouseEnter={() => this.handleMouseOver('edit')}
+                onMouseLeave={() => this.handleMouseLeave('edit')}
+                style={{
+ padding: this.state.help4 || this.state.help3 ? '0.5em' : null,
                   transform: this.state.help4 || this.state.help3 ? 'translate(0.5em,  -0.5em)' : null
               }}
               >
