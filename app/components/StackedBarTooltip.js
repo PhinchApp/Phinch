@@ -18,7 +18,7 @@ function Datum(props) {
   return (
     <SpotlightWithToolTip
       isActive={props.spotlight}
-      toolTipTitle={"If you hover over any visible bar chart slice, the whole visual will highlight the same observation across all graphs, and a box of detailed information will appear accordingly. If you click the hovered taxonomy, its graph will be added to the side bar."}
+      toolTipTitle="If you hover over any visible bar chart slice, the whole visual will highlight the same observation across all graphs, and a box of detailed information will appear accordingly. If you click the hovered taxonomy, its graph will be added to the side bar."
       style={{
         zIndex: 100000,
       }}

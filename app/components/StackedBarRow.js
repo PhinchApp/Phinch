@@ -151,7 +151,7 @@ export default class StackedBarRow extends Component {
           position: 'absolute',
           marginTop: this.props.isLast
             ? -322 + (this.props.metrics.padding * 2)
-            : this.props.metrics.padding*2.5,
+            : this.props.metrics.padding * 2.5,
           marginLeft: this.props.metrics.idWidth + (6),
           width: '321px',
           height: '322px',
@@ -199,14 +199,14 @@ export default class StackedBarRow extends Component {
           paddingTop: '3px',
           lineHeight: '7px',
           font: 'Open Sans',
-          fontSize: "9px",
+          fontSize: '9px',
           fontWeight: 600,
           letterSpacing: '1px',
         }}
         onClick={this._toggleTagMenu}
         onKeyPress={e => (e.key === ' ' ? this._toggleTagMenu() : null)}
       >
-      Edit Tag
+        Edit Tag
       </div>
     ) : '';
     const tagMenu = this.state.showTags ? (
@@ -282,7 +282,7 @@ export default class StackedBarRow extends Component {
           right: 0,
           marginTop: (this.props.metrics.lineHeight * 2) + 10,
           font: 'Open Sans',
-          fontSize: "9px",
+          fontSize: '9px',
           fontWeight: 600,
           letterSpacing: '1px',
 

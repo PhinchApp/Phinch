@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="148.263" height="29.99" viewBox="0 0 148.263 29.99">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="120" height="25" viewBox="0 0 148.263 29.99">
   <defs>
     <filter id="Union_1">
       <feOffset input="SourceAlpha"/>
@@ -22,6 +22,6 @@
       <path id="Path_608" data-name="Path 608" d="M18.269,171.886l3.241,3.862a1.384,1.384,0,0,1-2.121,1.78l-3.24-3.863a1.384,1.384,0,1,1,2.12-1.779" transform="translate(0.845 -163.443)" fill="#fdfdfa"/>
       <path id="Path_609" data-name="Path 609" d="M18.269,181.391l3.241-3.862a1.384,1.384,0,0,0-2.121-1.78l-3.24,3.863a1.384,1.384,0,1,0,2.12,1.779" transform="translate(0.845 -163.307)" fill="#fdfdfa"/>
     </g>
-    <text id="Filter_Data-2" data-name="Filter Data" transform="translate(14.208 22.052)" fill="#fdfdfa" font-size="20" font-family="OpenSans-Semibold, Open Sans" font-weight="600"><tspan x="0" y="0">Filter Data</tspan></text>
+    <text id="Filter_Data-2" data-name="Filter Data" transform="translate(14.208 22.052)" fill="#fdfdfa" font-size="16" font-family="OpenSans-Semibold, Open Sans" font-weight="600"><tspan x="0" y="0">Filter Data</tspan></text>
   </g>
 </svg>

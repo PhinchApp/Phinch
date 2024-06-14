@@ -13,9 +13,10 @@
 import { app, BrowserWindow, ipcMain, screen } from 'electron';
 import MenuBuilder from './menu';
 
-import { homedir, tmpdir } from 'os'
-import {join} from 'path'
-import fs from 'fs'
+import { homedir, tmpdir } from 'os';
+import { join } from 'path';
+import fs from 'fs';
+
 const phinchdir = join(homedir(), 'Documents', 'Phinch2.0');
 let mainWindow = null;
 
@@ -24,7 +25,10 @@ if (process.env.NODE_ENV === 'production') {
   sourceMapSupport.install();
 }
 
-if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
+if (
+  process.env.NODE_ENV === 'development' ||
+  process.env.DEBUG_PROD === 'true'
+) {
   require('electron-debug')();
   const path = require('path');
   const p = path.join(__dirname, '..', 'app', 'node_modules');
@@ -34,16 +38,12 @@ if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true')
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  const extensions = [
-    'REACT_DEVELOPER_TOOLS',
-    'REDUX_DEVTOOLS'
-  ];
+  const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];
 
-  return Promise
-    .all(extensions.map(name => installer.default(installer[name], forceDownload)))
-    .catch(console.log);
+  return Promise.all(
+    extensions.map((name) => installer.default(installer[name], forceDownload))
+  ).catch(console.log);
 };
-
 
 /**
  * Add event listeners...
@@ -57,13 +57,15 @@ app.on('window-all-closed', () => {
   // }
 });
 
-
 app.on('ready', async () => {
-  if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
+  if (
+    process.env.NODE_ENV === 'development' ||
+    process.env.DEBUG_PROD === 'true'
+  ) {
     await installExtensions();
   }
-  const maxSize = { width: 1398, height: 875 }
-  const { width, height } = screen.getPrimaryDisplay().workAreaSize
+  const maxSize = { width: 1398, height: 875 };
+  const { width, height } = screen.getPrimaryDisplay().workAreaSize;
 
   mainWindow = new BrowserWindow({
     show: false,
@@ -75,16 +77,14 @@ app.on('ready', async () => {
       nodeIntegrationInWorker: true,
       nodeIntegration: true,
     },
-
   });
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
-  mainWindow.webContents.session.setDownloadPath(phinchdir)
+  mainWindow.webContents.session.setDownloadPath(phinchdir);
   const listener = (event, item, webContents) => {
-    let filePath = join(tmpdir(), item.getFilename())
-    item.setSavePath(filePath)
-
-  }
+    const filePath = join(tmpdir(), item.getFilename());
+    item.setSavePath(filePath);
+  };
   mainWindow.webContents.session.on('will-download', listener);
 
   // @TODO: Use 'ready-to-show' event

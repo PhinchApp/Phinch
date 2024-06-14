@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { FixedSizeList as List } from 'react-window';
 
-import Spotlight from "rc-spotlight";
+import Spotlight from 'rc-spotlight';
 import 'antd/dist/antd.css';
 import { Tooltip } from 'antd';
 import ReactTooltip from 'react-tooltip';
@@ -46,7 +46,7 @@ import {
   removeRows,
   restoreRows,
   visSortBy,
-  countObservations
+  countObservations,
 } from '../filterfunctions';
 import { setProjectFilters, getProjectFilters } from '../projects';
 import handleExportButton from '../export';
@@ -64,7 +64,7 @@ import StackedBarsSVG from './StackedBarsSVG';
 import FilterChart from './FilterChart';
 import Summary from './Summary';
 import Modal from './Modal';
-import Sankey from './Sankey/'
+import Sankey from './Sankey/';
 import styles from './Vis.css';
 import gstyle from './general.css';
 import classNames from 'classnames';
@@ -108,7 +108,7 @@ export default class Vis extends Component {
       sankeyColors: 'right',
       helpCounter: 0,
       helpButton: needHelp,
-      overrideRightSidebar: null
+      overrideRightSidebar: null,
     };
 
     this._inputs = {};
@@ -131,8 +131,7 @@ export default class Vis extends Component {
         id: 'filter',
         name: 'Back',
         action: () => {
-          this.save(() => (
-            this.setState({ redirect: '/Filter' })));
+          this.save(() => this.setState({ redirect: '/Filter' }));
         },
         icon: <img src={back} alt="back" />,
       },
@@ -143,7 +142,7 @@ export default class Vis extends Component {
           this.setState({ renderSVG: true });
         },
         icon: <img src={exportButton} alt="export" />,
-      }
+      },
     ];
 
     this.filters = {};
@@ -154,24 +153,20 @@ export default class Vis extends Component {
     };
 
     // Move this to data
-    const tagColors = [
-      '#ff4a14',
-      '#ffc400',
-      '#00adff',
-      '#2bfec3',
-    ];
+    const tagColors = ['#ff4a14', '#ffc400', '#00adff', '#2bfec3'];
     this.state.tags = [
       {
         id: 'none',
         color: null,
         name: 'No Tags',
         selected: true,
-      }, ...tagColors.map((c, i) => ({
+      },
+      ...tagColors.map((c, i) => ({
         id: `tag-${i}`,
         name: `Tag ${i}`,
         color: c,
         selected: true,
-      }))
+      })),
     ];
 
     this.readsBySequence = {};
@@ -203,9 +198,10 @@ export default class Vis extends Component {
       debounce: 350,
     };
 
-    this.metrics.nonbarWidth = (this.metrics.padding * 3) + (this.metrics.barInfoWidth);
-    this.metrics.chartWidth = this.state.width
-      - (this.metrics.leftSidebar + this.metrics.nonbarWidth);
+    this.metrics.nonbarWidth =
+      this.metrics.padding * 3 + this.metrics.barInfoWidth;
+    this.metrics.chartWidth =
+      this.state.width - (this.metrics.leftSidebar + this.metrics.nonbarWidth);
     this.metrics.chartHeight = this.state.height - this.metrics.heightOffset;
 
     this.scales = {
@@ -220,27 +216,32 @@ export default class Vis extends Component {
     } else {
       // Break this whole chunk into a function or something
       //
-      this.init = getProjectFilters(this.state.summary.path, this.state.summary.dataKey, 'vis');
+      this.init = getProjectFilters(
+        this.state.summary.path,
+        this.state.summary.dataKey,
+        'vis'
+      );
       //
       this.state.names = this.init.names;
       // console.log('initial level', this.state.level)
-      this.state.level = (this.init.level !== undefined) ? this.init.level : this.state.level;
+      this.state.level =
+        this.init.level !== undefined ? this.init.level : this.state.level;
       // console.log(this.init, this.state.level)
       this.filters = this.init.filters ? this.init.filters : {};
       this.state.deleted = this.init.deleted ? this.init.deleted : [];
       this.state.tags = this.init.tags ? this.init.tags : this.state.tags;
       //
       // Can probably lose this for release
-      this.state.tags = this.state.tags.map(t => {
+      this.state.tags = this.state.tags.map((t) => {
         if (t.id === 'none') {
           t.name = 'No Tags';
         }
         return t;
       });
       //
-      //this is to allow the programmer to track if all tags are unselected or or least one
-      //is for styling purposes. Likely a better way to do this using data but the function of
-      //all state variables need to be identified first which will take time.
+      // this is to allow the programmer to track if all tags are unselected or or least one
+      // is for styling purposes. Likely a better way to do this using data but the function of
+      // all state variables need to be identified first which will take time.
       // this.state.tagTracker = this.state.tags.map(t => {
       //   if (t.selected === 'true') {
       //     return true;
@@ -249,33 +250,43 @@ export default class Vis extends Component {
       //   return false;
       // });
       //
-      this.state.rowTags = this.init.rowTags ? this.init.rowTags : this.state.rowTags;
-      this.state.selectedAttribute = this.init.selectedAttribute ? (
-        this.init.selectedAttribute
-      ) : this.state.selectedAttribute;
-      this.state.showEmptyAttrs = this.init.showEmptyAttrs === undefined
-        ? true : this.init.showEmptyAttrs;
+      this.state.rowTags = this.init.rowTags
+        ? this.init.rowTags
+        : this.state.rowTags;
+      this.state.selectedAttribute = this.init.selectedAttribute
+        ? this.init.selectedAttribute
+        : this.state.selectedAttribute;
+      this.state.showEmptyAttrs =
+        this.init.showEmptyAttrs === undefined
+          ? true
+          : this.init.showEmptyAttrs;
       //
       // Ugly...
-      this.state.showLeftSidebar = (this.init.showLeftSidebar !== undefined) ? (
-        this.init.showLeftSidebar
-      ) : this.state.showLeftSidebar;
-      this.metrics.leftSidebar = this.state.showLeftSidebar ?
-        this.metrics.left.max : this.metrics.left.min;
+      this.state.showLeftSidebar =
+        this.init.showLeftSidebar !== undefined
+          ? this.init.showLeftSidebar
+          : this.state.showLeftSidebar;
+      this.metrics.leftSidebar = this.state.showLeftSidebar
+        ? this.metrics.left.max
+        : this.metrics.left.min;
       //
       if (this.init.sort) {
-        this.state.mode = this.init.sort.mode === undefined
-          ? this.state.mode
-          : this.init.sort.mode;
-        this.state.labelKey = this.init.sort.labelKey === undefined
-          ? this.state.labelKey
-          : this.init.sort.labelKey;
-        this.state.sortReverse = this.init.sort.sortReverse === undefined
-          ? this.state.sortReverse
-          : this.init.sort.sortReverse;
-        this.state.sortKey = this.init.sort.sortKey === undefined
-          ? this.state.sortKey
-          : this.init.sort.sortKey;
+        this.state.mode =
+          this.init.sort.mode === undefined
+            ? this.state.mode
+            : this.init.sort.mode;
+        this.state.labelKey =
+          this.init.sort.labelKey === undefined
+            ? this.state.labelKey
+            : this.init.sort.labelKey;
+        this.state.sortReverse =
+          this.init.sort.sortReverse === undefined
+            ? this.state.sortReverse
+            : this.init.sort.sortReverse;
+        this.state.sortKey =
+          this.init.sort.sortKey === undefined
+            ? this.state.sortKey
+            : this.init.sort.sortKey;
       }
       //
     }
@@ -292,22 +303,24 @@ export default class Vis extends Component {
     this.toggleRightMenu = this.toggleRightMenu.bind(this);
     this.toggleLog = this.toggleLog.bind(this);
     this.countUpHelp = this.countUpHelp.bind(this);
-    this._isMounted = false
+    this._isMounted = false;
   }
 
   componentDidMount() {
-    this._isMounted = true
+    this._isMounted = true;
     window.addEventListener('resize', this.updateDimensions);
     if (this.initdata) {
       this.formatTaxonomyData(this.initdata, this.state.level, (data) => {
         this.setState({ data, preData: data }, () => {
-          this.updateAttributeValues(this.state.selectedAttribute, this.state.data);
+          this.updateAttributeValues(
+            this.state.selectedAttribute,
+            this.state.data
+          );
           this.setLevel(this.state.level);
         });
       });
     }
     window.addEventListener('click', this.countUpHelp);
-
   }
 
   componentDidUpdate() {
@@ -315,79 +328,109 @@ export default class Vis extends Component {
       this.setDialogVisible();
       // console.log(this.state.summary.path)
       // console.log(this._svg)
-      handleExportButton(_cloneDeep(this.state.summary.path), this._svg, this.exportComplete, this._visType);
+      handleExportButton(
+        _cloneDeep(this.state.summary.path),
+        this._svg,
+        this.exportComplete,
+        this._visType
+      );
     }
-    if (this.state.helpCounter === 6 && this._visType === 'stackedbar' && Object.keys(this.state.filters).length === 0) {
+    if (
+      this.state.helpCounter === 6 &&
+      this._visType === 'stackedbar' &&
+      Object.keys(this.state.filters).length === 0
+    ) {
       this._clickDatum(this.sequences[0]);
       this.setState({ datumClickedViaHelp: this.sequences[0] });
     }
-    if (this.state.helpCounter !== 6 && this._visType === 'stackedbar' && this.state.datumClickedViaHelp) {
+    if (
+      this.state.helpCounter !== 6 &&
+      this._visType === 'stackedbar' &&
+      this.state.datumClickedViaHelp
+    ) {
       this.removeFilter(this.state.datumClickedViaHelp.name);
       this.setState({ datumClickedViaHelp: null });
-
     }
-    if (this.state.helpCounter === 7 && this._visType === 'stackedbar' && !this.state.highlightedDatum && !this.state.highlightedDatumFromHelp) {
+    if (
+      this.state.helpCounter === 7 &&
+      this._visType === 'stackedbar' &&
+      !this.state.highlightedDatum &&
+      !this.state.highlightedDatumFromHelp
+    ) {
       this.setState({
         highlightedDatum: {
           datum: this.state.data[0].sequences[0],
           sample: this.state.data[0],
           position: {
-            x: 400, y: 250
-          }
+            x: 400,
+            y: 250,
+          },
         },
         showTooltip: true,
         highlightedDatumFromHelp: true,
-      })
-    } else if (this.state.helpCounter !== 7 && this._visType === 'stackedbar' && this.state.highlightedDatum && this.state.highlightedDatumFromHelp) {
+      });
+    } else if (
+      this.state.helpCounter !== 7 &&
+      this._visType === 'stackedbar' &&
+      this.state.highlightedDatum &&
+      this.state.highlightedDatumFromHelp
+    ) {
       this.setState({
         highlightedDatum: null,
         showTooltip: false,
         highlightedDatumFromHelp: false,
-      })
+      });
     }
-    if (this.state.helpCounter === 8 && this._visType === 'stackedbar' && !this.state.selectedAttributeFromHelp) {
+    if (
+      this.state.helpCounter === 8 &&
+      this._visType === 'stackedbar' &&
+      !this.state.selectedAttributeFromHelp
+    ) {
       const selectedAttribute = Object.keys(this.attributes)[0];
       this.updateAttributeValues(selectedAttribute, this.state.data);
 
       this.setState({
         selectedAttribute,
         selectedAttributeFromHelp: true,
-
-      })
-    } else if (this.state.helpCounter !== 8 && this._visType === 'stackedbar' && this.state.selectedAttributeFromHelp) {
+      });
+    } else if (
+      this.state.helpCounter !== 8 &&
+      this._visType === 'stackedbar' &&
+      this.state.selectedAttributeFromHelp
+    ) {
       this.setState({
         selectedAttribute: '',
         selectedAttributeFromHelp: false,
-      })
+      });
     }
   }
 
   componentWillUnmount() {
-    this._isMounted = false
+    this._isMounted = false;
     clearTimeout(this.tooltip.handle);
     clearTimeout(this.timeout);
     window.removeEventListener('resize', this.updateDimensions);
     window.removeEventListener('click', this.countUpHelp);
-
   }
   countUpHelp() {
-
-    if(this.state.helpCounter > 0) {
+    if (this.state.helpCounter > 0) {
       const currCount = this.state.helpCounter;
       const newCount = currCount + 1;
       // 6 for sankey, 8 for bargraph
       const maxCount = this._visType === 'sankey' ? 6 : 9;
-      newCount > maxCount ? this.setState({ helpCounter: 2, }) : this.setState({ helpCounter: newCount, });
+      newCount > maxCount
+        ? this.setState({ helpCounter: 2 })
+        : this.setState({ helpCounter: newCount });
     }
   }
 
   exportComplete = () => {
     this.setState({ renderSVG: false, dialogVisible: false });
-  }
+  };
 
   setDialogVisible = () => {
     this.setState({ dialogVisible: true });
-  }
+  };
 
   save = (callback) => {
     const viewMetadata = {
@@ -414,7 +457,7 @@ export default class Vis extends Component {
       viewMetadata,
       (value) => {
         callback(value);
-      },
+      }
     );
   };
 
@@ -424,12 +467,12 @@ export default class Vis extends Component {
       this.clearResult();
     }, 3000);
     this.setState({ result });
-  }
+  };
 
   clearResult = () => {
     const result = null;
     this.setState({ result });
-  }
+  };
 
   _toggleTag = (datum, tag, isRemoved) => {
     if (datum.tags[tag.id]) {
@@ -461,12 +504,12 @@ export default class Vis extends Component {
         this.save(this.setResult);
       });
     }
-  }
+  };
 
   _toggleTags = () => {
     const showTags = !this.state.showTags;
     this.setState({ showTags });
-  }
+  };
 
   _hoverDatum = (datum, sample, position) => {
     if (datum == null) {
@@ -483,27 +526,32 @@ export default class Vis extends Component {
       }
       this.setState({ highlightedDatum: { datum, sample, position } });
     }
-  }
+  };
 
   _clickDatum = (datum) => {
     if (!Object.prototype.hasOwnProperty.call(this.filters, this.state.level)) {
       this.filters[this.state.level] = {};
     }
     const filters = _cloneDeep(this.state.filters);
-    if (!Object.prototype.hasOwnProperty.call(this.filters[this.state.level], datum.name)) {
+    if (
+      !Object.prototype.hasOwnProperty.call(
+        this.filters[this.state.level],
+        datum.name
+      )
+    ) {
       const sequences = [];
-      this.state.preData.forEach(d => {
-        d.sequences.forEach(s => {
+      this.state.preData.forEach((d) => {
+        d.sequences.forEach((s) => {
           if (datum.name === s.name && s.reads > 0) {
             sequences.push(s);
           }
         });
       });
-      const totalReads = sequences.map(s => s.reads).reduce((s, v) => s + v);
+      const totalReads = sequences.map((s) => s.reads).reduce((s, v) => s + v);
       const values = _sortBy(sequences, (s) => s.reads).map((s, i) => ({
         index: i,
         value: s.reads,
-        count: (s.reads === 0) ? 1 : s.reads,
+        count: s.reads === 0 ? 1 : s.reads,
         percent: s.reads / totalReads,
       }));
       this.filters[this.state.level][datum.name] = {
@@ -525,7 +573,7 @@ export default class Vis extends Component {
       this.topSequences = this.renderTopSequences();
       this.save(this.setResult);
     });
-  }
+  };
 
   toggleLog(name) {
     const filters = _cloneDeep(this.state.filters);
@@ -542,29 +590,46 @@ export default class Vis extends Component {
     this.filters[this.state.level] = filters;
     const showRightSidebar = Object.keys(filters).length > 0;
     this.updateChartWidth(showRightSidebar);
-    const data = this.filterData(filters, this.state.tags, this.state.preData, this.state.deleted);
+    const data = this.filterData(
+      filters,
+      this.state.tags,
+      this.state.preData,
+      this.state.deleted
+    );
     const observations = countObservations(data);
     this.updateAttributeValues(this.state.selectedAttribute, data);
-    this.setState({
-      data, observations, filters, showRightSidebar
-    }, () => {
-      this.topSequences = this.renderTopSequences();
-      this.save(this.setResult);
-    });
+    this.setState(
+      {
+        data,
+        observations,
+        filters,
+        showRightSidebar,
+      },
+      () => {
+        this.topSequences = this.renderTopSequences();
+        this.save(this.setResult);
+      }
+    );
   }
 
   updateChartWidth(_showRightSidebar) {
-    const showRightSidebar = (_showRightSidebar || this.state.overrideRightSidebar === 'open') && !(_showRightSidebar && this.state.overrideRightSidebar === 'close')
+    const showRightSidebar =
+      (_showRightSidebar || this.state.overrideRightSidebar === 'open') &&
+      !(_showRightSidebar && this.state.overrideRightSidebar === 'close');
     // console.log('update chart width', { _showRightSidebar, showRightSidebar, overrideRightSidebar: this.state.overrideRightSidebar })
     if (showRightSidebar) {
-      this.metrics.chartWidth = window.innerWidth
-        - (this.metrics.leftSidebar + this.metrics.rightSidebar + this.metrics.nonbarWidth);
+      this.metrics.chartWidth =
+        window.innerWidth -
+        (this.metrics.leftSidebar +
+          this.metrics.rightSidebar +
+          this.metrics.nonbarWidth);
     } else {
-      this.metrics.chartWidth = window.innerWidth
-        - (this.metrics.leftSidebar + this.metrics.nonbarWidth );
+      this.metrics.chartWidth =
+        window.innerWidth -
+        (this.metrics.leftSidebar + this.metrics.nonbarWidth);
     }
     if (this._isMounted) {
-      this.setState({ chartWidth: this.metrics.chartWidth })
+      this.setState({ chartWidth: this.metrics.chartWidth });
     }
   }
 
@@ -586,15 +651,29 @@ export default class Vis extends Component {
     this.updateChartWidth(showRightSidebar);
     this.updateTaxonomyData(this.state.preData, level, true, (preData) => {
       this.updateTaxonomyData(this.state.deleted, level, false, (deleted) => {
-        const data = this.filterData(filters, this.state.tags, preData, deleted);
+        const data = this.filterData(
+          filters,
+          this.state.tags,
+          preData,
+          deleted
+        );
         const observations = countObservations(data);
         this.updateAttributeValues(this.state.selectedAttribute, data);
-        this.setState({
-          level, data, observations, preData, deleted, filters, showRightSidebar
-        }, () => {
-          this.topSequences = this.renderTopSequences();
-          this.save(this.setResult);
-        });
+        this.setState(
+          {
+            level,
+            data,
+            observations,
+            preData,
+            deleted,
+            filters,
+            showRightSidebar,
+          },
+          () => {
+            this.topSequences = this.renderTopSequences();
+            this.save(this.setResult);
+          }
+        );
       });
     });
   }
@@ -603,15 +682,15 @@ export default class Vis extends Component {
   // Move to data container?
   formatTaxonomyData(data, level, callback) {
     let totalDataReads = 0;
-    const indata = data.columns.map(c => {
+    const indata = data.columns.map((c) => {
       const matches = data.data
-        .filter(d => d[1] === c.metadata.phinchID)
-        .map(d => {
+        .filter((d) => d[1] === c.metadata.phinchID)
+        .map((d) => {
           const row = data.rows[d[0]];
           return {
             id: row.id,
             taxonomy: row.metadata.taxonomy,
-            count: d[2]
+            count: d[2],
           };
         });
       totalDataReads += c.reads;
@@ -619,19 +698,23 @@ export default class Vis extends Component {
       if (this.state.names[c.sampleName]) {
         phinchName = this.state.names[c.sampleName];
       }
-      const tags = this.state.rowTags[c.sampleName] ? this.state.rowTags[c.sampleName] : {};
-      Object.keys(tags).forEach(k => {
-        const [tag] = this.state.tags.filter(t => t.id === k);
+      const tags = this.state.rowTags[c.sampleName]
+        ? this.state.rowTags[c.sampleName]
+        : {};
+      Object.keys(tags).forEach((k) => {
+        const [tag] = this.state.tags.filter((t) => t.id === k);
         tags[k] = tag;
       });
       const [dateAttribute] = Object.keys(this.attributes)
-        .map(k => this.attributes[k])
-        .filter(a => a.type === 'date');
+        .map((k) => this.attributes[k])
+        .filter((a) => a.type === 'date');
       let collectionDate = '';
       if (dateAttribute) {
-        collectionDate = c.metadata[dateAttribute.key] ? (
-          new Date(c.metadata[dateAttribute.key]).toLocaleString().split(', ')[0]
-        ) : '';
+        collectionDate = c.metadata[dateAttribute.key]
+          ? new Date(c.metadata[dateAttribute.key])
+            .toLocaleString()
+            .split(', ')[0]
+          : '';
       }
       return {
         id: c.id,
@@ -658,12 +741,12 @@ export default class Vis extends Component {
     if (updateSequences) {
       this.readsBySequence = {};
     }
-    const taxonomyData = data.map(d => {
+    const taxonomyData = data.map((d) => {
       d.sequences = nest()
-        .key(s => s.taxonomy.slice(0, level + 1))
+        .key((s) => s.taxonomy.slice(0, level + 1))
         .entries(d.matches)
-        .map(s => {
-          const reads = s.values.map(v => v.count).reduce((a, v) => a + v);
+        .map((s) => {
+          const reads = s.values.map((v) => v.count).reduce((a, v) => a + v);
           if (updateSequences) {
             if (s.key in this.readsBySequence) {
               this.readsBySequence[s.key] += reads;
@@ -686,27 +769,32 @@ export default class Vis extends Component {
   }
 
   filterData(filters, tags, preData, deleted) {
-    const deletedSamples = deleted.map(d => d.sampleName);
-    const samples = preData.filter(s => {
+    const deletedSamples = deleted.map((d) => d.sampleName);
+    const samples = preData.filter((s) => {
       let include = true;
       if (deletedSamples.includes(s.sampleName)) {
         include = false;
       }
       Object.keys(filters).forEach((k) => {
-        const [sequence] = s.sequences.filter(d => (d.name === k));
+        const [sequence] = s.sequences.filter((d) => d.name === k);
         if (sequence) {
           const value = sequence.reads;
-          if (value < filters[k].range.min.value || value > filters[k].range.max.value) {
+          if (
+            value < filters[k].range.min.value ||
+            value > filters[k].range.max.value
+          ) {
             include = false;
           }
         }
       });
-      const showNoneTags = (tags.filter(t => t.selected && t.id === 'none').length > 0);
+      const showNoneTags =
+        tags.filter((t) => t.selected && t.id === 'none').length > 0;
       const countTags = Object.keys(s.tags).length;
-      const countSelectedTags = Object.keys(s.tags).filter(t => !s.tags[t].selected).length;
+      const countSelectedTags = Object.keys(s.tags).filter(
+        (t) => !s.tags[t].selected
+      ).length;
       if (
-        (!showNoneTags && countTags === 0)
-          ||
+        (!showNoneTags && countTags === 0) ||
         (countTags > 0 && countTags === countSelectedTags)
       ) {
         include = false;
@@ -717,52 +805,87 @@ export default class Vis extends Component {
   }
 
   applyFilters(filters) {
-    const data = this.filterData(filters, this.state.tags, this.state.preData, this.state.deleted);
+    const data = this.filterData(
+      filters,
+      this.state.tags,
+      this.state.preData,
+      this.state.deleted
+    );
     const observations = countObservations(data);
     this.updateAttributeValues(this.state.selectedAttribute, data);
-    this.setState({ filters, data, observations }, _debounce(() => {
-      this.save(this.setResult);
-    }), this.metrics.debounce, { leading: false, trailing: true });
+    this.setState(
+      { filters, data, observations },
+      _debounce(() => {
+        this.save(this.setResult);
+      }),
+      this.metrics.debounce,
+      { leading: false, trailing: true }
+    );
   }
 
   renderSearch() {
-    return <Search
-      options={this.sequences}
-      onValueCleared={this.onValueCleared}
-      onSuggestionSelected={this.onSuggestionSelected}
-      onSuggestionHighlighted={this.onSuggestionHighlighted}
-    />
+    return (
+      <Search
+        options={this.sequences}
+        onValueCleared={this.onValueCleared}
+        onSuggestionSelected={this.onSuggestionSelected}
+        onSuggestionHighlighted={this.onSuggestionHighlighted}
+      />
+    );
   }
   renderFilters() {
-    let segments = null
-    if (Object.keys(this.state.filters).length && this.state.overrideRightSidebar !== 'close') {
-      segments = Object.keys(this.state.filters).map(k => (
+    let segments = null;
+    if (
+      Object.keys(this.state.filters).length &&
+      this.state.overrideRightSidebar !== 'close'
+    ) {
+      segments = Object.keys(this.state.filters).map((k) => (
         <SpotlightWithToolTip
-          isActive={this.state.helpCounter === 6 && this._visType === 'stackedbar'}
-          toolTipPlacement= "left"
-          toolTipTitle={
-              <div>
-                After clicking a search result, a side bar will appear that shows the distribution of observations for each chosen search result. A mini bar chart for that search result will also appear underneath each main graph.
-                <br /><br />
-                On the side bar, the circles and slider bar underneath each distribution graph can be used as a further filtering mechanisms for rows displayed in the taxonomy bar chart. Only samples meeting the sidebar filtering criteria will remain visible in the main visualization window.
-                The graphs are visualized based on users’ setting on data filtering page, which means the actions taken previously will affect the visualisation shown here.
-                The top sequences box below shows the most abundant observations in your TOTAL dataset, with numerical values calculated after filter page settings have been applied.
-                <br /><br />
-                To remove the graph on the sidebar, simply click the “X” button on the upper right hand side of the sidebar detail. This will also cause the corresponding mini-bar chart to be removed in the main window.
-              </div>
+          isActive={
+            this.state.helpCounter === 6 && this._visType === 'stackedbar'
           }
-          style={{ boxShadow: 'rgba(255, 255, 255, 0.4) 0 0 10px 3px',
+          toolTipPlacement="left"
+          toolTipTitle={
+            <div>
+              After clicking a search result, a side bar will appear that shows
+              the distribution of observations for each chosen search result. A
+              mini bar chart for that search result will also appear underneath
+              each main graph.
+              <br />
+              <br />
+              On the side bar, the circles and slider bar underneath each
+              distribution graph can be used as a further filtering mechanisms
+              for rows displayed in the taxonomy bar chart. Only samples meeting
+              the sidebar filtering criteria will remain visible in the main
+              visualization window. The graphs are visualized based on users’
+              setting on data filtering page, which means the actions taken
+              previously will affect the visualisation shown here. The top
+              sequences box below shows the most abundant observations in your
+              TOTAL dataset, with numerical values calculated after filter page
+              settings have been applied.
+              <br />
+              <br />
+              To remove the graph on the sidebar, simply click the “X” button on
+              the upper right hand side of the sidebar detail. This will also
+              cause the corresponding mini-bar chart to be removed in the main
+              window.
+            </div>
+          }
+          style={{
+            boxShadow: 'rgba(255, 255, 255, 0.4) 0 0 10px 3px',
             pointerEvents: 'none',
             padding: '0.25rem 0.5rem 0px',
             margin: '0.25rem 0.5rem 0px',
           }}
-
         >
           <div
             key={k}
             style={{
               borderBottom: '1px solid #000',
-              margin: this.state.helpCounter === 6 ? '0.25rem 0.5rem 0px' : '0.5rem 1rem 0',
+              margin:
+                this.state.helpCounter === 6
+                  ? '0.25rem 0.5rem 0px'
+                  : '0.5rem 1rem 0',
             }}
           >
             <FilterChart
@@ -772,7 +895,7 @@ export default class Vis extends Component {
               fill={this.scales.c(k)}
               handle={this.scales.c(k)}
               data={this.state.filters[k]}
-              width={this.metrics.rightSidebar - (this.metrics.padding * 4)}
+              width={this.metrics.rightSidebar - this.metrics.padding * 4}
               height={this.metrics.rightSidebar / 4}
               filters={this.state.filters}
               update={updateFilters}
@@ -786,10 +909,27 @@ export default class Vis extends Component {
         </SpotlightWithToolTip>
       ));
     }
-    const rightSidebarOpen = (this.state.showRightSidebar || this.state.overrideRightSidebar === 'open') && !(this.state.showRightSidebar && this.state.overrideRightSidebar === 'close')
+    const rightSidebarOpen =
+      (this.state.showRightSidebar ||
+        this.state.overrideRightSidebar === 'open') &&
+      !(
+        this.state.showRightSidebar &&
+        this.state.overrideRightSidebar === 'close'
+      );
     return (
-      <div className={classNames(gstyle.panel, gstyle.noscrollbar, styles.rightPanelContainer, { [styles.rightSidebarOpen]: rightSidebarOpen})}
-        style={{ zIndex: this.state.helpCounter === 6 && this._visType === 'stackedbar' ? 100000 : null}}
+      <div
+        className={classNames(
+          gstyle.panel,
+          gstyle.noscrollbar,
+          styles.rightPanelContainer,
+          { [styles.rightSidebarOpen]: rightSidebarOpen }
+        )}
+        style={{
+          zIndex:
+            this.state.helpCounter === 6 && this._visType === 'stackedbar'
+              ? 100000
+              : null,
+        }}
       >
         <div className={styles.buttonContainer}>
           <div className={styles.toggleSquare} />
@@ -799,53 +939,69 @@ export default class Vis extends Component {
             tabIndex={0}
             className={`
               ${styles.menuToggle}
-              ${this.state.showRightSidebar || (this.state.overrideRightSidebar === 'open'  && this.state.overrideRightSidebar !== 'close') ? styles.closeMenu : styles.openMenu}`}
+              ${
+                this.state.showRightSidebar ||
+                (this.state.overrideRightSidebar === 'open' &&
+                  this.state.overrideRightSidebar !== 'close')
+                  ? styles.closeMenu
+                  : styles.openMenu
+              }`}
             onClick={this.toggleRightMenu}
             style={{
-              display: this.state.helpCounter === 6 && this._visType === 'stackedbar' ? 'none' : null,
+              display:
+                this.state.helpCounter === 6 && this._visType === 'stackedbar'
+                  ? 'none'
+                  : null,
             }}
           />
         </div>
-        {segments ?
+        {segments ? (
           <div
             className={`${gstyle.panel} ${gstyle.darkbgscrollbar}`}
             style={{
               borderTop: '1px solid #262626',
               position: 'fixed',
-              width: this.state.showRightSidebar || (this.state.overrideRightSidebar === 'open'  && this.state.overrideRightSidebar !== 'close') ? this.metrics.rightSidebar + 10 : 0,
-              height: this.metrics.chartHeight + (this.metrics.lineHeight * 2),
-              background: "#2D2F31",
+              width:
+                this.state.showRightSidebar ||
+                (this.state.overrideRightSidebar === 'open' &&
+                  this.state.overrideRightSidebar !== 'close')
+                  ? this.metrics.rightSidebar + 10
+                  : 0,
+              height: this.metrics.chartHeight + this.metrics.lineHeight * 2,
+              background: '#2D2F31',
             }}
           >
             {segments}
           </div>
-        : null}
+        ) : null}
       </div>
-
     );
   }
 
   toggleMenu() {
     const showLeftSidebar = !this.state.showLeftSidebar;
-    this.metrics.leftSidebar = showLeftSidebar ?
-      this.metrics.left.max : this.metrics.left.min;
+    this.metrics.leftSidebar = showLeftSidebar
+      ? this.metrics.left.max
+      : this.metrics.left.min;
     this.updateChartWidth(this.state.showRightSidebar);
     this.setState({ showLeftSidebar }, () => {
       this.save(this.setResult);
     });
   }
   toggleRightMenu() {
-    let newValue = this.state.showRightSidebar ? 'close' : 'open'
+    let newValue = this.state.showRightSidebar ? 'close' : 'open';
     if (newValue === this.state.overrideRightSidebar) {
-      newValue = null
+      newValue = null;
     }
 
-    this.setState({
-      overrideRightSidebar: newValue
-    }, () => {
-      this.updateChartWidth(this.state.showRightSidebar);
-    })
-
+    this.setState(
+      {
+        overrideRightSidebar: newValue,
+      },
+      () => {
+        this.updateChartWidth(this.state.showRightSidebar);
+      }
+    );
   }
 
   onSuggestionSelected(e, { suggestion }) {
@@ -860,7 +1016,7 @@ export default class Vis extends Component {
     if (suggestion === null) {
       this.setState({
         highlightedDatum: null,
-      })
+      });
       return;
     }
     const highlightedDatum = {
@@ -871,8 +1027,8 @@ export default class Vis extends Component {
     const showTooltip = false;
     this.setState({
       highlightedDatum,
-      showTooltip
-    })
+      showTooltip,
+    });
   }
 
   onValueCleared() {
@@ -894,9 +1050,14 @@ export default class Vis extends Component {
         names[d.sampleName] = d.phinchName;
         return d;
       });
-      this.setState({ deleted }, _debounce(() => {
-        this.save(this.setResult);
-      }), this.metrics.debounce, { leading: false, trailing: true });
+      this.setState(
+        { deleted },
+        _debounce(() => {
+          this.save(this.setResult);
+        }),
+        this.metrics.debounce,
+        { leading: false, trailing: true }
+      );
     } else {
       const data = this.state.data.map((d) => {
         if (d.sampleName === r.sampleName) {
@@ -905,32 +1066,47 @@ export default class Vis extends Component {
         names[d.sampleName] = d.phinchName;
         return d;
       });
-      this.setState({ data, names }, _debounce(() => {
-        this.save(this.setResult);
-      }), this.metrics.debounce, { leading: false, trailing: true });
+      this.setState(
+        { data, names },
+        _debounce(() => {
+          this.save(this.setResult);
+        }),
+        this.metrics.debounce,
+        { leading: false, trailing: true }
+      );
     }
   }
 
   updateTagName(event, tag) {
-    const tags = this.state.tags.map(t => {
+    const tags = this.state.tags.map((t) => {
       if (t.id === tag.id) {
         t.name = event.target.value;
       }
       return t;
     });
-    this.setState({ tags }, _debounce(() => {
-      this.save(this.setResult);
-    }), this.metrics.debounce, { leading: false, trailing: true });
+    this.setState(
+      { tags },
+      _debounce(() => {
+        this.save(this.setResult);
+      }),
+      this.metrics.debounce,
+      { leading: false, trailing: true }
+    );
   }
 
   filterByTag(event, tag) {
-    const tags = this.state.tags.map(t => {
+    const tags = this.state.tags.map((t) => {
       if (tag.id === t.id) {
         t.selected = event.target.checked;
       }
       return t;
     });
-    const data = this.filterData(this.state.filters, tags, this.state.preData, this.state.deleted);
+    const data = this.filterData(
+      this.state.filters,
+      tags,
+      this.state.preData,
+      this.state.deleted
+    );
     const observations = countObservations(data);
     this.updateAttributeValues(this.state.selectedAttribute, data);
     this.setState({ tags, data, observations }, () => {
@@ -958,13 +1134,17 @@ export default class Vis extends Component {
       filters={this.state.filters}
       metrics={this.metrics}
       scales={this.scales}
-      tags={this.state.tags.filter(t => t.id !== 'none')}
+      tags={this.state.tags.filter((t) => t.id !== 'none')}
       toggleTag={this._toggleTag}
-      isPercent={(this.state.mode === 'percent')}
+      isPercent={this.state.mode === 'percent'}
       isRemoved={removed}
       highlightedDatum={this.state.highlightedDatum}
-      removeDatum={() => { removeRows(this, [datum]); }}
-      restoreDatum={() => { restoreRows(this, [datum]); }}
+      removeDatum={() => {
+        removeRows(this, [datum]);
+      }}
+      restoreDatum={() => {
+        restoreRows(this, [datum]);
+      }}
       hoverDatum={this._hoverDatum}
       clickDatum={this._clickDatum}
       updatePhinchName={this.updatePhinchName}
@@ -972,7 +1152,8 @@ export default class Vis extends Component {
     />
   );
 
-  stackRow = ({ index, style }) => this.stack(this.state.data[index], index, style.top, false)
+  stackRow = ({ index, style }) =>
+    this.stack(this.state.data[index], index, style.top, false);
 
   attr = (datum, index, yOffset) => (
     <StackedBarRow
@@ -987,7 +1168,7 @@ export default class Vis extends Component {
       metrics={this.metrics}
       scales={this.scales}
       tags={[]}
-      isPercent={(this.state.mode === 'percent')}
+      isPercent={this.state.mode === 'percent'}
       isRemoved={null}
       highlightedDatum={this.state.highlightedDatum}
       hoverDatum={this._hoverDatum}
@@ -1005,45 +1186,67 @@ export default class Vis extends Component {
     />
   );
 
-  attrRow = ({ index, style }) => this.attr(this.attribute.displayValues[index], index, style.top)
+  attrRow = ({ index, style }) =>
+    this.attr(this.attribute.displayValues[index], index, style.top);
 
   updateAttributeValues(attribute, data) {
     if (attribute !== '') {
       this.attributes[attribute].displayValues = visSortBy(
-        this.attributes[attribute].values.map(a => {
-          const datum = {};
-          datum.name = (attribute === 'Year') ? a.value.toString() : a.value.toLocaleString();
-          datum.samples = [...new Set(a.samples)];
-          datum.sampleObjects = datum.samples.map(s => {
-            const [sample] = data.filter(d => d.sampleName === s);
-            return sample;
-          }).filter(s => s !== undefined);
-          datum.reads = datum.sampleObjects.map(s => s.reads).reduce((ac, v) => ac + v, 0);
-          datum.sequences = nest()
-            .key(s => s.name)
-            .entries(datum.sampleObjects
-              .map(s => s.sequences)
-              .reduce((ac, v) => ac.concat(v), []))
-            .map(s => ({
-              name: s.key,
-              reads: s.values.map(v => v.reads).reduce((ac, v) => ac + v, 0),
-              taxonomy: s.values[0].taxonomy,
-            }));
-          return datum;
-        })
-          .filter(v => {
+        this.attributes[attribute].values
+          .map((a) => {
+            const datum = {};
+            datum.name =
+              attribute === 'Year'
+                ? a.value.toString()
+                : a.value.toLocaleString();
+            datum.samples = [...new Set(a.samples)];
+            datum.sampleObjects = datum.samples
+              .map((s) => {
+                const [sample] = data.filter((d) => d.sampleName === s);
+                return sample;
+              })
+              .filter((s) => s !== undefined);
+            datum.reads = datum.sampleObjects
+              .map((s) => s.reads)
+              .reduce((ac, v) => ac + v, 0);
+            datum.sequences = nest()
+              .key((s) => s.name)
+              .entries(
+                datum.sampleObjects
+                  .map((s) => s.sequences)
+                  .reduce((ac, v) => ac.concat(v), [])
+              )
+              .map((s) => ({
+                name: s.key,
+                reads: s.values
+                  .map((v) => v.reads)
+                  .reduce((ac, v) => ac + v, 0),
+                taxonomy: s.values[0].taxonomy,
+              }));
+            return datum;
+          })
+          .filter((v) => {
             if (this.state.showEmptyAttrs) return true;
             return v.reads > 0;
           }),
         this.state.sortReverse,
-        this.state.sortKey,
+        this.state.sortKey
       );
     }
   }
 
   renderAttributesSelect() {
-    const options = [<option key="none" value="">None</option>]
-      .concat(Object.keys(this.attributes).map(a => <option key={a} value={a}>{a}</option>));
+    const options = [
+      <option key="none" value="">
+        None
+      </option>,
+    ].concat(
+      Object.keys(this.attributes).map((a) => (
+        <option key={a} value={a}>
+          {a}
+        </option>
+      ))
+    );
     const onSelectChange = (event) => {
       const selectedAttribute = event.target.value;
       this.updateAttributeValues(selectedAttribute, this.state.data);
@@ -1051,18 +1254,21 @@ export default class Vis extends Component {
         this.save(this.setResult);
       });
     };
-    const active = (this.state.selectedAttribute !== '') ? styles.selected : '';
+    const active = this.state.selectedAttribute !== '' ? styles.selected : '';
     return (
       <Spotlight
         isActive={this.state.helpCounter === 8}
-        style={{ boxShadow: 'rgba(255, 255, 255, 0.4) 0 0 10px 3px',
+        style={{
+          boxShadow: 'rgba(255, 255, 255, 0.4) 0 0 10px 3px',
           padding: '0.5em',
           margin: '-0.5em',
           borderRadius: '0.5em',
         }}
-
       >
-        <div className={styles.inlineControl} style={{ opacity: this.state.helpCounter === 8 ? '1' : null}}>
+        <div
+          className={styles.inlineControl}
+          style={{ opacity: this.state.helpCounter === 8 ? '1' : null }}
+        >
           <label htmlFor="attributesSelect">
             {'Attributes '}
             <select
@@ -1091,7 +1297,11 @@ export default class Vis extends Component {
         name: 'Sample Name',
       },
     ];
-    const options = showOptions.map(o => <option key={o.id} value={o.id} style={styles.selectItems}>{o.name}</option>);
+    const options = showOptions.map((o) => (
+      <option key={o.id} value={o.id} style={styles.selectItems}>
+        {o.name}
+      </option>
+    ));
     const onSelectChange = (event) => {
       const labelKey = event.target.value;
       this.setState({ labelKey }, () => {
@@ -1141,8 +1351,13 @@ export default class Vis extends Component {
         name: 'Sequence Reads',
       },
     ];
-    const sortOptions = this.state.selectedAttribute !== '' ? attrOptions : sampleOptions;
-    const options = sortOptions.map(o => <option key={o.id} value={o.id}>{o.name}</option>);
+    const sortOptions =
+      this.state.selectedAttribute !== '' ? attrOptions : sampleOptions;
+    const options = sortOptions.map((o) => (
+      <option key={o.id} value={o.id}>
+        {o.name}
+      </option>
+    ));
     const onSelectChange = (event) => {
       const sortKey = event.target.value;
       const isAttribute = this.state.selectedAttribute !== '';
@@ -1181,10 +1396,15 @@ export default class Vis extends Component {
         this.setState({ data, sortReverse }, () => this.save(this.setResult));
       }
     };
-    const buttons = radioOptions.map(o => {
+    const buttons = radioOptions.map((o) => {
       const checked = this.state.sortReverse === o.value ? 'checked' : '';
       return (
-        <div key={o.name} className={classNames(styles.inlineControl, { [styles.controlChecked]: checked })}>
+        <div
+          key={o.name}
+          className={classNames(styles.inlineControl, {
+            [styles.controlChecked]: checked,
+          })}
+        >
           <label htmlFor={o.name}>
             <input
               type="radio"
@@ -1228,7 +1448,7 @@ export default class Vis extends Component {
         name: 'Absolute',
       },
     ];
-    const toggle = buttons.map(b => {
+    const toggle = buttons.map((b) => {
       const onRadioChange = (event) => {
         this.setState({ mode: event.target.id }, () => {
           this.save(this.setResult);
@@ -1236,7 +1456,12 @@ export default class Vis extends Component {
       };
       const checked = this.state.mode === b.id ? 'checked' : '';
       return (
-        <div key={b.id}  className={classNames(styles.inlineControl, { [styles.controlChecked]: checked })}>
+        <div
+          key={b.id}
+          className={classNames(styles.inlineControl, {
+            [styles.controlChecked]: checked,
+          })}
+        >
           <label htmlFor={b.id}>
             <input
               type="radio"
@@ -1250,17 +1475,13 @@ export default class Vis extends Component {
         </div>
       );
     });
-    return (
-      <div className={styles.inlineControl}>
-        {toggle}
-      </div>
-    );
+    return <div className={styles.inlineControl}>{toggle}</div>;
   }
 
   renderLevelSelector(levels, dataLength) {
-    const modalLevel = (this.state.width - 580) < ((800 / 12) * this.levels.length);
+    const modalLevel = this.state.width - 580 < (800 / 12) * this.levels.length;
     const levelButtons = levels.map((l, i) => {
-      const selected = (l.order <= this.state.level) ? styles.selected : '';
+      const selected = l.order <= this.state.level ? styles.selected : '';
       return (
         <div
           key={l.name}
@@ -1271,20 +1492,22 @@ export default class Vis extends Component {
             zIndex: dataLength + 1,
           }}
         >
-          {(i === 0) ? '' : (<div className={`${selected} ${styles.dash}`}>—</div>)}
+          {i === 0 ? '' : <div className={`${selected} ${styles.dash}`}>—</div>}
           <div
             role="button"
             tabIndex={0}
             className={`${selected} ${styles.selector}`}
             onClick={() => this.setLevel(l.order)}
-            onKeyPress={e => (e.key === ' ' ? this.setLevel(l.order) : null)}
+            onKeyPress={(e) => (e.key === ' ' ? this.setLevel(l.order) : null)}
           >
             {l.name}
           </div>
         </div>
       );
     });
-    const [currentLevel] = this.levels.filter(l => l.order === this.state.level);
+    const [currentLevel] = this.levels.filter(
+      (l) => l.order === this.state.level
+    );
     const levelSelector = modalLevel ? (
       <Modal
         buttonTitle={`Level: ${currentLevel.name}`}
@@ -1307,19 +1530,17 @@ export default class Vis extends Component {
         data={levelButtons}
       />
     ) : (
-      <div className={styles.inlineControl}>
-        {levelButtons}
-      </div>
+      <div className={styles.inlineControl}>{levelButtons}</div>
     );
     return levelSelector;
   }
 
   updateSequences() {
     return Object.keys(this.readsBySequence)
-      .map(k => ({ name: k, reads: this.readsBySequence[k] }))
+      .map((k) => ({ name: k, reads: this.readsBySequence[k] }))
       .sort((a, b) => b.reads - a.reads)
       .map((s, i) => {
-        s.rank = (i + 1);
+        s.rank = i + 1;
         return s;
       });
   }
@@ -1344,77 +1565,88 @@ export default class Vis extends Component {
   renderTagFilter() {
     const tagFilter = this.state.showTags ? (
       <div key="tagFilter" className={styles.tagFilter}>
-        {
-          this.state.tags.map(t => {
-            const tagClass = styles.tag;
-            return (
-              <div
-                key={`tf-${t.id}`}
-                style={{
-                  padding: '2px 0',
-                }}
-                className={tagClass}
-              >
-                <label htmlFor={`c-${t.id}`} className={gstyle.checkbox}>
-                  <input
-                    id={`c-${t.id}`}
-                    type="checkbox"
-                    checked={t.selected}
-                    onChange={(e) => {this.filterByTag(e, t), this.setActiveTags}}
-                    style={{ top: 0, left: '-3px' }}
-                  />
-                  <span className={gstyle.checkmark} />
-                </label>
-                {
-                  t.color ? (
-                    <div
-                      className={gstyle.circle}
-                      style={{
-                        backgroundColor: t.color,
-                        border: 'none',
-                        margin: "0 .25rem 5px",
-                        opacity: t.selected ? 1 : 0.5,
-                      }}
-                    />
-                  ) : ''
-                }
+        {this.state.tags.map((t) => {
+          const tagClass = styles.tag;
+          return (
+            <div
+              key={`tf-${t.id}`}
+              style={{
+                padding: '2px 0',
+              }}
+              className={tagClass}
+            >
+              <label htmlFor={`c-${t.id}`} className={gstyle.checkbox}>
                 <input
-                  className={`${gstyle.input} ${styles.tagName} ${t.selected ? styles.selected : ''}`}
-                  type="text"
-                  value={t.name}
-                  id={t.id}
-                  ref={i => { this._inputs[t.id] = i; }}
-                  onChange={e => this.updateTagName(e, t)}
-                  onKeyPress={e => (e.key === 'Enter' ? this._inputs[t.id].blur() : null)}
-                  onMouseOver={this._hoverTag}
-                  onFocus={this._hoverTag}
-                  onMouseOut={this._unhoverTag}
-                  onBlur={this._unhoverTag}
-                  disabled={!t.color}
+                  id={`c-${t.id}`}
+                  type="checkbox"
+                  checked={t.selected}
+                  onChange={(e) => {
+                    this.filterByTag(e, t), this.setActiveTags;
+                  }}
+                  style={{ top: 0, left: '-3px' }}
                 />
-                <div className={styles.editTag}>edit</div>
-              </div>
-            );
-          })
-        }
+                <span className={gstyle.checkmark} />
+              </label>
+              {t.color ? (
+                <div
+                  className={gstyle.circle}
+                  style={{
+                    backgroundColor: t.color,
+                    border: 'none',
+                    margin: '0 .25rem 5px',
+                    opacity: t.selected ? 1 : 0.5,
+                  }}
+                />
+              ) : (
+                ''
+              )}
+              <input
+                className={`${gstyle.input} ${styles.tagName} ${
+                  t.selected ? styles.selected : ''
+                }`}
+                type="text"
+                value={t.name}
+                id={t.id}
+                ref={(i) => {
+                  this._inputs[t.id] = i;
+                }}
+                onChange={(e) => this.updateTagName(e, t)}
+                onKeyPress={(e) =>
+                  (e.key === 'Enter' ? this._inputs[t.id].blur() : null)
+                }
+                onMouseOver={this._hoverTag}
+                onFocus={this._hoverTag}
+                onMouseOut={this._unhoverTag}
+                onBlur={this._unhoverTag}
+                disabled={!t.color}
+              />
+              <div className={styles.editTag}>edit</div>
+            </div>
+          );
+        })}
       </div>
-    ) : '';
+    ) : (
+      ''
+    );
     const showTags = this.state.showTags ? styles.selected : '';
     return (
-      <div
-        className={styles.inlineControl}
-      >
+      <div className={styles.inlineControl}>
         <div
           role="button"
           tabIndex={0}
           className={styles.inlineControl}
           onClick={this._toggleTags}
-          onKeyPress={e => (e.key === ' ' ? this._toggleTags() : null)}
-          style={{ backgroundColor: '#2d2f31', borderRadius: '3px', }}
+          onKeyPress={(e) => (e.key === ' ' ? this._toggleTags() : null)}
+          style={{ backgroundColor: '#2d2f31', borderRadius: '3px' }}
         >
-          <div key="tags" className={`${styles.selector} ${styles.button} ${showTags}`}>Tags</div>
-          {
-            this.state.tags.map(t => (t.color ? (
+          <div
+            key="tags"
+            className={`${styles.selector} ${styles.button} ${showTags}`}
+          >
+            Tags
+          </div>
+          {this.state.tags.map((t) =>
+            (t.color ? (
               <div
                 key={`c-${t.id}`}
                 className={gstyle.circle}
@@ -1424,34 +1656,38 @@ export default class Vis extends Component {
                   verticalAlign: 'middle',
                 }}
               />
-            ) : ''))
-          }
-          <img style={{marginRight: '6px', width: "10px"}} src={dropDownArrow} />
+            ) : (
+              ''
+            )))}
+          <img
+            style={{ marginRight: '6px', width: '10px' }}
+            src={dropDownArrow}
+          />
         </div>
         {tagFilter}
       </div>
     );
   }
 
-  /*This function deals with when the mouse hovers over the browse icon on top right of
+  /* This function deals with when the mouse hovers over the browse icon on top right of
    and changes img src accordingly to correct svg file */
-   handleMouseOver (button) {
-    switch(button) {
-      case "help":
-        if(this.state.helpButton === needHelp) {
-          this.setState({helpButton: needHelpHover});
+  handleMouseOver(button) {
+    switch (button) {
+      case 'help':
+        if (this.state.helpButton === needHelp) {
+          this.setState({ helpButton: needHelpHover });
         }
         break;
     }
   }
 
-  /*This function deals with the mouse leaving an icon (no longer hovering) and
+  /* This function deals with the mouse leaving an icon (no longer hovering) and
   changed img src to correct svg file */
-  handleMouseLeave (button) {
-    switch(button) {
-      case "help":
-        if(this.state.helpButton === needHelpHover) {
-          this.setState({helpButton: needHelp});
+  handleMouseLeave(button) {
+    switch (button) {
+      case 'help':
+        if (this.state.helpButton === needHelpHover) {
+          this.setState({ helpButton: needHelp });
         }
         break;
     }
@@ -1461,123 +1697,132 @@ export default class Vis extends Component {
     return (
       <div className={gstyle.helpIcons}>
         <div
-        role="button"
-        style={{ marginRight: '4em'}}
-        className={gstyle.helpIcons}
-        onClick={() => {this.setState({ helpCounter: 0 }); this.forceUpdate();} }
+          role="button"
+          style={{ marginRight: '4em' }}
+          className={gstyle.helpIcons}
+          onClick={() => {
+            this.setState({ helpCounter: 0 });
+            this.forceUpdate();
+          }}
         >
           <img src={closeHelp} alt="close-walkthrough" />
         </div>
 
         <div
-        role="button"
-        tabIndex={0}
-        className={gstyle.helpIcons}
-        onClick={() => this.setState({ helpCounter: 1 })}
+          role="button"
+          tabIndex={0}
+          className={gstyle.helpIcons}
+          onClick={() => this.setState({ helpCounter: 1 })}
         >
           <img src={this.state.helpCounter == 2 ? help1Hover : help1} />
         </div>
 
         <div
-        role="button"
-        tabIndex={0}
-        className={gstyle.helpIcons}
-        onClick={() => this.setState({ helpCounter: 2 })}
+          role="button"
+          tabIndex={0}
+          className={gstyle.helpIcons}
+          onClick={() => this.setState({ helpCounter: 2 })}
         >
           <img src={this.state.helpCounter == 3 ? help2Hover : help2} />
         </div>
 
         <div
-        role="button"
-        tabIndex={0}
-        className={gstyle.helpIcons}
-        onClick={() => this.setState({ helpCounter: 3 })}
+          role="button"
+          tabIndex={0}
+          className={gstyle.helpIcons}
+          onClick={() => this.setState({ helpCounter: 3 })}
         >
           <img src={this.state.helpCounter == 4 ? help3Hover : help3} />
         </div>
 
         <div
-        role="button"
-        tabIndex={0}
-        className={gstyle.helpIcons}
-        onClick={() => this.setState({ helpCounter: 4 })}
+          role="button"
+          tabIndex={0}
+          className={gstyle.helpIcons}
+          onClick={() => this.setState({ helpCounter: 4 })}
         >
           <img src={this.state.helpCounter == 5 ? help4Hover : help4} />
         </div>
 
         <div
-        role="button"
-        tabIndex={0}
-        className={gstyle.helpIcons}
-        onClick={() => this.setState({ helpCounter: 5 })}
-
+          role="button"
+          tabIndex={0}
+          className={gstyle.helpIcons}
+          onClick={() => this.setState({ helpCounter: 5 })}
         >
           <img src={this.state.helpCounter == 6 ? help5Hover : help5} />
         </div>
-        {this._visType === 'stackedbar' ? <React.Fragment>
-          <div
-            role="button"
-            tabIndex={0}
-            className={gstyle.helpIcons}
-            onClick={() => this.setState({ helpCounter: 6 })}
-          >
-            <img src={this.state.helpCounter == 7 ? help6Hover : help6} />
-          </div>
-          <div
-            role="button"
-            tabIndex={0}
-            className={gstyle.helpIcons}
-            onClick={() => this.setState({ helpCounter: 7 })}
-          >
-            <img src={this.state.helpCounter == 8 ? help7Hover : help7} />
-          </div>
-          <div
-            role="button"
-            tabIndex={0}
-            className={gstyle.helpIcons}
-            onClick={() => this.setState({ helpCounter: 8 })}
-          >
-            <img src={this.state.helpCounter == 9 ? help8Hover : help8} />
-          </div>
-
-        </React.Fragment> : null}
+        {this._visType === 'stackedbar' ? (
+          <React.Fragment>
+            <div
+              role="button"
+              tabIndex={0}
+              className={gstyle.helpIcons}
+              onClick={() => this.setState({ helpCounter: 6 })}
+            >
+              <img src={this.state.helpCounter == 7 ? help6Hover : help6} />
+            </div>
+            <div
+              role="button"
+              tabIndex={0}
+              className={gstyle.helpIcons}
+              onClick={() => this.setState({ helpCounter: 7 })}
+            >
+              <img src={this.state.helpCounter == 8 ? help7Hover : help7} />
+            </div>
+            <div
+              role="button"
+              tabIndex={0}
+              className={gstyle.helpIcons}
+              onClick={() => this.setState({ helpCounter: 8 })}
+            >
+              <img src={this.state.helpCounter == 9 ? help8Hover : help8} />
+            </div>
+          </React.Fragment>
+        ) : null}
       </div>
     );
   }
 
-
   render() {
-    const redirect = this.state.redirect === null ? '' : <Redirect push to={this.state.redirect} />;
+    const redirect =
+      this.state.redirect === null ? (
+        ''
+      ) : (
+        <Redirect push to={this.state.redirect} />
+      );
 
     const visType = this.props.match.params.visType || 'stackedbar';
     this._visType = visType;
 
     const helpButtons = this.state.counter > 0 ? this.makeHelpButtons() : '';
     // console.log('render', { showRightSidebar: this.state.showRightSidebar, overrideRightSidebar: this.state.overrideRightSidebar });
-    const isAttribute = (
-      this.state.selectedAttribute !== ''
-        &&
-      this.attributes[this.state.selectedAttribute].displayValues
-    );
+    const isAttribute =
+      this.state.selectedAttribute !== '' &&
+      this.attributes[this.state.selectedAttribute].displayValues;
     // console.log(isAttribute, this.state.selectedAttribute, this.attributes)
 
-    this.attribute = isAttribute ? this.attributes[this.state.selectedAttribute] : null;
-    const dataLength = isAttribute ? this.attribute.displayValues.length : this.state.data.length;
+    this.attribute = isAttribute
+      ? this.attributes[this.state.selectedAttribute]
+      : null;
+    const dataLength = isAttribute
+      ? this.attribute.displayValues.length
+      : this.state.data.length;
 
     let maxReads = 1;
     if (dataLength) {
       maxReads = isAttribute
-        ? Math.max(...this.attribute.displayValues.map(d => d.reads))
-        : Math.max(...this.state.data.map(d => d.reads));
+        ? Math.max(...this.attribute.displayValues.map((d) => d.reads))
+        : Math.max(...this.state.data.map((d) => d.reads));
     }
     this.scales.x
       .domain([0, maxReads])
       .range([0, this.metrics.chartWidth])
       .clamp();
 
-    const color = this.state.highlightedDatum ? (
-      this.scales.c(this.state.highlightedDatum.datum.name)
-    ) : '';
+    const color = this.state.highlightedDatum
+      ? this.scales.c(this.state.highlightedDatum.datum.name)
+      : '';
     const tooltip = this.state.showTooltip ? (
       <StackedBarTooltip
         {...this.state.highlightedDatum}
@@ -1604,21 +1849,25 @@ export default class Vis extends Component {
           border: 'none',
           borderRadius: '8px',
           padding: 0,
-          background: (this.state.result === 'error') ? '#ff2514' : '#00da3e',
+          background: this.state.result === 'error' ? '#ff2514' : '#00da3e',
         }}
         onClick={this.clearResult}
-        onKeyPress={e => (e.key === ' ' ? this.clearResult() : null)}
+        onKeyPress={(e) => (e.key === ' ' ? this.clearResult() : null)}
       >
         {this.state.result}
       </div>
-    ) : '';
+    ) : (
+      ''
+    );
 
     const spacer = <div className={styles.spacer} />;
 
-    const svgHeight = (this.metrics.lineHeight * 4) + (
-      (this.metrics.barContainerHeight + (
-        this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
-      )) * dataLength);
+    const svgHeight =
+      this.metrics.lineHeight * 4 +
+      (this.metrics.barContainerHeight +
+        this.metrics.miniBarContainerHeight *
+          Object.keys(this.state.filters).length) *
+        dataLength;
 
     const ticks = (
       <StackedBarTicks
@@ -1627,7 +1876,7 @@ export default class Vis extends Component {
         mode={this.state.mode}
         width={this.state.width}
         svgWidth={this.metrics.chartWidth + this.metrics.nonbarWidth}
-        svgHeight={svgHeight - (this.metrics.lineHeight * 3)}
+        svgHeight={svgHeight - this.metrics.lineHeight * 3}
       />
     );
 
@@ -1644,27 +1893,30 @@ export default class Vis extends Component {
             className={gstyle.help}
             // on click command is still undefined outside of home page, set to issues page for now until later
             onClick={() => this.setState({ helpCounter: 1 })}
-            onMouseEnter={() => this.handleMouseOver("help")}
-            onMouseLeave={() => this.handleMouseLeave("help")}
-            >
-              <img src={this.state.helpButton} alt="needHelp" />
+            onMouseEnter={() => this.handleMouseOver('help')}
+            onMouseLeave={() => this.handleMouseLeave('help')}
+          >
+            <img src={this.state.helpButton} alt="needHelp" />
           </button>
         </div>
         <div
           className={`${gstyle.header} ${gstyle.darkbgscrollbar}`}
           style={{
-            zIndex: visType === 'stackedbar' ?
-              (
-                this.state.helpCounter === 0 ||
-                this.state.helpCounter === 3 ||
-                this.state.helpCounter === 5 ||
-                this.state.helpCounter === 8 ? 2000 : 1000
-
-              ) :
-              visType === 'sankey' ?
-              this.state.helpCounter === 2 ? 2000 : 1000
-              : 2000
-            }}>
+            zIndex:
+              visType === 'stackedbar'
+                ? this.state.helpCounter === 0 ||
+                  this.state.helpCounter === 3 ||
+                  this.state.helpCounter === 5 ||
+                  this.state.helpCounter === 8
+                  ? 2000
+                  : 1000
+                : visType === 'sankey'
+                ? this.state.helpCounter === 2
+                  ? 2000
+                  : 1000
+                : 2000,
+          }}
+        >
           <Summary
             summary={this.state.summary}
             observations={this.state.observations}
@@ -1673,92 +1925,142 @@ export default class Vis extends Component {
           />
           <SpotlightWithToolTip
             isActive={visType === 'stackedbar' && this.state.helpCounter === 3}
-            toolTipPlacement='bottomLeft'
-            overlayStyle={{maxWidth: "850px", zIndex: '10000'}}
-            toolTipTitle={<div>
-              Further editing or filtering can be carried out using the buttons and dropdown menus on the top panel. Any change made here will impact how the underlying data is summarized and visualized.
-              <br /><br />
-              Current selections and options will be highlighted in orange (activated), and those not editable or selectable will be greyed out (inactivated).
-            </div>}
+            toolTipPlacement="bottomLeft"
+            overlayStyle={{ maxWidth: '850px', zIndex: '10000' }}
+            toolTipTitle={
+              <div>
+                Further editing or filtering can be carried out using the
+                buttons and dropdown menus on the top panel. Any change made
+                here will impact how the underlying data is summarized and
+                visualized.
+                <br />
+                <br />
+                Current selections and options will be highlighted in orange
+                (activated), and those not editable or selectable will be greyed
+                out (inactivated).
+              </div>
+            }
           >
             <div className={styles.controls}>
-              <div className={styles.controlRow} style={{
-                display: 'flex',
-                opacity: visType === 'stackedbar' && (
-                  this.state.helpCounter === 3 ||
-                  this.state.helpCounter === 5
-                ) ? 1 : this.state.helpCounter === 0 ? 1 : 0.2
-              }}>
-                {
-                  visType === 'stackedbar' ? <React.Fragment>
-                  <SpotlightWithToolTip
-                    isActive={visType === 'stackedbar' && this.state.helpCounter === 5}
-                    toolTipPlacement='bottomLeft'
-                    toolTipTitle={<div>
-                      The search box on the top left will highlight the search result in the graph, and auto-complete based on the information contained within the uploaded file itself (e.g. so any search result that show up is a taxon/gene name (or other metadata text string) that is IN YOUR FILE).
-                      <br /><br />
-                      After clicking the search result (selecting an item in the list below the search field), the selected item will be highlighted in the main bar graph and a side bar will become activated (see next step).
-                    </div>}
-                    overlayStyle={{
-                      zIndex: '10000',
-                    }}
-                  >
+              <div
+                className={styles.controlRow}
+                style={{
+                  display: 'flex',
+                  opacity:
+                    visType === 'stackedbar' &&
+                    (this.state.helpCounter === 3 ||
+                      this.state.helpCounter === 5)
+                      ? 1
+                      : this.state.helpCounter === 0
+                      ? 1
+                      : 0.2,
+                }}
+              >
+                {visType === 'stackedbar' ? (
+                  <React.Fragment>
+                    <SpotlightWithToolTip
+                      isActive={
+                        visType === 'stackedbar' && this.state.helpCounter === 5
+                      }
+                      toolTipPlacement="bottomLeft"
+                      toolTipTitle={
+                        <div>
+                          The search box on the top left will highlight the
+                          search result in the graph, and auto-complete based on
+                          the information contained within the uploaded file
+                          itself (e.g. so any search result that show up is a
+                          taxon/gene name (or other metadata text string) that
+                          is IN YOUR FILE).
+                          <br />
+                          <br />
+                          After clicking the search result (selecting an item in
+                          the list below the search field), the selected item
+                          will be highlighted in the main bar graph and a side
+                          bar will become activated (see next step).
+                        </div>
+                      }
+                      overlayStyle={{
+                        zIndex: '10000',
+                      }}
+                    >
+                      {this.renderSearch()}
+                    </SpotlightWithToolTip>
+                    <div
+                      style={{
+                        display: 'flex',
+                        opacity:
+                          visType === 'stackedbar' &&
+                          this.state.helpCounter === 5
+                            ? 0.2
+                            : null,
+                      }}
+                    >
+                      {this.renderShow()}
+                      {this.renderSort()}
+                      {spacer}
+                      {this.renderToggle()}
+                    </div>
+                  </React.Fragment>
+                ) : visType === 'sankey' ? (
+                  <React.Fragment>
                     {this.renderSearch()}
-                  </SpotlightWithToolTip>
-                  <div
-                    style={{ display: 'flex',
-                    opacity: visType === 'stackedbar' && this.state.helpCounter === 5 ? 0.2 : null
-
-                  }}
-                  >
-                    {this.renderShow()}
-                    {this.renderSort()}
-                    {spacer}
-                    {this.renderToggle()}
-                  </div>
-                </React.Fragment> : visType === 'sankey' ? <React.Fragment>
-                  {this.renderSearch()}
-                  <div className={styles.inlineControl}>
-                    <label htmlFor='sankeyColors'>
-                      Link Colors:{' '}
-                      <select
-                        id='sankeyColors'
-                        value={this.state.sankeyColors}
-                        onChange={e => this.setState({ sankeyColors: e.target.value })}
-                      >
-                        {/* <option value="mix">mix</option> */}
-                        <option value="left">left</option>
-                        <option value="right">right</option>
-                      </select>
-                    </label>
-
-                  </div>
-
-                </React.Fragment> : null
-              }
+                    <div className={styles.inlineControl}>
+                      <label htmlFor="sankeyColors">
+                        Link Colors:{' '}
+                        <select
+                          id="sankeyColors"
+                          value={this.state.sankeyColors}
+                          onChange={(e) =>
+                            this.setState({ sankeyColors: e.target.value })
+                          }
+                        >
+                          {/* <option value="mix">mix</option> */}
+                          <option value="left">left</option>
+                          <option value="right">right</option>
+                        </select>
+                      </label>
+                    </div>
+                  </React.Fragment>
+                ) : null}
               </div>
               <SpotlightWithToolTip
                 isActive={this.state.helpCounter === 2 && visType === 'sankey'}
-                style={{ boxShadow: 'rgba(255, 255, 255, 0.4) 0 0 10px 3px',
+                style={{
+                  boxShadow: 'rgba(255, 255, 255, 0.4) 0 0 10px 3px',
                   // borderBottomLeftRadius: '0',
                   // borderBottomRightRadius: '0',
                 }}
               >
-                <div className={classNames(styles.controlRow, { [styles.controlRowFadeChildren]: this.state.helpCounter === 8})}
+                <div
+                  className={classNames(styles.controlRow, {
+                    [styles.controlRowFadeChildren]:
+                      this.state.helpCounter === 8,
+                  })}
                   style={{
                     paddingBottom: '0.5rem',
-                    opacity: visType === 'stackedbar' && this.state.helpCounter === 5 ? 0.2 : 1,
-                  }}>
+                    opacity:
+                      visType === 'stackedbar' && this.state.helpCounter === 5
+                        ? 0.2
+                        : 1,
+                  }}
+                >
                   {this.renderLevelSelector(this.levels, dataLength)}
-                  {visType === 'sankey' ?
-                    null :
+                  {visType === 'sankey' ? null : (
                     <React.Fragment>
-                      {this.levels.length ? <div className={styles.spacer} style={{ marginLeft: '8px'}} /> : null}
+                      {this.levels.length ? (
+                        <div
+                          className={styles.spacer}
+                          style={{ marginLeft: '8px' }}
+                        />
+                      ) : null}
                       {this.renderAttributesSelect()}
-                      <div className={styles.spacer} style={{ marginRight: '12px'}} />
+                      <div
+                        className={styles.spacer}
+                        style={{ marginRight: '12px' }}
+                      />
                       {this.renderTagFilter()}
                     </React.Fragment>
-                  }
+                  )}
                 </div>
               </SpotlightWithToolTip>
             </div>
@@ -1769,65 +2071,125 @@ export default class Vis extends Component {
           showLeftSidebar={this.state.showLeftSidebar}
           leftSidebar={this.metrics.leftSidebar}
           leftMin={this.metrics.left.min}
-          chartHeight={this.metrics.chartHeight + (this.metrics.lineHeight * 2)}
+          chartHeight={this.metrics.chartHeight + this.metrics.lineHeight * 2}
           items={this.menuItems}
           toggleMenu={this.toggleMenu}
-          spotlight={visType === 'sankey' ? this.state.helpCounter === 6 : this.state.helpCounter === 9}
+          spotlight={
+            visType === 'sankey'
+              ? this.state.helpCounter === 6
+              : this.state.helpCounter === 9
+          }
           helpText={
-            this.state.helpCounter === 6 ?
-            <div>
-              The sidebar on the left can be used to save the displayed sankey visual to file (Save button), go back to the filter window (Back button), or export a publication-read SVG image of the displayed visualization (Export SVG button).
-            </div> :
-            <div>
-              Clicking the Phinch logo in the upper left corner of the app will direct you back to the App homepage. The App automatically saves your work in progress, and you can return to your visual manipulations by re-selecting your project file on the homepage.
-              <br /><br />
-              Clicking the menu button underneath the Phinch logo will expand a side panel, revealing buttons that allow you to save your work, go back to the filter page window, or export a SVG graphic showing your customized visualization currently displayed in the main window.
-            </div>
+            this.state.helpCounter === 6 ? (
+              <div>
+                The sidebar on the left can be used to save the displayed sankey
+                visual to file (Save button), go back to the filter window (Back
+                button), or export a publication-read SVG image of the displayed
+                visualization (Export SVG button).
+              </div>
+            ) : (
+              <div>
+                Clicking the Phinch logo in the upper left corner of the app
+                will direct you back to the App homepage. The App automatically
+                saves your work in progress, and you can return to your visual
+                manipulations by re-selecting your project file on the homepage.
+                <br />
+                <br />
+                Clicking the menu button underneath the Phinch logo will expand
+                a side panel, revealing buttons that allow you to save your
+                work, go back to the filter page window, or export a SVG graphic
+                showing your customized visualization currently displayed in the
+                main window.
+              </div>
+            )
           }
         />
         <SpotlightWithToolTip
-          isActive={(this.state.helpCounter === 2 || this.state.helpCounter === 4 || this.state.helpCounter === 8 )&& visType === 'stackedbar'}
-          toolTipPlacement={ this.state.helpCounter === 2 ? "topLeft" : "bottomLeft"}
-          overlayStyle={{maxWidth: "950px"}}
-
+          isActive={
+            (this.state.helpCounter === 2 ||
+              this.state.helpCounter === 4 ||
+              this.state.helpCounter === 8) &&
+            visType === 'stackedbar'
+          }
+          toolTipPlacement={
+            this.state.helpCounter === 2 ? 'topLeft' : 'bottomLeft'
+          }
+          overlayStyle={{ maxWidth: '950px' }}
           toolTipTitle={
             this.state.helpCounter === 2 ? (
               <div>
-                The graphs are visualized based on users’ setting on data filtering page, which means the actions taken previously will affect the visualisation shown here.
-                The top sequences box below shows the most abundant observations in your TOTAL dataset, with numerical values calculated after filter page settings have been applied.
+                The graphs are visualized based on users’ setting on data
+                filtering page, which means the actions taken previously will
+                affect the visualisation shown here. The top sequences box below
+                shows the most abundant observations in your TOTAL dataset, with
+                numerical values calculated after filter page settings have been
+                applied.
               </div>
             ) : this.state.helpCounter === 4 ? (
               <div>
-                By hovering on the sample, you will see “EDIT TAG” and “ARCHIVE” for each individual sample. The tags can only be removed on this level (no attributes selected), which means it will not be editable under single attribute or on taxonomic levels.
-                <br /><br />
-                The visuals displayed can be updated by tag filter menu on the top right. When there is any tag selected, the “tags” will be highlighted in orange and selected tags will be shown in full opacity.
-                <br /><br />
-                The end user can edit and customize all text labels for each tag by double-clicking its texts in the dropdown menu. Tags are used for labelling samples, and multiple tags can be attached to any given sample.
+                By hovering on the sample, you will see “EDIT TAG” and “ARCHIVE”
+                for each individual sample. The tags can only be removed on this
+                level (no attributes selected), which means it will not be
+                editable under single attribute or on taxonomic levels.
+                <br />
+                <br />
+                The visuals displayed can be updated by tag filter menu on the
+                top right. When there is any tag selected, the “tags” will be
+                highlighted in orange and selected tags will be shown in full
+                opacity.
+                <br />
+                <br />
+                The end user can edit and customize all text labels for each tag
+                by double-clicking its texts in the dropdown menu. Tags are used
+                for labelling samples, and multiple tags can be attached to any
+                given sample.
               </div>
             ) : this.state.helpCounter === 8 ? (
               <div>
-                If a specific category is chosen from the “Attributes” drop down list on the top panel (take “{this.state.selectedAttribute}” here as an example), then the main visual will be updated to reflect the selected attribute.
-                The bar chart will show the overall proportions for all observations in all samples associated with the selected “Attribute” category.
-                <br /><br />
-                If you hover the mouse over an individual selected attribute on the left hand side of the main visualization window, there will be a “See samples” button showing a list of included sample sets.
-                In this example, hovering over the “{this.attribute && this.attribute.displayValues && this.attribute.displayValues[0] ? this.attribute.displayValues[0].name : ''}” group is showing a list of all the samples whose data is being combined and visualized in that specific bar graph row.
+                If a specific category is chosen from the “Attributes” drop down
+                list on the top panel (take “{this.state.selectedAttribute}”
+                here as an example), then the main visual will be updated to
+                reflect the selected attribute. The bar chart will show the
+                overall proportions for all observations in all samples
+                associated with the selected “Attribute” category.
+                <br />
+                <br />
+                If you hover the mouse over an individual selected attribute on
+                the left hand side of the main visualization window, there will
+                be a “See samples” button showing a list of included sample
+                sets. In this example, hovering over the “
+                {this.attribute &&
+                this.attribute.displayValues &&
+                this.attribute.displayValues[0]
+                  ? this.attribute.displayValues[0].name
+                  : ''}
+                ” group is showing a list of all the samples whose data is being
+                combined and visualized in that specific bar graph row.
               </div>
             ) : null
           }
         >
           <div
-            className={classNames(gstyle.panel,  gstyle.noscrollbar)}
+            className={classNames(gstyle.panel, gstyle.noscrollbar)}
             style={{
               width: this.metrics.chartWidth + this.metrics.nonbarWidth,
             }}
-            >
-            { visType === 'stackedbar' ? (
+          >
+            {visType === 'stackedbar' ? (
               <div
                 className={styles.axis}
                 style={{
-                  width: this.metrics.chartWidth + (this.metrics.nonbarWidth - this.metrics.padding),
+                  width:
+                    this.metrics.chartWidth +
+                    (this.metrics.nonbarWidth - this.metrics.padding),
                   height: this.metrics.lineHeight * 2,
-                  top: visType === 'stackedbar' && (this.state.helpCounter === 2 || this.state.helpCounter === 4 || this.state.helpCounter === 8) ? '0' : null,
+                  top:
+                    visType === 'stackedbar' &&
+                    (this.state.helpCounter === 2 ||
+                      this.state.helpCounter === 4 ||
+                      this.state.helpCounter === 8)
+                      ? '0'
+                      : null,
                 }}
               >
                 <svg
@@ -1838,102 +2200,120 @@ export default class Vis extends Component {
                     position: 'absolute',
                     left: 0,
                     pointerEvents: 'none',
-                    width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
+                    width: this.metrics.chartWidth + this.metrics.nonbarWidth,
                     height: this.metrics.chartHeight,
                   }}
                 >
                   {ticks}
                 </svg>
-                {
-                  isAttribute ? (
-                    <div className={styles.attrInfo}>
-                      <div className={styles.attrLabel}>
-                        {this.attribute.key} {this.attribute.unit ? `(${this.attribute.unit})` : ''}
-                      </div>
-                      <div
-                        role="button"
-                        tabIndex={0}
-                        className={styles.attrToggle}
-                        onClick={this.toggleEmptyAttrs}
-                        onKeyPress={e => (e.key === ' ' ? this.toggleEmptyAttrs() : null)}
-                      >
-                        {`${this.state.showEmptyAttrs ? 'Hide' : 'Show'} Empty`}
-                      </div>
+                {isAttribute ? (
+                  <div className={styles.attrInfo}>
+                    <div className={styles.attrLabel}>
+                      {this.attribute.key}{' '}
+                      {this.attribute.unit ? `(${this.attribute.unit})` : ''}
                     </div>
-                  ) : ''
-                }
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      className={styles.attrToggle}
+                      onClick={this.toggleEmptyAttrs}
+                      onKeyPress={(e) =>
+                        (e.key === ' ' ? this.toggleEmptyAttrs() : null)
+                      }
+                    >
+                      {`${this.state.showEmptyAttrs ? 'Hide' : 'Show'} Empty`}
+                    </div>
+                  </div>
+                ) : (
+                  ''
+                )}
               </div>
-            ) : null }
+            ) : null}
             <div
-              className={classNames(gstyle.panel,  gstyle.noscrollbar, {
-                [gstyle.panelNoYScroll]: visType === 'sankey'
+              className={classNames(gstyle.panel, gstyle.noscrollbar, {
+                [gstyle.panelNoYScroll]: visType === 'sankey',
               })}
               style={{
                 backgroundColor: '#ffffff',
-                width: (this.metrics.chartWidth + this.metrics.nonbarWidth),
-                height: this.metrics.chartHeight -
-                  (this.state.helpCounter === 2 && visType === 'stackedbar' ? 100 :
-                  this.state.helpCounter === 4 && visType === 'stackedbar' ? this.metrics.chartHeight / 2 :
-                  this.state.helpCounter === 8 && visType === 'stackedbar' ? this.metrics.chartHeight / 2
-                  : 0),
-                pointerEvents: (visType === 'stackedbar' &&
-                  (this.state.helpCounter === 4 && this.state.helpCounter === 8)
-                ) ? 'none' : null,
-
+                width: this.metrics.chartWidth + this.metrics.nonbarWidth,
+                height:
+                  this.metrics.chartHeight -
+                  (this.state.helpCounter === 2 && visType === 'stackedbar'
+                    ? 100
+                    : this.state.helpCounter === 4 && visType === 'stackedbar'
+                    ? this.metrics.chartHeight / 2
+                    : this.state.helpCounter === 8 && visType === 'stackedbar'
+                    ? this.metrics.chartHeight / 2
+                    : 0),
+                pointerEvents:
+                  visType === 'stackedbar' &&
+                  this.state.helpCounter === 4 &&
+                  this.state.helpCounter === 8
+                    ? 'none'
+                    : null,
               }}
             >
-              {
-                this.state.renderSVG && visType === 'stackedbar' ? (
-                  <StackedBarsSVG
-                    setRef={r => { this._svg = r; }}
-                    id={this.state.summary.path.slice(-1)}
-                    svgWidth={this.metrics.chartWidth + this.metrics.nonbarWidth}
-                    svgHeight={svgHeight}
-                    seqHeight={this.metrics.sequenceRowHeight * this.topSequences.length}
-                    data={isAttribute ? this.attribute.displayValues : this.state.data}
-                    row={isAttribute ? this.attrRow : this.stackRow}
-                    itemSize={this.metrics.barContainerHeight + (
-                      this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
-                    )}
-                    padding={this.metrics.padding}
-                    ticks={ticks}
-                    topSequences={this.renderTopSequences()}
-                  />
-                ) : (
-                  visType === 'stackedbar' ?
-                    <List
-                      className={`${styles.svglist}`}
-                      innerElementType="svg"
-                      width={this.metrics.chartWidth + this.metrics.nonbarWidth}
-                      height={this.metrics.chartHeight - (this.metrics.padding * 4)}
-                      itemSize={this.metrics.barContainerHeight + (
-                        this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length
-                      )}
-                      itemCount={dataLength}
-                      itemKey={index => (isAttribute
-                        ? this.attribute.displayValues[index].name : this.state.data[index].sampleName
-                      )}
-                    >
-                      {isAttribute ? this.attrRow : this.stackRow}
-                    </List>
-                  : visType === 'sankey' ?
-                    <Sankey
-                      setRef={r => { this._svg = r; }}
-
-                      data={this.state.data} preData={this.state.preData}
-                      width={this.metrics.chartWidth + this.metrics.nonbarWidth}
-                      height={this.metrics.chartHeight}
-                      colors={this.state.sankeyColors}
-                      renderSVG={this.state.renderSVG}
-                      helpCounter={this.state.helpCounter}
-                      clickDatum={this._clickDatum}
-                      colorScale={this.scales.c || (() => {})}
-                      highlightedDatum={this.state.highlightedDatum}
-                    />
-                  : null
-                )
-
-              }
+              {this.state.renderSVG && visType === 'stackedbar' ? (
+                <StackedBarsSVG
+                  setRef={(r) => {
+                    this._svg = r;
+                  }}
+                  id={this.state.summary.path.slice(-1)}
+                  svgWidth={this.metrics.chartWidth + this.metrics.nonbarWidth}
+                  svgHeight={svgHeight}
+                  seqHeight={
+                    this.metrics.sequenceRowHeight * this.topSequences.length
+                  }
+                  data={
+                    isAttribute ? this.attribute.displayValues : this.state.data
+                  }
+                  row={isAttribute ? this.attrRow : this.stackRow}
+                  itemSize={
+                    this.metrics.barContainerHeight +
+                    this.metrics.miniBarContainerHeight *
+                      Object.keys(this.state.filters).length
+                  }
+                  padding={this.metrics.padding}
+                  ticks={ticks}
+                  topSequences={this.renderTopSequences()}
+                />
+              ) : visType === 'stackedbar' ? (
+                <List
+                  className={`${styles.svglist}`}
+                  innerElementType="svg"
+                  width={this.metrics.chartWidth + this.metrics.nonbarWidth}
+                  height={this.metrics.chartHeight - this.metrics.padding * 4}
+                  itemSize={
+                    this.metrics.barContainerHeight +
+                    this.metrics.miniBarContainerHeight *
+                      Object.keys(this.state.filters).length
+                  }
+                  itemCount={dataLength}
+                  itemKey={(index) =>
+                    (isAttribute
+                      ? this.attribute.displayValues[index].name
+                      : this.state.data[index].sampleName)
+                  }
+                >
+                  {isAttribute ? this.attrRow : this.stackRow}
+                </List>
+              ) : visType === 'sankey' ? (
+                <Sankey
+                  setRef={(r) => {
+                    this._svg = r;
+                  }}
+                  data={this.state.data}
+                  preData={this.state.preData}
+                  width={this.metrics.chartWidth + this.metrics.nonbarWidth}
+                  height={this.metrics.chartHeight}
+                  colors={this.state.sankeyColors}
+                  renderSVG={this.state.renderSVG}
+                  helpCounter={this.state.helpCounter}
+                  clickDatum={this._clickDatum}
+                  colorScale={this.scales.c || (() => {})}
+                  highlightedDatum={this.state.highlightedDatum}
+                />
+              ) : null}
             </div>
           </div>
         </SpotlightWithToolTip>
@@ -1945,9 +2325,11 @@ export default class Vis extends Component {
           buttonPosition={{
             position: 'absolute',
             bottom: 0,
-            left: (
-              this.metrics.leftSidebar + this.metrics.barInfoWidth + (this.metrics.padding / 2) + 2
-            ),
+            left:
+              this.metrics.leftSidebar +
+              this.metrics.barInfoWidth +
+              this.metrics.padding / 2 +
+              2,
           }}
           modalPosition={{
             position: 'absolute',
@@ -1966,9 +2348,12 @@ export default class Vis extends Component {
           buttonPosition={{
             position: 'absolute',
             bottom: 0,
-            left: (
-              this.metrics.leftSidebar + this.metrics.barInfoWidth + this.metrics.padding + 2 + 130
-            ),
+            left:
+              this.metrics.leftSidebar +
+              this.metrics.barInfoWidth +
+              this.metrics.padding +
+              2 +
+              130,
           }}
           modalPosition={{
             position: 'absolute',
@@ -1981,27 +2366,28 @@ export default class Vis extends Component {
           data={this.state.deleted}
           row={this.stack}
           dataKey="sampleName"
-          itemHeight={this.metrics.barContainerHeight +
-            (this.metrics.miniBarContainerHeight * Object.keys(this.state.filters).length)
+          itemHeight={
+            this.metrics.barContainerHeight +
+            this.metrics.miniBarContainerHeight *
+              Object.keys(this.state.filters).length
           }
           svgContainer
           badge
         />
 
         <SpotlightWithToolTip
-          isActive = {this.state.helpCounter > 0}
+          isActive={this.state.helpCounter > 0}
           inheritParentBackgroundColor={false}
-          toolTipTitle={"* mouse click anywhere to advance"}
-          overlayStyle={{zIndex: '1001'}}
-          innerStyle={{color: 'white', fontWeight: '400', fontSize: '14px'}}
-          style={{boxShadow: 'none'}}
+          toolTipTitle="* mouse click anywhere to advance"
+          overlayStyle={{ zIndex: '1001' }}
+          innerStyle={{ color: 'white', fontWeight: '400', fontSize: '14px' }}
+          style={{ boxShadow: 'none' }}
         >
           <div className={gstyle.helpButtons}>
             {this.state.helpCounter > 0 ? this.makeHelpButtons() : null}
           </div>
         </SpotlightWithToolTip>
       </div>
-
     );
   }
 }

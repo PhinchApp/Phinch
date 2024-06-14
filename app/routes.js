@@ -18,7 +18,7 @@ export default () => (
       <Route path="/vis/:visType" component={Vis} />
       <Route path="/" component={HomePage} />
     </Switch>
-    <ReactTooltip className='customReactTooltip' place='bottom' effect='float' globalEventOff='click' type='light' arrowColor='transparent' />
+    <ReactTooltip className="customReactTooltip" place="bottom" effect="float" globalEventOff="click" type="light" arrowColor="transparent" />
 
   </App>
 );

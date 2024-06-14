@@ -75,7 +75,7 @@ export default function StackedBarTicks(props) {
                   x2={-1}
                   y2={props.svgHeight}
                   stroke="#b2b2b2"
-                  strokeOpacity={.85}
+                  strokeOpacity={0.85}
                   strokeWidth={0.5}
                 />
               </g>

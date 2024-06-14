@@ -1,12 +1,12 @@
 import { shell } from 'electron';
-import React, { MouseEventHandler, MouseEvent} from 'react';
+import React, { MouseEventHandler, MouseEvent } from 'react';
 
 import styles from './LinkList.css';
 
 const linkList = [
   {
     name: 'New to Phinch?',
-    icon: (context) => (<div className={styles.arrow}><img src={context.state.link1} alt="right facing arrow" /></div> ),
+    icon: (context) => (<div className={styles.arrow}><img src={context.state.link1} alt="right facing arrow" /></div>),
     action: () => { shell.openExternal('https://phinch.org/Tutorials'); },
     info: 'Click here for data formatting instructions and visualization tutorials.',
     handleMouseOver: (context) => { context.handleMouseOver('New to Phinch?'); },
@@ -39,7 +39,7 @@ const linkList = [
   {
     name: 'Find a software issue?',
     icon: (context) => (<div className={styles.arrow}><img src={context.state.link5} alt="right facing arrow" /></div>),
-    action: () => { shell.openExternal('https://github.com/PhinchApp/Phinch/issues' ); },
+    action: () => { shell.openExternal('https://github.com/PhinchApp/Phinch/issues'); },
     info: 'Report software bugs and errors on our Github issue tracker.',
     handleMouseOver: (context) => { context.handleMouseOver('Find a software issue?'); },
     handleMouseLeave: (context) => { context.handleMouseLeave('Find a software issue?'); },
@@ -48,7 +48,6 @@ const linkList = [
 
 
 function InfoLink(l, i, context) {
-
   return (
     <div
       key={`${l.action}-${i}`}

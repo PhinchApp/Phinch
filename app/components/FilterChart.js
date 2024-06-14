@@ -8,7 +8,7 @@ import close from 'images/orangeX.svg';
 
 import styles from './FilterChart.css';
 import gstyle from './general.css';
-import classNames from 'classnames'
+import classNames from 'classnames';
 
 export default class FilterChart extends Component {
   constructor(props) {
@@ -158,8 +158,8 @@ export default class FilterChart extends Component {
       </div>
     ) : <div />;
     const style = {
-        width: (this.props.width - (this.padding * 2)),
-        margin: this.props.noMargin ? '0 8px' : '0 24px',
+      width: (this.props.width - (this.padding * 2)),
+      margin: this.props.noMargin ? '0 8px' : '0 24px',
     };
     const brush = filter.expanded ? (
       <div style={style}>
@@ -179,7 +179,7 @@ export default class FilterChart extends Component {
       </div>
     ) : '';
     const scaleToggle = this.props.showScale ? (
-      <div style={{ marginTop: '2em'}}>
+      <div style={{ marginTop: '2em' }}>
         <div className={styles.toggleLabel}>
           Percentage
         </div>
@@ -188,7 +188,7 @@ export default class FilterChart extends Component {
           icons={false}
           defaultChecked={this.props.data.log}
           onChange={() => this.props.toggleLog(this.props.name)}
-          style={{backgroundColor: "red !important", height: "12px !important", }}
+          style={{ backgroundColor: 'red !important', height: '12px !important', }}
         />
         <div className={styles.toggleLabel}>
           Log Scale
@@ -198,14 +198,19 @@ export default class FilterChart extends Component {
     const taxa = this.props.name.split(',');
     const name = taxa[taxa.length - 1].replace(/[a-zA-Z]__/g, '');
     const circle = this.props.showCircle ? (
-      <div className={gstyle.circle} style={{ verticalAlign: 'middle', background: this.props.fill,
+      <div
+        className={gstyle.circle}
+        style={{
+ verticalAlign: 'middle',
+background: this.props.fill,
       transform: 'scale(1.1)',
       marginRight: '0.5em',
       border: 'none',
-    }} />
+    }}
+      />
     ) : '';
     return (
-      <div className={styles.filterChart} style={{ paddingBottom: this.props.noMargin ? '0.5rem' : null}}>
+      <div className={styles.filterChart} style={{ paddingBottom: this.props.noMargin ? '0.5rem' : null }}>
         {circle}
         {remove}
         <div

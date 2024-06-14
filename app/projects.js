@@ -19,7 +19,7 @@ function checkFolders() {
     fs.mkdirSync(join(homedirectory, 'Documents', 'Phinch2.0'));
   }
 }
-//this is to look into preloaded flagship data folder
+// this is to look into preloaded flagship data folder
 // function checkFSFolders() {
 //   // check settings file - look somewhere other than home folder
 //   const home = fs.readdirSync(join(homedirectory));
@@ -194,7 +194,7 @@ export function getProjects() {
     slug: 'newproject',
     thumb: newicon
   };
-  //this filters out any flagship datasets as they are located in the same location.
+  // this filters out any flagship datasets as they are located in the same location.
   // const nonFSProjects = [];
   // projects.forEach(proj => {
   //   if(proj.summary.name != "Earth Microbiome Project" && proj.summary.name !=  "Showerhead Microbiome Project" && proj.summary.name !=  "Project MERCCURI") {
@@ -229,8 +229,8 @@ export function getFSProjects() {
       link: 'https://github.com/PhinchApp/datasets/raw/master/emp_deblur_150bp.subset_10k.rare_5000-metadata.biom',
     },
   ].map(d => {
-    d.flagship = true
-    return d
+    d.flagship = true;
+    return d;
   });
 
   // checkFSFolders();

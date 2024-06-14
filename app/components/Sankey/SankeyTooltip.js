@@ -13,7 +13,9 @@ const percentFormatter = (value) => `${Math.round(value * 10000) / 100}%`;
 
 
 function Datum(props) {
-  const { name, counts, totalCounts, color, maxWidth } = props;
+  const {
+    name, counts, totalCounts, color, maxWidth
+  } = props;
 
   return (
     <div
@@ -24,7 +26,7 @@ function Datum(props) {
           }
         }
       }}
-      style={{...props.style, maxWidth}}
+      style={{ ...props.style, maxWidth }}
       className={styles.SankeyTooltip}
     >
       <div className={styles.label}>Taxonomy:</div>
